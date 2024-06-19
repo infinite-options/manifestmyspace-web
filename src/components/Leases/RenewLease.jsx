@@ -1,10 +1,31 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { ThemeProvider, Typography, Box, Paper, Grid, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import {
+    ThemeProvider, Typography, Box, Paper, Grid, FormControlLabel, Radio, RadioGroup,
+    TextField, MenuItem, Button, OutlinedInput, FormControl, InputAdornment, Select
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DataGrid } from "@mui/x-data-grid";
+import dayjs from "dayjs";
+import { makeStyles } from "@material-ui/core/styles";
 import theme from "../../theme/theme";
+import AddIcon from "@mui/icons-material/Add";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        "& .MuiOutlinedInput-input": {
+            border: 0,
+            borderRadius: 3,
+            color: "#3D5CAC",
+            fontSize: 50,
+        },
+    },
+}));
 
 export default function RenewLease({ leaseDetails, selectedLeaseId }) {
+    const classes = useStyles();
     const [currentLease, setCurrentLease] = useState("");
     const [tenantWithId, setTenantWithId] = useState([]);
     const [utilities, setUtilities] = useState([]);
@@ -12,6 +33,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [leaseFees, setLeaseFees] = useState([]);
     const [rent, setRent] = useState([]);
     const [documents, setDocuments] = useState([]);
+    const [remainingUtils, setRemainingUtils] = useState([]);
+    const [selectedAddUtil, setSelectedAddUtil] = useState(null);
     const color = theme.palette.form.main;
 
     useEffect(() => {
@@ -23,11 +46,27 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         const utils = JSON.parse(filtered.property_utilities);
         setUtilities(utils);
         setNewUtilities(utils);
+        console.log('utils', utils);
         const fees = JSON.parse(filtered.lease_fees);
         setLeaseFees(fees)
+
         const rentFee = fees.find(fee => fee.fee_name === "Rent");
-        console.log('feess', rentFee)
+        console.log('All lease fees', fees)
+        console.log('rent values', rentFee)
         setRent(rentFee);
+
+        const newUtilityIds = new Set(newUtilities.map(utility => utility.utility_type_id));
+        // Create a map of items that are present in utilitiesMap but not in newUtilities
+        const missingUtilitiesMap = new Map();
+
+        for (const [key, value] of utilitiesMap) {
+            if (!newUtilityIds.has(key)) {
+                missingUtilitiesMap.set(key, value);
+            }
+        }
+
+        setRemainingUtils(missingUtilitiesMap);
+        console.log('missing', typeof (missingUtilitiesMap));
         setDocuments(JSON.parse(filtered.lease_documents));
     }, [leaseDetails, selectedLeaseId])
 
@@ -65,19 +104,24 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     ]
 
     const utilitiesMap = new Map([
-        ["050-000001", "Electricity"],
-        ["050-000002", "Water"],
-        ["050-000003", "Gas"],
-        ["050-000004", "Trash"],
-        ["050-000005", "Sewer"],
-        ["050-000006", "Internet"],
-        ["050-000007", "Cable"],
-        ["050-000008", "HOA Dues"],
-        ["050-000009", "Security System"],
-        ["050-000010", "Pest Control"],
-        ["050-000011", "Gardener"],
-        ["050-000012", "Maintenance"],
+        ["050-000001", "electricity"],
+        ["050-000002", "water"],
+        ["050-000003", "gas"],
+        ["050-000004", "trash"],
+        ["050-000005", "sewer"],
+        ["050-000006", "internet"],
+        ["050-000007", "cable"],
+        ["050-000008", "hoa dues"],
+        ["050-000009", "security system"],
+        ["050-000010", "pest control"],
+        ["050-000011", "gardener"],
+        ["050-000012", "maintenance"],
     ]);
+
+    const formatUtilityName = (utility) => {
+        const formattedUtility = utility.replace(/_/g, " ");
+        return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
+    };
 
     const entitiesMap = new Map([
         ["050-000041", "owner"],
@@ -116,6 +160,33 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             flex: 1,
         },
     ]
+
+    const onAddUtilitiesClick = () => {
+        const utilityTypeId = selectedAddUtil;
+        const name = utilitiesMap.get(utilityTypeId);
+
+        // Check if the utility already exists in the newUtilities array
+        const exists = newUtilities.some(util => util.utility_type_id === utilityTypeId);
+
+        if (!exists) {
+            const newUtil = {
+                utility_desc: name,
+                utility_payer_id: "050-000041",
+                utility_type_id: utilityTypeId
+            };
+            console.log('Adding new util', newUtil);
+            setNewUtilities(prevUtilities => [...prevUtilities, newUtil]);
+            setRemainingUtils(prevUtils => {
+                const newUtils = new Map(prevUtils);
+                newUtils.delete(utilityTypeId);
+                return newUtils;
+            });
+        }
+    }
+
+    const onAddUtilTextChange = (e) => {
+        setSelectedAddUtil(e.target.value);
+    }
 
     return (
         <Box
@@ -208,7 +279,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Grid container sx={{ marginBottom: "5px" }}>
+                                        <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                             <Grid item xs={1} />
                                             <Grid item xs={4}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Start Date</Typography>
@@ -217,13 +288,31 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_start}</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", color: "black" }}>NEW</Typography>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DatePicker
+                                                        value={dayjs(currentLease.lease_end).add(1, 'day')}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                size="small" // Reduce the size of the TextField
+                                                                sx={{
+                                                                    '& .MuiInputBase-root': {
+                                                                        fontSize: '14px', // Adjust the font size
+                                                                    },
+                                                                    '& .MuiSvgIcon-root': {
+                                                                        fontSize: '20px', // Adjust the icon size
+                                                                    },
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                </LocalizationProvider>
                                             </Grid>
                                         </Grid>
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Grid container sx={{ marginBottom: "5px" }}>
+                                        <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                             <Grid item xs={1} />
                                             <Grid item xs={4}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>End Date</Typography>
@@ -232,7 +321,25 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_end}</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", color: "black" }}>NEW</Typography>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DatePicker
+                                                        value={dayjs()}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                size="small" // Reduce the size of the TextField
+                                                                sx={{
+                                                                    '& .MuiInputBase-root': {
+                                                                        fontSize: '14px', // Adjust the font size
+                                                                    },
+                                                                    '& .MuiSvgIcon-root': {
+                                                                        fontSize: '20px', // Adjust the icon size
+                                                                    },
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                </LocalizationProvider>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -251,13 +358,31 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Grid container sx={{ marginBottom: "5px" }}>
+                                        <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                             <Grid item xs={1} />
                                             <Grid item xs={4}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-Out Date</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{currentLease.move_out_date ? currentLease.move_out_date : "-"}</Typography>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DatePicker
+                                                        value={dayjs()}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                size="small" // Reduce the size of the TextField
+                                                                sx={{
+                                                                    '& .MuiInputBase-root': {
+                                                                        fontSize: '14px', // Adjust the font size
+                                                                    },
+                                                                    '& .MuiSvgIcon-root': {
+                                                                        fontSize: '20px', // Adjust the icon size
+                                                                    },
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                </LocalizationProvider>
                                             </Grid>
                                             <Grid item xs={3} />
                                         </Grid>
@@ -294,40 +419,107 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                             </Grid>
 
                                             {/* utilities map */}
-                                            {utilities.map((utility) =>
-                                                <React.Fragment key={utility.utility_type_id}>
-                                                    <Grid item xs={2} />
-                                                    <Grid item xs={3} container alignItems="center">
-                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{utilitiesMap.get(utility.utility_type_id)}</Typography>
-                                                    </Grid>
-                                                    <Grid item xs={3}>
-                                                        <RadioGroup
-                                                            row
-                                                            aria-labelledby="demo-row-radio-buttons-group-label"
-                                                            name="row-radio-buttons-group"
-                                                            value={utility.utility_payer_id === "050-000041" ? "owner" : "tenant"}
-                                                        >
-                                                            <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
-                                                            <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
-                                                        </RadioGroup>
-                                                    </Grid>
-                                                    <Grid item xs={3}>
-                                                        <RadioGroup
-                                                            row
-                                                            aria-labelledby="demo-row-radio-buttons-group-label"
-                                                            name="row-radio-buttons-group"
-                                                        >
-                                                            <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
-                                                            <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
-                                                        </RadioGroup>
-                                                    </Grid>
-                                                </React.Fragment>
+                                            {newUtilities.map((newUtility, index) => {
+                                                // Find the corresponding utility in newUtilities
+                                                const utilityIndex = utilities.findIndex(u => u.utility_type_id === newUtility.utility_type_id);
+                                                const utility = utilityIndex !== -1 ? utilities[utilityIndex] : null;
+                                                console.log('map', utilityIndex, utility, newUtilities);
+                                                return (
+                                                    <React.Fragment key={newUtility.utility_type_id}>
+                                                        <Grid item xs={2} />
+                                                        <Grid item xs={3} container alignItems="center">
+                                                            <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{formatUtilityName(utilitiesMap.get(newUtility.utility_type_id))}</Typography>
+                                                        </Grid>
+                                                        <Grid item xs={3}>
+                                                            {utility !== null && (
+                                                                <RadioGroup
+                                                                    row
+                                                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                                                    name="row-radio-buttons-group"
+                                                                    value={utility.utility_payer_id === "050-000041" ? "owner" : "tenant"}
+                                                                >
+                                                                    <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
+                                                                    <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
+                                                                </RadioGroup>)
+                                                            }
+                                                        </Grid>
+                                                        <Grid item xs={3}>
+                                                            <RadioGroup
+                                                                row
+                                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                                name="row-radio-buttons-group"
+                                                                value={newUtility.utility_payer_id === "050-000041" ? "owner" : "tenant"}
+                                                            >
+                                                                <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
+                                                                <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
+                                                            </RadioGroup>
+                                                        </Grid>
+                                                    </React.Fragment>
+                                                )
+                                            }
                                             )}
+
                                             {/* Utilities map end */}
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                <Grid item xs={1} md={2} />
+                                                <Grid item>
+                                                    <TextField
+                                                        id="addUtilityText"
+                                                        select
+                                                        label="Add Utilities"
+                                                        defaultValue=""
+                                                        sx={{
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'visible',
+                                                            textOverflow: 'clip',
+                                                            width: "150px",
+                                                            '& .MuiOutlinedInput-root': {
+                                                                '& fieldset': {
+                                                                    borderColor: '#636363',
+                                                                },
+                                                                '&:hover fieldset': {
+                                                                    borderColor: '#636363',
+                                                                },
+                                                                '&.Mui-focused fieldset': {
+                                                                    borderColor: '#636363',
+                                                                },
+                                                            },
+                                                        }}
+                                                        onChange={(e) => {
+                                                            onAddUtilTextChange(e)
+                                                        }}
+                                                    >
+                                                        {remainingUtils && Array.from(remainingUtils.entries()).map(([key, value]) => (
+                                                            <MenuItem key={key} value={key}>
+                                                                {value}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </TextField>
+                                                    <Button
+                                                        sx={{
+                                                            minWidth: "55px",
+                                                            minHeight: "55px",
+                                                            marginLeft: "5px",
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            backgroundColor: '#c2c2c2',
+                                                            "&:hover": {
+                                                                backgroundColor: '#cfcfcf'
+                                                            },
+                                                        }}
+                                                        onClick={onAddUtilitiesClick}
+                                                    >
+                                                        <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "20px" }} />
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Rent</Typography>
@@ -336,13 +528,25 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     <Typography sx={{ fontSize: "14px", color: "black" }}>${rent.charge}</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                    <FormControl sx={{ m: 1 }} variant="outlined">
+                                                        <OutlinedInput
+                                                            id="outlined-adornment-weight"
+
+                                                            aria-describedby="outlined-weight-helper-text"
+                                                            inputProps={{
+                                                                'aria-label': 'weight',
+                                                            }}
+                                                            sx={{ height: "42px", fontSize: "14px" }}
+                                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                                            value={rent.charge}
+                                                        />
+                                                    </FormControl>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Frequency</Typography>
@@ -351,28 +555,51 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.frequency}</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                    <Select
+                                                        value={rent.frequency}
+                                                        size="small"
+                                                        fullWidth
+                                                        placeholder="Select frequency"
+                                                        className={classes.select}
+                                                    >
+                                                        <MenuItem value="One-time">One-time</MenuItem>
+                                                        <MenuItem value="Weekly">Weekly</MenuItem>
+                                                        <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
+                                                        <MenuItem value="Monthly">Monthly</MenuItem>
+                                                        <MenuItem value="Annually">Annually</MenuItem>
+                                                    </Select>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Due Date</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.due_by_date ? rent.due_by_date : "-"}</Typography>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.due_by}</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                    <FormControl sx={{ m: 1 }} variant="outlined">
+                                                        <OutlinedInput
+                                                            id="outlined-adornment-weight"
+
+                                                            aria-describedby="outlined-weight-helper-text"
+                                                            inputProps={{
+                                                                'aria-label': 'weight',
+                                                            }}
+                                                            sx={{ height: "42px", fontSize: "14px" }}
+                                                            value={rent.due_by}
+                                                        />
+                                                    </FormControl>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Available to Pay</Typography>
@@ -381,13 +608,24 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.available_topay}</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                    <FormControl sx={{ m: 1 }} variant="outlined">
+                                                        <OutlinedInput
+                                                            id="outlined-adornment-weight"
+
+                                                            aria-describedby="outlined-weight-helper-text"
+                                                            inputProps={{
+                                                                'aria-label': 'weight',
+                                                            }}
+                                                            sx={{ height: "42px", fontSize: "14px" }}
+                                                            value={rent.available_topay}
+                                                        />
+                                                    </FormControl>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee After</Typography>
@@ -396,13 +634,24 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.late_by}</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                    <FormControl sx={{ m: 1 }} variant="outlined">
+                                                        <OutlinedInput
+                                                            id="outlined-adornment-weight"
+
+                                                            aria-describedby="outlined-weight-helper-text"
+                                                            inputProps={{
+                                                                'aria-label': 'weight',
+                                                            }}
+                                                            sx={{ height: "42px", fontSize: "14px" }}
+                                                            value={rent.late_by}
+                                                        />
+                                                    </FormControl>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee</Typography>
@@ -411,13 +660,24 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.late_fee}</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                    <FormControl sx={{ m: 1 }} variant="outlined">
+                                                        <OutlinedInput
+                                                            id="outlined-adornment-weight"
+
+                                                            aria-describedby="outlined-weight-helper-text"
+                                                            inputProps={{
+                                                                'aria-label': 'weight',
+                                                            }}
+                                                            sx={{ height: "42px", fontSize: "14px" }}
+                                                            value={rent.late_fee}
+                                                        />
+                                                    </FormControl>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
                                                 <Grid item xs={1} />
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee Per Day</Typography>
@@ -426,7 +686,18 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.perDay_late_fee}</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px" }}>NEW</Typography>
+                                                    <FormControl sx={{ m: 1 }} variant="outlined">
+                                                        <OutlinedInput
+                                                            id="outlined-adornment-weight"
+
+                                                            aria-describedby="outlined-weight-helper-text"
+                                                            inputProps={{
+                                                                'aria-label': 'weight',
+                                                            }}
+                                                            sx={{ height: "42px", fontSize: "14px" }}
+                                                            value={rent.perDay_late_fee}
+                                                        />
+                                                    </FormControl>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
@@ -449,35 +720,35 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                             >
                                 Fee Details
                             </Typography>
-                            
-                            {leaseFees && 
-                            <DataGrid
-                                rows={leaseFees}
-                                columns={feesColumns}
-                                pageSize={10}
-                                rowsPerPageOptions={[10]}
-                                getRowId={(row) => row.leaseFees_uid}
-                                sx={{
-                                    '& .MuiDataGrid-columnHeader': {
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        color: "#3D5CAC",
-                                    },
-                                    '& .MuiDataGrid-columnHeaderTitle': {
-                                        font: "bold",
-                                        width: '100%',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        fontWeight: "bold",
-                                    },
-                                    '& .MuiDataGrid-cell': {
-                                        color: "#3D5CAC",
-                                        fontWeight: "bold",
-                                    },
 
-                                }}
-                            />
-                        }
+                            {leaseFees &&
+                                <DataGrid
+                                    rows={leaseFees}
+                                    columns={feesColumns}
+                                    pageSize={10}
+                                    rowsPerPageOptions={[10]}
+                                    getRowId={(row) => row.leaseFees_uid}
+                                    sx={{
+                                        '& .MuiDataGrid-columnHeader': {
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            color: "#3D5CAC",
+                                        },
+                                        '& .MuiDataGrid-columnHeaderTitle': {
+                                            font: "bold",
+                                            width: '100%',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            fontWeight: "bold",
+                                        },
+                                        '& .MuiDataGrid-cell': {
+                                            color: "#3D5CAC",
+                                            fontWeight: "bold",
+                                        },
+
+                                    }}
+                                />
+                            }
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
