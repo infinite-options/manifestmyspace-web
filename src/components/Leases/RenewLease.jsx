@@ -69,7 +69,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
 
         setRemainingUtils(missingUtilitiesMap);
         console.log('missing', typeof (missingUtilitiesMap));
-        const docs = JSON.parse(filtered.lease_documents)
+        const docs = JSON.parse(filtered.lease_documents).map((doc, index) => ({
+            ...doc,
+            id: index
+        }));
+
         setDocuments(docs);
         const leaseDoc = docs.find(doc => doc.description.trim().toLowerCase() === "modified unsigned lease".trim().toLowerCase());
         console.log('leaselink', leaseDoc);
@@ -141,7 +145,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             flex: 1,
         },
         {
-            field: "fee_type",
+            field: "fee_name",
             headerName: "Type",
             flex: 1,
         },
@@ -151,7 +155,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             flex: 1,
         },
         {
-            field: "fee_name",
+            field: "-",
             headerName: "Description",
             flex: 1,
         },
@@ -164,6 +168,48 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             field: "late_by",
             headerName: "Late",
             flex: 1,
+        },
+    ]
+
+    const docsColumns = [
+        {
+            field: "id",
+            headerName: "UID",
+            flex: 0.5,
+        },
+        {
+            field: "description",
+            headerName: "Document",
+            flex: 1,
+        },
+        {
+            field: "created_date",
+            headerName: "Date Added",
+            flex: 1,
+        },
+        {
+            field: "link",
+            headerName: "Action",
+            flex: 0.5,
+            renderCell: (params) => {
+                console.log('params', params);
+                return (
+                    <Button
+                        sx={{
+                            padding: "0px",
+                            '&:hover': {
+                                backgroundColor: theme.palette.form.main,
+                            },
+                        }}
+                        className=".MuiButton-icon"
+                        onClick={() =>
+                            window.open(params.value, "_blank", "rel=noopener noreferrer")
+                        }
+                    >
+                        <img src={LeaseIcon} />
+                    </Button>
+                )
+            },
         },
     ]
 
@@ -210,33 +256,33 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     width: "100%", // Occupy full width with 25px margins on each side
                 }}
             >
-                <Grid container sx={{ marginTop: '15px', alignItems: 'center', justifyContent: 'center' }}>
+                <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
                     <Grid item xs={12} md={12}>
-                        <Box sx = {{display:"flex", alignItems:"center", justifyContent:"center", paddingBottom:"10px"}}>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.largeFont,
-                                textAlign: 'center'
-                            }}
-                        >
-                            {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
-                        </Typography>
-                        {signedLease !== null && <Button
-                            sx={{
-                                padding: "0px",
-                                '&:hover': {
-                                    backgroundColor: theme.palette.form.main,
-                                },
-                            }}
-                            className=".MuiButton-icon"
-                          onClick={() =>
-                            window.open(signedLease.link, "_blank", "rel=noopener noreferrer")
-                          }
-                        >
-                            <img src={LeaseIcon} />
-                        </Button>}
+                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.largeFont,
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
+                            </Typography>
+                            {signedLease !== null && <Button
+                                sx={{
+                                    padding: "0px",
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.form.main,
+                                    },
+                                }}
+                                className=".MuiButton-icon"
+                                onClick={() =>
+                                    window.open(signedLease.link, "_blank", "rel=noopener noreferrer")
+                                }
+                            >
+                                <img src={LeaseIcon} />
+                            </Button>}
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
@@ -249,6 +295,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     textAlign: 'center'
                                 }}
                                 paddingBottom="10px"
+                                paddingTop="5px"
                             >
                                 Tenant Details
                             </Typography>
@@ -576,19 +623,22 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.frequency}</Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <Select
-                                                        value={rent.frequency}
-                                                        size="small"
-                                                        fullWidth
-                                                        placeholder="Select frequency"
-                                                        className={classes.select}
-                                                    >
-                                                        <MenuItem value="One-time">One-time</MenuItem>
-                                                        <MenuItem value="Weekly">Weekly</MenuItem>
-                                                        <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
-                                                        <MenuItem value="Monthly">Monthly</MenuItem>
-                                                        <MenuItem value="Annually">Annually</MenuItem>
-                                                    </Select>
+                                                    {rent.frequency &&
+                                                        <Select
+                                                            value={rent.frequency}
+                                                            size="small"
+                                                            fullWidth
+                                                            placeholder="Select frequency"
+                                                            className={classes.select}
+                                                            sx={{ fontSize: "14px" }}
+                                                        >
+                                                            <MenuItem value="One-time">One-time</MenuItem>
+                                                            <MenuItem value="Weekly">Weekly</MenuItem>
+                                                            <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
+                                                            <MenuItem value="Monthly">Monthly</MenuItem>
+                                                            <MenuItem value="Annually">Annually</MenuItem>
+                                                        </Select>
+                                                    }
                                                 </Grid>
                                             </Grid>
                                         </Grid>
@@ -738,6 +788,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     textAlign: 'center'
                                 }}
                                 paddingBottom="10px"
+                                paddingTop="5px"
                             >
                                 Fee Details
                             </Typography>
@@ -781,10 +832,39 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     fontSize: theme.typography.small,
                                     textAlign: 'center'
                                 }}
+                                paddingTop="5px"
                                 paddingBottom="10px"
                             >
                                 Documents
                             </Typography>
+
+                            <DataGrid
+                                rows={documents}
+                                columns={docsColumns}
+                                pageSize={5}
+                                rowsPerPageOptions={[5]}
+                                getRowId={(row) => row.id}
+                                sx={{
+                                    '& .MuiDataGrid-columnHeader': {
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        color: "#3D5CAC",
+                                    },
+                                    '& .MuiDataGrid-columnHeaderTitle': {
+                                        font: "bold",
+                                        width: '100%',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        fontWeight: "bold",
+                                    },
+                                    '& .MuiDataGrid-cell': {
+                                        color: "#3D5CAC",
+                                        fontWeight: "bold",
+                                    },
+
+                                }}
+                            />
+
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
@@ -801,6 +881,115 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 Occupants Details
                             </Typography>
                         </Paper>
+                    </Grid>
+
+                    <Grid item xs={12} md={12}>
+                        <Box sx={{ margin: "0px 10px 10px 10px", display: "flex", alignItems: "center" }}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: "bold",
+                                    fontSize: theme.typography.small,
+                                    textAlign: 'center',
+                                    marginRight: "10px", // Add some space between the typography and text box
+                                }}
+                                paddingBottom="10px"
+                            >
+                                Enter Contract Name
+                            </Typography>
+                            <FormControl sx={{ m: 1, display: "flex", alignItems: "center" }} variant="outlined">
+                                <OutlinedInput
+                                    id="outlined-adornment-weight"
+                                    aria-describedby="outlined-weight-helper-text"
+                                    inputProps={{
+                                        'aria-label': 'weight',
+                                    }}
+                                    sx={{
+                                        height: "42px",
+                                        fontSize: "14px",
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '6e6e6e', 
+                                        },
+                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '6e6e6e', 
+                                        },
+                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#6e6e6e', 
+                                        },
+                                    }}
+                                />
+                            </FormControl>
+                        </Box>
+                    </Grid>
+
+                    <Grid item xs={12} md={12}>
+                        <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
+                            <Grid item md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                <Button
+                                    variant="outlined"
+                                    sx={{
+                                        background: "#D4736D",
+                                        color: theme.palette.background.default,
+                                        cursor: "pointer",
+                                        textTransform: "none",
+                                        minWidth: "150px",
+                                        minHeight: "35px",
+                                        width: "95%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        '&:hover': {
+                                            background: '#DEA19C',
+                                        },
+                                    }}
+                                    size="small"
+                                >
+                                    <Typography sx={{
+                                        textTransform: "none",
+                                        color: theme.typography.primary.black,
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        whiteSpace: "nowrap",
+                                        marginLeft: "1%",
+                                    }}>
+                                        {"End Lease"}
+                                    </Typography>
+                                </Button>
+                            </Grid>
+
+                            <Grid item md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                <Button
+                                    variant="outlined"
+                                    sx={{
+                                        background: "#6788B3",
+                                        color: theme.palette.background.default,
+                                        cursor: "pointer",
+                                        textTransform: "none",
+                                        minWidth: "150px",
+                                        minHeight: "35px",
+                                        width: "95%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        '&:hover': {
+                                            background: '#92A9CB',
+                                        },
+                                    }}
+                                    size="small"
+                                >
+                                    <Typography sx={{
+                                        textTransform: "none",
+                                        color: theme.typography.primary.black,
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        whiteSpace: "nowrap",
+                                        marginLeft: "1%",
+                                    }}>
+                                        {"Renew Lease"}
+                                    </Typography>
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Paper>
