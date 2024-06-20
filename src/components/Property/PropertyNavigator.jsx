@@ -1402,7 +1402,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                     {/* {isManager() && item.applications.length > 0 && */}
                     {property.applications.length > 0 && (
                       <>
-                        <Grid item xs={6} md={6}>
+                        <Grid item xs={12} md={12}>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Typography
                             sx={{
                               textTransform: "none",
@@ -1413,7 +1414,24 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           >
                             Applications:
                           </Typography>
+                          <Box sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
+                          }}>
+                            <Badge
+                              color="success"
+                              badgeContent={property.applications.length}
+                              showZero
+                              sx={{
+                                paddingRight: "10px",
+                              }}
+                            />
+                          </Box>
+                        
+                          </Box>
                         </Grid>
+                      
                         <Grid item xs={12} md={12}>
                           <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: '-5px' }}>
                             <AccordionSummary
