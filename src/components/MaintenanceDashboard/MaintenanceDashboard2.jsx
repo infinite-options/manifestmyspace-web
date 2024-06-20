@@ -163,7 +163,9 @@ const WorkOrdersWidget = () => {
               </Grid>
               <Grid item xs={12} sx={{padding: '20px 0px 20px 0px', }}>
                 <Paper
+                  elevation={0}
                   style={{
+                    
                     borderRadius: "5px",
                     backgroundColor: "#FFFFFF",
                     height: 240,
