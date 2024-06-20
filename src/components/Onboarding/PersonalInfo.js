@@ -233,6 +233,8 @@ const PersonalInfo = () => {
           alignItems: "center",
           width: "100%", // Take up full screen width
           height: "100vh", // Set the Box height to full view height
+          minHeight: "100vh", // Ensure minimum height is full view height
+          overflowY: "auto", // Enable vertical scrolling
           justifyContent: "flex-start", // Align items at the top
         }}
       >

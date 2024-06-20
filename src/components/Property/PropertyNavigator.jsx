@@ -51,6 +51,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const [currentId, setCurrentId] = useState(property.property_uid);
   const [maintenanceData, setMaintenanceData] = useState([{}]);
   const [propertyRentStatus, setpropertyRentStatus] = useState(allRentStatus);
+  const [rentFee, setrentFee] = useState({});
 
   // Parse property images once outside the component
   const parsedPropertyImages = propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
@@ -175,7 +176,15 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     getContractsForOwner();
     // refreshPropertyData();
     const rentDetails = getRentStatus();
-    setpropertyRentStatus(rentDetails)
+    setpropertyRentStatus(rentDetails);
+
+    if (property.leaseFees !== null) {
+      const rent = JSON.parse(propertyData[currentIndex].leaseFees).find(fee => fee.fee_name === "Rent");
+      setrentFee(rent);
+      console.log('check rent', rent)
+    } else{
+      setrentFee(null);
+    }
   }, [currentIndex, propertyId]);
 
   //const [propertyId, setPropertyId] = useState('200-000028')
@@ -1151,7 +1160,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {property.lease_rent_due_by ? property.lease_rent_due_by : "No Due Date Listed"}
+                        {/* {property.lease_rent_due_by ? property.lease_rent_due_by : "No Due Date Listed"} */}
+                        {rentFee ? rentFee.due_by : "No Due Date Listed"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6} md={6}>
@@ -1173,7 +1183,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        10 days before
+                        {rentFee ? rentFee.available_topay : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6} md={6}>
@@ -1195,7 +1205,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        Monthly
+                        {rentFee ? rentFee.frequency : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6} md={6}>

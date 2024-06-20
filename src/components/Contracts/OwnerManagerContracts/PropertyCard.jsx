@@ -1092,7 +1092,7 @@ const sendPutRequest = (data) => {
             throw new Error('Network response was not ok');
         } else{
             console.log("Data updated successfully");
-            navigate("/PMProperties");
+            navigate("/managerDashboard");
         }
     })
     .catch(error => {

@@ -200,59 +200,69 @@ export default function TenantApplication(){
         })
     }
 
-    function handleApplicationSubmit(){
+    async function handleApplicationSubmit(){
         //submit to backend
         // console.log("Application Submitted")
         // console.log("should call /annoucements")
         // console.log("should call /leases")
-        let date = new Date()
+        try{
+            let date = new Date()
 
-        const receiverPropertyMapping = {            
-            [property.contract_business_id]: [property.contract_property_id],
-        };
-
-
-        const annoucementsResponse = fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                "announcement_title" : "New Tenant Application",
-                "announcement_msg" : "You have a new tenant application for your property",
-                "announcement_sender": getProfileId(),
-                "announcement_date": date.toDateString(),
-                // "announcement_properties": property.contract_property_id,
-                "announcement_properties": JSON.stringify(receiverPropertyMapping),
-                "announcement_mode": "LEASE",
-                "announcement_receiver": [property.contract_business_id],
-                "announcement_type": ["Text", "Email"]
+            const receiverPropertyMapping = {            
+                [property.contract_business_id]: [property.contract_property_id],
+            };
+    
+    
+    
+            const leaseApplicationData = new FormData();
+            leaseApplicationData.append('lease_property_id', property.property_uid)
+            leaseApplicationData.append('lease_status', "NEW")
+            leaseApplicationData.append('lease_assigned_contacts', JSON.stringify([getProfileId()]))
+            leaseApplicationData.append('lease_documents', JSON.stringify(tenantDocuments))
+            leaseApplicationData.append('lease_adults', tenantProfile?.tenant_adult_occupants)
+            leaseApplicationData.append('lease_children', tenantProfile?.tenant_children_occupants)
+            leaseApplicationData.append('lease_pets', tenantProfile?.tenant_pet_occupants)
+            leaseApplicationData.append('lease_vehicles', tenantProfile?.tenant_vehicle_info)
+            leaseApplicationData.append('lease_referred', "[]")
+            leaseApplicationData.append('lease_rent', "[]")
+            leaseApplicationData.append('lease_application_date', date.toLocaleDateString())
+            leaseApplicationData.append('tenant_uid', getProfileId())
+            const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+                method: 'POST',
+                body: leaseApplicationData
             })
-        })
 
-        const leaseApplicationData = new FormData();
-        leaseApplicationData.append('lease_property_id', property.property_uid)
-        leaseApplicationData.append('lease_status', "NEW")
-        leaseApplicationData.append('lease_assigned_contacts', JSON.stringify([getProfileId()]))
-        leaseApplicationData.append('lease_documents', JSON.stringify(tenantDocuments))
-        leaseApplicationData.append('lease_adults', tenantProfile?.tenant_adult_occupants)
-        leaseApplicationData.append('lease_children', tenantProfile?.tenant_children_occupants)
-        leaseApplicationData.append('lease_pets', tenantProfile?.tenant_pet_occupants)
-        leaseApplicationData.append('lease_vehicles', tenantProfile?.tenant_vehicle_info)
-        leaseApplicationData.append('lease_referred', "[]")
-        leaseApplicationData.append('lease_rent', "[]")
-        leaseApplicationData.append('lease_application_date', date.toLocaleDateString())
-        leaseApplicationData.append('tenant_uid', getProfileId())
-        const leaseApplicationResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-            method: 'POST',
-            body: leaseApplicationData
-        })
 
-        
+            const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "announcement_title" : "New Tenant Application",
+                    "announcement_msg" : "You have a new tenant application for your property",
+                    "announcement_sender": getProfileId(),
+                    "announcement_date": date.toDateString(),
+                    // "announcement_properties": property.contract_property_id,
+                    "announcement_properties": JSON.stringify(receiverPropertyMapping),
+                    "announcement_mode": "LEASE",
+                    "announcement_receiver": [property.contract_business_id],
+                    "announcement_type": ["Text", "Email"]
+                })
+            })
+    
+            
+    
+            Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
+                navigate("/listings") // send success data back to the propertyInfo page
+            })
+        }catch (error) {
+            console.log("Error submitting application:", error);
+            alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+            
+            navigate("/listings");
+        }
 
-        Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
-            navigate("/listings") // send success data back to the propertyInfo page
-        })
     }
 
     return(

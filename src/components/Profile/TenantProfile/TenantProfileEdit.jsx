@@ -262,6 +262,7 @@ function TenantProfileEdit() {
     }
 
     if (tenantFiles.length) {
+      console.log("---tenantFiles----", tenantFiles);
       setIsEdited(true);
       const documentsDetails = [];
       [...tenantFiles].forEach((file, i) => {
@@ -278,6 +279,7 @@ function TenantProfileEdit() {
       profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
     }
 
+    console.log("---deletedDocs----", deletedDocs);
     if (deletedDocs.length > 0) {
       profileFormData.append("deleted_documents", JSON.stringify(deletedDocs));
     }
@@ -308,6 +310,12 @@ function TenantProfileEdit() {
             console.log(error.response.data);
           }
         });
+    } else {
+      const confirmed = window.confirm("You haven't made any changes to the form. Are you sure you want to continue without saving any changes?");
+      if (confirmed) {
+        navigate(-1);
+      }
+            
     }
   };
 

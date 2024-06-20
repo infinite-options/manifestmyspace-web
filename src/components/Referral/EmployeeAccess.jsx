@@ -154,7 +154,7 @@ export default function EmployeeAccess({}) {
     event.preventDefault();
     try {
         const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employeeVerification', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
