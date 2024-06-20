@@ -50,6 +50,7 @@ function MaintenanceProfile() {
         axios
           .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
           .then((res) => {
+            console.log("res is", res)
             setProfileData(res.data.result[0]);
             setShowSpinner(false);
             try {
