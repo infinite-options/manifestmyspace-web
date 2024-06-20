@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge, Dialog, DialogActions,
-  DialogContent, DialogTitle, IconButton, TextField, Snackbar, Alert
+  DialogContent, DialogTitle, IconButton, TextField, Snackbar, Alert, MenuItem, Select, FormControl, InputLabel
 } from "@mui/material";
 import theme from "../../theme/theme";
 import propertyImage from "./propertyImage.png";
@@ -69,6 +69,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [applianceCategories, setApplianceCategories] = useState([]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -207,9 +208,11 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
     }
 
     const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-    console.log('Applicances', propertyApplicances);
+    console.log('Appliances', propertyApplicances);
     if (property.appliances != null) {
       setAppliances(propertyApplicances);
+      getApplianceCategories();
+      console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
     }
   }, [currentIndex, propertyId]);
 
@@ -620,11 +623,6 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const handleAddAppln = () => {
     const newError = {};
     if (!currentApplRow.appliance_type) newError.appliance_type = "Type is required";
-    if (!currentApplRow.appliance_model_num) newError.appliance_model_num = "Model Number is required";
-    if (!currentApplRow.appliance_serial_num) newError.appliance_serial_num = "Serial Number is required";
-    if (!currentApplRow.appliance_manufacturer) newError.appliance_manufacturer = "Manufacturer is required";
-    if (!currentApplRow.appliance_purchase_order) newError.appliance_purchase_order = "Purchase Order is required";
-    if (!currentApplRow.appliance_purchased_from) newError.appliance_purchased_from = "Purchased From is required";
 
     setError(newError);
     if (Object.keys(newError).length === 0) {
@@ -642,6 +640,20 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+
+  const getApplianceCategories = async () => {
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+      if (!response.ok) {
+        console.log("Error fetching lists data");
+      }
+      const responseJson = await response.json();
+      const applnCategories = responseJson.result.filter(res => res.list_category === "appliances");
+      setApplianceCategories(applnCategories);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const applnColumns = [
     { field: 'appliance_uid', headerName: 'UID', width: 150 },
@@ -1645,8 +1657,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
             <Grid item xs={12} md={12}>
               <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box sx={{ width: '100%' }}>
-                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin:"0px 15px 0px 10px"}}>
-                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}> 
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0px 15px 0px 10px" }}>
+                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1658,7 +1670,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                       >
                         Appliances
                       </Typography>
-                    </Box> 
+                    </Box>
                     <Button variant="outlined"
                       sx={{
                         background: "#3D5CAC",
@@ -1674,7 +1686,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                       onClick={() => {
                         setcurrentApplRow({
                           appliance_uid: '', appliance_url: '',
-                          appliance_type: '', appliance_images: '', appliance_available: 0,
+                          appliance_type: '', appliance_images: '', appliance_available: 0, appliance_installed: null,
                           appliance_model_num: '', appliance_purchased: null, appliance_serial_num: '',
                           appliance_property_id: { propertyId }, appliance_manufacturer: '',
                           appliance_warranty_info: '', appliance_warranty_till: null,
@@ -1702,20 +1714,30 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                   <Dialog open={open} onClose={handleClose}>
                     <DialogTitle>{isEditing ? 'Edit Appliance' : 'Add New Appliance'}</DialogTitle>
                     <DialogContent>
+                      <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
+                        <InputLabel required>Appliance Type</InputLabel>
+                        <Select
+                          margin="dense"
+                          label="Appliance Type"
+                          fullWidth
+                          required
+                          variant="outlined"
+                          value={currentApplRow?.appliance_type || ''}
+                          onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_type: e.target.value })}
+                        >
+                          {applianceCategories && applianceCategories.map((appln) => (
+                            <MenuItem key={appln.list_uid} value={appln.list_item}>
+                              {appln.list_item}
+                            </MenuItem>
+                          ))}
+
+                        </Select>
+                      </FormControl>
+
                       <TextField
                         margin="dense"
-                        label="Appliance"
+                        label="Manufacturer Name"
                         fullWidth
-                        required
-                        variant="outlined"
-                        value={currentApplRow?.appliance_type || ''}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_type: e.target.value })}
-                      />
-                      <TextField
-                        margin="dense"
-                        label="Manufacturer"
-                        fullWidth
-                        required
                         variant="outlined"
                         value={currentApplRow?.appliance_manufacturer || ''}
                         onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_manufacturer: e.target.value })}
@@ -1733,7 +1755,41 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           label="Purchased On"
                           value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
                           onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased: e.target.value })}
-                          renderInput={(params) => (
+                          textField={(params) => (
+                            <TextField
+                              {...params}
+                              margin="dense"
+                              fullWidth
+                              size="small"
+                              variant="outlined"
+                              sx={{
+                                '& .MuiInputBase-root': {
+                                  fontSize: '14px',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                  fontSize: '20px',
+                                },
+                              }}
+                            />
+                          )}
+                          sx={{ marginTop: "10px", width: "535px" }}
+                        />
+                      </LocalizationProvider>
+                      <TextField
+                        margin="dense"
+                        label="Purchase Order Number"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_purchase_order || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchase_order: e.target.value })}
+                      />
+
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="Installed On"
+                          value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
+                          onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_installed: e.target.value })}
+                          textField={(params) => (
                             <TextField
                               {...params}
                               size="small"
@@ -1747,24 +1803,14 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                               }}
                             />
                           )}
-                          sx={{ marginTop: "10px" }}
+                          sx={{ marginTop: "10px", width: "535px" }}
                         />
                       </LocalizationProvider>
-                      <TextField
-                        margin="dense"
-                        label="Purchase Order Number"
-                        fullWidth
-                        required
-                        variant="outlined"
-                        value={currentApplRow?.appliance_purchase_order || ''}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchase_order: e.target.value })}
-                      />
 
                       <TextField
                         margin="dense"
                         label="Serial Number"
                         fullWidth
-                        required
                         variant="outlined"
                         value={currentApplRow?.appliance_serial_num || ''}
                         onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_serial_num: e.target.value })}
@@ -1773,7 +1819,6 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                         margin="dense"
                         label="Model Number"
                         fullWidth
-                        required
                         variant="outlined"
                         value={currentApplRow?.appliance_model_num || ''}
                         onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_model_num: e.target.value })}
@@ -1791,7 +1836,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           label="Warranty Till"
                           value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
                           onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_till: e.target.value })}
-                          renderInput={(params) => (
+                          textField={(params) => (
                             <TextField
                               {...params}
                               size="small"
@@ -1805,7 +1850,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                               }}
                             />
                           )}
-                          sx={{ marginTop: "10px" }}
+                          sx={{ marginTop: "10px", width: "535px" }}
                         />
                       </LocalizationProvider>
                       <TextField
@@ -1824,7 +1869,6 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                         value={currentApplRow?.appliance_images || ''}
                         onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_images: e.target.value })}
                       />
-
                     </DialogContent>
                     <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
                       <Button variant="outlined"
