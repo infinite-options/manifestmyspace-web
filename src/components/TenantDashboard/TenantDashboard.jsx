@@ -98,7 +98,7 @@ function TenantDashboard(props) {
     return (
       <>
         {lease_status === "ACTIVE" ? <CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }} /> : null /* blue */}
-        {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ? <CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }} /> : null /* orange */}
+        {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ||lease_status === "RESCIND" ? <CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }} /> : null /* orange */}
         {lease_status === "NEW" ? <CircleIcon fontSize="small" sx={{ color: "#FAD102", paddingRight: "10px" }} /> : null /* yellow */}
         {lease_status === "PROCESSING" ? <CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }} /> : null /* green */}
         {lease_status === "REJECTED" ? <CircleIcon fontSize="small" sx={{ color: "#FA0202", paddingRight: "10px" }} /> : null /* red */}
@@ -116,6 +116,7 @@ function TenantDashboard(props) {
       PROCESSING: "#00D100",
       REJECTED: "#FA0202",
       ENDED: "#000000",
+      RESCIND: "#FF8832",
     };
     // return property?.property_status ? statusColorMapping[property?.property_status] : "#ddd"
     return status ? statusColorMapping[status] : "#ddd";

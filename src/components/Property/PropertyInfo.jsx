@@ -100,7 +100,7 @@ const PropertyInfo = (props) => {
   }
 
   function renderCorrectButtonText() {
-    if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED") {
+    if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
       return "Apply Now";
     } else if (status === "NEW") {
       return "View Application";
@@ -116,7 +116,7 @@ const PropertyInfo = (props) => {
   }
 
   function navigateToCorrectPage() {
-    if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED") {
+    if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
       navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
     } else if (status === "TENANT APPROVED" || status === "PROCESSING") {
       navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });

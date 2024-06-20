@@ -35,7 +35,7 @@ export default function TenantApplication(){
     const [property, setProperty] = useState(location.state.property)
     const [status, setStatus] = useState(location.state.status)
     const [lease, setLease] = useState(location.state.lease)
-    // console.log("status", status)
+    console.log("in tenant application status", status)
     // console.log("lease", lease)
     // console.log(property)
 
@@ -891,112 +891,65 @@ export default function TenantApplication(){
                             ))}
                         </Grid>
                         {status && status !== "WITHDRAWN" && status !== "REFUSED" ? (
-                            null
-                          ) : (
-                            <>
-                                {/* <Grid container direction="row" columnSpacing={6} rowSpacing={6} >
-                                    <Grid item xs={6} alignContent={'center'}>
-                                        <Button
-                                            sx={{
-                                                justifyContent: 'center',
-                                                color: "#160449",
-                                                backgroundColor: "#9EAED6",
-                                                fontWeight: theme.typography.medium.fontWeight,
-                                                fontSize: theme.typography.mediumFont,
-                                                textTransform: "none",
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-            
-                                            }}
-                                            onClick={() => handleApplicationSubmit()}
-                                        >
-                                            Submit
-                                        </Button>
-                                    </Grid>
-                                    <Grid item xs={6} alignContent={'center'}>
-                                        <Button
-                                            sx={{
-                                                justifyContent: 'center',
-                                                color: "#000000",
-                                                backgroundColor: "#CB8E8E",
-                                                fontWeight: theme.typography.medium.fontWeight,
-                                                fontSize: theme.typography.mediumFont,
-                                                textTransform: "none",
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                            }}
-                                            onClick={() => navigate("/tenantProfileEdit")}
-                                        >
-                                            Edit
-                                        </Button>
-                                    </Grid>
-                                </Grid> */}
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent:'space-between',
-                                    alignItems: 'center',
-                                    paddingTop: '10px',
-                                    marginBottom: '7px',
-                                    width: '100%',
-                                }}>
-
-                                
-                                    <Button
-                                        variant="contained"
-                                        
-                                        sx={{
-                                            backgroundColor: "#9EAED6",
-                                            textTransform: "none",
-                                            borderRadius: "5px",
-                                            display: 'flex',
-                                            width: "45%",
-                                            // '&:hover': {
-                                            //     backgroundColor: "#CB8E8E",
-                                            // },
-                                        }}
-                                        onClick={() => handleApplicationSubmit()}
-                                        >
-                                        <Typography sx={{
-                                            fontWeight: theme.typography.primary.fontWeight, 
-                                            fontSize: "14px",
-                                            color: "#160449",
-                                            textTransform: "none",
-                                        }}>
-                                            Submit
-                                        </Typography>
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        
-                                        sx={{
-                                            backgroundColor: "#CB8E8E",
-                                            textTransform: "none",
-                                            borderRadius: "5px",
-                                            display: 'flex',
-                                            width: "45%",
-                                            // '&:hover': {
-                                            //     backgroundColor: "#9EAED6",
-                                            // },
-                                        }}
-                                        onClick={() => navigate("/tenantProfileEdit")}
-
-                                        
-                                        >
-                                        <Typography sx={{
-                                            fontWeight: theme.typography.primary.fontWeight, 
-                                            fontSize: "14px",
-                                            color: "#160449",
-                                            textTransform: "none",
-                                        }}>
-                                            Edit
-                                        </Typography>
-                                    </Button>
-                                </Box>
-                            </>
-                        )}
+        <>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingTop: '10px',
+              marginBottom: '7px',
+              width: '100%',
+            }}
+          >
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#9EAED6",
+                textTransform: "none",
+                borderRadius: "5px",
+                display: 'flex',
+                width: "45%",
+              }}
+              onClick={() => handleApplicationSubmit()}
+            >
+              <Typography
+                sx={{
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "14px",
+                  color: "#160449",
+                  textTransform: "none",
+                }}
+              >
+                Submit
+              </Typography>
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#CB8E8E",
+                textTransform: "none",
+                borderRadius: "5px",
+                display: 'flex',
+                width: "45%",
+              }}
+              onClick={() => navigate("/tenantProfileEdit")}
+            >
+              <Typography
+                sx={{
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "14px",
+                  color: "#160449",
+                  textTransform: "none",
+                }}
+              >
+                Edit
+              </Typography>
+            </Button>
+          </Box>
+        </>
+      ) : null}
                         {status && status === "NEW" ? (
                           <>
                             <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: 'center', }}>

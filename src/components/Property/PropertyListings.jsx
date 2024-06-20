@@ -760,6 +760,7 @@ function PropertyCard(props) {
     NEW: new_label,
     ACTIVE: active_label,
     REFUSED: refused_label,
+    RESCIND: refused_label,
     REJECTED: rejected_label,
     "TENANT APPROVED": tenant_approved_label,
     PROCESSING: processing_label,
