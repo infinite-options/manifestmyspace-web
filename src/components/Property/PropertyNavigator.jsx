@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge } from "@mui/material";
+import {
+  Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge, Dialog, DialogActions,
+  DialogContent, DialogTitle, IconButton, TextField, Snackbar, Alert
+} from "@mui/material";
 import theme from "../../theme/theme";
 import propertyImage from "./propertyImage.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -17,6 +20,7 @@ import { getPaymentStatusColor, getPaymentStatus } from "./PropertyList.jsx";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from "@mui/x-data-grid";
@@ -25,11 +29,18 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useUser } from "../../contexts/UserContext";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
 import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/MaintenanceManager.jsx";
 
 import APIConfig from "../../utils/APIConfig";
+import { v4 as uuidv4 } from 'uuid';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
@@ -52,6 +63,15 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   const [maintenanceData, setMaintenanceData] = useState([{}]);
   const [propertyRentStatus, setpropertyRentStatus] = useState(allRentStatus);
   const [rentFee, setrentFee] = useState({});
+  const [appliances, setAppliances] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [currentApplRow, setcurrentApplRow] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState({});
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   // Parse property images once outside the component
   const parsedPropertyImages = propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
@@ -182,8 +202,14 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
       const rent = JSON.parse(propertyData[currentIndex].leaseFees).find(fee => fee.fee_name === "Rent");
       setrentFee(rent);
       console.log('check rent', rent)
-    } else{
+    } else {
       setrentFee(null);
+    }
+
+    const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
+    console.log('Applicances', propertyApplicances);
+    if (property.appliances != null) {
+      setAppliances(propertyApplicances);
     }
   }, [currentIndex, propertyId]);
 
@@ -579,6 +605,74 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
+  ];
+
+  const handleEditClick = (row) => {
+    setcurrentApplRow(row);
+    setIsEditing(true);
+    handleOpen();
+  };
+
+  const handleDeleteClick = (id) => {
+    setAppliances(appliances.filter(appliance => appliance.appliance_uid !== id));
+  };
+
+  const handleAddAppln = () => {
+    const newError = {};
+    if (!currentApplRow.appliance_type) newError.appliance_type = "Type is required";
+    if (!currentApplRow.appliance_model_num) newError.appliance_model_num = "Model Number is required";
+    if (!currentApplRow.appliance_serial_num) newError.appliance_serial_num = "Serial Number is required";
+    if (!currentApplRow.appliance_manufacturer) newError.appliance_manufacturer = "Manufacturer is required";
+    if (!currentApplRow.appliance_purchase_order) newError.appliance_purchase_order = "Purchase Order is required";
+    if (!currentApplRow.appliance_purchased_from) newError.appliance_purchased_from = "Purchased From is required";
+
+    setError(newError);
+    if (Object.keys(newError).length === 0) {
+      if (isEditing) {
+        setAppliances(appliances.map(appliance => (appliance.appliance_uid === currentApplRow.appliance_uid ? currentApplRow : appliance)));
+      } else {
+        setAppliances([...appliances, { ...currentApplRow, appliance_uid: uuidv4() }]);
+      }
+      handleClose();
+    } else {
+      setSnackbarOpen(true);
+    };
+  }
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const applnColumns = [
+    { field: 'appliance_uid', headerName: 'UID', width: 150 },
+    { field: 'appliance_type', headerName: 'Appliance', width: 150 },
+    { field: 'appliance_manufacturer', headerName: 'Manufacturer', width: 150 },
+    { field: 'appliance_purchased_from', headerName: 'Purchased From', width: 150 },
+    { field: 'appliance_purchased', headerName: 'Purchased On', width: 150 },
+    { field: 'appliance_purchase_order', headerName: 'Purchase Order Number', width: 150 },
+    { field: 'appliance_installed', headerName: 'Installed On', width: 150 },
+    { field: 'appliance_serial_num', headerName: 'Serial Number', width: 150 },
+    { field: 'appliance_model_num', headerName: 'Model Number', width: 150 },
+    { field: 'appliance_warranty_till', headerName: 'Warranty Till', width: 150 },
+    { field: 'appliance_warranty_info', headerName: 'Warranty Info', width: 150 },
+    { field: 'appliance_url', headerName: 'URLs', width: 150 },
+    { field: 'appliance_images', headerName: 'Images', width: 150 },
+    { field: '-', headerName: 'Documents', width: 150 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params) => (
+        <Box>
+          <IconButton onClick={() => handleEditClick(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      )
+    }
   ];
 
   return (
@@ -1183,7 +1277,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.available_topay : "-"}
+                        {rentFee ? rentFee.available_topay + " days in advance" : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6} md={6}>
@@ -1563,6 +1657,224 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                     }}
                   />
                 </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={12}>
+              <Card sx={{ backgroundColor: color, height: "100%" }}>
+                <Box sx={{ width: '100%' }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin:"0px 15px 0px 10px"}}>
+                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}> 
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: theme.typography.largeFont,
+                          textAlign: "center",
+                          marginTop: '10px',
+                        }}
+                      >
+                        Appliances
+                      </Typography>
+                    </Box> 
+                    <Button variant="outlined"
+                      sx={{
+                        background: "#3D5CAC",
+                        color: theme.palette.background.default,
+                        cursor: "pointer",
+                        textTransform: "none",
+                        minWidth: "30px",
+                        minHeight: "30px",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                      size="small"
+                      onClick={() => {
+                        setcurrentApplRow({
+                          appliance_uid: '', appliance_url: '',
+                          appliance_type: '', appliance_images: '', appliance_available: 0,
+                          appliance_model_num: '', appliance_purchased: null, appliance_serial_num: '',
+                          appliance_property_id: { propertyId }, appliance_manufacturer: '',
+                          appliance_warranty_info: '', appliance_warranty_till: null,
+                          appliance_purchase_order: '', appliance_purchased_from: ''
+                        });
+                        setIsEditing(false);
+                        handleOpen();
+                      }}
+                    >
+                      <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                    </Button>
+                  </Box>
+                  <DataGrid
+                    rows={appliances}
+                    columns={applnColumns}
+                    pageSize={5}
+                    getRowId={(row) => row.appliance_uid}
+                    autoHeight
+                  />
+                  <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+                      Please fill in all required fields.
+                    </Alert>
+                  </Snackbar>
+                  <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>{isEditing ? 'Edit Appliance' : 'Add New Appliance'}</DialogTitle>
+                    <DialogContent>
+                      <TextField
+                        margin="dense"
+                        label="Appliance"
+                        fullWidth
+                        required
+                        variant="outlined"
+                        value={currentApplRow?.appliance_type || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_type: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Manufacturer"
+                        fullWidth
+                        required
+                        variant="outlined"
+                        value={currentApplRow?.appliance_manufacturer || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_manufacturer: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Purchased From"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_purchased_from || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased_from: e.target.value })}
+                      />
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="Purchased On"
+                          value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
+                          onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased: e.target.value })}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              size="small"
+                              sx={{
+                                '& .MuiInputBase-root': {
+                                  fontSize: '14px',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                  fontSize: '20px',
+                                },
+                              }}
+                            />
+                          )}
+                          sx={{ marginTop: "10px" }}
+                        />
+                      </LocalizationProvider>
+                      <TextField
+                        margin="dense"
+                        label="Purchase Order Number"
+                        fullWidth
+                        required
+                        variant="outlined"
+                        value={currentApplRow?.appliance_purchase_order || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchase_order: e.target.value })}
+                      />
+
+                      <TextField
+                        margin="dense"
+                        label="Serial Number"
+                        fullWidth
+                        required
+                        variant="outlined"
+                        value={currentApplRow?.appliance_serial_num || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_serial_num: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Model Number"
+                        fullWidth
+                        required
+                        variant="outlined"
+                        value={currentApplRow?.appliance_model_num || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_model_num: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Warranty Info"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_warranty_info || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_info: e.target.value })}
+                      />
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="Warranty Till"
+                          value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
+                          onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_till: e.target.value })}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              size="small"
+                              sx={{
+                                '& .MuiInputBase-root': {
+                                  fontSize: '14px',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                  fontSize: '20px',
+                                },
+                              }}
+                            />
+                          )}
+                          sx={{ marginTop: "10px" }}
+                        />
+                      </LocalizationProvider>
+                      <TextField
+                        margin="dense"
+                        label="URLs"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_url || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Images"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_images || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_images: e.target.value })}
+                      />
+
+                    </DialogContent>
+                    <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
+                      <Button variant="outlined"
+                        sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          textTransform: "none",
+                          width: "30%",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                        size="small" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="outlined"
+                        sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          textTransform: "none",
+                          width: "30%",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                        size="small"
+                        onClick={handleAddAppln}>
+                        Save
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </Box>
               </Card>
             </Grid>
           </Grid>
