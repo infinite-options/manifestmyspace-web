@@ -890,8 +890,7 @@ export default function TenantApplication(){
                                 </>                                        
                             ))}
                         </Grid>
-                        {status && status !== "WITHDRAWN" && status !== "REFUSED" ? (
-        <>
+                       
           <Box
             sx={{
               display: 'flex',
@@ -948,8 +947,6 @@ export default function TenantApplication(){
               </Typography>
             </Button>
           </Box>
-        </>
-      ) : null}
                         {status && status === "NEW" ? (
                           <>
                             <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: 'center', }}>
