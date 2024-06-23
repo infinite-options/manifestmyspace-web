@@ -571,11 +571,13 @@ const OwnerInformation = ({ contactDetails, index }) => {
 
   useEffect(() => {
     if (contactDetails) {
-      const paymentMethodString = contactDetails[index]?.payment_method;
-      console.log("contactDetails.payment_method - ", paymentMethodString);
-      const parsedPaymentMethods = paymentMethodString ? JSON.parse(paymentMethodString) : [];
-      setPaymentMethods(parsedPaymentMethods);
+      // const paymentMethodString = contactDetails[index]?.payment_method;
+      // console.log("contactDetails.payment_method - ", paymentMethodString);
+      // const parsedPaymentMethods = paymentMethodString ? JSON.parse(paymentMethodString) : [];
+      // setPaymentMethods(parsedPaymentMethods);
       // setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method));
+
+      setPaymentMethods(contactDetails[index]?.payment_method ? JSON.parse(contactDetails[index]?.payment_method) : []);
     }
   }, [contactDetails]);
 
