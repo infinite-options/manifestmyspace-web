@@ -116,9 +116,10 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
         const ownerContacts = data["owners"];
         console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
         setContactDetails(ownerContacts);
-        console.log("Data to find index: ", ownerUID);
+        console.log("Set Contact Details 1");
+        // console.log("Data to find index: ", ownerUID);
         const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
-        console.log("Owner Index: ", index);
+        // console.log("Owner Index: ", index);
         setIndex(index);
 
         // setAllTenantsData(data["tenants"]);
@@ -140,6 +141,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
       setContactsTab("Owner");
     } else if (navigatingFrom === "PMContacts") {
       setContactDetails(location.state.dataDetails);
+      console.log("Set Contact Details 2");
       setContactsTab(location.state.tab);
     }
   }, []);
@@ -148,12 +150,12 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
     // console.log("INDEX UPDATED - ", index);
     // location.state.index = index;
     // contactDetails && console.log("DATA DETAILS", contactDetails[index]);
-    setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : []);
-    setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : []);
+    setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+    setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     setFilteredCashflowDetailsByPropertyByMonth(
-      contactDetails != null ? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : []
+      contactDetails != null ? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []
     );
-    setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : []);
+    setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
   }, [index]);
 
   //   console.log("Data details passed 1: ", contactDetails);
@@ -528,7 +530,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
             <PropertiesInformation
               propertiesData={propertiesData}
               contractsData={contractsData}
-              ownerUID={contactDetails && index >= 0 && index < contactDetails.length ? contactDetails[index]?.contact_uid : null}
+              ownerUID={contactDetails && index >= 0 && index < contactDetails.length ? contactDetails[index]?.owner_uid : null}
             />
           </Paper>
         </Grid>
@@ -564,13 +566,16 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
 };
 
 const OwnerInformation = ({ contactDetails, index }) => {
-  console.log("In OwnerInformation: ", contactDetails);
+  console.log("In OwnerInformation: ", index, contactDetails);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
   useEffect(() => {
     if (contactDetails) {
-      // console.log("contactDetails.payment_method - ", contactDetails[index]?.payment_method);
-      setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method));
+      const paymentMethodString = contactDetails[index]?.payment_method;
+      console.log("contactDetails.payment_method - ", paymentMethodString);
+      const parsedPaymentMethods = paymentMethodString ? JSON.parse(paymentMethodString) : [];
+      setPaymentMethods(parsedPaymentMethods);
+      // setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method));
     }
   }, [contactDetails]);
 
@@ -620,11 +625,9 @@ const OwnerInformation = ({ contactDetails, index }) => {
         <Grid item xs={6}>
           <Typography sx={{ fontSize: "15px", fontWeight: "600", color: "#160449" }}>SSN</Typography>
           <Typography sx={{ fontSize: "15px", color: "#160449" }}>
-            {/* {
-              contactDetails && contactDetails[index]?.contact_ssn? maskSSN(getDecryptedSSN(contactDetails[index]?.contact_ssn)) : "No SSN provided"
-              
-            } */}
-            {contactDetails && "***-**-" + AES.decrypt(contactDetails[index]?.contact_ssn, process.env.REACT_APP_ENKEY).toString().slice(-4)}
+            {contactDetails && contactDetails[index]?.contact_ssn ? maskSSN(contactDetails[index]?.contact_ssn) : "No SSN provided"}
+            {/* {contactDetails && contactDetails[index]?.contact_ssn ? maskSSN(getDecryptedSSN(contactDetails[index]?.contact_ssn)) : "No SSN provided"} */}
+            {/* {contactDetails && "***-**-" + AES.decrypt(contactDetails[index]?.contact_ssn, process.env.REACT_APP_ENKEY).toString().slice(-4)} */}
           </Typography>
         </Grid>
         <Grid item xs={6}>
