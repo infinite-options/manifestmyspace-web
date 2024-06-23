@@ -266,7 +266,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
 
   useEffect(() => {
     const filteredValues = contactsData?.filter((item) => {
-      return item.contact_first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.contact_last_name.toLowerCase().includes(searchTerm.toLowerCase());
+      return item.owner_first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.owner_last_name.toLowerCase().includes(searchTerm.toLowerCase());
     });
     console.log("Set FilteredContactsData 2");
     setFilteredContactsData(filteredValues);
@@ -336,13 +336,13 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
                         <CommentIcon sx={{ color: "#3D5CAC" }} />
                       </Grid>
                       <Grid item xs={12}>
-                        <Typography sx={{ fontWeight: "600", color: "#160449", fontSize: "15px" }}>{`${contact?.property_count} properties`}</Typography>
+                        <Typography sx={{ fontWeight: "600", color: "#160449", fontSize: "15px" }}>{`${contact?.PROPERTY_count} properties`}</Typography>
                       </Grid>
                       <Grid item xs={12}>
-                        <Typography sx={{ color: "#160449", fontSize: "15px" }}>{contact?.contact_email}</Typography>
+                        <Typography sx={{ color: "#160449", fontSize: "15px" }}>{contact?.owner_email}</Typography>
                       </Grid>
                       <Grid item xs={12}>
-                        <Typography sx={{ color: "#160449", fontSize: "15px" }}>{contact?.contact_phone_number}</Typography>
+                        <Typography sx={{ color: "#160449", fontSize: "15px" }}>{contact?.owner_phone_number}</Typography>
                       </Grid>
                     </Grid>
                   </Paper>
@@ -460,7 +460,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
               }}
             >
               <img
-                src={contactDetails && contactDetails[index]?.contact_photo_url ? contactDetails[index].contact_photo_url : User_fill}
+                src={contactDetails && contactDetails[index]?.owner_photo_url ? contactDetails[index].owner_photo_url : User_fill}
                 alt="profile placeholder"
                 style={{
                   height: "60px",
@@ -603,24 +603,18 @@ const OwnerInformation = ({ contactDetails, index }) => {
       </Grid>
       <Grid container direction="row" item xs={12} alignContent="center">
         <img src={EmailIcon} alt="email" />
-        <Typography sx={{ color: "#160449" }}>{contactDetails && contactDetails[index]?.contact_email}</Typography>
+        <Typography sx={{ color: "#160449" }}>{contactDetails && contactDetails[index]?.owner_email}</Typography>
       </Grid>
       <Grid container direction="row" item xs={12} alignContent="center">
         <img src={PhoneIcon} alt="phone" />
-        <Typography sx={{ color: "#160449" }}>{contactDetails && contactDetails[index]?.contact_phone_number}</Typography>
+        <Typography sx={{ color: "#160449" }}>{contactDetails && contactDetails[index]?.owner_phone_number}</Typography>
       </Grid>
       <Grid container direction="row" item xs={12} alignItems="center">
         <img src={AddressIcon} alt="address" />
 
         <Typography sx={{ color: "#160449" }}>
           {contactDetails &&
-            contactDetails[index]?.contact_address +
-              ", " +
-              contactDetails[index]?.contact_city +
-              ", " +
-              contactDetails[index]?.contact_state +
-              ", " +
-              contactDetails[index]?.contact_zip}
+            contactDetails[index]?.owner_address + ", " + contactDetails[index]?.owner_city + ", " + contactDetails[index]?.owner_state + ", " + contactDetails[index]?.owner_zip}
         </Typography>
       </Grid>
       <Grid item xs={12} sx={{ marginTop: "15px" }}>
@@ -630,7 +624,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
         <Grid item xs={6}>
           <Typography sx={{ fontSize: "15px", fontWeight: "600", color: "#160449" }}>SSN</Typography>
           <Typography sx={{ fontSize: "15px", color: "#160449" }}>
-            {contactDetails && contactDetails[index]?.contact_ssn ? maskSSN(contactDetails[index]?.contact_ssn) : "No SSN provided"}
+            {contactDetails && contactDetails[index]?.owner_ssn ? maskSSN(contactDetails[index]?.owner_ssn) : "No SSN provided"}
             {/* {contactDetails && contactDetails[index]?.contact_ssn ? maskSSN(getDecryptedSSN(contactDetails[index]?.contact_ssn)) : "No SSN provided"} */}
             {/* {contactDetails && "***-**-" + AES.decrypt(contactDetails[index]?.contact_ssn, process.env.REACT_APP_ENKEY).toString().slice(-4)} */}
           </Typography>
@@ -638,7 +632,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
         <Grid item xs={6}>
           <Typography sx={{ color: "#160449", fontWeight: "600" }}>EIN</Typography>
           <Typography sx={{ fontSize: "15px", color: "#160449" }}>
-            {contactDetails && contactDetails[index]?.contact_ein_number ? maskEIN(contactDetails[index]?.contact_ein_number) : "No EIN provided"}
+            {contactDetails && contactDetails[index]?.owner_ein_number ? maskEIN(contactDetails[index]?.owner_ein_number) : "No EIN provided"}
           </Typography>
         </Grid>
       </Grid>
