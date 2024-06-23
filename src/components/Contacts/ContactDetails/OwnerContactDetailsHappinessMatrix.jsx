@@ -715,7 +715,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
       <Grid item xs={12}>
         <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Active {`(${activeProperties?.length})`}</Typography>
       </Grid>
-      <Grid container sx={{ padding: "10px", maxHeight: "250px", overflow: "auto" }}>
+      <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
         {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
           {
             activeProperties?.map( (property) => {
@@ -1116,10 +1116,22 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
   return (
     <>
       <Grid container item xs={12} sx={{ padding: "10px" }}>
-        <Grid container justifyContent="center" item xs={4}>
+        <Grid container justifyContent="center" item xs={3}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center", // Vertically centers the children
+              justifyContent: "center", // Horizontally centers the children (optional)
+              // height: "100vh", // Adjust the height as needed
+            }}
+          >
+            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>CASHFLOW</Typography>
+          </Box>
+        </Grid>
+        <Grid container justifyContent="center" item xs={3}>
           <Button
             sx={{
-              width: "200px",
+              width: "150px",
               backgroundColor: tab === "by_month" ? "#3D5CAC" : "#9EAED6",
               textTransform: "none",
               "&:hover": {
@@ -1128,13 +1140,13 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             }}
             onClick={() => handleSelectTab("by_month")}
           >
-            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>By Month</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Month</Typography>
           </Button>
         </Grid>
-        <Grid container justifyContent="center" item xs={4}>
+        <Grid container justifyContent="center" item xs={3}>
           <Button
             sx={{
-              width: "200px",
+              width: "150px",
               backgroundColor: tab === "by_property" ? "#3D5CAC" : "#9EAED6",
               textTransform: "none",
               "&:hover": {
@@ -1143,10 +1155,10 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             }}
             onClick={() => handleSelectTab("by_property")}
           >
-            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
           </Button>
         </Grid>
-        <Grid container justifyContent="center" item xs={4}>
+        <Grid container justifyContent="center" item xs={3}>
           <Button
             sx={{
               width: "200px",
@@ -1158,7 +1170,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             }}
             onClick={() => handleSelectTab("by_property_by_month")}
           >
-            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>By Property By Month</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property By Month</Typography>
           </Button>
         </Grid>
       </Grid>
