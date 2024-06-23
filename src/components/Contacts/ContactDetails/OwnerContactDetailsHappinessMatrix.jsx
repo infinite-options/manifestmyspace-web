@@ -54,7 +54,7 @@ import AES from "crypto-js/aes";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const OwnerContactDetailsHappinessMatrix = (props) => {
-  // console.log("In Owner Contact Details", props);
+  console.log("In Owner Contact Details - Happiness Matrix", props);
   const { selectedRole, getProfileId } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,6 +106,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
 
   const getDataFromAPI = async () => {
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
+    console.log("Calling contacts endpoint");
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     // setShowSpinner(true);
 
@@ -253,8 +254,9 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
         entities: contact.entities != null ? JSON.parse(contact.entities) : [],
       };
     });
-    // console.log("AllContacts - processedData -", processedData);
+    console.log("AllContacts - processedData -", processedData);
     setContactsData(processedData);
+    console.log("Set FilteredContactsData 1");
     setFilteredContactsData(processedData);
   }, [data]);
 
@@ -266,7 +268,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
     const filteredValues = contactsData?.filter((item) => {
       return item.contact_first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.contact_last_name.toLowerCase().includes(searchTerm.toLowerCase());
     });
-
+    console.log("Set FilteredContactsData 2");
     setFilteredContactsData(filteredValues);
   }, [searchTerm]);
 
@@ -327,7 +329,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
                             fontSize: "20px",
                           }}
                         >
-                          {contact?.contact_first_name + " " + contact.contact_last_name}
+                          {contact?.owner_first_name + " " + contact.owner_last_name}
                         </Typography>
                       </Grid>
                       <Grid item xs={1}>
@@ -379,6 +381,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
 
   const getContractsData = async () => {
     // const url = `http://localhost:4000/contracts/${getProfileId()}`;
+    console.log("Calling contRacts endpoint");
     const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;
     // setShowSpinner(true);
 
@@ -441,8 +444,8 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
           <Grid item xs={12} container justifyContent="center">
             <Typography sx={{ fontSize: "25px", fontWeight: "bold", color: "#F2F2F2" }}>
               {`
-                    ${contactDetails && contactDetails[index]?.contact_first_name ? contactDetails[index]?.contact_first_name : "<FIRST_NAME>"}
-                    ${contactDetails && contactDetails[index]?.contact_last_name ? contactDetails[index]?.contact_last_name : "<LAST_NAME>"}
+                    ${contactDetails && contactDetails[index]?.owner_first_name ? contactDetails[index]?.owner_first_name : "<FIRST_NAME>"}
+                    ${contactDetails && contactDetails[index]?.owner_last_name ? contactDetails[index]?.owner_last_name : "<LAST_NAME>"}
                   `}
             </Typography>
           </Grid>
