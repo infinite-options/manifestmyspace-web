@@ -120,7 +120,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
         console.log("Set Contact Details 1");
         // console.log("Data to find index: ", ownerUID);
         const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
-        // console.log("Owner Index: ", index);
+        console.log("Owner Index: ", index);
         setIndex(index);
 
         // setAllTenantsData(data["tenants"]);
