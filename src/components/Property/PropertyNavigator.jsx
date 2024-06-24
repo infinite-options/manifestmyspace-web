@@ -699,37 +699,38 @@ export default function PropertyNavigator({
     }
   }
 
-	const applnColumns = [
-		{ field: 'appliance_uid', headerName: 'UID', width: 150 },
-		{ field: 'appliance_type', headerName: 'Appliance', width: 150 },
-		{ field: 'appliance_manufacturer', headerName: 'Manufacturer', width: 150 },
-		{ field: 'appliance_purchased_from', headerName: 'Purchased From', width: 150 },
-		{ field: 'appliance_purchased', headerName: 'Purchased On', width: 150 },
-		{ field: 'appliance_purchase_order', headerName: 'Purchase Order Number', width: 150 },
-		{ field: 'appliance_installed', headerName: 'Installed On', width: 150 },
-		{ field: 'appliance_serial_num', headerName: 'Serial Number', width: 150 },
-		{ field: 'appliance_model_num', headerName: 'Model Number', width: 150 },
-		{ field: 'appliance_warranty_till', headerName: 'Warranty Till', width: 150 },
-		{ field: 'appliance_warranty_info', headerName: 'Warranty Info', width: 150 },
-		{ field: 'appliance_url', headerName: 'URLs', width: 150 },
-		{ field: 'appliance_images', headerName: 'Images', width: 150 },
-		{ field: '-', headerName: 'Documents', width: 150 },
-		{
-			field: 'actions',
-			headerName: 'Actions',
-			width: 150,
-			renderCell: (params) => (
-				<Box>
-					<IconButton onClick={() => handleEditClick(params.row)}>
-						<EditIcon />
-					</IconButton>
-					<IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
-						<DeleteIcon />
-					</IconButton>
-				</Box>
-			),
-		},
-	];
+  const applnColumns = [
+    { field: 'appliance_uid', headerName: 'UID', width: 80 },
+    { field: 'appliance_type', headerName: 'Appliance', width: 80 },
+    { field: 'appliance_desc', headerName: 'Description', width: 80 },
+    { field: 'appliance_manufacturer', headerName: 'Manufacturer', width: 80 },
+    { field: 'appliance_purchased_from', headerName: 'Purchased From', width: 80 },
+    { field: 'appliance_purchased', headerName: 'Purchased On', width: 80 },
+    { field: 'appliance_purchase_order', headerName: 'Purchase Order Number', width: 80 },
+    { field: 'appliance_installed', headerName: 'Installed On', width: 80 },
+    { field: 'appliance_serial_num', headerName: 'Serial Number', width: 80 },
+    { field: 'appliance_model_num', headerName: 'Model Number', width: 80 },
+    { field: 'appliance_warranty_till', headerName: 'Warranty Till', width: 80 },
+    { field: 'appliance_warranty_info', headerName: 'Warranty Info', width: 80 },
+    { field: 'appliance_url', headerName: 'URLs', width: 80 },
+    { field: 'appliance_images', headerName: 'Images', width: 80 },
+    { field: 'appliance_documents', headerName: 'Documents', width: 80 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      renderCell: (params) => (
+        <Box>
+          <IconButton onClick={() => handleEditClick(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      )
+    }
+  ];
 
 	return (
 		<Paper
@@ -1914,7 +1915,7 @@ export default function PropertyNavigator({
                       onClick={() => {
                         setcurrentApplRow({
                           appliance_uid: '', appliance_url: '',
-                          appliance_type: '', appliance_images: '', appliance_available: 0, appliance_installed: null,
+                          appliance_type: '', appliance_desc:'', appliance_images: '', appliance_available: 0, appliance_installed: null,
                           appliance_model_num: '', appliance_purchased: null, appliance_serial_num: '',
                           appliance_property_id: { propertyId }, appliance_manufacturer: '',
                           appliance_warranty_info: '', appliance_warranty_till: null,
@@ -1933,6 +1934,13 @@ export default function PropertyNavigator({
                     pageSize={5}
                     getRowId={(row) => row.appliance_uid}
                     autoHeight
+                    sx={{fontSize:"10px",
+                      '& .wrap-text': {
+                        whiteSpace: 'normal !important',
+                        wordWrap: 'break-word !important',
+                        overflow: 'visible !important',
+                      },
+                    }}
                   />
                   <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                     <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
@@ -1961,7 +1969,14 @@ export default function PropertyNavigator({
 
                         </Select>
                       </FormControl>
-
+                      <TextField
+                        margin="dense"
+                        label="Description"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_desc || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
+                      />
                       <TextField
                         margin="dense"
                         label="Manufacturer Name"
