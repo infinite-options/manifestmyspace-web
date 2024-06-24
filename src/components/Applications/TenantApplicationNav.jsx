@@ -73,7 +73,7 @@ const TenantApplicationNav = () => {
 
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", application.lease_uid);
-    leaseApplicationFormData.append("lease_status", "RESCIND");
+    leaseApplicationFormData.append("lease_status", "REJECTED");
 
     setShowSpinner(true);
     await fetch(

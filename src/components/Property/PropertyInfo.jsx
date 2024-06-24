@@ -13,6 +13,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import backButton from "../Payments/backIcon.png";
 import { set } from "date-fns";
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -32,6 +37,8 @@ const PropertyInfo = (props) => {
   console.log(property);
   console.log(status);
 
+  const [showRejectApplicationDialog, setshowRejectApplicationDialog] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -43,9 +50,9 @@ const PropertyInfo = (props) => {
       setButtonColor("#7AD15B");
     } else if (status === "TENANT APPROVED") {
       setButtonColor("#7AD15B");
-    } else if (status === "REJECTED") {
-      setButtonColor("#490404");
-    } else if (status === "REFUSED") {
+    } /* else if (status === "REJECTED") {
+      setButtonColor("#490404"); 
+    } */else if (status === "REFUSED") {
       // setButtonColor("#CB8E8E")
       setButtonColor("#3D5CAC");
     } else if (status === "ACTIVE") {
@@ -100,7 +107,7 @@ const PropertyInfo = (props) => {
   }
 
   function renderCorrectButtonText() {
-    if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED") {
+    if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND" || status === "REJECTED") {
       return "Apply Now";
     } else if (status === "NEW") {
       return "View Application";
@@ -108,21 +115,27 @@ const PropertyInfo = (props) => {
       return "Approved";
     } else if (status === "TENANT APPROVED") {
       return "Approved WFD";
-    } else if (status === "REJECTED") {
+    } /* else if (status === "REJECTED") {
       return "Not Approved";
-    } else if (status === "ACTIVE") {
+    } */ else if (status === "ACTIVE") {
       return "Active";
     }
   }
 
   function navigateToCorrectPage() {
-    if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED") {
+    if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
       navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
-    } else if (status === "TENANT APPROVED" || status === "PROCESSING") {
+    } else if(status === "REJECTED"){
+      setshowRejectApplicationDialog(true);
+    }else if (status === "TENANT APPROVED" || status === "PROCESSING") {
       navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
     } else {
       return null;
     }
+  }
+
+  function navigateToRejectPage() {
+      navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
   }
 
   function formatAddress() {
@@ -538,6 +551,63 @@ const PropertyInfo = (props) => {
               </Typography>
             </Box>
           </Stack>
+          {showRejectApplicationDialog  && (
+                            <Dialog
+                                open={showRejectApplicationDialog}
+                                onClose={() => setshowRejectApplicationDialog(false)}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                            >                                
+                                <DialogContent>                                    
+                                    <DialogContentText 
+                                        id="alert-dialog-description"
+                                        sx={{
+
+                                            fontWeight: theme.typography.common.fontWeight,
+                                            paddingTop: "10px",                                                        
+                                        }}
+                                    >
+                                        Have you contacted property manager of {property.property_address} {property.property_unit} regarding reason for initial rejection?
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>                                    
+                                    <Box sx={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                    }}>
+                                        <Button
+                                            onClick={() => navigateToRejectPage()}
+                                            sx={{
+                                                color:"white",                            
+                                                backgroundColor: "#3D5CAC80",
+                                                ':hover': { 
+                                                    backgroundColor: '#3D5CAC'
+                                                },
+                                                marginRight: '10px',                             
+                                            }}
+                                            autoFocus
+                                        >
+                                            Yes
+                                        </Button>
+                                        <Button 
+                                            onClick={() => setshowRejectApplicationDialog(false)}
+                                            sx={{
+                                                color:"white",                            
+                                                backgroundColor: "#3D5CAC80",
+                                                ':hover': { 
+                                                    backgroundColor: '#3D5CAC'
+                                                },
+                                                marginLeft: '10px',                                                          
+                                            }}>
+                                            No
+                                        </Button>
+                                    </Box>
+
+                                </DialogActions>
+                            </Dialog>
+                        )}
         </Paper>
       </Box>
     </ThemeProvider>
