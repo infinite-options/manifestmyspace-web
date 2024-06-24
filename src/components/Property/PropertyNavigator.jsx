@@ -1916,7 +1916,7 @@ export default function PropertyNavigator({
                       onClick={() => {
                         setcurrentApplRow({
                           appliance_uid: '', appliance_url: '',
-                          appliance_type: '', appliance_images: '', appliance_available: 0, appliance_installed: null,
+                          appliance_type: '', appliance_desc:'', appliance_images: '', appliance_available: 0, appliance_installed: null,
                           appliance_model_num: '', appliance_purchased: null, appliance_serial_num: '',
                           appliance_property_id: { propertyId }, appliance_manufacturer: '',
                           appliance_warranty_info: '', appliance_warranty_till: null,
@@ -1970,7 +1970,14 @@ export default function PropertyNavigator({
 
                         </Select>
                       </FormControl>
-
+                      <TextField
+                        margin="dense"
+                        label="Description"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_desc || ''}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
+                      />
                       <TextField
                         margin="dense"
                         label="Manufacturer Name"
