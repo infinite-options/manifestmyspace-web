@@ -3,7 +3,7 @@ const contactsContainer = [
     { tab: 'Managers', color: '#3D5CAC' },
     { tab: 'Tenant', color: '#160449' },
     { tab: 'Maintenance', color: '#A52A2A' },
-    { tab: 'Employees', color: '#FF8A00' },
+    { tab: 'Employee', color: '#FF8A00' },
 ];
 const getStatusColor = (tab) => {
     for (let i = 0; i < contactsContainer.length; i++) {

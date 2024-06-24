@@ -52,7 +52,8 @@ function a11yProps(index) {
 }
 
 export function MaintenanceRequestDetail({ maintenance_request_index, status: initialStatus, maintenanceItemsForStatus: initialMaintenanceItemsForStatus, allMaintenanceData }) {
-  console.log('----inside request detail----', maintenance_request_index, initialStatus);
+  // console.log('----inside request detail----', maintenance_request_index, initialStatus);
+  console.log("----inside request detail----", initialStatus);
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
   let navigate = useNavigate();
@@ -130,7 +131,7 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
   }
 
   useEffect(() => {
-    console.log('------UseEffect 0--------', initialStatus, maintenance_request_index);
+    console.log("------UseEffect 0--------", initialStatus, maintenance_request_index);
     const stat = isMobile ? location.state.status : initialStatus;
     setCurrentStatus(stat);
     const selectedIndex = isMobile ? location.state.maintenance_request_index : maintenance_request_index;
@@ -216,34 +217,34 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
 
   useEffect(() => {
     const handleMaintenanceRequestSelected = () => {
-        const index = sessionStorage.getItem('selectedRequestIndex');
-        const status = sessionStorage.getItem('selectedStatus');
-        const maintenanceItemsForStatus = JSON.parse(sessionStorage.getItem('maintenanceItemsForStatus'));
+      const index = sessionStorage.getItem("selectedRequestIndex");
+      const status = sessionStorage.getItem("selectedStatus");
+      const maintenanceItemsForStatus = JSON.parse(sessionStorage.getItem("maintenanceItemsForStatus"));
 
-      console.log('---new useEffect-----', index, status);
-        // Update state with the new values
-        setMaintenanceRequestIndex(Number(index));
-        setCurrentStatus(status);
-        setMaintenanceItemsForStatus(maintenanceItemsForStatus);
+      console.log("---new useEffect-----", index, status);
+      // Update state with the new values
+      setMaintenanceRequestIndex(Number(index));
+      setCurrentStatus(status);
+      setMaintenanceItemsForStatus(maintenanceItemsForStatus);
 
-        // Find the tab index based on the status
-        const statusIndex = colorStatus.findIndex(item => item.status === status);
-        if (statusIndex !== -1) {
-            setValue(statusIndex);
-            handleChange(null, statusIndex, Number(index));
-        }
+      // Find the tab index based on the status
+      const statusIndex = colorStatus.findIndex((item) => item.status === status);
+      if (statusIndex !== -1) {
+        setValue(statusIndex);
+        handleChange(null, statusIndex, Number(index));
+      }
     };
 
-    window.addEventListener('maintenanceRequestSelected', handleMaintenanceRequestSelected);
+    window.addEventListener("maintenanceRequestSelected", handleMaintenanceRequestSelected);
 
     // Clean up the event listener on component unmount
     return () => {
-        window.removeEventListener('maintenanceRequestSelected', handleMaintenanceRequestSelected);
+      window.removeEventListener("maintenanceRequestSelected", handleMaintenanceRequestSelected);
     };
-}, []);
+  }, []);
 
-  const handleChange = (event, newValue, index=0) => {
-    console.log('----Handle change in req detail---', newValue);
+  const handleChange = (event, newValue, index = 0) => {
+    console.log("----Handle change in req detail---", newValue);
     setCurrentStatus(colorStatus[newValue].status);
     setValue(newValue);
     setMaintenanceRequestIndex(index);
