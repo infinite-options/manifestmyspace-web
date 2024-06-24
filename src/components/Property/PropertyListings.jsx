@@ -699,6 +699,64 @@ function PropertyCard(props) {
     </Box>
   );
 
+  const rescinded_label = (
+    <Box
+      sx={{
+        backgroundColor: "#CB8E8E",
+        color: theme.typography.secondary.white,
+        boxShadow: "0 8px 8px 0 rgba(0, 0, 0, 0.4)",
+        zIndex: 5,
+        width: "fit-content",
+        position: "relative",
+        borderRadius: "8px",
+        margin: "-20px 15px 5px",
+        padding: "3px 5px",
+        alignSelf: "flex-start",
+        textTransform: "none",
+      }}
+      onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+    >
+      <Typography
+        sx={{
+          padding: "5px",
+          fontSize: "18px",
+          fontWeight: "800px",
+        }}
+      >
+        Lease Rescinded {lease.lease_application_date}
+      </Typography>
+    </Box>
+  );
+
+  const withdrawn_label = (
+    <Box
+      sx={{
+        backgroundColor: "#CB8E8E",
+        color: theme.typography.secondary.white,
+        boxShadow: "0 8px 8px 0 rgba(0, 0, 0, 0.4)",
+        zIndex: 5,
+        width: "fit-content",
+        position: "relative",
+        borderRadius: "8px",
+        margin: "-20px 15px 5px",
+        padding: "3px 5px",
+        alignSelf: "flex-start",
+        textTransform: "none",
+      }}
+      onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+    >
+      <Typography
+        sx={{
+          padding: "5px",
+          fontSize: "18px",
+          fontWeight: "800px",
+        }}
+      >
+        Lease Withdrawn{lease.lease_application_date}
+      </Typography>
+    </Box>
+  );
+
   const tenant_approved_label = (
     <Box
       sx={{
@@ -760,6 +818,8 @@ function PropertyCard(props) {
     NEW: new_label,
     ACTIVE: active_label,
     REFUSED: refused_label,
+    RESCIND: rescinded_label,
+    WITHDRAWN: withdrawn_label,
     REJECTED: rejected_label,
     "TENANT APPROVED": tenant_approved_label,
     PROCESSING: processing_label,
