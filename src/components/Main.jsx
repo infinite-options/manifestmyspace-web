@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { Box } from "@mui/material";
+import OwnerOnBoardDeskTopForm from "./Onboarding/OwnerOnBoardDesktopForm";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -41,6 +42,7 @@ import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
 // import OwnerRentDetail from "./Rent/OwnerRent/OwnerRentDetail";
 import PMRent from "./Rent/PMRent/PMRent";
 import PMRentDetail from "./Rent/PMRent/PMRentDetail";
+
 
 import MaintenanceProfile from "./Profile/MaintenanceProfile/MaintenanceProfile";
 
@@ -124,6 +126,7 @@ import RescheduleMaintenance from "./Maintenance/Manager/RescheduleMaintenance";
 import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
 import Onboarding from "./Onboarding/Onboarding";
+import OnBoardDesktop from "./Onboarding/OnBoardDesktop";
 import NewUser from "./Onboarding/NewUser";
 import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
@@ -186,7 +189,9 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/tt" element={<OwnerOnBoardDeskTopForm />} />
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
             <Route path="newUser" element={<NewUser />} />
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
@@ -206,6 +211,7 @@ function Main() {
 
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
+           
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
