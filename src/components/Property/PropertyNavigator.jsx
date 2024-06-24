@@ -1632,19 +1632,37 @@ export default function PropertyNavigator({
 										</Grid>
 										{contractsData && contractsData.length > 0 && selectedRole !== 'MANAGER' ? (
 											<>
-												<Grid item xs={6} md={6}>
+												<Grid item xs={10.7} md={10.7}>
+
+												<Box sx={{ display: 'flex', alignItems: 'center' }}>
 													<Typography
 														sx={{
 															textTransform: 'none',
 															color: theme.typography.primary.black,
 															fontWeight: theme.typography.secondary.fontWeight,
 															fontSize: theme.typography.smallFont,
+															paddingRight: '15px',
 														}}
 													>
 														PM Quotes Requested:
 													</Typography>
+													<Box
+															sx={{
+																display: 'flex',
+																alignItems: 'center',
+																cursor: 'pointer',
+															}}
+														>
+
+													<Badge
+															color="success"
+															badgeContent={contractsNewSent}
+															showZero
+														/>
+														</Box>
+														</Box>
 												</Grid>
-												<Grid item xs={6} md={6}>
+												<Grid item xs={1.3} md={1.3}>
 													<Box
 														sx={{
 															display: 'flex',
@@ -1653,11 +1671,6 @@ export default function PropertyNavigator({
 															padding: '0px 0px 0px 8px',
 														}}
 													>
-														<Badge
-															color="success"
-															badgeContent={contractsNewSent}
-															showZero
-														/>
 														<KeyboardArrowRightIcon
 															sx={{ color: arrowButton1_color, cursor: 'pointer' }}
 															onClick={() => {
