@@ -206,49 +206,62 @@ const WorkOrdersWidget = () => {
     const [query, setQuery] = useState("");
 
     useEffect(() => {
-        const dataObject = {};        
-    
-        const getMaintenanceData = async () => {
-            setShowSpinner(true);
-            const maintenanceRequests1 = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
-            const maintenanceRequestsData1 = await maintenanceRequests1.json();
-    
-            let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ?? [];
-            let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
-            
-            // This removes rejected quotes and adds it to another array.
-            // let rejectedQuotes = [];
-            // for (let i = 0; i < array2.length; i++) {
-            //     let item = array2[i];
-            //     if (item.quote_status === "REJECTED") {
-            //         rejectedQuotes.push(item);
-            //         array2.splice(i, 1);
-            //         i--;
-            //     }
-            // }
-            let array3 = maintenanceRequestsData1.result?.ACCEPTED?.maintenance_items ?? [];
-            let array4 = maintenanceRequestsData1.result?.SCHEDULED?.maintenance_items ?? [];
-            let array5 = maintenanceRequestsData1.result?.FINISHED?.maintenance_items ?? [];
-            let array6 = maintenanceRequestsData1.result?.PAID?.maintenance_items ?? [];
-    
-            dataObject["REQUESTED"] = [...array1];
-            dataObject["SUBMITTED"] = [...array2];
-            dataObject["ACCEPTED"] = [...array3];
-            dataObject["SCHEDULED"] = [...array4];
-            dataObject["FINISHED"] = [...array5];
-            dataObject["PAID"] = [...array6];
-    
-            // dataObject["REJECTED"] = [...rejectedQuotes];
-    
-            // console.log("dataObject from new api call", dataObject)
-            setMaintenanceRequests((prevData) => ({
-                ...prevData,
-                ...dataObject,
-            }));
-            setShowSpinner(false);
-        };
-            getMaintenanceData();            
-      }, []);
+      const dataObject = {};
+  
+      const getMaintenanceData = async () => {
+          setShowSpinner(true);
+          const maintenanceRequests1 = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
+          const maintenanceRequestsData1 = await maintenanceRequests1.json();
+          console.log('---maintenanceRequestsData1--', maintenanceRequestsData1);
+  
+          // Assuming the new API structure
+          let currentQuotes = maintenanceRequestsData1.CurrentQuotes?.result ?? [];
+  
+          console.log('---currentQuotes--', currentQuotes);
+
+
+          const categorizeData = (data) => {
+            console.log('----is it in categorize data----');
+              const categorizedData = {
+                  REQUESTED: [],
+                  SUBMITTED: [],
+                  ACCEPTED: [],
+                  SCHEDULED: [],
+                  FINISHED: [],
+                  PAID: [],
+              };
+  
+              data.forEach(item => {
+                  const status = item.maintenance_status || item.quote_status || "REQUESTED"; // Default to "REQUESTED" if status not found
+                  if (categorizedData[status]) {
+                      categorizedData[status].push(item);
+                  }
+              });
+  
+              console.log('----return categorize data----', categorizedData);
+              return categorizedData;
+          };
+  
+          const categorizedCurrentQuotes = categorizeData(currentQuotes);
+          console.log('---categorizedCurrentQuotes---', categorizedCurrentQuotes);
+  
+          dataObject["REQUESTED"] = categorizedCurrentQuotes.REQUESTED;
+          dataObject["SUBMITTED"] = categorizedCurrentQuotes.SUBMITTED;
+          dataObject["ACCEPTED"] = categorizedCurrentQuotes.ACCEPTED;
+          dataObject["SCHEDULED"] = categorizedCurrentQuotes.SCHEDULED;
+          dataObject["FINISHED"] = categorizedCurrentQuotes.FINISHED;
+          dataObject["PAID"] = categorizedCurrentQuotes.PAID;
+  
+          setMaintenanceRequests((prevData) => ({
+              ...prevData,
+              ...dataObject,
+          }));
+          setShowSpinner(false);
+      };
+  
+      getMaintenanceData();
+  }, []);
+  
 
       function handleFilter(filterString, searchArray) {
         let filteredArray = [];
@@ -265,8 +278,12 @@ const WorkOrdersWidget = () => {
             <Grid item xs={12} sx={{width: '90%', margin: 'auto',}}>
                 {colorStatus.map((item, index) => {
                     let mappingKey = item.mapping;
+                    console.log('---mappingKey----', mappingKey);
+                    console.log('---maintenanceRequests----',maintenanceRequests);
 
                     let maintenanceArray = maintenanceRequests[mappingKey] || [];
+
+                    console.log('---maintenanceArray----', maintenanceArray);
 
                     let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);
                     // console.log("[DEBUG] MaintenanceWorkerDashboardWidget.jsx before MaintenanceStatusTable01")
