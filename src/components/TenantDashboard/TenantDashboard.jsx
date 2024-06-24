@@ -598,6 +598,14 @@ function TenantDashboard(props) {
                           {" "}
                           {selectedLease?.property_address ? selectedLease?.property_address : ""} {selectedLease?.property_unit ? selectedLease?.property_unit : ""}
                         </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
+                          {" "}
+                          Lease UID{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+                          {" "}
+                          {selectedLease?.lease_uid}
+                        </Grid>
                       </Grid>
                     </Box>
                     <Box
