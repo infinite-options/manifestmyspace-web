@@ -15,6 +15,7 @@ import {
   Tabs,
   Tab,
   Badge,
+  Switch,
 } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
@@ -37,6 +38,7 @@ import dayjs from "dayjs";
 import AES from "crypto-js/aes";
 
 import APIConfig from "../../../utils/APIConfig";
+import ContactDetails from "../ContactDetails";
 
 const PMContacts = () => {
   const { getProfileId, selectedRole } = useUser();
@@ -1712,61 +1714,13 @@ const RentHistoryDataGrid = ({ data }) => {
 
 const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
 
-  const { selectedRole, getProfileId } = useUser();
-  const [ propertiesData, setPropertiesData ] = useState([]);
-  const [ contractsData, setContractsData ] = useState([]);
+  // const { selectedRole, getProfileId } = useUser();  
+
   const [ contactDetails, setContactDetails ] = useState([]);
 
   useEffect(() => {
     setContactDetails(data)
   }, [data]);
-
-
-  const getPropertiesData = async () => {
-    const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;    
-    // setShowSpinner(true);
-
-    await axios
-      .get(url)
-      .then((resp) => {
-        const data = resp.data;
-        // console.log("properties endpoint - data - ", data);
-        setPropertiesData(data);        
-        // setShowSpinner(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        // setShowSpinner(false);
-      });
-
-  }
-
-  const getContractsData = async () => {    
-    // const url = `http://localhost:4000/contracts/${getProfileId()}`;
-    const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;    
-    // setShowSpinner(true);
-
-    await axios
-      .get(url)
-      .then((resp) => {
-        const data = resp.data?.result;
-        // console.log("properties endpoint - data - ", data);
-        setContractsData(data);        
-        // setShowSpinner(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        // setShowSpinner(false);
-      });
-
-  }
-
-  useEffect( () => {
-    getPropertiesData();
-    getContractsData();
-  }, []);
-
-
 
   return (
     <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px', }}>                
@@ -1957,6 +1911,9 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
                           padding: '10px',
                       }}
                   >
+                    <Typography sx={{fontSize: '20px', color: '#160449', fontWeight: 'bold', }}>
+                      Notes:
+                    </Typography>
                       
                       
                       
@@ -1989,7 +1946,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
                           //   contractsData={contractsData}
                           //   ownerUID={contactDetails[currentIndex]?.contact_uid}                       
                           // />
-                          <WorkOrdersAccordion data={contactDetails}/>
+                          <WorkOrdersAccordion data={contactDetails[currentIndex]}/>
                         ) :
                         <></>
                       }
@@ -2003,7 +1960,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
                     style={{
                         // margin: '50p', // Add margin here
                         borderRadius: "10px",
-                        backgroundColor: "#D6D5DA",
+                        // backgroundColor: "#D6D5DA",
                         minHeight: 260,
 
                         // [theme.breakpoints.down("sm")]: {
@@ -2013,19 +1970,17 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
                         //     width: "50%",
                         // },
                         // width: "100%",
-                        padding: '10px',
+                        // padding: '10px',
                     }}
                 >
-                    {/* {
+                    {
                       contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
-                        <PropertiesInformation 
-                          propertiesData={propertiesData} 
-                          contractsData={contractsData}
-                          ownerUID={contactDetails[currentIndex]?.contact_uid}                       
+                        <MaintenanceCashflowWidget 
+                          data={contactDetails[currentIndex]}
                         />
                       ) :
                       <></>
-                    } */}
+                    }
                     
                 </Paper>
             </Grid>             
@@ -2037,25 +1992,41 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
 
 const WorkOrdersAccordion = ({ data }) => {
   const colorStatus = theme.colorStatusMM;
+  console.log("ROHIT - WorkOrdersAccordion - data - ", data);
+  // const allMaintenanceRequests = [];
+  const [ maintenanceRequests, setMaintenanceRequests ] = useState({})
 
-  const maintenanceScheduled = data?.find( maintenance => maintenance.maintenance_status === "SCHEDULED")  
-  const maintenanceRequested = data?.find( maintenance => maintenance.maintenance_status === "NEW")
-  const maintenanceSubmitted = data?.find( maintenance => maintenance.maintenance_status === "SUBMITTED")
-  const maintenanceAccepted = data?.find( maintenance => maintenance.maintenance_status === "ACCEPTED")
-  const maintenanceFinished = data?.find( maintenance => maintenance.maintenance_status === "FINISHED")
-  const maintenancePaid = data?.find( maintenance => maintenance.maintenance_status === "PAID")
+  
 
-  const maintenanceRequests = {
-    'SCHEDULED': maintenanceScheduled,
-    'REQUESTED': maintenanceRequested,
-    'SUBMITTED': maintenanceSubmitted,
-    'ACCEPTED': maintenanceAccepted,
-    'FINISHED': maintenanceFinished,
-    'PAID': maintenancePaid,
-  }
+  useEffect(() => {
+
+    const maintenanceData = data?.maintenance_by_status? JSON.parse(data?.maintenance_by_status) : []
+
+    const maintenanceScheduled = maintenanceData?.find( maintenance => maintenance.maintenance_status === "SCHEDULED")  
+    const maintenanceRequested = maintenanceData?.find( maintenance => maintenance.maintenance_status === "REQUESTED")
+    const maintenanceSubmitted = maintenanceData?.find( maintenance => maintenance.maintenance_status === "SUBMITTED")
+    const maintenanceAccepted = maintenanceData?.find( maintenance => maintenance.maintenance_status === "ACCEPTED")
+    const maintenanceFinished = maintenanceData?.find( maintenance => maintenance.maintenance_status === "FINISHED")
+    const maintenancePaid = maintenanceData?.find( maintenance => maintenance.maintenance_status === "PAID")
+
+    setMaintenanceRequests( prevState => ({
+      ...prevState,
+      'SCHEDULED': maintenanceScheduled,
+      'REQUESTED': maintenanceRequested,
+      'SUBMITTED': maintenanceSubmitted,
+      'ACCEPTED': maintenanceAccepted,
+      'FINISHED': maintenanceFinished,
+      'PAID': maintenancePaid,
+    }));
 
 
-  console.log("ROHIT - maintenanceRequests - ", maintenanceRequests);
+  }, [data]);
+
+  useEffect(() => {
+    console.log("ROHIT - WorkOrdersAccordion - maintenanceRequests - ", maintenanceRequests);
+  }, [maintenanceRequests]);
+
+  
 
   const [showSpinner, setShowSpinner] = useState(false);
   const { getProfileId } = useUser();
@@ -2123,7 +2094,14 @@ const WorkOrdersAccordion = ({ data }) => {
               {colorStatus.map((item, index) => {
                   let mappingKey = item.mapping;
 
-                  let maintenanceArray = maintenanceRequests[mappingKey] || [];
+                  let maintenanceArray = maintenanceRequests[mappingKey];
+                  // let maintenanceItems = maintenanceArray? JSON.parse(maintenanceArray?.maintenance_request_info) : []
+                  let maintenanceItems = maintenanceArray? maintenanceArray?.maintenance_request_info : []
+                  console.log("ROHIT - maintenanceArray - ", maintenanceArray);
+                  console.log("ROHIT - maintenanceArray.maintenance_request_info - ", maintenanceArray?.maintenance_request_info);                  
+                  console.log("ROHIT - maintenanceItems - ", maintenanceItems);
+
+                  // let maintenanceArray = maintenanceRequests[mappingKey]?  JSON.parse(maintenanceRequests[mappingKey]?.maintenance_request_info) : [];
 
                   let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);
                   // console.log("[DEBUG] MaintenanceWorkerDashboardWidget.jsx before MaintenanceStatusTable01")
@@ -2133,9 +2111,10 @@ const WorkOrdersAccordion = ({ data }) => {
                       key={index}
                       status={item.status}
                       color={item.color}
-                      maintenanceItemsForStatus={maintenanceArray}
+                      // maintenanceItemsForStatus={maintenanceArray}
+                      maintenanceItemsForStatus={maintenanceItems}
                       allMaintenanceData={maintenanceRequests}
-                      maintenanceRequestsCount={maintenanceArray}
+                      maintenanceRequestsCount={maintenanceItems? maintenanceItems.length : 0}
                   />
                   );
               })}
@@ -2169,7 +2148,7 @@ const WorkerMaintenanceStatusTable = ({ status, color, maintenanceItemsForStatus
   const location = useLocation();
   let navigate = useNavigate();
 
-  console.log("ROHIT - maintenanceItemsForStatus - ", maintenanceItemsForStatus);
+  console.log("ROHIT - WorkerMaintenanceStatusTable - maintenanceItemsForStatus - ", maintenanceItemsForStatus);
   // console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
 
   const tableTextStyle = {
@@ -2208,7 +2187,7 @@ const WorkerMaintenanceStatusTable = ({ status, color, maintenanceItemsForStatus
     },
     {
       headerName: "Status",
-      field: "quote_status",
+      field: "maintenance_status",
       flex: 0.5,
       minWidth: 100,
       renderCell: (params) => {
@@ -2314,7 +2293,7 @@ const WorkerMaintenanceStatusTable = ({ status, color, maintenanceItemsForStatus
             <p>{status}</p>
             <span style={{ float: "right", alignContent: "center", alignItems: "center" }}>
               {/* {maintenanceItemsForStatus ? maintenanceItemsForStatus.length : maintenanceRequestsCount ? maintenanceRequestsCount : 0} */}
-              {maintenanceItemsForStatus && maintenanceItemsForStatus["COUNT(quote_status)"]? maintenanceItemsForStatus["COUNT(quote_status)"] :  0}
+              {maintenanceRequestsCount}
               {/* {2000} */}
             </span>
           </div>
@@ -2360,6 +2339,142 @@ const WorkerMaintenanceStatusTable = ({ status, color, maintenanceItemsForStatus
         ) : null}
       </Accordion>
     </ThemeProvider>
+  );
+}
+
+const MaintenanceCashflowWidget = ({ data }) => {
+  const [ maintenanceRequests, setMaintenanceRequests ] = useState({})
+
+  
+
+  useEffect(() => {
+
+    const maintenanceData = data?.maintenance_by_status? JSON.parse(data?.maintenance_by_status) : []
+
+    const maintenanceScheduled = maintenanceData?.find( maintenance => maintenance.maintenance_status === "SCHEDULED")  
+    const maintenanceRequested = maintenanceData?.find( maintenance => maintenance.maintenance_status === "REQUESTED")
+    const maintenanceSubmitted = maintenanceData?.find( maintenance => maintenance.maintenance_status === "SUBMITTED")
+    const maintenanceAccepted = maintenanceData?.find( maintenance => maintenance.maintenance_status === "ACCEPTED")
+    const maintenanceFinished = maintenanceData?.find( maintenance => maintenance.maintenance_status === "FINISHED")
+    const maintenancePaid = maintenanceData?.find( maintenance => maintenance.maintenance_status === "PAID")
+
+    setMaintenanceRequests( prevState => ({
+      ...prevState,
+      'SCHEDULED': maintenanceScheduled,
+      'REQUESTED': maintenanceRequested,
+      'SUBMITTED': maintenanceSubmitted,
+      'ACCEPTED': maintenanceAccepted,
+      'FINISHED': maintenanceFinished,
+      'PAID': maintenancePaid,
+    }));
+
+
+  }, [data]);
+
+  useEffect(() => {
+    console.log("ROHIT - MaintenanceCashflowWidget - maintenanceRequests - ", maintenanceRequests);
+  }, [maintenanceRequests]);
+
+
+  return (
+    <Grid item xs={12} sx={{
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: '#F2F2F2'
+    }}>
+        <Grid container direction="column" columnGap={1} rowGap={1}>
+            <Grid item xs={12} sx={{
+              backgroundColor: "#CEA892",
+              textTransform: "none",                            
+              borderRadius: "10px",
+              display: 'flex',
+              flexDirection: "column",                            
+              alignItems: "center",
+            }}>                
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                  Quotes Submitted Cashflow
+              </Typography>
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
+                  {/* ${quotesSubmittedCashflow} */}
+                  {`$${maintenanceRequests?.SUBMITTED?.total_estimate? maintenanceRequests?.SUBMITTED?.total_estimate : 0}`}
+              </Typography>
+               
+            </Grid>
+            <Grid item xs={12} sx={{
+              backgroundColor: "#BAAC7A",
+              textTransform: "none",                            
+              borderRadius: "10px",
+              display: 'flex',
+              flexDirection: "column",                            
+              alignItems: "center",
+            }}>
+                
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                  Quotes Accepted Cashflow
+              </Typography>
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
+                  {/* ${quotesAcceptedCashflow} */}
+                  {`$${maintenanceRequests?.ACCEPTED?.total_estimate? maintenanceRequests?.ACCEPTED?.total_estimate : 0}`}
+              </Typography>
+                
+            </Grid>
+
+            <Grid item xs={12} sx={{
+              backgroundColor: "#959A76",
+              textTransform: "none",                            
+              borderRadius: "10px",
+              display: 'flex',
+              flexDirection: "column",                            
+              alignItems: "center",
+            }}>
+                
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                  Quotes Scheduled Cashflow
+              </Typography>
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
+                  {/* ${quotesScheduledCashflow} */}
+                  {`$${maintenanceRequests?.SCHEDULED?.total_estimate? maintenanceRequests?.SCHEDULED?.total_estimate : 0}`}
+              </Typography>                
+            </Grid>
+
+
+            <Grid item xs={12} sx={{
+              backgroundColor: "#598A96",
+              textTransform: "none",                            
+              borderRadius: "10px",
+              display: 'flex',
+              flexDirection: "column",                            
+              alignItems: "center",
+            }}>
+                
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                  Quotes Finished Cashflow
+              </Typography>
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
+                  {/* ${quotesFinishedCashflow} */}
+                  {`$${maintenanceRequests?.FINISHED?.total_estimate? maintenanceRequests?.FINISHED?.total_estimate : 0}`}
+              </Typography>                
+            </Grid>
+
+            <Grid item xs={12} sx={{
+              backgroundColor: "#6588AC",
+              textTransform: "none",                            
+              borderRadius: "10px",
+              display: 'flex',
+              flexDirection: "column",                            
+              alignItems: "center",
+            }}>
+                
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
+                  Quotes Paid
+              </Typography>
+              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
+                  {/* ${quotesFinishedCashflow} */}
+                  {`$${maintenanceRequests?.PAID?.total_estimate? maintenanceRequests?.PAID?.total_estimate : 0}`}
+              </Typography>                
+            </Grid>
+        </Grid>
+    </Grid>
   );
 }
 
@@ -2725,9 +2840,53 @@ const EmployeeContactsCard = (props) => {
   const handleSetSelectedCard = props.selected;
   const index = props.index;
 
+  const [ verified, setVerified ] = useState(employee?.employee_verification === "Y");
+
   const handleSelection = () => {
     handleSetSelectedCard(employee, index);
   };
+
+  const updateVerification = ( value ) => {
+    const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employeeVerification'; // Replace with your API endpoint
+    const data = {
+      employee_uid: employee?.employee_uid,
+      employee_verification: value,
+    };
+
+    const options = {
+      method: 'PUT', 
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+      body: JSON.stringify([data]), 
+    };
+
+    fetch(url, options)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json(); 
+      })
+      .then(data => {
+        console.log('Success:', data); 
+      })
+      .catch(error => {
+        console.error('Error:', error); 
+      });
+
+  }
+
+  const handleVerificationChange = (e) => {
+    if(e.target.checked){
+      console.log("CHANGED TO VERIFIED");
+      updateVerification("Y");
+    } else{
+      console.log("CHANGED TO UNVERIFIED");
+      updateVerification("N");
+    }
+    setVerified(e.target.checked)
+  }
   return (
     <Stack>
       <Card
@@ -2749,14 +2908,12 @@ const EmployeeContactsCard = (props) => {
             >
               {` ${employee.employee_first_name ? employee.employee_first_name : "<FIRST_NAME>"} ${employee.employee_last_name ? employee.employee_last_name : "<FIRST_NAME>"}`}
             </Typography>
-            <Button>
-              <Message
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontSize: "15px",
-                }}
-              />
-            </Button>
+            <Switch
+                checked={verified}
+                onChange={handleVerificationChange}
+                color="primary"
+                inputProps={{ 'aria-label': 'primary checkbox' }}
+            />
           </Stack>
           <Typography
             sx={{
