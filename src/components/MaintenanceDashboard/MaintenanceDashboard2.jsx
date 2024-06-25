@@ -50,14 +50,15 @@ export default function MaintenanceDashboard2() {
 			const data = await response.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
-			const currentgraphData = [];
+			const currentgraphData = [{"Quotes Requested":[],"Quotes Submitted":[],
+      "Quotes Accepted":[],"Scheduled":[],"Finished":[],"Paid":[]}];
 			currentActivities
 				.map((item) => {
 					const statusMapping = theme.colorStatusMM.find(
 						(statusObj) => statusObj.mapping === item.maintenance_status
 					);
 					if (statusMapping) {
-						currentgraphData.push({
+						currentgraphData[0][statusMapping.status].push({
 							value: item.num,
 							label: statusMapping.status,
 							color: statusMapping.color,
@@ -89,7 +90,21 @@ export default function MaintenanceDashboard2() {
 			});
 
 			await setMaintenanceRequests(maintainance_info);
-			await setGraphData(currentgraphData);
+
+      const fixedOrder = [
+        { label: "Quotes Requested", color: "#DB9687" },
+        { label: "Quotes Submitted", color: "#CEA892" },
+        { label: "Quotes Accepted", color: "#BAAC7A" },
+        { label: "Scheduled", color: "#D4C28D" },
+        { label: "Finished", color: "#598A96" },
+        { label: "Paid", color: "#6B8E23" }
+      ];
+      
+      const sortedData = fixedOrder.map((status) => {
+        const statusData = currentgraphData[0][status.label];
+        return statusData.length > 0 ? statusData[0] : { value: 0, label: status.label, color: status.color }; // default color if no data
+      });
+			await setGraphData(sortedData);
       await setcashflowData(currentActivities);
 			console.log('----graph data---', graphData);
 			setShowSpinner(false);
@@ -320,12 +335,12 @@ const RadialBarChart = ({ data }) => {
 				offsetY: 0,
 				startAngle: 0,
 				endAngle: 270,
-				hollow: {
-					margin: 5,
-					size: '30%',
-					background: 'transparent',
-					image: undefined,
-				},
+        hollow: {
+          margin: 5,
+          size: '30%',
+          background: 'transparent',
+          image: undefined,
+        },
 				dataLabels: {
 					name: {
 						show: false,
