@@ -338,7 +338,7 @@ const RadialBarChart = ({ data }) => {
 					enabled: true,
 					useSeriesColors: true,
 					margin: 8,
-					fontSize: '10px',
+					fontSize: '15px',
 					formatter: function (seriesName, opts) {
 						return seriesName + ':  ' + originalValues[opts.seriesIndex];
 					},
