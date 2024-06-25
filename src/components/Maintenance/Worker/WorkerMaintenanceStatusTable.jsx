@@ -73,7 +73,7 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
     },
     {
       headerName: "Status",
-      field: "quote_status",
+      field: "maintenance_status",
       flex: 0.5,
       minWidth: 100,
       renderCell: (params) => {

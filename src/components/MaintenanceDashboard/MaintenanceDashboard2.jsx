@@ -214,43 +214,39 @@ const WorkOrdersWidget = () => {
           const maintenanceRequestsData1 = await maintenanceRequests1.json();
           console.log('---maintenanceRequestsData1--', maintenanceRequestsData1);
   
+          let CurrentActivities = maintenanceRequestsData1.CurrentActivities?.result ?? [];
+
+          console.log('---CurrentActivities--', CurrentActivities);
+          const maintainance_info = {
+            REQUESTED: [],
+            SUBMITTED: [],
+            ACCEPTED: [],
+            SCHEDULED: [],
+            FINISHED: [],
+            PAID: [],
+        };
+        CurrentActivities.forEach(item => {
+          const status = item.maintenance_status;
+          if (maintainance_info[status]) {
+              const maintenanceInfo = JSON.parse(item.maintenance_request_info);
+              const mergedItems = maintenanceInfo.map(info => ({
+                  maintenance_status: status,
+                  ...info
+              }));
+              maintainance_info[status].push(...mergedItems);
+          }
+      });
+      
+          console.log('---maintainance_info--', maintainance_info);
           // Assuming the new API structure
           let currentQuotes = maintenanceRequestsData1.CurrentQuotes?.result ?? [];
   
-          console.log('---currentQuotes--', currentQuotes);
-
-
-          const categorizeData = (data) => {
-            console.log('----is it in categorize data----');
-              const categorizedData = {
-                  REQUESTED: [],
-                  SUBMITTED: [],
-                  ACCEPTED: [],
-                  SCHEDULED: [],
-                  FINISHED: [],
-                  PAID: [],
-              };
-  
-              data.forEach(item => {
-                  const status = item.maintenance_status || item.quote_status || "REQUESTED"; // Default to "REQUESTED" if status not found
-                  if (categorizedData[status]) {
-                      categorizedData[status].push(item);
-                  }
-              });
-  
-              console.log('----return categorize data----', categorizedData);
-              return categorizedData;
-          };
-  
-          const categorizedCurrentQuotes = categorizeData(currentQuotes);
-          console.log('---categorizedCurrentQuotes---', categorizedCurrentQuotes);
-  
-          dataObject["REQUESTED"] = categorizedCurrentQuotes.REQUESTED;
-          dataObject["SUBMITTED"] = categorizedCurrentQuotes.SUBMITTED;
-          dataObject["ACCEPTED"] = categorizedCurrentQuotes.ACCEPTED;
-          dataObject["SCHEDULED"] = categorizedCurrentQuotes.SCHEDULED;
-          dataObject["FINISHED"] = categorizedCurrentQuotes.FINISHED;
-          dataObject["PAID"] = categorizedCurrentQuotes.PAID;
+          dataObject["REQUESTED"] = maintainance_info.REQUESTED;
+          dataObject["SUBMITTED"] = maintainance_info.SUBMITTED;
+          dataObject["ACCEPTED"] = maintainance_info.ACCEPTED;
+          dataObject["SCHEDULED"] = maintainance_info.SCHEDULED;
+          dataObject["FINISHED"] = maintainance_info.FINISHED;
+          dataObject["PAID"] = maintainance_info.PAID;
   
           setMaintenanceRequests((prevData) => ({
               ...prevData,
@@ -278,12 +274,8 @@ const WorkOrdersWidget = () => {
             <Grid item xs={12} sx={{width: '90%', margin: 'auto',}}>
                 {colorStatus.map((item, index) => {
                     let mappingKey = item.mapping;
-                    console.log('---mappingKey----', mappingKey);
-                    console.log('---maintenanceRequests----',maintenanceRequests);
 
                     let maintenanceArray = maintenanceRequests[mappingKey] || [];
-
-                    console.log('---maintenanceArray----', maintenanceArray);
 
                     let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);
                     // console.log("[DEBUG] MaintenanceWorkerDashboardWidget.jsx before MaintenanceStatusTable01")
