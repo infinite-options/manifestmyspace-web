@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge, Dialog, DialogActions,
   DialogContent, DialogTitle, IconButton, TextField, Snackbar, Alert, MenuItem, Select, FormControl, InputLabel
-  DialogContent, DialogTitle, IconButton, TextField, Snackbar, Alert, MenuItem, Select, FormControl, InputLabel
 } from "@mui/material";
 import theme from "../../theme/theme";
 import propertyImage from "./propertyImage.png";

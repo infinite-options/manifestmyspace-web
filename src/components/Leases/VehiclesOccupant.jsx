@@ -95,7 +95,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles }) => {
                     <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                 </Button>
             </Box>
-            {leaseVehicles &&
+            {leaseVehicles && leaseVehicles.length > 0 &&
                 <DataGrid
                     rows={vehicles}
                     columns={columns}

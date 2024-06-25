@@ -95,7 +95,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults }) => {
                     <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                 </Button>
             </Box>
-            {leaseAdults &&
+            {leaseAdults && leaseAdults.length > 0 &&
                 <DataGrid
                     rows={adults}
                     columns={columns}
