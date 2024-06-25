@@ -24,6 +24,7 @@ import VehiclesOccupant from "./VehiclesOccupant";
 import EndLeaseButton from "./EndLeaseButton";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
+import RenewLeaseButton from "./RenewLeaseButton";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -1412,27 +1413,29 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
 
                     <Grid item xs={12} md={12}>
                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                            <Grid item md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            <Grid item md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
                                     moveoutDate={moveoutDate} leaseData={currentLease} />
                             </Grid>
 
-                            <Grid item md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            <Grid item md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                <RenewLeaseButton  theme={theme} handleRenewLease={handleRenewLease} leaseData={currentLease}/>
+                            </Grid>
+                            <Grid item md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <Button
                                     variant="outlined"
                                     sx={{
-                                        background: "#6788B3",
+                                        background: "#ffa500",
                                         color: theme.palette.background.default,
                                         cursor: "pointer",
                                         textTransform: "none",
-                                        minWidth: "150px",
+                                        minWidth: "200px",
                                         minHeight: "35px",
-                                        width: "95%",
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
                                         '&:hover': {
-                                            background: '#92A9CB',
+                                            background: '#ffa500',
                                         },
                                     }}
                                     size="small"
@@ -1446,9 +1449,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         whiteSpace: "nowrap",
                                         marginLeft: "1%",
                                     }}>
-                                        {"Renew Lease"}
+                                        {"Update Lease"}
                                     </Typography>
                                 </Button>
+                                {/* <RenewLeaseButton  theme={theme} handleRenewLease={handleRenewLease} leaseData={currentLease}/> */}
                             </Grid>
                         </Grid>
                     </Grid>
