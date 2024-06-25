@@ -1437,6 +1437,50 @@ export default function PropertyNavigator({
 										<Grid item xs={6} md={6}>
 											<Typography
 												sx={{
+													color: theme.typography.primary.black,
+													fontWeight: theme.typography.secondary.fontWeight,
+													fontSize: theme.typography.smallFont,
+												}}
+											>
+												Late Fee:
+											</Typography>
+										</Grid>
+										<Grid item xs={6} md={6}>
+											<Typography
+												sx={{
+													color: theme.typography.primary.black,
+													fontWeight: theme.typography.light.fontWeight,
+													fontSize: theme.typography.smallFont,
+												}}
+											>
+												{rentFee ? rentFee.late_fee : '-'}
+											</Typography>
+										</Grid>
+										<Grid item xs={6} md={6}>
+											<Typography
+												sx={{
+													color: theme.typography.primary.black,
+													fontWeight: theme.typography.secondary.fontWeight,
+													fontSize: theme.typography.smallFont,
+												}}
+											>
+												Late Fee Per Day:
+											</Typography>
+										</Grid>
+										<Grid item xs={6} md={6}>
+											<Typography
+												sx={{
+													color: theme.typography.primary.black,
+													fontWeight: theme.typography.light.fontWeight,
+													fontSize: theme.typography.smallFont,
+												}}
+											>
+												{rentFee ? rentFee.perDay_late_fee : '-'}
+											</Typography>
+										</Grid>
+										<Grid item xs={6} md={6}>
+											<Typography
+												sx={{
 													textTransform: 'none',
 													color: theme.typography.primary.black,
 													fontWeight: theme.typography.secondary.fontWeight,
