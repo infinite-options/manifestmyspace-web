@@ -34,7 +34,7 @@ const RenewLeaseButton = ({ theme, handleRenewLease, leaseData }) => {
                     alignItems: "center",
                     justifyContent: "center",
                     '&:hover': {
-                        background: '#6788B3',
+                        background: '#9ab0cd',
                     },
                 }}
                 size="small"

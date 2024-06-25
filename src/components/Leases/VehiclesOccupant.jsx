@@ -80,8 +80,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles }) => {
                     Vehicles ({vehicles.length})</Typography>
                 <Button
                     sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
+                        "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                         cursor: "pointer",
                         textTransform: "none",
                         minWidth: "40px",
@@ -89,10 +88,10 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles }) => {
                         width: "40px",
                         fontWeight: theme.typography.secondary.fontWeight,
                         fontSize: theme.typography.smallFont,
-                        marginBottom: "5px",
+                        margin: "5px",
                     }}
                     onClick={() => { setCurrentRow({ id: null, year: '', make: '', model: '', license: '', state: '', owner: '' }); handleOpen(); }}>
-                    <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                 </Button>
             </Box>
             {leaseVehicles && leaseVehicles.length > 0 &&

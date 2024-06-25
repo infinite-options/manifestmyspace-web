@@ -80,8 +80,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren }) => {
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Children ({children.length})</Typography>
                 <Button
                     sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
+                        "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                         cursor: "pointer",
                         textTransform: "none",
                         minWidth: "40px",
@@ -89,13 +88,13 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren }) => {
                         width: "40px",
                         fontWeight: theme.typography.secondary.fontWeight,
                         fontSize: theme.typography.smallFont,
-                        marginBottom: "5px",
+                        margin: "5px",
                     }}
                     onClick={() => { setCurrentRow({ id: null, name: '', last_name: '', dob: '', email: '', phone_number: '', relationship: '' }); handleOpen(); }}>
-                    <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                 </Button>
             </Box>
-            {leaseChildren &&
+            {leaseChildren && leaseChildren.length > 0 &&
                 <DataGrid
                     rows={children}
                     columns={columns}

@@ -443,45 +443,45 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                 .then((response) => {
 
                     //Step 2 - Renew the lease by creating a new lease row in DB with lease status - "DRAFT"
-                    console.log('check', tenantWithId, typeof(tenantWithId));
+                    console.log('check', tenantWithId, typeof (tenantWithId));
                     // Renew for all tenants in tenants list
-                    for(let i = 0; i < tenantWithId.length; i++){
-                    const leaseApplicationFormData = new FormData();
-                    let date = new Date()
+                    for (let i = 0; i < tenantWithId.length; i++) {
+                        const leaseApplicationFormData = new FormData();
+                        let date = new Date()
 
-                    leaseApplicationFormData.append('lease_property_id', currentLease.property_uid);
-                    leaseApplicationFormData.append('lease_status', "DRAFT");
-                    leaseApplicationFormData.append('lease_assigned_contacts', currentLease.lease_assigned_contacts);
-                    leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
-                    leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
-                    leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
-                    leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
-                    leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
-                    leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString());
-                    leaseApplicationFormData.append('tenant_uid', tenantWithId[i].tenant_uid);
+                        leaseApplicationFormData.append('lease_property_id', currentLease.property_uid);
+                        leaseApplicationFormData.append('lease_status', "DRAFT");
+                        leaseApplicationFormData.append('lease_assigned_contacts', currentLease.lease_assigned_contacts);
+                        leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
+                        leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
+                        leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
+                        leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
+                        leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
+                        leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString());
+                        leaseApplicationFormData.append('tenant_uid', tenantWithId[i].tenant_uid);
 
-                    leaseApplicationFormData.append("lease_start", formatDate(newStartDate));
-                    leaseApplicationFormData.append("lease_end", formatDate(newEndDate));
-                    leaseApplicationFormData.append("lease_move_in_date", currentLease.lease_move_in_date);
-                    leaseApplicationFormData.append("property_listed_rent", newRent);
-                    leaseApplicationFormData.append("frequency", newFreq);
-                    leaseApplicationFormData.append("lease_rent_late_by", newLateBy);
-                    leaseApplicationFormData.append("lease_rent_late_fee", newLateFee);
-                    leaseApplicationFormData.append("lease_rent_due_by", newDueBy);
-                    leaseApplicationFormData.append("lease_rent_available_topay", newAvlToPay);
-                    leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees));
+                        leaseApplicationFormData.append("lease_start", formatDate(newStartDate));
+                        leaseApplicationFormData.append("lease_end", formatDate(newEndDate));
+                        leaseApplicationFormData.append("lease_move_in_date", currentLease.lease_move_in_date);
+                        leaseApplicationFormData.append("property_listed_rent", newRent);
+                        leaseApplicationFormData.append("frequency", newFreq);
+                        leaseApplicationFormData.append("lease_rent_late_by", newLateBy);
+                        leaseApplicationFormData.append("lease_rent_late_fee", newLateFee);
+                        leaseApplicationFormData.append("lease_rent_due_by", newDueBy);
+                        leaseApplicationFormData.append("lease_rent_available_topay", newAvlToPay);
+                        leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees));
 
-                    axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                        .then((response) => {
-                            console.log('Data updated successfully');
-                            showSnackbar("Successfully Renewed the lease.", "success");
-                        })
-                        .catch((error) => {
-                            if (error.response) {
-                                console.log(error.response.data);
-                                showSnackbar("Cannot Renew the lease. Please Try Again", "error");
-                            }
-                        });
+                        axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                            .then((response) => {
+                                console.log('Data updated successfully');
+                                showSnackbar("Successfully Renewed the lease.", "success");
+                            })
+                            .catch((error) => {
+                                if (error.response) {
+                                    console.log(error.response.data);
+                                    showSnackbar("Cannot Renew the lease. Please Try Again", "error");
+                                }
+                            });
                     }
                 })
         } catch (error) {
@@ -853,14 +853,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                                 marginLeft: "5px",
                                                                 alignItems: 'center',
                                                                 justifyContent: 'center',
-                                                                backgroundColor: '#3D5CAC',
-                                                                "&:hover": {
-                                                                    backgroundColor: '#3D5CAC'
-                                                                },
+                                                                "&:hover, &:focus, &:active": { background: theme.palette.primary.main }
                                                             }}
                                                             onClick={onAddUtilitiesClick}
                                                         >
-                                                            <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                                                            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                                                         </Button>
                                                     </Box>
                                                 </Grid>
@@ -1095,8 +1092,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 </Typography>
                                 <Button variant="outlined"
                                     sx={{
-                                        background: "#3D5CAC",
-                                        color: theme.palette.background.default,
+                                        // background: "#3D5CAC",
+                                        // color: theme.palette.background.default,
+                                        "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                                         cursor: "pointer",
                                         textTransform: "none",
                                         minWidth: "40px",
@@ -1104,7 +1102,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         width: "40px",
                                         fontWeight: theme.typography.secondary.fontWeight,
                                         fontSize: theme.typography.smallFont,
-                                        marginBottom: "5px",
+                                        margin: "5px",
                                     }}
                                     size="small"
                                     onClick={() => {
@@ -1124,7 +1122,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         setIsFeeEditing(false);
                                         handleFeeModalOpen();
                                     }}>
-                                    <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                                 </Button>
                             </Box>
 
@@ -1317,10 +1315,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 >
                                     Documents
                                 </Typography>
-                                {/* <Button variant="outlined"
+                                <Button variant="outlined"
                                     sx={{
-                                        background: "#3D5CAC",
-                                        color: theme.palette.background.default,
+                                        // background: "#3D5CAC",
+                                        // color: theme.palette.background.default,
+                                        "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                                         cursor: "pointer",
                                         textTransform: "none",
                                         minWidth: "40px",
@@ -1328,7 +1327,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         width: "40px",
                                         fontWeight: theme.typography.secondary.fontWeight,
                                         fontSize: theme.typography.smallFont,
-                                        marginBottom: "5px",
+                                        margin: "5px",
                                     }}
                                     size="small"
                                     onClick={() => {
@@ -1348,8 +1347,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         setIsFeeEditing(false);
                                         handleFeeModalOpen();
                                     }}>
-                                    <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
-                                </Button> */}
+                                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
+                                </Button>
                             </Box>
                             <DataGrid
                                 rows={documents}
@@ -1419,7 +1418,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                             </Grid>
 
                             <Grid item md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                <RenewLeaseButton  theme={theme} handleRenewLease={handleRenewLease} leaseData={currentLease}/>
+                                <RenewLeaseButton theme={theme} handleRenewLease={handleRenewLease} leaseData={currentLease} />
                             </Grid>
                             <Grid item md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <Button
@@ -1435,7 +1434,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         alignItems: "center",
                                         justifyContent: "center",
                                         '&:hover': {
-                                            background: '#ffa500',
+                                            background: '#ffc04d',
                                         },
                                     }}
                                     size="small"
@@ -1452,7 +1451,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         {"Update Lease"}
                                     </Typography>
                                 </Button>
-                                {/* <RenewLeaseButton  theme={theme} handleRenewLease={handleRenewLease} leaseData={currentLease}/> */}
                             </Grid>
                         </Grid>
                     </Grid>
