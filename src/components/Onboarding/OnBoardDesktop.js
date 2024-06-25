@@ -8,6 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import ManagerOnBoardDesktopForm from './ManagerOnBoardDesktopForm';
 import TenantOnBoardDesktopForm from './TenantOnBoardDesktopForm';
 import OwnerOnBoardDeskTopForm from './OwnerOnBoardDesktopForm';
+import MaintenanceOnBoardDesktopForm from './MaintenanceOnBoardDesktopForm';
 
 const OnBoardDesktop = () => {
   const { setAuthData, onboardingState, setOnboardingState } = useUser();
@@ -102,7 +103,7 @@ const OnBoardDesktop = () => {
       case 'TENANT':
         return <TenantOnBoardDesktopForm />;
       case 'MAINTENANCE':
-        return <ManagerOnBoardDesktopForm />;
+        return <MaintenanceOnBoardDesktopForm />;
       case 'MAINTENANCE_EMP':
         return <ManagerOnBoardDesktopForm />;
       default:

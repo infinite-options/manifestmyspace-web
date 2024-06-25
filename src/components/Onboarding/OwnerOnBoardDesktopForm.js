@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 const OwnerOnBoardDeskTopForm = () => {
     const classes = useStyles();
+    const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookies["default_form_vals"];
     const [showSpinner, setShowSpinner] = useState(false);
@@ -243,7 +244,7 @@ const OwnerOnBoardDeskTopForm = () => {
             console.log(paymentSetup);
           }
           setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
-          Navigate("/onboardingRouter");
+          //navigate("/onboardingRouter");
           return ;
          
        

@@ -5,6 +5,7 @@ import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { Box } from "@mui/material";
 import OwnerOnBoardDeskTopForm from "./Onboarding/OwnerOnBoardDesktopForm";
+import MaintenanceOnBoardDesktopForm from "./Onboarding/MaintenanceOnBoardDesktopForm";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -74,6 +75,7 @@ import OwnerContactDetailsHappinessMatrix from "./Contacts/ContactDetails/OwnerC
 import PropertyList from "./Property/PropertyList";
 // import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard/OwnerDashboard";
+import ManagerOnBoardDesktopForm from "./Onboarding/ManagerOnBoardDesktopForm";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
@@ -189,7 +191,7 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/tt" element={<OwnerOnBoardDeskTopForm />} />
+            <Route path="/tt" element={<MaintenanceOnBoardDesktopForm />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
             <Route path="newUser" element={<NewUser />} />

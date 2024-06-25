@@ -20,8 +20,6 @@ import {
     CircularProgress,
     Backdrop,
     Paper,
-    Select,
-    MenuItem,
 } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import PayPal from "../../images/PayPal.png";
@@ -44,11 +42,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ManagerOnBoardDesktopForm = () => {
+const MaintenanceOnBoardDesktopForm = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
-  const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
   const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
   const [ein_mask, setEinMask] = useState("");
@@ -89,24 +86,15 @@ const ManagerOnBoardDesktopForm = () => {
       return data;
   };
 
-  const addFeeRow = () => {
-      setFees((prev) => [...prev, { id: prev.length + 1, fee_name: "", frequency: "", charge: "", of: "" }]);
+  const addServiceRow = () => {
+      setServices((prev) => [...prev, { id: prev.length + 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
   };
 
-  const handleFeeChange = (event, id) => {
+  const handleServiceChange = (event, id) => {
     const { name, value } = event.target;
-    setFees((prevFees) =>
-      prevFees.map((fee) =>
-        fee.id === id ? { ...fee, [name]: value } : fee
-      )
-    );
-  };
-
-  const handleFrequencyChange = (event, id) => {
-    const { value } = event.target;
-    setFees((prevFees) =>
-      prevFees.map((fee) =>
-        fee.id === id ? { ...fee, frequency: value } : fee
+    setServices((prevServices) =>
+      prevServices.map((service) =>
+        service.id === id ? { ...service, [name]: value } : service
       )
     );
   };
@@ -159,13 +147,13 @@ const ManagerOnBoardDesktopForm = () => {
   const getPayload = () => {
       return {
         business_user_id: "100-0XX",
-        business_type: "MANAGEMENT",
+        business_type: "MAINTENANCE",
         business_name: businessName,
         business_photo_url: photo,
         business_phone_number: phoneNumber,
         business_email: email,
         business_ein_number: AES.encrypt(ein, process.env.REACT_APP_ENKEY).toString(),
-        business_services_fees: JSON.stringify(fees),
+        business_services_fees: JSON.stringify(services),
         business_locations: JSON.stringify(locations),
         business_address: address,
         business_unit: unit,
@@ -299,41 +287,6 @@ const ManagerOnBoardDesktopForm = () => {
       // navigate("/onboardingRouter");
       return;
   };
-
-
-  // const CreateEmpStep = async () => {
-  //   if (validate_form() === false) return;
-
-  //   setShowSpinner(true);
-  //   const payload = {
-  //     employee_user_id: user.user_uid,
-  //     employee_business_id: businessId,
-  //     employee_first_name: firstName,
-  //     employee_last_name: lastName,
-  //     employee_phone_number: phoneNumber,
-  //     employee_email: email,
-  //     employee_role: isEmployee() ? "EMPLOYEE" : "OWNER",
-  //     employee_address: address,
-  //     employee_unit: unit,
-  //     employee_city: city,
-  //     employee_state: state,
-  //     employee_zip: zip,
-  //     employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
-  //   };
-
-  //   const formPayload = new FormData();
-  //   for (const key of Object.keys(payload)) {
-  //     if (key === "employee_photo" && payload[key]) formPayload.append(key, payload[key].file);
-  //     else formPayload.append(key, payload[key]);
-  //   }
-  //   const { data } = await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee", formPayload, headers);
-  //   setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
-  //   updateProfileUid({ business_owner_id: data.employee_uid });
-  //   setShowSpinner(false);
-    
-  // };
- 
-
 
   const handleChangeChecked = (e) => {
       const { name, checked } = e.target;
@@ -481,8 +434,8 @@ const ManagerOnBoardDesktopForm = () => {
       ));
   };
 
-  const renderFees = () => {
-    return fees.map((row, index) => (
+  const renderServices = () => {
+    return services.map((row, index) => (
       <div key={row.id}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={3}>
@@ -493,20 +446,19 @@ const ManagerOnBoardDesktopForm = () => {
                   fontWeight: theme.typography.primary.fontWeight,
                 }}
               >
-                {"Fee Name"}
+                {"Service Name"}
               </Typography>
               <TextField
-                name="fee_name"
-                value={row.fee_name}
+                name="service_name"
+                value={row.service_name}
                 variant="filled"
                 fullWidth
-                placeholder="Service Charge"
                 className={classes.root}
-                onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceChange(e, row.id)}
               />
             </Stack>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -514,26 +466,19 @@ const ManagerOnBoardDesktopForm = () => {
                   fontWeight: theme.typography.primary.fontWeight,
                 }}
               >
-                {"Frequency"}
+                {"# of Hours"}
               </Typography>
-              <Select
-                value={row.frequency}
-                size="small"
+              <TextField
+                name="hours"
+                value={row.hours}
+                variant="filled"
                 fullWidth
-                onChange={(e) => handleFrequencyChange(e, row.id)}
-                placeholder="Select frequency"
-                className={classes.select}
-              >
-                <MenuItem value="Hourly">Hourly</MenuItem>
-                <MenuItem value="Daily">Daily</MenuItem>
-                <MenuItem value="Weekly">Weekly</MenuItem>
-                <MenuItem value="Biweekly">Biweekly</MenuItem>
-                <MenuItem value="Monthly">Monthly</MenuItem>
-                <MenuItem value="Annually">Annually</MenuItem>
-              </Select>
+                className={classes.root}
+                onChange={(e) => handleServiceChange(e, row.id)}
+              />
             </Stack>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -541,20 +486,19 @@ const ManagerOnBoardDesktopForm = () => {
                   fontWeight: theme.typography.primary.fontWeight,
                 }}
               >
-                {"Percent"}
+                {"Charge/Hr."}
               </Typography>
               <TextField
                 name="charge"
                 value={row.charge}
                 variant="filled"
                 fullWidth
-                placeholder="15%"
                 className={classes.root}
-                onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceChange(e, row.id)}
               />
             </Stack>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -562,42 +506,20 @@ const ManagerOnBoardDesktopForm = () => {
                   fontWeight: theme.typography.primary.fontWeight,
                 }}
               >
-                {"Flat Rate"}
+                {"Total Cost"}
               </Typography>
               <TextField
-                name="of"
-                value={row.of}
+                name="total_cost"
+                value={row.total_cost}
                 variant="filled"
                 fullWidth
-                placeholder="Rent"
                 className={classes.root}
-                onChange={(e) => handleFeeChange(e, row.id)}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={2}>
-            <Stack spacing={-2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"Amount"}
-              </Typography>
-              <TextField
-                name="amount"
-                value={row.amount}
-                variant="filled"
-                fullWidth
-                placeholder="Amount"
-                className={classes.root}
-                onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceChange(e, row.id)}
               />
             </Stack>
           </Grid>
         </Grid>
-        {row.id === fees.length ? (
+        {row.id === services.length ? (
           <Stack
             direction="row"
             sx={{
@@ -605,14 +527,14 @@ const ManagerOnBoardDesktopForm = () => {
               justifyContent: "right",
             }}
           >
-            <div onClick={addFeeRow} style={{ cursor: "pointer" }}>
+            <div onClick={addServiceRow} style={{ cursor: "pointer" }}>
               <Typography
                 sx={{
                   color: theme.typography.common.blue,
                   fontWeight: theme.typography.primary.fontWeight,
                 }}
               >
-                Add another fee
+                Add another service
               </Typography>
             </div>
           </Stack>
@@ -622,7 +544,7 @@ const ManagerOnBoardDesktopForm = () => {
       </div>
     ));
   };
-
+  
   const handleEmpFirstNameChange = (event) => {
     setEmpFirstName(event.target.value);
   };
@@ -683,7 +605,7 @@ const ManagerOnBoardDesktopForm = () => {
   return (
       <div>
           <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
-              Property Manager Profile Info
+               Maintenance Profile Info
           </Typography>
           <Box display="flex">
               <Box width="20%" p={2}>
@@ -849,11 +771,11 @@ const ManagerOnBoardDesktopForm = () => {
           </Box>
           <hr />
           <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
-              Management Fees
+              Maintenance Services
           </Typography>
           <Box p={3}>
               <Paper elevation={3} sx={{ padding: 3, mb: 3 }}>
-                  {renderFees()}
+                  {renderServices()}
               </Paper>
           </Box>
           <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
@@ -872,7 +794,7 @@ const ManagerOnBoardDesktopForm = () => {
           </Box>
           <hr/>
           <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
-              Property Manager Personal Info
+              Maintenance Personal Info
           </Typography>
           <Box display="flex" p={3}>
               <Box width="20%" p={2}>
@@ -1044,4 +966,4 @@ const ManagerOnBoardDesktopForm = () => {
   );
 };
 
-export default ManagerOnBoardDesktopForm;
+export default MaintenanceOnBoardDesktopForm;
