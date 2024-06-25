@@ -9,6 +9,12 @@ import {
 	Container,
 	Backdrop,
 	CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@mui/material';
 import { ReactComponent as HomeIcon } from '../../images/home_icon.svg';
 import { ReactComponent as CalendarIcon } from '../../images/calendar_icon.svg';
@@ -27,6 +33,15 @@ export default function MaintenanceDashboard2() {
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
 	const [graphData, setGraphData] = useState([]);
   const [cashflowData, setcashflowData] = useState([]);
+
+  const testdata = [
+    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
+    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
+    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
+    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
+    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
+    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
+  ];
 
 	useEffect(() => {
 		const getMaintenanceData = async () => {
@@ -132,7 +147,12 @@ export default function MaintenanceDashboard2() {
 							</Grid>
 						</Grid>
 						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '600px' }}>
-							Revenue
+            <Stack direction="row" justifyContent="center" width="100%" sx={{ marginBottom: '15px' , marginTop: '15px'}}>
+								<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
+									Revenue
+								</Typography>
+							</Stack>
+              <RevenueTable data={testdata}></RevenueTable>
 						</Grid>
 					</Grid>
 				</Grid>
@@ -451,3 +471,36 @@ const MaintenanceCashflowWidget = ({ data }) => {
     </Grid>
   );
 }
+
+const RevenueTable = ({ data }) => {
+  return (
+    <Box sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', p: 3 }}>
+      <TableContainer component={Paper} sx={{ borderRadius: '10px' }}>
+        <Table>
+          <TableHead sx={{ backgroundColor: '#F2F2F2' }}>
+            <TableRow>
+              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>ID</Typography></TableCell>
+              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>To</Typography></TableCell>
+              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Description</Typography></TableCell>
+              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Property Address</Typography></TableCell>
+              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Due Date</Typography></TableCell>
+              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Amount</Typography></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody sx={{ backgroundColor: '#F2F2F2' }}>
+            {data.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell><Typography sx={{ color: '#160449' }}>{row.id}</Typography></TableCell>
+                <TableCell><Typography sx={{ color: '#160449' }}>{row.to}</Typography></TableCell>
+                <TableCell><Typography sx={{ color: '#160449' }}>{row.description}</Typography></TableCell>
+                <TableCell><Typography sx={{ color: '#160449' }}>{row.address}</Typography></TableCell>
+                <TableCell><Typography sx={{ color: '#160449' }}>{row.dueDate}</Typography></TableCell>
+                <TableCell><Typography sx={{ color: '#160449' }}>{row.amount}</Typography></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+};
