@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
     Typography, Box, Paper, Grid, FormControlLabel, Radio, RadioGroup,
     TextField, MenuItem, Button, OutlinedInput, FormControl, InputAdornment, Select, Dialog, DialogActions,
-    DialogContent, DialogTitle, IconButton, Snackbar, Alert, InputLabel
+    DialogContent, DialogTitle, IconButton, Snackbar, Alert, InputLabel, Accordion, AccordionSummary, AccordionDetails
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -25,6 +25,7 @@ import EndLeaseButton from "./EndLeaseButton";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import RenewLeaseButton from "./RenewLeaseButton";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -72,6 +73,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [leasePets, setLeasePets] = useState([]);
     const [leaseVehicles, setLeaseVehicles] = useState([]);
     const color = theme.palette.form.main;
+    const [expanded, setExpanded] = useState(false);
 
     useEffect(() => {
         const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
@@ -495,6 +497,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
+    };
+
+    const handleAccordionToggle = () => {
+        setExpanded(!expanded);
     };
 
     return (
@@ -1076,337 +1082,364 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                <Typography
-                                    sx={{
-                                        color: theme.typography.primary.black,
-                                        fontWeight: theme.typography.primary.fontWeight,
-                                        fontSize: theme.typography.small,
-                                        textAlign: 'center',
-                                        paddingBottom: "10px",
-                                        paddingTop: "5px",
-                                        flexGrow: 1,
-                                    }}
+                            <Accordion sx={{ backgroundColor: color }}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="occupants-content"
+                                    id="occupants-header"
                                 >
-                                    Fee Details
-                                </Typography>
-                                <Button variant="outlined"
-                                    sx={{
-                                        // background: "#3D5CAC",
-                                        // color: theme.palette.background.default,
-                                        "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-                                        cursor: "pointer",
-                                        textTransform: "none",
-                                        minWidth: "40px",
-                                        minHeight: "40px",
-                                        width: "40px",
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                        margin: "5px",
-                                    }}
-                                    size="small"
-                                    onClick={() => {
-                                        setcurrentFeeRow({
-                                            fee_Type: '$',
-                                            available_topay: '',
-                                            charge: '',
-                                            due_by: '',
-                                            due_by_date: dayjs(),
-                                            fee_name: '',
-                                            fee_type: '',
-                                            frequency: '',
-                                            late_by: '',
-                                            late_fee: '',
-                                            perDay_late_fee: '',
-                                        });
-                                        setIsFeeEditing(false);
-                                        handleFeeModalOpen();
-                                    }}>
-                                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                                </Button>
-                            </Box>
-
-                            {leaseFees && <>
-                                <DataGrid
-                                    rows={leaseFees}
-                                    columns={feesColumns}
-                                    pageSize={10}
-                                    rowsPerPageOptions={[10]}
-                                    getRowId={(row) => row.leaseFees_uid}
-                                    sx={{
-                                        '& .MuiDataGrid-columnHeader': {
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            color: "#3D5CAC",
-                                        },
-                                        '& .MuiDataGrid-columnHeaderTitle': {
-                                            font: "bold",
-                                            width: '100%',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            fontWeight: "bold",
-                                        },
-                                        '& .MuiDataGrid-cell': {
-                                            color: "#3D5CAC",
-                                            fontWeight: "bold",
-                                        },
-
-                                    }}
-                                />
-                                <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                                    <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-                                        {snackbarMessage}
-                                    </Alert>
-                                </Snackbar>
-                                <Dialog open={open} onClose={handleFeeModalClose}>
-                                    <DialogTitle>{isEditing ? 'Edit Fee' : 'Add Fee'}</DialogTitle>
-                                    <DialogContent>
-                                        <TextField
-                                            margin="dense"
-                                            label="Fee Name"
-                                            fullWidth
-                                            required
-                                            variant="outlined"
-                                            value={currentFeeRow?.fee_name || ''}
-                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, fee_name: e.target.value })}
-                                        />
-                                        <TextField
-                                            margin="dense"
-                                            label="Charge"
-                                            fullWidth
-                                            required
-                                            variant="outlined"
-                                            value={currentFeeRow?.charge || ''}
-                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, charge: e.target.value })}
-                                        />
-                                        <FormControl fullWidth sx={{ marginTop: "10px" }}>
-                                            <InputLabel sx={{ color: theme.palette.grey }}>Frequency *</InputLabel>
-                                            <Select
-                                                value={currentFeeRow?.frequency || ''}
-                                                onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, frequency: e.target.value })}
-                                                size="small"
-                                                fullWidth
-                                                label="Frequency"
-                                                className={classes.select}
-                                                sx={{
-                                                    marginTop: "10px",
-                                                }}
-                                                required
-                                            >
-                                                <MenuItem value="One-time">One-time</MenuItem>
-                                                <MenuItem value="Weekly">Weekly</MenuItem>
-                                                <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
-                                                <MenuItem value="Monthly">Monthly</MenuItem>
-                                                <MenuItem value="Annually">Annually</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DatePicker
-                                                label="Due By *"
-                                                value={currentFeeRow?.due_by_date ? dayjs(currentFeeRow.due_by_date) : null}
-                                                onChange={(e) => {
-                                                    // console.log('dueby row', e)
-                                                    const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                    setcurrentFeeRow({ ...currentFeeRow, due_by_date: formattedDate })
-                                                }
-                                                }
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        required
-                                                        {...params}
-                                                        size="small"
-                                                        sx={{
-                                                            '& .MuiInputBase-root': {
-                                                                fontSize: '14px',
-                                                            },
-                                                            '& .MuiSvgIcon-root': {
-                                                                fontSize: '20px',
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
-                                                sx={{ marginTop: "10px" }}
-                                            />
-                                        </LocalizationProvider>
-
-                                        <TextField
-                                            margin="dense"
-                                            label="Available To Pay (Days Before)"
-                                            fullWidth
-                                            variant="outlined"
-                                            value={currentFeeRow?.available_topay || ''}
-                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, available_topay: e.target.value })}
-                                        />
-
-                                        <TextField
-                                            margin="dense"
-                                            label="Late By (Days After)"
-                                            fullWidth
-                                            variant="outlined"
-                                            value={currentFeeRow?.late_by || ''}
-                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, late_by: e.target.value })}
-                                        />
-                                        <TextField
-                                            margin="dense"
-                                            label="Late Fee"
-                                            fullWidth
-                                            variant="outlined"
-                                            value={currentFeeRow?.late_fee || ''}
-                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, late_fee: e.target.value })}
-                                        />
-                                        <TextField
-                                            margin="dense"
-                                            label="Late Fee Per Day"
-                                            fullWidth
-                                            variant="outlined"
-                                            value={currentFeeRow?.perDay_late_fee || ''}
-                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, perDay_late_fee: e.target.value })}
-                                        />
-                                    </DialogContent>
-                                    <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
-                                        <Button variant="outlined"
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                        <Typography
                                             sx={{
-                                                background: "#3D5CAC",
-                                                color: theme.palette.background.default,
-                                                cursor: "pointer",
-                                                textTransform: "none",
-                                                width: "30%",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
+                                                color: theme.typography.primary.black,
+                                                fontWeight: theme.typography.primary.fontWeight,
+                                                fontSize: theme.typography.small,
+                                                textAlign: 'center',
+                                                paddingBottom: "10px",
+                                                paddingTop: "5px",
+                                                flexGrow: 1,
                                             }}
-                                            size="small" onClick={handleFeeModalClose}>
-                                            Cancel
-                                        </Button>
+                                        >
+                                            Fee Details
+                                        </Typography>
                                         <Button variant="outlined"
                                             sx={{
-                                                background: "#3D5CAC",
-                                                color: theme.palette.background.default,
+                                                // background: "#3D5CAC",
+                                                // color: theme.palette.background.default,
+                                                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                                                 cursor: "pointer",
                                                 textTransform: "none",
-                                                width: "30%",
+                                                minWidth: "40px",
+                                                minHeight: "40px",
+                                                width: "40px",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}
                                             size="small"
-                                            onClick={handleAddNewFee}>
-                                            Save
+                                            onClick={() => {
+                                                setcurrentFeeRow({
+                                                    fee_Type: '$',
+                                                    available_topay: '',
+                                                    charge: '',
+                                                    due_by: '',
+                                                    due_by_date: dayjs(),
+                                                    fee_name: '',
+                                                    fee_type: '',
+                                                    frequency: '',
+                                                    late_by: '',
+                                                    late_fee: '',
+                                                    perDay_late_fee: '',
+                                                });
+                                                setIsFeeEditing(false);
+                                                handleFeeModalOpen();
+                                            }}>
+                                            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                                         </Button>
-                                    </DialogActions>
-                                </Dialog>
-                            </>
-                            }
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                <Typography
-                                    sx={{
-                                        color: theme.typography.primary.black,
-                                        fontWeight: theme.typography.primary.fontWeight,
-                                        fontSize: theme.typography.small,
-                                        textAlign: 'center',
-                                        paddingBottom: "10px",
-                                        paddingTop: "5px",
-                                        flexGrow: 1,
-                                    }}
-                                    paddingTop="5px"
-                                    paddingBottom="10px"
-                                >
-                                    Documents
-                                </Typography>
-                                <Button variant="outlined"
-                                    sx={{
-                                        // background: "#3D5CAC",
-                                        // color: theme.palette.background.default,
-                                        "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-                                        cursor: "pointer",
-                                        textTransform: "none",
-                                        minWidth: "40px",
-                                        minHeight: "40px",
-                                        width: "40px",
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                        margin: "5px",
-                                    }}
-                                    size="small"
-                                    onClick={() => {
-                                        setcurrentFeeRow({
-                                            fee_Type: '',
-                                            available_topay: '',
-                                            charge: '',
-                                            due_by: '',
-                                            due_by_date: dayjs(),
-                                            fee_name: '',
-                                            fee_type: '',
-                                            frequency: '',
-                                            late_by: '',
-                                            late_fee: '',
-                                            perDay_late_fee: '',
-                                        });
-                                        setIsFeeEditing(false);
-                                        handleFeeModalOpen();
-                                    }}>
-                                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                                </Button>
-                            </Box>
-                            <DataGrid
-                                rows={documents}
-                                columns={docsColumns}
-                                pageSize={5}
-                                rowsPerPageOptions={[5]}
-                                getRowId={(row) => row.id}
-                                sx={{
-                                    '& .MuiDataGrid-columnHeader': {
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        color: "#3D5CAC",
-                                    },
-                                    '& .MuiDataGrid-columnHeaderTitle': {
-                                        font: "bold",
-                                        width: '100%',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        fontWeight: "bold",
-                                    },
-                                    '& .MuiDataGrid-cell': {
-                                        color: "#3D5CAC",
-                                        fontWeight: "bold",
-                                    },
+                                    </Box>
+                                </AccordionSummary>
+                                <AccordionDetails>
 
-                                }}
-                            />
+                                    {leaseFees && <>
+                                        <DataGrid
+                                            rows={leaseFees}
+                                            columns={feesColumns}
+                                            pageSize={10}
+                                            rowsPerPageOptions={[10]}
+                                            getRowId={(row) => row.leaseFees_uid}
+                                            sx={{
+                                                '& .MuiDataGrid-columnHeader': {
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    color: "#3D5CAC",
+                                                },
+                                                '& .MuiDataGrid-columnHeaderTitle': {
+                                                    font: "bold",
+                                                    width: '100%',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    fontWeight: "bold",
+                                                },
+                                                '& .MuiDataGrid-cell': {
+                                                    color: "#3D5CAC",
+                                                    fontWeight: "bold",
+                                                },
+
+                                            }}
+                                        />
+                                        <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                                            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                                                {snackbarMessage}
+                                            </Alert>
+                                        </Snackbar>
+                                        <Dialog open={open} onClose={handleFeeModalClose}>
+                                            <DialogTitle>{isEditing ? 'Edit Fee' : 'Add Fee'}</DialogTitle>
+                                            <DialogContent>
+                                                <TextField
+                                                    margin="dense"
+                                                    label="Fee Name"
+                                                    fullWidth
+                                                    required
+                                                    variant="outlined"
+                                                    value={currentFeeRow?.fee_name || ''}
+                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, fee_name: e.target.value })}
+                                                />
+                                                <TextField
+                                                    margin="dense"
+                                                    label="Charge"
+                                                    fullWidth
+                                                    required
+                                                    variant="outlined"
+                                                    value={currentFeeRow?.charge || ''}
+                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, charge: e.target.value })}
+                                                />
+                                                <FormControl fullWidth sx={{ marginTop: "10px" }}>
+                                                    <InputLabel sx={{ color: theme.palette.grey }}>Frequency *</InputLabel>
+                                                    <Select
+                                                        value={currentFeeRow?.frequency || ''}
+                                                        onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, frequency: e.target.value })}
+                                                        size="small"
+                                                        fullWidth
+                                                        label="Frequency"
+                                                        className={classes.select}
+                                                        sx={{
+                                                            marginTop: "10px",
+                                                        }}
+                                                        required
+                                                    >
+                                                        <MenuItem value="One-time">One-time</MenuItem>
+                                                        <MenuItem value="Weekly">Weekly</MenuItem>
+                                                        <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
+                                                        <MenuItem value="Monthly">Monthly</MenuItem>
+                                                        <MenuItem value="Annually">Annually</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DatePicker
+                                                        label="Due By *"
+                                                        value={currentFeeRow?.due_by_date ? dayjs(currentFeeRow.due_by_date) : null}
+                                                        onChange={(e) => {
+                                                            // console.log('dueby row', e)
+                                                            const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                                            setcurrentFeeRow({ ...currentFeeRow, due_by_date: formattedDate })
+                                                        }
+                                                        }
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                required
+                                                                {...params}
+                                                                size="small"
+                                                                sx={{
+                                                                    '& .MuiInputBase-root': {
+                                                                        fontSize: '14px',
+                                                                    },
+                                                                    '& .MuiSvgIcon-root': {
+                                                                        fontSize: '20px',
+                                                                    },
+                                                                }}
+                                                            />
+                                                        )}
+                                                        sx={{ marginTop: "10px" }}
+                                                    />
+                                                </LocalizationProvider>
+
+                                                <TextField
+                                                    margin="dense"
+                                                    label="Available To Pay (Days Before)"
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    value={currentFeeRow?.available_topay || ''}
+                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, available_topay: e.target.value })}
+                                                />
+
+                                                <TextField
+                                                    margin="dense"
+                                                    label="Late By (Days After)"
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    value={currentFeeRow?.late_by || ''}
+                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, late_by: e.target.value })}
+                                                />
+                                                <TextField
+                                                    margin="dense"
+                                                    label="Late Fee"
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    value={currentFeeRow?.late_fee || ''}
+                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, late_fee: e.target.value })}
+                                                />
+                                                <TextField
+                                                    margin="dense"
+                                                    label="Late Fee Per Day"
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    value={currentFeeRow?.perDay_late_fee || ''}
+                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, perDay_late_fee: e.target.value })}
+                                                />
+                                            </DialogContent>
+                                            <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
+                                                <Button variant="outlined"
+                                                    sx={{
+                                                        background: "#3D5CAC",
+                                                        color: theme.palette.background.default,
+                                                        cursor: "pointer",
+                                                        textTransform: "none",
+                                                        width: "30%",
+                                                        fontWeight: theme.typography.secondary.fontWeight,
+                                                        fontSize: theme.typography.smallFont,
+                                                    }}
+                                                    size="small" onClick={handleFeeModalClose}>
+                                                    Cancel
+                                                </Button>
+                                                <Button variant="outlined"
+                                                    sx={{
+                                                        background: "#3D5CAC",
+                                                        color: theme.palette.background.default,
+                                                        cursor: "pointer",
+                                                        textTransform: "none",
+                                                        width: "30%",
+                                                        fontWeight: theme.typography.secondary.fontWeight,
+                                                        fontSize: theme.typography.smallFont,
+                                                    }}
+                                                    size="small"
+                                                    onClick={handleAddNewFee}>
+                                                    Save
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </>
+                                    }
+                                </AccordionDetails>
+                            </Accordion>
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <Typography
-                                sx={{
-                                    color: theme.typography.primary.black,
-                                    fontWeight: theme.typography.primary.fontWeight,
-                                    fontSize: theme.typography.small,
-                                    textAlign: 'center',
-                                    paddingBottom: "10px",
-                                    paddingTop: "5px",
-                                    flexGrow: 1,
-                                }}
-                                paddingTop="5px"
-                                paddingBottom="10px"
-                            >
-                                Occupants Details
-                            </Typography>
-                            {leaseAdults &&
-                                <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} />
-                            }
-                            {leaseChildren &&
-                                <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} />
-                            }
-                            {leasePets &&
-                                <PetsOccupant leasePets={leasePets} setLeasePets={setLeasePets} />
-                            }
-                            {leaseVehicles &&
-                                <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} />
-                            }
+                            <Accordion sx={{ backgroundColor: color }}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="occupants-content"
+                                    id="occupants-header"
+                                >
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                        <Typography
+                                            sx={{
+                                                color: theme.typography.primary.black,
+                                                fontWeight: theme.typography.primary.fontWeight,
+                                                fontSize: theme.typography.small,
+                                                textAlign: 'center',
+                                                paddingBottom: "10px",
+                                                paddingTop: "5px",
+                                                flexGrow: 1,
+                                            }}
+                                            paddingTop="5px"
+                                            paddingBottom="10px"
+                                        >
+                                            Documents
+                                        </Typography>
+                                        <Button variant="outlined"
+                                            sx={{
+                                                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                                                cursor: "pointer",
+                                                textTransform: "none",
+                                                minWidth: "40px",
+                                                minHeight: "40px",
+                                                width: "40px",
+                                                fontWeight: theme.typography.secondary.fontWeight,
+                                                fontSize: theme.typography.smallFont,
+                                            }}
+                                            size="small"
+                                            // onClick={() => {
+                                            //     setcurrentFeeRow({
+                                            //         fee_Type: '',
+                                            //         available_topay: '',
+                                            //         charge: '',
+                                            //         due_by: '',
+                                            //         due_by_date: dayjs(),
+                                            //         fee_name: '',
+                                            //         fee_type: '',
+                                            //         frequency: '',
+                                            //         late_by: '',
+                                            //         late_fee: '',
+                                            //         perDay_late_fee: '',
+                                            //     });
+                                            //     setIsFeeEditing(false);
+                                            //     handleFeeModalOpen();
+                                            // }}
+                                            >
+                                            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
+                                        </Button>
+                                    </Box>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <DataGrid
+                                        rows={documents}
+                                        columns={docsColumns}
+                                        pageSize={5}
+                                        rowsPerPageOptions={[5]}
+                                        getRowId={(row) => row.id}
+                                        sx={{
+                                            '& .MuiDataGrid-columnHeader': {
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                color: "#3D5CAC",
+                                            },
+                                            '& .MuiDataGrid-columnHeaderTitle': {
+                                                font: "bold",
+                                                width: '100%',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                fontWeight: "bold",
+                                            },
+                                            '& .MuiDataGrid-cell': {
+                                                color: "#3D5CAC",
+                                                fontWeight: "bold",
+                                            },
+
+                                        }}
+                                    />
+                                </AccordionDetails>
+                            </Accordion>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                            <Accordion sx={{ backgroundColor: color }}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="occupants-content"
+                                    id="occupants-header"
+                                >
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.primary.fontWeight,
+                                            fontSize: theme.typography.small,
+                                            textAlign: 'center',
+                                            paddingBottom: "10px",
+                                            paddingTop: "5px",
+                                            flexGrow: 1,
+                                        }}
+                                        paddingTop="5px"
+                                        paddingBottom="10px"
+                                    >
+                                        Occupants Details
+                                    </Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {leaseAdults &&
+                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} />
+                                    }
+                                    {leaseChildren &&
+                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} />
+                                    }
+                                    {leasePets &&
+                                        <PetsOccupant leasePets={leasePets} setLeasePets={setLeasePets} />
+                                    }
+                                    {leaseVehicles &&
+                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} />
+                                    }
+                                </AccordionDetails>
+                            </Accordion>
                         </Paper>
                     </Grid>
 
