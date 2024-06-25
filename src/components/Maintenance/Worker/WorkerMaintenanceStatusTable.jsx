@@ -33,7 +33,7 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
   const location = useLocation();
   let navigate = useNavigate();
 
-  console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
+  // console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
 
   // console.log("----MaintenanceStatusTable", allMaintenanceData, maintenanceRequestsCount);
 
