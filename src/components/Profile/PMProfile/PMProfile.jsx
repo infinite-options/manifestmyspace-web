@@ -77,6 +77,20 @@ function PMProfile() {
           .join("")
       : "No Address Is Not Available";
 
+      let employee_address =
+      profileData.employee_address || profileData.employee_unit || profileData.employee_city || profileData.employee_state || profileData.employee_zip
+        ? [
+            profileData.employee_address && `${profileData.employee_address}`,
+            profileData.employee_unit && `, #${profileData.employee_unit}`,
+            profileData.employee_city && `, ${profileData.employee_city}`,
+            profileData.employee_state && `, ${profileData.employee_state}`,
+            profileData.employee_zip && `, ${profileData.employee_zip}`,
+          ]
+            .filter(Boolean)
+            .join("")
+        : "No Address Is Not Available";
+
+
   let paymentElements = {
     bank:{ icon: <img src={ChaseIcon} alt="Chase Icon" width="25" height="25" /> },
     zelle: { icon: <img src={ZelleIcon} alt="Zelle Icon" width="25" height="25" /> },
@@ -180,7 +194,7 @@ function PMProfile() {
                 fontSize: theme.typography.smallFont,
               }}
             >
-              Manager Profile
+              {selectedRole==="PM_EMPLOYEE" ? "Employee Profile": "Manager Profile"}
             </Typography>
           </Stack>
 
@@ -209,7 +223,8 @@ function PMProfile() {
                   fontSize: theme.typography.smallFont,
                 }}
               >
-                {profileData?.business_email}
+                {selectedRole==="PM_EMPLOYEE" ? profileData?.employee_email: profileData?.business_email}
+               
               </Typography>
             </Stack>
 
@@ -233,7 +248,8 @@ function PMProfile() {
                   fontSize: theme.typography.smallFont,
                 }}
               >
-                {profileData?.business_phone_number}
+               
+                {selectedRole==="PM_EMPLOYEE" ? profileData?.employee_phone_number: profileData?.business_phone_number}
               </Typography>
             </Stack>
 
@@ -257,7 +273,7 @@ function PMProfile() {
                   fontSize: theme.typography.smallFont,
                 }}
               >
-                {manager_address}
+                {selectedRole==="PM_EMPLOYEE" ? employee_address: manager_address}
               </Typography>
             </Stack>
 
@@ -476,8 +492,10 @@ function PMProfile() {
                     color: theme.typography.common.blue,
                     fontSize: "12px",
                   }}
-                >
-                  {profileData?.business_ein_number === "" ? "No EIN Provided" : profileData?.business_ein_number}
+                > {(selectedRole==="MANAGER") &&
+                  profileData?.business_ein_number === "" ? "No EIN Provided" : profileData?.business_ein_number}
+                  {(selectedRole==="PM_EMPLOYEE") &&
+                  profileData?.employee_ssn === "" ? "No SSN Provided" : profileData?.employee_ssn}
                 </Typography>
               </Stack>
             </Box>

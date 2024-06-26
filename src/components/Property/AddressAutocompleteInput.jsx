@@ -73,6 +73,7 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
     <Autocomplete
       onLoad={auto => { autocomplete.current = auto; }}
       onPlaceChanged={onPlaceChanged}
+      sx={{ width: '50%' }}
       options={{
         types: ['address'],
         componentRestrictions: { country: 'us' },
