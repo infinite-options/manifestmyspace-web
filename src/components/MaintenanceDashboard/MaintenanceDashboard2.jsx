@@ -28,7 +28,7 @@ import WorkerMaintenanceStatusTable from '../Maintenance/Worker/WorkerMaintenanc
 import { format, isEqual, isAfter, parseISO } from 'date-fns';
 
 export default function MaintenanceDashboard2() {
-	const { user } = useUser();
+	const { user, getProfileId, } = useUser();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
@@ -40,6 +40,8 @@ export default function MaintenanceDashboard2() {
 	useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
+			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+
 			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
