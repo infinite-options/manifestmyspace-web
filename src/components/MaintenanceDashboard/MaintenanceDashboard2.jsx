@@ -40,7 +40,7 @@ export default function MaintenanceDashboard2() {
 	useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000052`);
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
@@ -583,7 +583,7 @@ const RevenueTable = ({ data }) => {
 				component={Paper}
 				sx={{
 					borderRadius: '10px',
-					maxHeight: '600px', // Adjust the height as needed
+					maxHeight: '500px', // Adjust the height as needed
 					maxWidth: '100%', // Adjust the width as needed
 					overflowX: 'scroll',
 					overflowY: 'auto',
