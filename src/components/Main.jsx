@@ -18,6 +18,7 @@ import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
 import Leases from "./Leases/Leases";
+import LeasesDashboard from "./Leases/LeasesDashboard";
 import { PropertyListings } from "./Property/PropertyListings";
 
 import Announcements from "./Announcement/Announcements";
@@ -62,7 +63,7 @@ import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
 import Contacts from "./Contacts/Contacts";
-import OwnerContacts from "./Contacts/OwnerContacts";
+import OwnerContacts from "./Contacts/OwnerContacts/OwnerContacts";
 import PMContacts from "./Contacts/PMContacts/PMContacts";
 import MaintenanceContacts from "./Contacts/MaintenanceContacts";
 import ContactDetails from "./Contacts/ContactDetails";
@@ -116,6 +117,7 @@ import { Footer } from "./Layout/Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
 import Emp_Waiting from "./PM_Emp_Dashboard/Waiting_Page";
 import MaintenanceDashboard from "./MaintenanceDashboard/MaintenanceDashboard";
+import MaintenanceDashboard2 from "./MaintenanceDashboard/MaintenanceDashboard2";
 
 import SettingsACH1 from "./SettingsACH/SettingsACH1";
 import SettingsACH2 from "./SettingsACH/SettingsACH2";
@@ -228,7 +230,7 @@ function Main() {
             <Route path="viewLease" element={<ViewLease />} />
             <Route path="editLease" element={<EditLease />} />
             <Route path="leaseDocument" element={<LeasePDF />} />
-            <Route path="Leases" element={<Leases />} />
+            <Route path="Leases" element={<LeasesDashboard />} />
 
             <Route path="PrivateprofileName" element={<ProfileName />} />
             <Route path="PrivateprofileInfo" element={<ProfileInfo />} />
@@ -310,6 +312,7 @@ function Main() {
             <Route path="ownerDashboard" element={<OwnerDashboard />} />
 
             <Route path="maintenanceDashboard" element={<MaintenanceDashboard />} />
+            <Route path="maintenanceDashboard2" element={<MaintenanceDashboard2 />} />
             <Route path="addMaintenanceItem" element={<AddMaintenanceItem />} />
             <Route path="editMaintenanceItem" element={<EditMaintenanceItem />} />
             <Route path="maintenance/detail" element={<MaintenanceRequestDetail />} />

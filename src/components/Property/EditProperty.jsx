@@ -490,14 +490,18 @@ export default function EditProperty({}) {
 
     const autoUpdate = async () => {
       const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+      console.log('---updateResponse---',updateResponse);
       // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
       const updatedJson = await updateResponse.json();
-      const updatedProperty = updatedJson.result[0];
+      console.log('---updatedJson---',updatedJson);
+      const updatedProperty = updatedJson.Property.result[0];
+      console.log('---updatedProperty---',updatedProperty);
       propertyList = propertyList.map((property) => {
         if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
         return property;
       });
-      // console.log("updatedPropertyList - ", propertyList);
+      console.log('---index---',index);
+      console.log("updatedPropertyList - ", propertyList);
       setPropertyData(propertyList[index]);
     };
 

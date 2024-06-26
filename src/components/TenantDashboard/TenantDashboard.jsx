@@ -102,7 +102,8 @@ function TenantDashboard(props) {
         {lease_status === "NEW" ? <CircleIcon fontSize="small" sx={{ color: "#FAD102", paddingRight: "10px" }} /> : null /* yellow */}
         {lease_status === "PROCESSING" ? <CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }} /> : null /* green */}
         {lease_status === "REJECTED" ? <CircleIcon fontSize="small" sx={{ color: "#FA0202", paddingRight: "10px" }} /> : null /* red */}
-        {lease_status === "ENDED" ? <CircleIcon fontSize="small" sx={{ color: "#000000", paddingRight: "10px" }} /> : null /* black */}
+        {lease_status === "RESCIND" ? <CircleIcon fontSize="small" sx={{ color: "#000000", paddingRight: "10px" }} /> : null /* black */}
+        {lease_status === "ENDED" ? <CircleIcon fontSize="small" sx={{ color: "#2E2E2E", paddingRight: "10px" }} /> : null /* black */}
       </>
     );
   };
@@ -116,6 +117,7 @@ function TenantDashboard(props) {
       PROCESSING: "#00D100",
       REJECTED: "#FA0202",
       ENDED: "#000000",
+      RESCIND: "#FF8832",
     };
     // return property?.property_status ? statusColorMapping[property?.property_status] : "#ddd"
     return status ? statusColorMapping[status] : "#ddd";
@@ -597,6 +599,14 @@ function TenantDashboard(props) {
                         <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
                           {" "}
                           {selectedLease?.property_address ? selectedLease?.property_address : ""} {selectedLease?.property_unit ? selectedLease?.property_unit : ""}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
+                          {" "}
+                          Lease UID{" "}
+                        </Grid>
+                        <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+                          {" "}
+                          {selectedLease?.lease_uid}
                         </Grid>
                       </Grid>
                     </Box>
