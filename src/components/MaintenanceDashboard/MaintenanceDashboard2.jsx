@@ -33,6 +33,7 @@ export default function MaintenanceDashboard2() {
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
 	const [graphData, setGraphData] = useState([]);
   const [cashflowData, setcashflowData] = useState([]);
+  const [revenueData, setrevenueData] = useState([]);
 
   const testdata = [
     { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
@@ -46,10 +47,13 @@ export default function MaintenanceDashboard2() {
 	useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000052`);
 			const data = await response.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
+      const CurrentQuotes = data.CurrentQuotes?.result ?? [];
+
+
 			const currentgraphData = [{"Quotes Requested":[],"Quotes Submitted":[],
       "Quotes Accepted":[],"Scheduled":[],"Finished":[],"Paid":[]}];
 			currentActivities
@@ -107,6 +111,7 @@ export default function MaintenanceDashboard2() {
 			await setGraphData(sortedData);
       await setcashflowData(currentActivities);
 			console.log('----graph data---', graphData);
+      await setrevenueData(CurrentQuotes);
 			setShowSpinner(false);
 		};
 
@@ -167,7 +172,7 @@ export default function MaintenanceDashboard2() {
 									Revenue
 								</Typography>
 							</Stack>
-              <RevenueTable data={testdata}></RevenueTable>
+              <RevenueTable data={revenueData}></RevenueTable>
 						</Grid>
 					</Grid>
 				</Grid>
@@ -490,32 +495,104 @@ const MaintenanceCashflowWidget = ({ data }) => {
 const RevenueTable = ({ data }) => {
   return (
     <Box sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', p: 3 }}>
-      <TableContainer component={Paper} sx={{ borderRadius: '10px' }}>
-        <Table>
-          <TableHead sx={{ backgroundColor: '#F2F2F2' }}>
-            <TableRow>
-              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>ID</Typography></TableCell>
-              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>To</Typography></TableCell>
-              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Description</Typography></TableCell>
-              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Property Address</Typography></TableCell>
-              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Due Date</Typography></TableCell>
-              <TableCell><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Amount</Typography></TableCell>
+    <TableContainer
+      component={Paper}
+      sx={{
+        borderRadius: '10px',
+        maxHeight: '600px', // Adjust the height as needed
+        maxWidth: '100%', // Adjust the width as needed
+        overflowX: 'scroll',
+        overflowY: 'auto',
+      }}
+    >
+      <Table >
+        <TableHead >
+          <TableRow sx={{ borderBottom: '1px solid #4A4A4A', backgroundColor: '#F2F2F2' }}>
+            <TableCell sx={{
+                position: 'sticky',
+                top: 0,
+                backgroundColor: '#F2F2F2',
+                borderBottom: '1px solid #4A4A4A',
+                zIndex: 1,
+                padding: '10px 20px',
+                whiteSpace: 'nowrap'
+              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}> QuoteID</Typography></TableCell>
+            <TableCell sx={{
+                position: 'sticky',
+                top: 0,
+                backgroundColor: '#F2F2F2',
+                borderBottom: '1px solid #4A4A4A',
+                zIndex: 1,
+                padding: '10px 20px',
+                whiteSpace: 'nowrap'
+              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>BusinessID</Typography></TableCell>
+            <TableCell sx={{
+                position: 'sticky',
+                top: 0,
+                backgroundColor: '#F2F2F2',
+                borderBottom: '1px solid #4A4A4A',
+                zIndex: 1,
+                padding: '10px 20px',
+                whiteSpace: 'nowrap'
+              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Business Name</Typography></TableCell>
+            <TableCell sx={{
+                position: 'sticky',
+                top: 0,
+                backgroundColor: '#F2F2F2',
+                borderBottom: '1px solid #4A4A4A',
+                zIndex: 1,
+                padding: '10px 20px',
+                whiteSpace: 'nowrap'
+              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Maintenance Description</Typography></TableCell>
+            <TableCell sx={{
+                position: 'sticky',
+                top: 0,
+                backgroundColor: '#F2F2F2',
+                borderBottom: '1px solid #4A4A4A',
+                zIndex: 1,
+                padding: '10px 20px',
+                whiteSpace: 'nowrap'
+              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Property Address</Typography></TableCell>
+            <TableCell sx={{
+                position: 'sticky',
+                top: 0,
+                backgroundColor: '#F2F2F2',
+                borderBottom: '1px solid #4A4A4A',
+                zIndex: 1,
+                padding: '10px 20px',
+                whiteSpace: 'nowrap'
+              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Due Date</Typography></TableCell>
+            <TableCell sx={{
+                position: 'sticky',
+                top: 0,
+                backgroundColor: '#F2F2F2',
+                borderBottom: '1px solid #4A4A4A',
+                zIndex: 1,
+                padding: '10px 20px',
+                whiteSpace: 'nowrap'
+              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Amount</Typography></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody sx={{ backgroundColor: '#F2F2F2' }}>
+          {data.map((row, index) => (
+            <TableRow key={index} sx={{ borderBottom: '1px solid #4A4A4A' }}>
+              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.maintenance_quote_uid}</Typography></TableCell>
+
+              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.business_uid}</Typography></TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.business_name}</Typography></TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.maintenance_title}</Typography></TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+                <Typography sx={{ color: '#160449' }}>
+                  {row.property_address}, {row.property_city}, {row.property_state} {row.property_zip}
+                </Typography>
+              </TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.maintenance_scheduled_date && row.maintenance_scheduled_date !== 'null' ? row.maintenance_scheduled_date : 'N/A'}</Typography></TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.quote_total_estimate}</Typography></TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody sx={{ backgroundColor: '#F2F2F2' }}>
-            {data.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell><Typography sx={{ color: '#160449' }}>{row.id}</Typography></TableCell>
-                <TableCell><Typography sx={{ color: '#160449' }}>{row.to}</Typography></TableCell>
-                <TableCell><Typography sx={{ color: '#160449' }}>{row.description}</Typography></TableCell>
-                <TableCell><Typography sx={{ color: '#160449' }}>{row.address}</Typography></TableCell>
-                <TableCell><Typography sx={{ color: '#160449' }}>{row.dueDate}</Typography></TableCell>
-                <TableCell><Typography sx={{ color: '#160449' }}>{row.amount}</Typography></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
-  );
-};
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </Box>
+  )
+ };
