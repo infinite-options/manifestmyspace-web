@@ -58,7 +58,7 @@ import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
 import Contacts from "./Contacts/Contacts";
-import OwnerContacts from "./Contacts/OwnerContacts";
+import OwnerContacts from "./Contacts/OwnerContacts/OwnerContacts";
 import PMContacts from "./Contacts/PMContacts/PMContacts";
 import MaintenanceContacts from "./Contacts/MaintenanceContacts";
 import ContactDetails from "./Contacts/ContactDetails";
