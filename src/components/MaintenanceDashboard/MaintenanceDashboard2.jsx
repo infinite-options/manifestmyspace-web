@@ -9,12 +9,12 @@ import {
 	Container,
 	Backdrop,
 	CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
 } from '@mui/material';
 import { ReactComponent as HomeIcon } from '../../images/home_icon.svg';
 import { ReactComponent as CalendarIcon } from '../../images/calendar_icon.svg';
@@ -25,6 +25,7 @@ import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
 import Chart from 'react-apexcharts';
 import WorkerMaintenanceStatusTable from '../Maintenance/Worker/WorkerMaintenanceStatusTable';
+import { format, isEqual, isAfter, parseISO } from 'date-fns';
 
 export default function MaintenanceDashboard2() {
 	const { user } = useUser();
@@ -32,17 +33,9 @@ export default function MaintenanceDashboard2() {
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
 	const [graphData, setGraphData] = useState([]);
-  const [cashflowData, setcashflowData] = useState([]);
-  const [revenueData, setrevenueData] = useState([]);
-
-  const testdata = [
-    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
-    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
-    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
-    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
-    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
-    { id: 123456, to: 'Pipevendor', description: 'Broken Pipe', address: '103 N. Abel St, Milpitas CA 95035', dueDate: '07/12/2023', amount: '$1,300.00' },
-  ];
+	const [cashflowData, setcashflowData] = useState([]);
+	const [revenueData, setrevenueData] = useState([]);
+	const [todayData, settodayData] = useState([]);
 
 	useEffect(() => {
 		const getMaintenanceData = async () => {
@@ -51,11 +44,18 @@ export default function MaintenanceDashboard2() {
 			const data = await response.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
-      const CurrentQuotes = data.CurrentQuotes?.result ?? [];
+			const CurrentQuotes = data.CurrentQuotes?.result ?? [];
 
-
-			const currentgraphData = [{"Quotes Requested":[],"Quotes Submitted":[],
-      "Quotes Accepted":[],"Scheduled":[],"Finished":[],"Paid":[]}];
+			const currentgraphData = [
+				{
+					'Quotes Requested': [],
+					'Quotes Submitted': [],
+					'Quotes Accepted': [],
+					Scheduled: [],
+					Finished: [],
+					Paid: [],
+				},
+			];
 			currentActivities
 				.map((item) => {
 					const statusMapping = theme.colorStatusMM.find(
@@ -94,24 +94,43 @@ export default function MaintenanceDashboard2() {
 			});
 
 			await setMaintenanceRequests(maintainance_info);
+			console.log('-----maintainance_info----', maintainance_info.SCHEDULED);
+			const today = format(new Date(), 'MM-dd-yyyy');
 
-      const fixedOrder = [
-        { label: "Quotes Requested", color: "#DB9687" },
-        { label: "Quotes Submitted", color: "#CEA892" },
-        { label: "Quotes Accepted", color: "#BAAC7A" },
-        { label: "Scheduled", color: "#D4C28D" },
-        { label: "Finished", color: "#598A96" },
-        { label: "Paid", color: "#6B8E23" }
-      ];
-      
-      const sortedData = fixedOrder.map((status) => {
-        const statusData = currentgraphData[0][status.label];
-        return statusData.length > 0 ? statusData[0] : { value: 0, label: status.label, color: status.color }; // default color if no data
-      });
+			// Filter the data
+			const currentDateData = maintainance_info.SCHEDULED.filter(
+				(item) => item.maintenance_scheduled_date === today
+			);
+			let filteredData = [];
+
+			if (currentDateData.length > 0) {
+				filteredData = currentDateData;
+			} else {
+				filteredData = maintainance_info.SCHEDULED.filter((item) =>
+					isAfter(parseISO(item.maintenance_scheduled_date), parseISO(today))
+				).sort((a, b) => new Date(a.maintenance_scheduled_date) - new Date(b.maintenance_scheduled_date));
+			}
+
+			console.log('-----maintainance_info filteredData----', filteredData);
+
+			const fixedOrder = [
+				{ label: 'Quotes Requested', color: '#DB9687' },
+				{ label: 'Quotes Submitted', color: '#CEA892' },
+				{ label: 'Quotes Accepted', color: '#BAAC7A' },
+				{ label: 'Scheduled', color: '#D4C28D' },
+				{ label: 'Finished', color: '#598A96' },
+				{ label: 'Paid', color: '#6B8E23' },
+			];
+
+			const sortedData = fixedOrder.map((status) => {
+				const statusData = currentgraphData[0][status.label];
+				return statusData.length > 0 ? statusData[0] : { value: 0, label: status.label, color: status.color }; // default color if no data
+			});
 			await setGraphData(sortedData);
-      await setcashflowData(currentActivities);
+			await setcashflowData(currentActivities);
 			console.log('----graph data---', graphData);
-      await setrevenueData(CurrentQuotes);
+			await setrevenueData(CurrentQuotes);
+			await settodayData(filteredData);
 			setShowSpinner(false);
 		};
 
@@ -148,31 +167,41 @@ export default function MaintenanceDashboard2() {
 						</Box>
 					</Grid>
 					<Grid item xs={12} md={4}>
-						<WorkOrdersWidget maintenanceRequests={maintenanceRequests} />
+						<WorkOrdersWidget maintenanceRequests={maintenanceRequests} todayData={todayData} />
 					</Grid>
 					<Grid container item xs={12} md={8} columnSpacing={6} rowGap={4}>
-						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '400px'  }}>
-							<Stack direction="row" justifyContent="center" width="100%" sx={{ marginBottom: '15px' , marginTop: '15px'}}>
+						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '400px' }}>
+							<Stack
+								direction="row"
+								justifyContent="center"
+								width="100%"
+								sx={{ marginBottom: '15px', marginTop: '15px' }}
+							>
 								<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
 									Current Activity
 								</Typography>
 							</Stack>
 							<Grid container spacing={2}>
-								<Grid item xs={12} md={6} sx={{ marginBottom: '0px' , marginTop: '0px'}}>
+								<Grid item xs={12} md={6} sx={{ marginBottom: '0px', marginTop: '0px' }}>
 									<RadialBarChart data={graphData} />
 								</Grid>
-								<Grid item xs={12} md={6} sx={{ marginBottom: '15px' , marginTop: '25px'}}>
-                <MaintenanceCashflowWidget data={cashflowData}></MaintenanceCashflowWidget>
+								<Grid item xs={12} md={6} sx={{ marginBottom: '15px', marginTop: '25px' }}>
+									<MaintenanceCashflowWidget data={cashflowData}></MaintenanceCashflowWidget>
 								</Grid>
 							</Grid>
 						</Grid>
 						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '600px' }}>
-            <Stack direction="row" justifyContent="center" width="100%" sx={{ marginBottom: '15px' , marginTop: '15px'}}>
+							<Stack
+								direction="row"
+								justifyContent="center"
+								width="100%"
+								sx={{ marginBottom: '15px', marginTop: '15px' }}
+							>
 								<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
 									Revenue
 								</Typography>
 							</Stack>
-              <RevenueTable data={revenueData}></RevenueTable>
+							<RevenueTable data={revenueData}></RevenueTable>
 						</Grid>
 					</Grid>
 				</Grid>
@@ -181,7 +210,7 @@ export default function MaintenanceDashboard2() {
 	);
 }
 
-const WorkOrdersWidget = ({ maintenanceRequests }) => {
+const WorkOrdersWidget = ({ maintenanceRequests, todayData }) => {
 	const [showSpinner, setShowSpinner] = useState(false);
 
 	return (
@@ -267,13 +296,41 @@ const WorkOrdersWidget = ({ maintenanceRequests }) => {
 								}}
 							>
 								<Grid item xs={12}>
-									<Typography
-										align="center"
-										sx={{ fontSize: '24px', fontWeight: 'bold', color: '#160449' }}
-									>
-										Work Orders Today
-									</Typography>
-								</Grid>
+  <Typography align="center" sx={{ fontSize: '24px', fontWeight: 'bold', color: '#160449' }}>
+    Work Orders Today
+  </Typography>
+  {todayData.length === 0 ? (
+    <Typography align="center" sx={{ fontSize: '20px', fontWeight: 'bold', color: '#3D5CAC' }}>
+      None
+    </Typography>
+  ) : (
+    todayData.map((row, index) => (
+      <Box
+        key={index}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: index === 0 ? '#B33A3A' : index === 1 ? '#FFAA00' : '#FFC107',
+          color: 'white',
+          borderRadius: '10px',
+          p: 2,
+          mb: 2,
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          {row.maintenance_scheduled_time}
+        </Typography>
+        <Typography variant="body1">
+          <strong>Address:</strong> {row.property_address}, {row.property_city}, {row.property_state} {row.property_zip}
+        </Typography>
+        <Typography variant="body1">
+          <strong>Issue:</strong> {row.maintenance_title}
+        </Typography>
+      </Box>
+    ))
+  )}
+</Grid>
+
 							</Paper>
 						</Grid>
 					</Grid>
@@ -340,12 +397,12 @@ const RadialBarChart = ({ data }) => {
 				offsetY: 0,
 				startAngle: 0,
 				endAngle: 270,
-        hollow: {
-          margin: 5,
-          size: '30%',
-          background: 'transparent',
-          image: undefined,
-        },
+				hollow: {
+					margin: 5,
+					size: '30%',
+					background: 'transparent',
+					image: undefined,
+				},
 				dataLabels: {
 					name: {
 						show: false,
@@ -379,220 +436,307 @@ const RadialBarChart = ({ data }) => {
 		],
 	};
 
-	return (
-			<Chart options={options} series={series} type="radialBar" height={390} />
-		
-	);
+	return <Chart options={options} series={series} type="radialBar" height={390} />;
 };
 
 const MaintenanceCashflowWidget = ({ data }) => {
-  let submitted = 0;
-  let accepted = 0;
-  let scheduled = 0;
-  let finished = 0;
+	let submitted = 0;
+	let accepted = 0;
+	let scheduled = 0;
+	let finished = 0;
 
-  data.forEach((item) => {
-    if (item.total_estimate !== null) {
-        switch (item.maintenance_status) {
-          case 'SUBMITTED':
-            submitted += item.total_estimate;
-            break;
-            case 'ACCEPTED':
-                accepted += item.total_estimate;
-                break;
-            case 'SCHEDULED':
-                scheduled += item.total_estimate;
-                break;
-            case 'FINISHED':
-                finished += item.total_estimate;
-                break;
-            default:
-                break;
-        }
-    }
-});
+	data.forEach((item) => {
+		if (item.total_estimate !== null) {
+			switch (item.maintenance_status) {
+				case 'SUBMITTED':
+					submitted += item.total_estimate;
+					break;
+				case 'ACCEPTED':
+					accepted += item.total_estimate;
+					break;
+				case 'SCHEDULED':
+					scheduled += item.total_estimate;
+					break;
+				case 'FINISHED':
+					finished += item.total_estimate;
+					break;
+				default:
+					break;
+			}
+		}
+	});
 
-  return (
-    <Grid item xs={11} sx={{
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: '#F2F2F2'
-    }}>
-        <Grid container direction="column" columnGap={1} rowGap={5}>
-            <Grid item xs={10} sx={{
-              backgroundColor: "#CEA892",
-              textTransform: "none",                            
-              borderRadius: "10px",
-              display: 'flex',
-              flexDirection: "column",                            
-              alignItems: "center",
-            }}>                
-              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                  Quotes Submitted Cashflow
-              </Typography>
-              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "20px"}}>
-                  ${submitted}
-              </Typography>
-               
-            </Grid>
-            <Grid item xs={10} sx={{
-              backgroundColor: "#BAAC7A",
-              textTransform: "none",                            
-              borderRadius: "10px",
-              display: 'flex',
-              flexDirection: "column",                            
-              alignItems: "center",
-            }}>
-                
-              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                  Quotes Accepted Cashflow
-              </Typography>
-              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "20px"}}>
-                  ${accepted}
-                  </Typography>
-                
-            </Grid>
+	return (
+		<Grid
+			item
+			xs={11}
+			sx={{
+				alignItems: 'center',
+				justifyContent: 'center',
+				backgroundColor: '#F2F2F2',
+			}}
+		>
+			<Grid container direction="column" columnGap={1} rowGap={5}>
+				<Grid
+					item
+					xs={10}
+					sx={{
+						backgroundColor: '#CEA892',
+						textTransform: 'none',
+						borderRadius: '10px',
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+					}}
+				>
+					<Typography
+						sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '16px' }}
+					>
+						Quotes Submitted Cashflow
+					</Typography>
+					<Typography
+						sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '20px' }}
+					>
+						${submitted}
+					</Typography>
+				</Grid>
+				<Grid
+					item
+					xs={10}
+					sx={{
+						backgroundColor: '#BAAC7A',
+						textTransform: 'none',
+						borderRadius: '10px',
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+					}}
+				>
+					<Typography
+						sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '16px' }}
+					>
+						Quotes Accepted Cashflow
+					</Typography>
+					<Typography
+						sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '20px' }}
+					>
+						${accepted}
+					</Typography>
+				</Grid>
 
-            <Grid item xs={10} sx={{
-              backgroundColor: "#959A76",
-              textTransform: "none",                            
-              borderRadius: "10px",
-              display: 'flex',
-              flexDirection: "column",                            
-              alignItems: "center",
-            }}>
-                
-              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                  Quotes Scheduled Cashflow
-              </Typography>
-              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "20px"}}>
-                  ${scheduled}
-                   </Typography>                
-            </Grid>
+				<Grid
+					item
+					xs={10}
+					sx={{
+						backgroundColor: '#959A76',
+						textTransform: 'none',
+						borderRadius: '10px',
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+					}}
+				>
+					<Typography
+						sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '16px' }}
+					>
+						Quotes Scheduled Cashflow
+					</Typography>
+					<Typography
+						sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '20px' }}
+					>
+						${scheduled}
+					</Typography>
+				</Grid>
 
-
-            <Grid item xs={10} sx={{
-              backgroundColor: "#598A96",
-              textTransform: "none",                            
-              borderRadius: "10px",
-              display: 'flex',
-              flexDirection: "column",                            
-              alignItems: "center",
-            }}>
-                
-              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "16px"}}>
-                  Quotes Finished Cashflow
-              </Typography>
-              <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "20px"}}>
-                  ${finished}
-                  </Typography>                
-            </Grid>
-        </Grid>
-    </Grid>
-  );
-}
+				<Grid
+					item
+					xs={10}
+					sx={{
+						backgroundColor: '#598A96',
+						textTransform: 'none',
+						borderRadius: '10px',
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+					}}
+				>
+					<Typography
+						sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '16px' }}
+					>
+						Quotes Finished Cashflow
+					</Typography>
+					<Typography
+						sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '20px' }}
+					>
+						${finished}
+					</Typography>
+				</Grid>
+			</Grid>
+		</Grid>
+	);
+};
 
 const RevenueTable = ({ data }) => {
-  return (
-    <Box sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', p: 3 }}>
-    <TableContainer
-      component={Paper}
-      sx={{
-        borderRadius: '10px',
-        maxHeight: '600px', // Adjust the height as needed
-        maxWidth: '100%', // Adjust the width as needed
-        overflowX: 'scroll',
-        overflowY: 'auto',
-      }}
-    >
-      <Table >
-        <TableHead >
-          <TableRow sx={{ borderBottom: '1px solid #4A4A4A', backgroundColor: '#F2F2F2' }}>
-            <TableCell sx={{
-                position: 'sticky',
-                top: 0,
-                backgroundColor: '#F2F2F2',
-                borderBottom: '1px solid #4A4A4A',
-                zIndex: 1,
-                padding: '10px 20px',
-                whiteSpace: 'nowrap'
-              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}> QuoteID</Typography></TableCell>
-            <TableCell sx={{
-                position: 'sticky',
-                top: 0,
-                backgroundColor: '#F2F2F2',
-                borderBottom: '1px solid #4A4A4A',
-                zIndex: 1,
-                padding: '10px 20px',
-                whiteSpace: 'nowrap'
-              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>BusinessID</Typography></TableCell>
-            <TableCell sx={{
-                position: 'sticky',
-                top: 0,
-                backgroundColor: '#F2F2F2',
-                borderBottom: '1px solid #4A4A4A',
-                zIndex: 1,
-                padding: '10px 20px',
-                whiteSpace: 'nowrap'
-              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Business Name</Typography></TableCell>
-            <TableCell sx={{
-                position: 'sticky',
-                top: 0,
-                backgroundColor: '#F2F2F2',
-                borderBottom: '1px solid #4A4A4A',
-                zIndex: 1,
-                padding: '10px 20px',
-                whiteSpace: 'nowrap'
-              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Maintenance Description</Typography></TableCell>
-            <TableCell sx={{
-                position: 'sticky',
-                top: 0,
-                backgroundColor: '#F2F2F2',
-                borderBottom: '1px solid #4A4A4A',
-                zIndex: 1,
-                padding: '10px 20px',
-                whiteSpace: 'nowrap'
-              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Property Address</Typography></TableCell>
-            <TableCell sx={{
-                position: 'sticky',
-                top: 0,
-                backgroundColor: '#F2F2F2',
-                borderBottom: '1px solid #4A4A4A',
-                zIndex: 1,
-                padding: '10px 20px',
-                whiteSpace: 'nowrap'
-              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Due Date</Typography></TableCell>
-            <TableCell sx={{
-                position: 'sticky',
-                top: 0,
-                backgroundColor: '#F2F2F2',
-                borderBottom: '1px solid #4A4A4A',
-                zIndex: 1,
-                padding: '10px 20px',
-                whiteSpace: 'nowrap'
-              }}><Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>Amount</Typography></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody sx={{ backgroundColor: '#F2F2F2' }}>
-          {data.map((row, index) => (
-            <TableRow key={index} sx={{ borderBottom: '1px solid #4A4A4A' }}>
-              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.maintenance_quote_uid}</Typography></TableCell>
+	return (
+		<Box sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', p: 3 }}>
+			<TableContainer
+				component={Paper}
+				sx={{
+					borderRadius: '10px',
+					maxHeight: '600px', // Adjust the height as needed
+					maxWidth: '100%', // Adjust the width as needed
+					overflowX: 'scroll',
+					overflowY: 'auto',
+				}}
+			>
+				<Table>
+					<TableHead>
+						<TableRow sx={{ borderBottom: '1px solid #4A4A4A', backgroundColor: '#F2F2F2' }}>
+							<TableCell
+								sx={{
+									position: 'sticky',
+									top: 0,
+									backgroundColor: '#F2F2F2',
+									borderBottom: '1px solid #4A4A4A',
+									zIndex: 1,
+									padding: '10px 20px',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
+									{' '}
+									QuoteID
+								</Typography>
+							</TableCell>
+							<TableCell
+								sx={{
+									position: 'sticky',
+									top: 0,
+									backgroundColor: '#F2F2F2',
+									borderBottom: '1px solid #4A4A4A',
+									zIndex: 1,
+									padding: '10px 20px',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
+									BusinessID
+								</Typography>
+							</TableCell>
+							<TableCell
+								sx={{
+									position: 'sticky',
+									top: 0,
+									backgroundColor: '#F2F2F2',
+									borderBottom: '1px solid #4A4A4A',
+									zIndex: 1,
+									padding: '10px 20px',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
+									Business Name
+								</Typography>
+							</TableCell>
+							<TableCell
+								sx={{
+									position: 'sticky',
+									top: 0,
+									backgroundColor: '#F2F2F2',
+									borderBottom: '1px solid #4A4A4A',
+									zIndex: 1,
+									padding: '10px 20px',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
+									Maintenance Description
+								</Typography>
+							</TableCell>
+							<TableCell
+								sx={{
+									position: 'sticky',
+									top: 0,
+									backgroundColor: '#F2F2F2',
+									borderBottom: '1px solid #4A4A4A',
+									zIndex: 1,
+									padding: '10px 20px',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
+									Property Address
+								</Typography>
+							</TableCell>
+							<TableCell
+								sx={{
+									position: 'sticky',
+									top: 0,
+									backgroundColor: '#F2F2F2',
+									borderBottom: '1px solid #4A4A4A',
+									zIndex: 1,
+									padding: '10px 20px',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
+									Due Date
+								</Typography>
+							</TableCell>
+							<TableCell
+								sx={{
+									position: 'sticky',
+									top: 0,
+									backgroundColor: '#F2F2F2',
+									borderBottom: '1px solid #4A4A4A',
+									zIndex: 1,
+									padding: '10px 20px',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
+									Amount
+								</Typography>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody sx={{ backgroundColor: '#F2F2F2' }}>
+						{data.map((row, index) => (
+							<TableRow key={index} sx={{ borderBottom: '1px solid #4A4A4A' }}>
+								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+									<Typography sx={{ color: '#160449' }}>{row.maintenance_quote_uid}</Typography>
+								</TableCell>
 
-              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.business_uid}</Typography></TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.business_name}</Typography></TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.maintenance_title}</Typography></TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
-                <Typography sx={{ color: '#160449' }}>
-                  {row.property_address}, {row.property_city}, {row.property_state} {row.property_zip}
-                </Typography>
-              </TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.maintenance_scheduled_date && row.maintenance_scheduled_date !== 'null' ? row.maintenance_scheduled_date : 'N/A'}</Typography></TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}><Typography sx={{ color: '#160449' }}>{row.quote_total_estimate}</Typography></TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </Box>
-  )
- };
+								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+									<Typography sx={{ color: '#160449' }}>{row.business_uid}</Typography>
+								</TableCell>
+								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+									<Typography sx={{ color: '#160449' }}>{row.business_name}</Typography>
+								</TableCell>
+								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+									<Typography sx={{ color: '#160449' }}>{row.maintenance_title}</Typography>
+								</TableCell>
+								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+									<Typography sx={{ color: '#160449' }}>
+										{row.property_address}, {row.property_city}, {row.property_state}{' '}
+										{row.property_zip}
+									</Typography>
+								</TableCell>
+								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+									<Typography sx={{ color: '#160449' }}>
+										{row.maintenance_scheduled_date && row.maintenance_scheduled_date !== 'null'
+											? row.maintenance_scheduled_date
+											: 'N/A'}
+									</Typography>
+								</TableCell>
+								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+									<Typography sx={{ color: '#160449' }}>{row.quote_total_estimate}</Typography>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</Box>
+	);
+};
