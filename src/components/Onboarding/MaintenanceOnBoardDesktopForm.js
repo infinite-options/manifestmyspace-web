@@ -146,7 +146,7 @@ const MaintenanceOnBoardDesktopForm = () => {
 
   const getPayload = () => {
       return {
-        business_user_id: "100-0XX",
+        business_user_id: user.user_uid,
         business_type: "MAINTENANCE",
         business_name: businessName,
         business_photo_url: photo,
@@ -160,19 +160,6 @@ const MaintenanceOnBoardDesktopForm = () => {
         business_city: city,
         business_state: state,
         business_zip: zip,
-       
-        employee_first_name: empFirstName,
-        employee_last_name: empLastName,
-        employee_phone_number: empPhoneNumber,
-        employee_email: empEmail,
-        employee_role: "OWNER",
-        employee_address: empAddress,
-        employee_unit: empUnit,
-        employee_city: empCity,
-        employee_state: empState,
-        employee_zip: empZip,
-        employee_photo: photo,
-        employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
       };           
   };
 
@@ -238,6 +225,39 @@ const MaintenanceOnBoardDesktopForm = () => {
       return form;
   };
 
+  const CreateEmpStep = async (businessId) => {
+    // setShowSpinner(true);
+     const payload = {
+       employee_user_id: user.user_uid,
+       employee_business_id: businessId,
+       employee_first_name: firstName,
+       employee_last_name: lastName,
+       employee_phone_number: phoneNumber,
+       employee_email: email,
+       employee_role: "OWNER",
+       employee_photo_url: photo,
+       employee_address: address,
+       employee_unit: unit,
+       employee_city: city,
+       employee_state: state,
+       employee_zip: zip,
+       employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
+     };
+ 
+     const formPayload= encodeForm(payload);
+     // for (const key of Object.keys(payload)) {
+     //   if (key === "employee_photo" && payload[key]) formPayload.append(key, payload[key].file);
+     //   else formPayload.append(key, payload[key]);
+     // }
+     const { data } = await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee", formPayload, headers);
+     setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
+     updateProfileUid({ business_owner_id: data.employee_uid });
+     //setShowSpinner(false);
+     
+   };
+  
+ 
+
   const handleNextStep = async() => {
       setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
       if (firstName === "") {
@@ -270,21 +290,21 @@ const MaintenanceOnBoardDesktopForm = () => {
       const data = await createProfile(form);
 
       
-
       setShowSpinner(false);
       let role_id = {};
       if (data.business_uid) {
         
          updateProfileUid({ business_uid: data.business_uid });
           let businesses = user.businesses;
-         businesses["MANAGEMENT"].business_uid = data.business_uid;
+         businesses["MAINTENANCE"].business_uid = data.business_uid;
           role_id = { businesses };
           setCookie("user", { ...user, ...role_id });
           const paymentSetup = await handlePaymentStep(data.business_uid);
           console.log(paymentSetup);
+          const createEmp= await CreateEmpStep(data.business_uid);
+          console.log(createEmp);
       }
       setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
-      // navigate("/onboardingRouter");
       return;
   };
 
@@ -326,15 +346,15 @@ const MaintenanceOnBoardDesktopForm = () => {
     setBusinessName(event.target.value);
   };
 
-  const handlePaymentStep = async (owner_id) => {
+ const handlePaymentStep = async (bussiness_id) => {
      // setShowSpinner(true);
       const keys = Object.keys(paymentMethods);
-      const profile= getPayload();
-      const paymentpayload =  [];
+      
+      const payload =  [];
       keys.forEach((key) => {
           if (paymentMethods[key].value !== "") {
               let paymentMethodPayload = {
-                 // paymentMethod_profile_id: owner_id,
+                  paymentMethod_profile_id: bussiness_id,
                   paymentMethod_type: key,
               };
               if (key === "bank_account") {
@@ -342,27 +362,27 @@ const MaintenanceOnBoardDesktopForm = () => {
                   if (bankAccount.routing_number && bankAccount.account_number) {
                       paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
                       paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-                      paymentpayload.push(paymentMethodPayload);
+                      payload.push(paymentMethodPayload);
                   }
               } else {
                   paymentMethodPayload.paymentMethod_value = paymentMethods[key].value;
-                  paymentpayload.push(paymentMethodPayload);
+                  payload.push(paymentMethodPayload);
               }
           }
       });
-      const finalPayload={
-        ...profile,
-        paymentpayload
-      }
-      console.log("Payment payload: ", finalPayload);
-      // const response = await axios.post(
-      //     "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
-      //     payload,
-      //     { headers: { "Content-Type": "application/json" } }
-      // );
-      // console.log("POST response: ", response);
-      // setShowSpinner(false);
-      // setCookie("default_form_vals", { ...cookiesData, paymentMethods });
+      // const finalPayload={
+      //   ...profile,
+      //   paymentpayload
+      // }
+      // console.log("Payment payload: ", finalPayload);
+      const response = await axios.post(
+          "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+          payload,
+          { headers: { "Content-Type": "application/json" } }
+      );
+      console.log("POST response: ", response);
+      //setShowSpinner(false);
+      setCookie("default_form_vals", { ...cookiesData, paymentMethods });
       // Handle navigation based on user type, if needed
   };
 
@@ -957,7 +977,7 @@ const MaintenanceOnBoardDesktopForm = () => {
           <Button
               variant="contained"
               color="primary"
-              onClick={handlePaymentStep}
+              onClick={handleNextStep}
               disabled={nextStepDisabled}
           >
               Save

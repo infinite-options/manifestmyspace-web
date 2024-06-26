@@ -9,6 +9,8 @@ import ManagerOnBoardDesktopForm from './ManagerOnBoardDesktopForm';
 import TenantOnBoardDesktopForm from './TenantOnBoardDesktopForm';
 import OwnerOnBoardDeskTopForm from './OwnerOnBoardDesktopForm';
 import MaintenanceOnBoardDesktopForm from './MaintenanceOnBoardDesktopForm';
+import PMEmpOnBoardDesktopForm from './PMEmpOnBoardDesktopForm';
+import MaintEmpOnBoardDesktopForm from './MaintEmpOnBoardDesktopForm';
 
 const OnBoardDesktop = () => {
   const { setAuthData, onboardingState, setOnboardingState } = useUser();
@@ -96,16 +98,16 @@ const OnBoardDesktop = () => {
     switch (activeForm) {
       case 'MANAGER':
         return <ManagerOnBoardDesktopForm />;
-      case 'EMPLOYEE':
-        return <TenantOnBoardDesktopForm />;
+      case 'PM_EMPLOYEE':
+        return <PMEmpOnBoardDesktopForm />;
       case 'OWNER':
         return <OwnerOnBoardDeskTopForm />;
       case 'TENANT':
         return <TenantOnBoardDesktopForm />;
       case 'MAINTENANCE':
         return <MaintenanceOnBoardDesktopForm />;
-      case 'MAINTENANCE_EMP':
-        return <ManagerOnBoardDesktopForm />;
+      case 'MAINT_EMPLOYEE':
+        return <MaintEmpOnBoardDesktopForm />;
       default:
         return (
           <div>
@@ -145,12 +147,12 @@ const OnBoardDesktop = () => {
             <Button 
               fullWidth 
               variant="contained" 
-              onClick={() => handleRoleSelect('EMPLOYEE')}
+              onClick={() => handleRoleSelect('PM_EMPLOYEE')}
               sx={{ 
-                backgroundColor: activeForm === 'EMPLOYEE' ? 'darkblue' : 'rgb(61, 92, 172)', 
+                backgroundColor: activeForm === 'PM_EMPLOYEE' ? 'darkblue' : 'rgb(61, 92, 172)', 
                 color: '#fff',
                 '&:hover': {
-                  backgroundColor: activeForm === 'EMPLOYEE' ? 'darkblue' : 'rgb(41, 72, 152)',
+                  backgroundColor: activeForm === 'PM_EMPLOYEE' ? 'darkblue' : 'rgb(41, 72, 152)',
                 }
               }}
             >
@@ -201,12 +203,12 @@ const OnBoardDesktop = () => {
             <Button 
               fullWidth 
               variant="contained" 
-              onClick={() => handleRoleSelect('MAINTENANCE_EMP')}
+              onClick={() => handleRoleSelect('MAINT_EMPLOYEE')}
               sx={{ 
-                backgroundColor: activeForm === 'MAINTENANCE_EMP' ? 'darkblue' : 'rgb(61, 92, 172)', 
+                backgroundColor: activeForm === 'MAINT_EMPLOYEE' ? 'darkblue' : 'rgb(61, 92, 172)', 
                 color: '#fff',
                 '&:hover': {
-                  backgroundColor: activeForm === 'MAINTENANCE_EMP' ? 'darkblue' : 'rgb(41, 72, 152)',
+                  backgroundColor: activeForm === 'MAINT_EMPLOYEE' ? 'darkblue' : 'rgb(41, 72, 152)',
                 }
               }}
             >

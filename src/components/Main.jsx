@@ -6,6 +6,8 @@ import { roleMap } from "./Onboarding/helper";
 import { Box } from "@mui/material";
 import OwnerOnBoardDeskTopForm from "./Onboarding/OwnerOnBoardDesktopForm";
 import MaintenanceOnBoardDesktopForm from "./Onboarding/MaintenanceOnBoardDesktopForm";
+import PMEmpOnBoardDesktopForm from "./Onboarding/PMEmpOnBoardDesktopForm";
+import MaintEmpOnBoardDesktopForm from "./Onboarding/MaintEmpOnBoardDesktopForm";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -191,7 +193,7 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/tt" element={<MaintenanceOnBoardDesktopForm />} />
+            
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
             <Route path="newUser" element={<NewUser />} />

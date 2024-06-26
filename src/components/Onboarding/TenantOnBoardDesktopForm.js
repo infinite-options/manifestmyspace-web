@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import {  useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
 import theme from "../../theme/theme";
@@ -242,7 +242,7 @@ const TenantOnBoardDesktopForm = () => {
           console.log(paymentSetup);
         }
         setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
-        Navigate("/onboardingRouter");
+      
         return ;
        
      
