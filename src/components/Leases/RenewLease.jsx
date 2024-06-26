@@ -26,6 +26,7 @@ import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import RenewLeaseButton from "./RenewLeaseButton";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import APIConfig from '../../utils/APIConfig';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -73,7 +74,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [leasePets, setLeasePets] = useState([]);
     const [leaseVehicles, setLeaseVehicles] = useState([]);
     const color = theme.palette.form.main;
-    const [expanded, setExpanded] = useState(false);
+    const [relationships, setRelationships] = useState([]);
+    const [states, setStates] = useState([]);
 
     useEffect(() => {
         const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
@@ -138,6 +140,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         setLeaseChildren(children);
         setLeasePets(pets);
         setLeaseVehicles(vehicles);
+        getListDetails();
     }, [leaseDetails, selectedLeaseId])
 
     const tenantColumns = [
@@ -499,9 +502,22 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         setSnackbarOpen(true);
     };
 
-    const handleAccordionToggle = () => {
-        setExpanded(!expanded);
-    };
+    const getListDetails = async () => {
+        try {
+            const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+            if (!response.ok) {
+                console.log("Error fetching lists data");
+            }
+            const responseJson = await response.json();
+            const relationships = responseJson.result.filter(res => res.list_category === "relationships");
+            const states = responseJson.result.filter(res => res.list_category === "states");
+            setRelationships(relationships);
+            setStates(states);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     return (
         <Box
@@ -1348,24 +1364,24 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 fontSize: theme.typography.smallFont,
                                             }}
                                             size="small"
-                                            // onClick={() => {
-                                            //     setcurrentFeeRow({
-                                            //         fee_Type: '',
-                                            //         available_topay: '',
-                                            //         charge: '',
-                                            //         due_by: '',
-                                            //         due_by_date: dayjs(),
-                                            //         fee_name: '',
-                                            //         fee_type: '',
-                                            //         frequency: '',
-                                            //         late_by: '',
-                                            //         late_fee: '',
-                                            //         perDay_late_fee: '',
-                                            //     });
-                                            //     setIsFeeEditing(false);
-                                            //     handleFeeModalOpen();
-                                            // }}
-                                            >
+                                        // onClick={() => {
+                                        //     setcurrentFeeRow({
+                                        //         fee_Type: '',
+                                        //         available_topay: '',
+                                        //         charge: '',
+                                        //         due_by: '',
+                                        //         due_by_date: dayjs(),
+                                        //         fee_name: '',
+                                        //         fee_type: '',
+                                        //         frequency: '',
+                                        //         late_by: '',
+                                        //         late_fee: '',
+                                        //         perDay_late_fee: '',
+                                        //     });
+                                        //     setIsFeeEditing(false);
+                                        //     handleFeeModalOpen();
+                                        // }}
+                                        >
                                             <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                                         </Button>
                                     </Box>
@@ -1427,16 +1443,16 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     {leaseAdults &&
-                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} />
+                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} relationships={relationships}/>
                                     }
                                     {leaseChildren &&
-                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} />
+                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} relationships={relationships}/>
                                     }
                                     {leasePets &&
                                         <PetsOccupant leasePets={leasePets} setLeasePets={setLeasePets} />
                                     }
                                     {leaseVehicles &&
-                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} />
+                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} states={states}/>
                                     }
                                 </AccordionDetails>
                             </Accordion>
