@@ -1,6 +1,6 @@
 const contactsContainer = [
     { tab: 'Owner', color: '#3D5CAC' },
-    { tab: 'Managers', color: '#3D5CAC' },
+    { tab: 'Manager', color: '#3D5CAC' },
     { tab: 'Tenant', color: '#160449' },
     { tab: 'Maintenance', color: '#A52A2A' },
     { tab: 'Employee', color: '#FF8A00' },
