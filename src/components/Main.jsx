@@ -4,6 +4,10 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import { roleMap } from "./Onboarding/helper";
 import { Box } from "@mui/material";
+import OwnerOnBoardDeskTopForm from "./Onboarding/OwnerOnBoardDesktopForm";
+import MaintenanceOnBoardDesktopForm from "./Onboarding/MaintenanceOnBoardDesktopForm";
+import PMEmpOnBoardDesktopForm from "./Onboarding/PMEmpOnBoardDesktopForm";
+import MaintEmpOnBoardDesktopForm from "./Onboarding/MaintEmpOnBoardDesktopForm";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -43,6 +47,7 @@ import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
 import PMRent from "./Rent/PMRent/PMRent";
 import PMRentDetail from "./Rent/PMRent/PMRentDetail";
 
+
 import MaintenanceProfile from "./Profile/MaintenanceProfile/MaintenanceProfile";
 
 import ViewTransactionOwner from "./Transactions/ViewTransactionOwner";
@@ -58,7 +63,7 @@ import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
 import Contacts from "./Contacts/Contacts";
-import OwnerContacts from "./Contacts/OwnerContacts";
+import OwnerContacts from "./Contacts/OwnerContacts/OwnerContacts";
 import PMContacts from "./Contacts/PMContacts/PMContacts";
 import MaintenanceContacts from "./Contacts/MaintenanceContacts";
 import ContactDetails from "./Contacts/ContactDetails";
@@ -73,6 +78,7 @@ import OwnerContactDetailsHappinessMatrix from "./Contacts/ContactDetails/OwnerC
 import PropertyList from "./Property/PropertyList";
 // import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard/OwnerDashboard";
+import ManagerOnBoardDesktopForm from "./Onboarding/ManagerOnBoardDesktopForm";
 import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
@@ -126,6 +132,7 @@ import RescheduleMaintenance from "./Maintenance/Manager/RescheduleMaintenance";
 import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
 import Onboarding from "./Onboarding/Onboarding";
+import OnBoardDesktop from "./Onboarding/OnBoardDesktop";
 import NewUser from "./Onboarding/NewUser";
 import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
@@ -188,7 +195,9 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
+            
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
             <Route path="newUser" element={<NewUser />} />
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
@@ -208,6 +217,7 @@ function Main() {
 
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
+           
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />

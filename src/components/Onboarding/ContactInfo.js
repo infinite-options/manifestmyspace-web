@@ -6,11 +6,12 @@ import {
   ThemeProvider,
   Button,
   Typography,
+  TextField,
+  useMediaQuery,
 } from "@mui/material";
 import theme from "../../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { TextField } from "@mui/material";
 import { formatPhoneNumber } from "./helper";
 import { useCookies } from "react-cookie";
 import DataValidator from "../DataValidator";
@@ -18,7 +19,7 @@ import DataValidator from "../DataValidator";
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
-      backgroundColor: "#D6D5DA", // Update the background color here
+      backgroundColor: "#D6D5DA",
       borderRadius: 10,
       height: 30,
       marginBlock: 10,
@@ -37,23 +38,22 @@ function Register() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
-  const validate_form= () =>{
-
+  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const validate_form = () => {
     if (firstName === "" || lastName === "" || phoneNumber === "") {
       alert("Please fill out all fields");
       return false;
     }
-    if (!DataValidator.phone_validate(phoneNumber )){
+    if (!DataValidator.phone_validate(phoneNumber)) {
       alert("Please enter a valid phone number");
       return false;
     }
-  }
-
-
+    return true;
+  };
 
   const handleCreateUser = async () => {
-    if (validate_form() === false)
-      return;
+    if (validate_form() === false) return;
+
     const user = {
       first_name: firstName,
       last_name: lastName,
@@ -63,8 +63,14 @@ function Register() {
       role: "",
       isEmailSignup: true,
     };
-    setCookie("default_form_vals", {...cookiesData, firstName, lastName, phoneNumber, email });
-    navigate("/selectRole", { state: { user } });
+
+    setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email });
+
+    if (isDesktop) {
+      navigate("/onboardingDesktop", { state: { user } });
+    } else {
+      navigate("/selectRole", { state: { user } });
+    }
   };
 
   return (
@@ -74,10 +80,9 @@ function Register() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-
-          width: "100%", // Take up full screen width
-          height: "100vh", // Set the Box height to full view height
-          justifyContent: "flex-start", // Align items at the top
+          width: "100%",
+          height: "100vh",
+          justifyContent: "flex-start",
         }}
       >
         <Box
@@ -103,7 +108,7 @@ function Register() {
           style={{
             padding: theme.spacing(2),
             backgroundColor: theme.palette.primary.main,
-            width: "85%", // Occupy full width with 25px margins on each side
+            width: "85%",
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },
@@ -119,20 +124,18 @@ function Register() {
             position="relative"
             flexDirection="column"
           >
-            <>
-              <Stack spacing={-2} m={5} direction="row">
-                <Typography
-                  sx={{
-                    color: theme.typography.propertyPage.color,
-                    fontFamily: "Source Sans Pro",
-                    fontWeight: theme.typography.common.fontWeight,
-                    fontSize: theme.typography.largeFont,
-                  }}
-                >
-                  {"Contact Info"}
-                </Typography>
-              </Stack>
-            </>
+            <Stack spacing={-2} m={5} direction="row">
+              <Typography
+                sx={{
+                  color: theme.typography.propertyPage.color,
+                  fontFamily: "Source Sans Pro",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.largeFont,
+                }}
+              >
+                {"Contact Info"}
+              </Typography>
+            </Stack>
           </Box>
 
           <Stack spacing={-2} m={5}>
@@ -179,9 +182,7 @@ function Register() {
               <TextField
                 type="tel"
                 value={phoneNumber}
-                onChange={(e) =>
-                  setPhoneNumber(formatPhoneNumber(e.target.value))
-                }
+                onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
                 placeholder="Phone Number"
                 fullWidth
                 className={classes.root}
