@@ -27,7 +27,7 @@ const RenewLeaseButton = ({ theme, handleRenewLease, leaseData }) => {
                     color: theme.palette.background.default,
                     cursor: "pointer",
                     textTransform: "none",
-                    minWidth: "200px",
+                    minWidth: "150px",
                     minHeight: "35px",
                     // width: "100%",
                     display: "flex",
@@ -48,7 +48,7 @@ const RenewLeaseButton = ({ theme, handleRenewLease, leaseData }) => {
                     whiteSpace: "nowrap",
                     marginLeft: "1%",
                 }}>
-                    {"Renew Lease"}
+                    {"Renew"}
                 </Typography>
             </Button>
             <Dialog
