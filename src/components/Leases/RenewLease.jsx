@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
     Typography, Box, Paper, Grid, FormControlLabel, Radio, RadioGroup,
     TextField, MenuItem, Button, OutlinedInput, FormControl, InputAdornment, Select, Dialog, DialogActions,
@@ -76,6 +76,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const color = theme.palette.form.main;
     const [relationships, setRelationships] = useState([]);
     const [states, setStates] = useState([]);
+    const [endLeaseStatus, setEndLeaseStatus] = useState("");
+    const alertRef = useRef(null);
+
 
     useEffect(() => {
         const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
@@ -142,6 +145,12 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         setLeaseVehicles(vehicles);
         getListDetails();
     }, [leaseDetails, selectedLeaseId])
+
+    useEffect(() => {
+        if (snackbarOpen && alertRef.current) {
+            alertRef.current.focus();
+        }
+    }, [snackbarOpen]);
 
     const tenantColumns = [
         {
@@ -405,11 +414,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         const formattedMoveOutDate = formatDate(moveoutDate);;
         leaseApplicationFormData.append("lease_uid", currentLease.lease_uid);
         leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);
-        if (selectedRole === "MANAGER") {
-            leaseApplicationFormData.append("lease_status", "NOT-RENEWED");
-        } else {
-            leaseApplicationFormData.append("lease_status", "END-REQUEST");
-        }
+        leaseApplicationFormData.append("lease_status", endLeaseStatus);
 
         console.log('formattedMoveOutDate', formattedMoveOutDate, typeof (formattedMoveOutDate))
         console.log('end form', leaseApplicationFormData);
@@ -417,7 +422,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
             .then((response) => {
                 console.log("Data updated successfully", response);
-                showSnackbar("Successfully terminated the lease.", "success");
+                showSnackbar(`Your lease has been moved to ${endLeaseStatus} status.`, "success");
             })
             .catch((error) => {
                 if (error.response) {
@@ -429,74 +434,69 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
 
     const handleRenewLease = async () => {
         try {
-            //Step 1 - Make the existing lease TERMINATED with a move out date, lease status - END-APPROVED
+            //Renew the lease by creating a new lease row in DB with lease status - "PROCESSING" if requested by Manager 
+            //or "NEW" if requested by tenant
             const headers = {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "*",
                 "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*"
+                "Access-Control-Allow-Credentials": "*",
             };
+            console.log('tenantWithId', tenantWithId, typeof (tenantWithId));
+            // Renew for all tenants in tenants list
+            for (let i = 0; i < tenantWithId.length; i++) {
+                const leaseApplicationFormData = new FormData();
+                let date = new Date()
 
-            const leaseApplicationFormData = new FormData();
-            const formattedMoveOutDate = formatDate(moveoutDate);
-            leaseApplicationFormData.append("lease_uid", currentLease.lease_uid);
-            leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);
-            leaseApplicationFormData.append("lease_status", "END-APPROVED");
+                leaseApplicationFormData.append('lease_property_id', currentLease.property_uid);
+                leaseApplicationFormData.append("lease_start", formatDate(newStartDate));
+                leaseApplicationFormData.append("lease_end", formatDate(newEndDate));
+                leaseApplicationFormData.append("lease_end_notice_period", currentLease.lease_end_notice_period);
+                leaseApplicationFormData.append('lease_assigned_contacts', currentLease.lease_assigned_contacts);
+                leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
+                leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
+                leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
+                leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
+                leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
+                leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString());
+                leaseApplicationFormData.append('tenant_uid', tenantWithId[i].tenant_uid);
+                leaseApplicationFormData.append('lease_referred', currentLease.lease_referred)
+                leaseApplicationFormData.append("lease_move_in_date", currentLease.lease_move_in_date);
+                leaseApplicationFormData.append("property_listed_rent", newRent);
+                leaseApplicationFormData.append("frequency", newFreq);
+                //leaseApplicationFormData.append("lease_rent_late_by", newLateBy);
+                // leaseApplicationFormData.append("lease_rent_late_fee", newLateFee);
+                // leaseApplicationFormData.append("lease_rent_due_by", newDueBy);
+                // leaseApplicationFormData.append("lease_rent_available_topay", newAvlToPay);
+                // leaseApplicationFormData.append("lease_rent_perDay_late_fee", newLateFeePerDay);
+                const feesJSON =  JSON.stringify(leaseFees)
+                leaseApplicationFormData.append("lease_fees", feesJSON);
 
-            axios
-                .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
-                .then((response) => {
+                if(selectedRole === "MANAGER"){
+                    leaseApplicationFormData.append('lease_status', "PROCESSING");
+                } else {
+                    leaseApplicationFormData.append('lease_status', "NEW");
+                }
 
-                    //Step 2 - Renew the lease by creating a new lease row in DB with lease status - "DRAFT"
-                    console.log('check', tenantWithId, typeof (tenantWithId));
-                    // Renew for all tenants in tenants list
-                    for (let i = 0; i < tenantWithId.length; i++) {
-                        const leaseApplicationFormData = new FormData();
-                        let date = new Date()
-
-                        leaseApplicationFormData.append('lease_property_id', currentLease.property_uid);
-                        leaseApplicationFormData.append('lease_status', "DRAFT");
-                        leaseApplicationFormData.append('lease_assigned_contacts', currentLease.lease_assigned_contacts);
-                        leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
-                        leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
-                        leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
-                        leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
-                        leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
-                        leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString());
-                        leaseApplicationFormData.append('tenant_uid', tenantWithId[i].tenant_uid);
-
-                        leaseApplicationFormData.append("lease_start", formatDate(newStartDate));
-                        leaseApplicationFormData.append("lease_end", formatDate(newEndDate));
-                        leaseApplicationFormData.append("lease_move_in_date", currentLease.lease_move_in_date);
-                        leaseApplicationFormData.append("property_listed_rent", newRent);
-                        leaseApplicationFormData.append("frequency", newFreq);
-                        leaseApplicationFormData.append("lease_rent_late_by", newLateBy);
-                        leaseApplicationFormData.append("lease_rent_late_fee", newLateFee);
-                        leaseApplicationFormData.append("lease_rent_due_by", newDueBy);
-                        leaseApplicationFormData.append("lease_rent_available_topay", newAvlToPay);
-                        leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees));
-
-                        axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                            .then((response) => {
-                                console.log('Data updated successfully');
-                                showSnackbar("Successfully Renewed the lease.", "success");
-                            })
-                            .catch((error) => {
-                                if (error.response) {
-                                    console.log(error.response.data);
-                                    showSnackbar("Cannot Renew the lease. Please Try Again", "error");
-                                }
-                            });
-                    }
-                })
-        } catch (error) {
-            if (error.response) {
-                console.log(error.response.data);
+                axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                    .then((response) => {
+                        console.log('Data updated successfully');
+                        showSnackbar("Successfully Renewed the lease.", "success");
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            console.log(error.response.data);
+                            showSnackbar("Cannot Renew the lease. Please Try Again", "error");
+                        }
+                    });
             }
+        } catch (error) {
+            console.log("Cannot Renew the lease");
         }
     }
 
     const showSnackbar = (message, severity) => {
+        console.log('Inside show snackbar');
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
@@ -517,7 +517,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             console.log(error);
         }
     }
-
 
     return (
         <Box
@@ -1182,8 +1181,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
 
                                             }}
                                         />
-                                        <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                                            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                                        <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                                            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
                                                 {snackbarMessage}
                                             </Alert>
                                         </Snackbar>
@@ -1443,16 +1442,16 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     {leaseAdults &&
-                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} relationships={relationships}/>
+                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} relationships={relationships} />
                                     }
                                     {leaseChildren &&
-                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} relationships={relationships}/>
+                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} relationships={relationships} />
                                     }
                                     {leasePets &&
                                         <PetsOccupant leasePets={leasePets} setLeasePets={setLeasePets} />
                                     }
                                     {leaseVehicles &&
-                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} states={states}/>
+                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} states={states} />
                                     }
                                 </AccordionDetails>
                             </Accordion>
@@ -1461,15 +1460,15 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
 
                     <Grid item xs={12} md={12}>
                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                            <Grid item md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
-                                    moveoutDate={moveoutDate} leaseData={currentLease} />
+                                    moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={false}/>
                             </Grid>
 
-                            <Grid item md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <RenewLeaseButton theme={theme} handleRenewLease={handleRenewLease} leaseData={currentLease} />
                             </Grid>
-                            <Grid item md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <Button
                                     variant="outlined"
                                     sx={{
@@ -1477,7 +1476,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         color: theme.palette.background.default,
                                         cursor: "pointer",
                                         textTransform: "none",
-                                        minWidth: "200px",
+                                        minWidth: "150px",
                                         minHeight: "35px",
                                         display: "flex",
                                         alignItems: "center",
@@ -1487,7 +1486,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         },
                                     }}
                                     size="small"
-                                    onClick={handleRenewLease}
+                                    // onClick={}
                                 >
                                     <Typography sx={{
                                         textTransform: "none",
@@ -1497,9 +1496,13 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         whiteSpace: "nowrap",
                                         marginLeft: "1%",
                                     }}>
-                                        {"Update Lease"}
+                                        {"Update"}
                                     </Typography>
                                 </Button>
+                            </Grid>
+                            <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                 <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
+                                    moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={true}/>
                             </Grid>
                         </Grid>
                     </Grid>
