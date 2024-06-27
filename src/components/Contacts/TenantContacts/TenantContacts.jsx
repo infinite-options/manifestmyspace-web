@@ -12,11 +12,11 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 import ContactsList from "../ContactsList";
-import TenantContactDetail from "../ContactDetail/TenantContactDetail";
 import ManagerContactDetail from "../ContactDetail/ManagerContactDetail";
 
 
-const OwnerContacts = () => {
+
+const TenantContacts = () => {
   const { getProfileId, selectedRole } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [contactsTab, setContactsTab] = useState("Manager");
@@ -84,79 +84,5 @@ const OwnerContacts = () => {
       </Container>    
   );
 }
-// const ContactCard = (props) => {
-//   const contact = props.data;
-//   const handleSetSelectedCard = props.selected;
-//   const dataDetails = props.dataDetails;
-//   const index = props.index;
 
-//   const handleSelection = () => {
-//     console.log("In handleSelection: ", contact, index);
-//     handleSetSelectedCard(contact, index);
-//   };
-
-//   return (
-//     <Stack>
-//       <Card
-//         sx={{
-//           backgroundColor: "#D6D5DA",
-//           borderRadius: "10px",
-//           margin: "10px",
-//           color: "#160449",
-//         }}
-//         onClick={handleSelection}
-//       >
-//         <CardContent>
-//           <Stack flexDirection="row" justifyContent="space-between">
-//             <Typography
-//               sx={{
-//                 fontSize: "16px",
-//                 fontWeight: theme.typography.common.fontWeight,
-//               }}
-//             >
-//               {`
-//                                 ${contact.contact_first_name ? contact.contact_first_name : "<FIRST_NAME>"}
-//                                 ${contact.contact_last_name ? contact.contact_last_name : "<LAST_NAME>"}
-//                             `}
-//             </Typography>
-//             <Button>
-//               <Message
-//                 sx={{
-//                   color: theme.typography.common.blue,
-//                   fontSize: "15px",
-//                 }}
-//               />
-//             </Button>
-//           </Stack>
-//           <Typography
-//             sx={{
-//               color: theme.typography.common.blue,
-//               fontSize: "14px",
-//               fontWeight: theme.typography.primary.fontWeight,
-//             }}
-//           >
-//             {`${contact.property_count ? contact.property_count : "<PROPERTY_COUNT>"} Properties`}
-//           </Typography>
-//           <Typography
-//             sx={{
-//               color: theme.typography.common.blue,
-//               fontSize: "14px",
-//             }}
-//           >
-//             {contact.contact_email ? contact.contact_email : "<EMAIL>"}
-//           </Typography>
-//           <Typography
-//             sx={{
-//               color: theme.typography.common.blue,
-//               fontSize: "14px",
-//             }}
-//           >
-//             {contact.contact_phone_number ? formattedPhoneNumber(contact.contact_phone_number) : "<PHONE_NUMBER>"}
-//           </Typography>
-//         </CardContent>
-//       </Card>
-//     </Stack>
-//   );
-// };
-
-export default OwnerContacts;
+export default TenantContacts;

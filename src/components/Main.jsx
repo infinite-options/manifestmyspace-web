@@ -65,7 +65,9 @@ import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWid
 import Contacts from "./Contacts/Contacts";
 import OwnerContacts from "./Contacts/OwnerContacts/OwnerContacts";
 import PMContacts from "./Contacts/PMContacts/PMContacts";
-import MaintenanceContacts from "./Contacts/MaintenanceContacts";
+import TenantContacts from "./Contacts/TenantContacts/TenantContacts";
+import MaintenanceContacts from "./Contacts/MaintenanceContacts/MaintenanceContacts";
+// import MaintenanceContacts from "./Contacts/MaintenanceContactsOld";
 import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
 // import TenantContactDetails from "./Contacts/TenantContactDetails";
@@ -298,6 +300,7 @@ function Main() {
             <Route path="contacts" element={<Contacts />} />
             <Route path="ownerContacts" element={<OwnerContacts />} />
             <Route path="PMContacts" element={<PMContacts />} />
+            <Route path="tenantContacts" element={<TenantContacts />} />
             <Route path="maintenanceContacts" element={<MaintenanceContacts />} />
             <Route path="contactDetails" element={<ContactDetails />} />
             <Route path="addContacts" element={<AddContacts />} />

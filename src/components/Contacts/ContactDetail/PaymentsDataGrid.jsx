@@ -134,7 +134,7 @@ const PaymentsDataGrid = ({ data }) => {
         flex: 0.5,
         renderCell: (params) => (
           <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {`${params.row.total_amount_due}`}
+            {`${params.row.total_amount_due || params.row.pur_amount_due}`}
           </Typography>
         )
       },

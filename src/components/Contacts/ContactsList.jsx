@@ -57,7 +57,7 @@ const tabsManager = [
     {
       label: "Employees",
       value: "Employee"
-    }
+    },
   ];
   
   const tabsOwner = [
@@ -68,6 +68,21 @@ const tabsManager = [
     {
       label: "Tenants",
       value: "Tenant"
+    }
+  ];
+
+  const tabsMaintenance = [
+    {
+      label: "Managers",
+      value: "Manager"
+    },
+    {
+      label: "Tenants",
+      value: "Tenant"
+    },
+    {
+      label: "Employees",
+      value: "Employee"
     }
   ];
 
@@ -296,6 +311,16 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
                             />
                         ))
                     }
+                    {selectedRole === "MAINTENANCE" && 
+                        tabsMaintenance.map(tab => (
+                            <Tab 
+                                key={tab.value}
+                                label={tab.label}
+                                value={tab.value}
+                                sx={tabStyle(tab.value)}
+                            />
+                        ))
+                    }
                 </Tabs>
                 <Box sx={{backgroundColor: getStatusColor(contactsTab), height: '25px', width: '100%',  }}></Box>              
               </Grid>   
@@ -407,7 +432,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
     const manager = props.data;
     const handleSetSelectedCard = props.selected;
     const index = props.index;
-    const managerProperties = manager.properties.length > 0? JSON.parse(manager.properties).filter( property => property.contract_status === "ACTIVE") : [];
+    const managerProperties = manager?.properties?.length > 0? JSON.parse(manager?.properties).filter( property => property?.contract_status === "ACTIVE") : [];
     const activeProperties = managerProperties;
   
     const handleSelection = () => {
