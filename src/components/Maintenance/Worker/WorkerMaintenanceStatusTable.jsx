@@ -33,7 +33,9 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
   const location = useLocation();
   let navigate = useNavigate();
 
-  // console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
+  // console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
+
+  // console.log("----MaintenanceStatusTable", allMaintenanceData, maintenanceRequestsCount);
 
   const tableTextStyle = {
     backgroundColor: color,
@@ -71,7 +73,7 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
     },
     {
       headerName: "Status",
-      field: "quote_status",
+      field: "maintenance_status",
       flex: 0.5,
       minWidth: 100,
       renderCell: (params) => {

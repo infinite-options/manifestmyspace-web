@@ -53,7 +53,8 @@ function a11yProps(index) {
 
 export function MaintenanceRequestDetail({ maintenance_request_index, status: initialStatus, maintenanceItemsForStatus: initialMaintenanceItemsForStatus, allMaintenanceData }) {
   // console.log('----inside request detail----', maintenance_request_index, initialStatus);
-  console.log("----inside request detail----", initialStatus);
+  console.log("----inside request detail----", initialStatus, initialMaintenanceItemsForStatus);
+  console.log("---allMaintenanceData---", allMaintenanceData);
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
   let navigate = useNavigate();
@@ -168,6 +169,8 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
 
   useEffect(() => {
     console.log("------useeffect 2------", maintenanceQuotes);
+    console.log("------useeffect 2------", maintenanceItemsForStatus);
+    console.log("------useeffect 2------", maintenanceRequestIndex);
     var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
     console.log("------useeffect 2.1------", quotesFilteredById);
     quotesFilteredById.sort((a, b) => {
