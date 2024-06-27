@@ -71,6 +71,17 @@ const tabsManager = [
     }
   ];
 
+  const tabsTenant = [
+    {
+      label: "Managers",
+      value: "Manager"
+    },
+    {
+      label: "Maintenance",
+      value: "Maintenance"
+    }
+  ];
+
   const tabsMaintenance = [
     {
       label: "Managers",
@@ -201,7 +212,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
         case "Employee":
           dataDetails = displayedEmployeesData;
           break;
-        case "Employee":
+        case "Manager":
           dataDetails = displayedManagersData;
           break;
         default:
@@ -313,6 +324,16 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
                     }
                     {selectedRole === "MAINTENANCE" && 
                         tabsMaintenance.map(tab => (
+                            <Tab 
+                                key={tab.value}
+                                label={tab.label}
+                                value={tab.value}
+                                sx={tabStyle(tab.value)}
+                            />
+                        ))
+                    }
+                    {selectedRole === "TENANT" && 
+                        tabsTenant.map(tab => (
                             <Tab 
                                 key={tab.value}
                                 label={tab.label}

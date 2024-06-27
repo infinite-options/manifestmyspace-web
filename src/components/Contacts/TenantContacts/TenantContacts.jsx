@@ -13,6 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 import ContactsList from "../ContactsList";
 import ManagerContactDetail from "../ContactDetail/ManagerContactDetail";
+import MaintenanceContactDetail from "../ContactDetail/MaintenanceContactDetail";
 
 
 
@@ -75,7 +76,7 @@ const TenantContacts = () => {
               }
              
               {
-                contactsTab === "Tenant" && <TenantContactDetail data={contactsData?.tenants} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
+                contactsTab === "Maintenance" && <MaintenanceContactDetail data={contactsData?.maintenance} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
               }
                
             </Grid>                  
