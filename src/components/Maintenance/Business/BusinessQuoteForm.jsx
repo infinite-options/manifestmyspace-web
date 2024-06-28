@@ -318,7 +318,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     }
 
     function handleBackButton(){
-        navigate("/maintenanceDashboard", {
+        navigate("/maintenanceDashboard2", {
             state: {
                 refresh: true
             }
