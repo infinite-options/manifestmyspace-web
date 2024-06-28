@@ -40,9 +40,10 @@ export default function MaintenanceDashboard2() {
 	useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
-			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+      console.log('---getProfileId()---', getProfileId());
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
 
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
+			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
