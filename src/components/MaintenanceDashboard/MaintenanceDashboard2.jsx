@@ -99,28 +99,23 @@ export default function MaintenanceDashboard2() {
 
 			await setMaintenanceRequests(maintainance_info);
 
-			console.log('-----maintainance_info----', maintainance_info.SCHEDULED);
 			const today = new Date().toISOString().split('T')[0];
 
 			const parseDate = (dateString) => {
 				const [month, day, year] = dateString.split('-');
 				return `${year}-${month}-${day}`;
 			};
-
 			// Filter the data
 			const currentDateData = maintainance_info.SCHEDULED.filter(
-				(item) => item.maintenance_scheduled_date === today
+				(item) => parseDate(item.maintenance_scheduled_date) === today
 			);
-			console.log('---currentDateData---', currentDateData);
+
 			let filteredTodayData = [];
 			let filteredData = [];
 
 			if (currentDateData.length > 0) {
-				console.log('--inside if--');
 				filteredTodayData = currentDateData;
 			} else {
-				console.log('--inside else--', maintainance_info.SCHEDULED);
-				console.log('--inside else today--', today);
 				filteredData = maintainance_info.SCHEDULED.filter((item) => {
 					return isAfter(parseISO(parseDate(item.maintenance_scheduled_date)), parseISO(today));
 				}).sort(
@@ -129,8 +124,6 @@ export default function MaintenanceDashboard2() {
 						new Date(parseDate(b.maintenance_scheduled_date))
 				);
 			}
-
-			console.log('-----maintainance_info filteredData----', filteredData);
 
 			const fixedOrder = [
 				{ label: 'Quotes Requested', color: '#DB9687' },
@@ -147,7 +140,6 @@ export default function MaintenanceDashboard2() {
 			});
 			await setGraphData(sortedData);
 			await setcashflowData(currentActivities);
-			console.log('----graph data---', graphData);
 			await setrevenueData(CurrentQuotes);
 			await settodayData(filteredTodayData);
 			await setnextScheduleData(filteredData);
@@ -244,6 +236,8 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 
 		return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
 	};
+
+  const colors = ['#B33A3A', '#FFAA00', '#FFC107'];
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -352,7 +346,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 													sx={{
 														display: 'flex',
 														flexDirection: 'column',
-														backgroundColor: '#B33A3A', // Use the desired background color
+														backgroundColor: colors[index % colors.length], // Use the desired background color
 														color: 'white', // Use the desired text color
 														borderRadius: '10px',
 														marginBottom: 2,
@@ -410,7 +404,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
                             sx={{
                               display: 'flex',
                               flexDirection: 'column',
-                              backgroundColor: '#B33A3A', // Use the desired background color
+                              backgroundColor: colors[index % colors.length], // Use the desired background color
                               color: 'white', // Use the desired text color
                               borderRadius: '10px',
                               marginBottom: 2,

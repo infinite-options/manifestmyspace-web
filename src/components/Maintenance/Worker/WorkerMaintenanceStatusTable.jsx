@@ -35,7 +35,7 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
   const { user, getProfileId, } = useUser();
   // console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
-  console.log("----MaintenanceStatusTable----", status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount);
+  // console.log("----MaintenanceStatusTable----", status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount);
 
   const tableTextStyle = {
     backgroundColor: color,
@@ -128,7 +128,7 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
       try {
         const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
         const data = await response.json();
-        console.log('-----data inside workerMaintenanceTable----', data);
+        //console.log('-----data inside workerMaintenanceTable----', data);
 
         const statusMappings = [
           { status: 'Quotes Requested', mapping: 'REQUESTED' },
@@ -161,9 +161,9 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
     
     // console.log("handleRequestDetailPage")
     //console.log("maintenance_request_index", maintenance_request_index)
-    console.log("status", status);
-    console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
-    console.log("maintenanceRequests", maintenanceRequests[status]);
+    //console.log("status", status);
+    //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
+    //console.log("maintenanceRequests", maintenanceRequests[status]);
 
     navigate(`/workerMaintenance/detail`, {
       state: {
