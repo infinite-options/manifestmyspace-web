@@ -197,7 +197,7 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
-            
+            <Route path="/tt" element={<ManagerOnBoardDesktopForm />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
             <Route path="newUser" element={<NewUser />} />

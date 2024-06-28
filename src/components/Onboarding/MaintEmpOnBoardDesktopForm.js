@@ -62,7 +62,8 @@ const MaintEmpOnBoardDesktopForm = () => {
     const [showSpinner, setShowSpinner] = useState(false);
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
-    const { user, isBusiness, isManager, roleName, selectedRole, updateProfileUid, isLoggedIn } = useUser();
+    const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
+    const { user, isBusiness, isManager, roleName, setLoggedIn, selectRole, selectedRole, updateProfileUid, isLoggedIn } = useUser();
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
@@ -100,7 +101,7 @@ const MaintEmpOnBoardDesktopForm = () => {
     }, [selectedBusiness, businesses]);
 
     const createProfile = async (form) => {
-       // const profileApi = "/employeeProfile";
+        // const profileApi = "/employeeProfile";
         const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee`, form, headers);
         return data;
     };
@@ -274,11 +275,18 @@ const MaintEmpOnBoardDesktopForm = () => {
             setCookie("user", { ...user, ...role_id });
             const paymentSetup = await handlePaymentStep(data.employee_uid);
             console.log(paymentSetup);
+            setDashboardButtonEnabled(true)
         }
         setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
         // navigate("/onboardingRouter");
         return;
     };
+
+    const handleNavigation =(e) => {
+        selectRole('MAINTENANCE');
+        setLoggedIn(true);
+        navigate("/maintenanceDashboard")
+    }
 
     const handleChangeChecked = (e) => {
         const { name, checked } = e.target;
@@ -608,7 +616,9 @@ const MaintEmpOnBoardDesktopForm = () => {
                         </Typography>
                     </Stack>
                     <Stack spacing={2} direction="row">
-                        <AddressAutocompleteInput sx={{ width: '50%' }} onAddressSelect={handleAddressSelect} gray={true} />
+                        <Box sx={{ width: '50%' }}>
+                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
+                        </Box>
                         <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
                         <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
                         <TextField name="State" value={state} onChange={handleStateChange} variant="filled" sx={{ width: '10%' }} placeholder="State" className={classes.root} />
@@ -678,14 +688,26 @@ const MaintEmpOnBoardDesktopForm = () => {
                     {renderPaymentMethods()}
                 </Paper>
             </Box>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNextStep}
-                disabled={nextStepDisabled}
-            >
-                Save
-            </Button>
+            <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" p={5}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNextStep}
+                    disabled={nextStepDisabled}
+                    sx={{ mb: 2 }}
+                >
+                    Save
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleNavigation}
+                   
+                    disabled={!dashboardButtonEnabled}
+                >
+                    Go to Dashboard
+                </Button>
+            </Box>
         </div>
     );
 };

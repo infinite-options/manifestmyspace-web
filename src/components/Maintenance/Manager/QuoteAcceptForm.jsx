@@ -375,7 +375,8 @@ export default function QuoteAcceptForm() {
             </Button>
           </Grid>
         </Grid>
-        {console.log(maintenanceItem)}
+        {console.log("-------", maintenanceItem)}
+        {console.log("%%%%%-----", maintenanceQuotes[currentQuoteIndex])}
         {maintenanceQuotes[currentQuoteIndex]?.quote_status === "SENT" ||
         maintenanceQuotes[currentQuoteIndex]?.quote_status === "ACCEPTED" ||
         maintenanceQuotes[currentQuoteIndex]?.quote_status === "REJECTED" ||

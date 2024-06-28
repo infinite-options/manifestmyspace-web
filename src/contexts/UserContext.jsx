@@ -189,11 +189,11 @@ return "/managerDashboard";
 } else if (role === "Owner") {
 return "/ownerDashboard";
 } else if (role === "Maintenance") {
-return "/maintenanceDashboard";
+return "/maintenanceDashboard2";
 } else if (role === "PM Employee") {
 return "/managerDashboard";
 } else if (role === "Maintenance Employee") {
-return "/maintenanceDashboard";
+return "/maintenanceDashboard2";
 } else if (role === "Tenant") {
 return "/tenantDashboard";
 }
