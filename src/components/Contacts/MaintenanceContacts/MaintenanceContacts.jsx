@@ -42,9 +42,9 @@ const MaintenanceContacts = () => {
   
 
   const fetchData = async () => {
-    // const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`; //rohit
+    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     // const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
-    const url = `http://localhost:4000/contacts/${getProfileId()}`;
+    // const url = `http://localhost:4000/contacts/${getProfileId()}`;
     console.log("In PMContracts.jsx");
     setShowSpinner(true);
 
