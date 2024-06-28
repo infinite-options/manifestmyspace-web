@@ -76,14 +76,19 @@ export default function OwnerDashboard() {
   // const [allAnnouncementsData, setAllAnnouncementsData] = useState([]);
 
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
-
+  console.log("getProfileId()",getProfileId())
   useEffect(() => {
     const dataObject = {};
+    console.log("getProfileI$",getProfileId())
     const fetchData = async () => {
+      console.log("getProfileId*",getProfileId())
       if (!getProfileId()) navigate("/PrivateprofileName");
       setShowSpinner(true);
+      console.log("getProfileId()",getProfileId())
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
+      console.log("jsonData",jsonData)
+      
       const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
       const announcementsResponseData = await announcementsResponse.json();
 
