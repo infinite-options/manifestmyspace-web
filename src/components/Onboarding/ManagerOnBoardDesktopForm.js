@@ -57,7 +57,8 @@ const ManagerOnBoardDesktopForm = () => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
-  const { user, isBusiness, isManager, roleName, selectedRole, updateProfileUid, isLoggedIn } = useUser();
+  const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
+  const { user, isBusiness, isManager, roleName,selectRole, selectedRole,setLoggedIn, updateProfileUid, isLoggedIn } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [paymentMethods, setPaymentMethods] = useState({
@@ -110,6 +111,12 @@ const ManagerOnBoardDesktopForm = () => {
       )
     );
   };
+ 
+  const handleNavigation =(e) => {
+    selectRole('MANAGER');
+    setLoggedIn(true);
+    navigate("/managerDashboard")
+}
 
   const handlePhotoChange = (e) => {
       const file = {
@@ -287,6 +294,8 @@ const ManagerOnBoardDesktopForm = () => {
           console.log(paymentSetup);
           const createEmp= await CreateEmpStep(data.business_uid);
           console.log(createEmp);
+          setDashboardButtonEnabled(true);
+         
       }
       setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
       // navigate("/onboardingRouter");
@@ -784,7 +793,10 @@ const ManagerOnBoardDesktopForm = () => {
                       </Typography>
                   </Stack>
                   <Stack spacing={2} direction="row">
-                      <AddressAutocompleteInput sx={{ width: '50%' }} onAddressSelect={handleAddressSelect} gray={true} />
+        
+                      <Box sx={{ width: '50%' }}>
+                        <AddressAutocompleteInput  onAddressSelect={handleAddressSelect} gray={true} />
+                      </Box>
                       <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="Unit" className={classes.root}></TextField>
                       <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
                       <TextField name="State" value={state} onChange={handleStateChange} variant="filled" sx={{ width: '10%' }} placeholder="State" className={classes.root} />
@@ -926,7 +938,7 @@ const ManagerOnBoardDesktopForm = () => {
                           sx={{
                               color: theme.typography.common.blue,
                               fontWeight: theme.typography.primary.fontWeight,
-                              width: '100%'
+                              width: '50%'
                           }}
                       >
                           {"Personal Address"}
@@ -969,7 +981,9 @@ const ManagerOnBoardDesktopForm = () => {
                       </Typography>
                   </Stack>
                   <Stack spacing={2} direction="row">
-                      <AddressAutocompleteInput sx={{ width: '50%' }} onAddressSelect={handleEmpAddressSelect} gray={true} />
+                      <Box sx={{ width: '50%' }}>
+                        <AddressAutocompleteInput  onAddressSelect={handleEmpAddressSelect} gray={true} />
+                      </Box>
                       <TextField value={empUnit} onChange={handleEmpUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="Unit" className={classes.root}></TextField>
                       <TextField name="empCity" value={empCity} onChange={handleEmpCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
                       <TextField name="empState" value={empState} onChange={handleEmpStateChange} variant="filled" sx={{ width: '10%' }} placeholder="State" className={classes.root} />
@@ -1024,14 +1038,25 @@ const ManagerOnBoardDesktopForm = () => {
                   </Stack>
               </Box>
           </Box>
-          <Button
-              variant="contained"
-              color="primary"
-              onClick={handleNextStep}
-              disabled={nextStepDisabled}
-          >
-              Save
-          </Button>
+          <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" p={5}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNextStep}
+                    disabled={nextStepDisabled}
+                    sx={{ mb: 2 }}
+                >
+                    Save
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleNavigation}
+                    disabled={!dashboardButtonEnabled}
+                >
+                    Go to Dashboard
+                </Button>
+            </Box>
       </div>
   );
 };

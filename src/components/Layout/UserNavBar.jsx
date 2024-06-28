@@ -73,6 +73,25 @@ const getCommentButtonNav = () => {
     }
 };
 
+const getPhoneButtonNav = () => {
+  switch (selectedRole) {
+    case 'OWNER':
+      return '/ownerContacts';
+    case 'MANAGER':
+      return '/PMContacts';
+    case 'TENANT':
+      return '/tenantContacts';
+    case 'MAINTENANCE':
+      return '/maintenanceContacts';
+    case 'PM_EMPLOYEE':
+      return '/PMContacts';
+    case 'MAINT_EMPLOYEE':
+      return '/maintenanceContacts';
+    default:
+      return '/';
+  }
+};
+
   return (
     <Grid
       container
@@ -111,25 +130,26 @@ const getCommentButtonNav = () => {
         />
       </Grid>      
       {
-        selectedRole === "MANAGER" ? (
+        (
           <Grid item xs={3}>
             <img
               src={phone_fill}
               alt="Phone Icon"
               style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
-              onClick={()=>{navigate("/PMContacts")}}
-            />
-          </Grid>
-        ) : (
-          <Grid item xs={3}>
-            <img
-              src={comment_fill}
-              alt="Comment Icon"
-              style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
-              onClick={()=>{navigate(getCommentButtonNav())}}
+              onClick={()=>{navigate(getPhoneButtonNav())}}
             />
           </Grid>
         )
+        // : (
+        //   <Grid item xs={3}>
+        //     <img
+        //       src={comment_fill}
+        //       alt="Comment Icon"
+        //       style={{ display: 'block', margin: '0 auto', cursor: 'pointer' }}
+        //       onClick={()=>{navigate(getCommentButtonNav())}}
+        //     />
+        //   </Grid>
+        // )
       }
       
     </Grid>

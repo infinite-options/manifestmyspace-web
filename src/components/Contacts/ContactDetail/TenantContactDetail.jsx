@@ -235,7 +235,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                         contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
                           <TenantPropertyInformation 
                             // propertyData={contactDetails[currentIndex]?.property}
-                            propertyData={selectedRole === "OWNER" ? contactDetails[currentIndex]?.properties : contactDetails[currentIndex]?.property} //rohit - fix later
+                            propertyData={(selectedRole === "OWNER" || selectedRole === "MAINTENANCE" )  ? contactDetails[currentIndex]?.properties : contactDetails[currentIndex]?.property} //rohit - fix later
                             index={0}
                           />
                         ) :

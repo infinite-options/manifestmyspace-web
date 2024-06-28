@@ -11,6 +11,7 @@ import OwnerOnBoardDeskTopForm from './OwnerOnBoardDesktopForm';
 import MaintenanceOnBoardDesktopForm from './MaintenanceOnBoardDesktopForm';
 import PMEmpOnBoardDesktopForm from './PMEmpOnBoardDesktopForm';
 import MaintEmpOnBoardDesktopForm from './MaintEmpOnBoardDesktopForm';
+import ConfirmationDialog from './ConfirmationDialog'; // Import the dialog component
 
 const OnBoardDesktop = () => {
   const { setAuthData, onboardingState, setOnboardingState } = useUser();
@@ -22,8 +23,23 @@ const OnBoardDesktop = () => {
   const [activeForm, setActiveForm] = useState('');
   const [cookies, setCookie] = useCookies(['user']);
   const userInfo = cookies.user || {};
+  const [unsavedChanges, setUnsavedChanges] = useState(false); // Track unsaved changes
+  const [dialogOpen, setDialogOpen] = useState(false); // State for dialog visibility
+  const [nextRole, setNextRole] = useState(''); // Track the next role to navigate to
+  const [formSaved, setFormSaved] = useState(false); // Track if form is saved
 
-  const handleRoleSelect = async (role) => {
+  const handleRoleSelect = (role) => {
+    if (unsavedChanges && !formSaved) {
+      // If there are unsaved changes, show the confirmation dialog
+      setNextRole(role);
+      setDialogOpen(true);
+    } else {
+      // Otherwise, proceed with role selection
+      proceedWithRoleSelection(role);
+    }
+  };
+
+  const proceedWithRoleSelection = async (role) => {
     setShowSpinner(true);
     const payload = {
       ...user,
@@ -37,9 +53,13 @@ const OnBoardDesktop = () => {
     try {
       let response;
       if (userInfo.user_uid) {
-        // If user account exists, append the new role and make a PUT request
         const existingRoles = userInfo.role ? userInfo.role.split(",") : [];
-        if (!existingRoles.includes(role)) {
+        if (existingRoles.includes(role)) {
+          //alert(`You already have the role: ${role}`);
+          setShowSpinner(false);
+          setActiveForm(role);
+          return;
+        } else {
           existingRoles.push(role);
         }
         const updatedRole = existingRoles.join(",");
@@ -48,18 +68,17 @@ const OnBoardDesktop = () => {
           "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE",
           { user_uid: userInfo.user_uid, role: updatedRole }
         );
-        
+
         if (response.status === 200) {
           userInfo.role = updatedRole;  // Update the local role state
           setAuthData({ ...userInfo, role: updatedRole });
           setActiveForm(role);
           setCookie('user', { ...userInfo, role: updatedRole }, { path: '/' });  // Update the cookie
+          setUnsavedChanges(false); // Reset unsaved changes flag
         } else {
           alert('An error occurred while updating the role.');
         }
-        console.log("activeForm",activeForm)
       } else {
-        // If user account does not exist, make a POST request
         if (user.isEmailSignup) {
           response = await axios.post(
             "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
@@ -71,21 +90,21 @@ const OnBoardDesktop = () => {
             payload
           );
         }
-      
 
-      if (response.data.message === "User already exists") {
-        alert(response.data.message);
-        setActiveForm('');
-        setShowSpinner(false);
-        return;
-      } else {
-        const { result } = response.data;
-        setAuthData(result);
-        setShowSpinner(false);
-        setActiveForm(role);
-        setCookie('user', result.user, { path: '/' });
+        if (response.data.message === "User already exists") {
+          alert(response.data.message);
+          setActiveForm('');
+          setShowSpinner(false);
+          return;
+        } else {
+          const { result } = response.data;
+          setAuthData(result);
+          setShowSpinner(false);
+          setActiveForm(role);
+          setCookie('user', result.user, { path: '/' });
+          setUnsavedChanges(false); // Reset unsaved changes flag
+        }
       }
-    }
     } catch (error) {
       alert("An error occurred while processing your request.");
       console.log(error)
@@ -94,20 +113,38 @@ const OnBoardDesktop = () => {
     }
   };
 
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleDialogConfirm = () => {
+    setDialogOpen(false);
+    proceedWithRoleSelection(nextRole);
+  };
+
+  const handleFormSaved = () => {
+    setFormSaved(true);
+    setUnsavedChanges(false);
+  };
+
+  const handleFormChange = () => {
+    setUnsavedChanges(true);
+  };
+
   const renderForm = () => {
     switch (activeForm) {
       case 'MANAGER':
-        return <ManagerOnBoardDesktopForm />;
+        return <ManagerOnBoardDesktopForm onChange={handleFormChange} onSave={handleFormSaved} />;
       case 'PM_EMPLOYEE':
-        return <PMEmpOnBoardDesktopForm />;
+        return <PMEmpOnBoardDesktopForm onChange={handleFormChange} onSave={handleFormSaved} />;
       case 'OWNER':
-        return <OwnerOnBoardDeskTopForm />;
+        return <OwnerOnBoardDeskTopForm onChange={handleFormChange} onSave={handleFormSaved} />;
       case 'TENANT':
-        return <TenantOnBoardDesktopForm />;
+        return <TenantOnBoardDesktopForm onChange={handleFormChange} onSave={handleFormSaved} />;
       case 'MAINTENANCE':
-        return <MaintenanceOnBoardDesktopForm />;
+        return <MaintenanceOnBoardDesktopForm onChange={handleFormChange} onSave={handleFormSaved} />;
       case 'MAINT_EMPLOYEE':
-        return <MaintEmpOnBoardDesktopForm />;
+        return <MaintEmpOnBoardDesktopForm onChange={handleFormChange} onSave={handleFormSaved} />;
       default:
         return (
           <div>
@@ -222,6 +259,11 @@ const OnBoardDesktop = () => {
           </Paper>
         </Box>
       </Box>
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        onConfirm={handleDialogConfirm}
+      />
     </ThemeProvider>
   );
 };
