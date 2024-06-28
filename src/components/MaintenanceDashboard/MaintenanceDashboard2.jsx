@@ -697,6 +697,7 @@ const MaintenanceCashflowWidget = ({ data }) => {
 };
 
 const RevenueTable = ({ data }) => {
+  console.log('---inside RevenueTable---', data);
 	return (
 		<Box sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', p: 3 }}>
 			<TableContainer
@@ -756,6 +757,21 @@ const RevenueTable = ({ data }) => {
 							>
 								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
 									Business Name
+								</Typography>
+							</TableCell>
+              <TableCell
+								sx={{
+									position: 'sticky',
+									top: 0,
+									backgroundColor: '#F2F2F2',
+									borderBottom: '1px solid #4A4A4A',
+									zIndex: 1,
+									padding: '10px 20px',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								<Typography variant="body1" sx={{ fontWeight: 'bold', color: '#3D5CAC' }}>
+									Status
 								</Typography>
 							</TableCell>
 							<TableCell
@@ -832,6 +848,9 @@ const RevenueTable = ({ data }) => {
 								</TableCell>
 								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
 									<Typography sx={{ color: '#160449' }}>{row.business_name}</Typography>
+								</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+									<Typography sx={{ color: '#160449' }}>{row.maintenance_status}</Typography>
 								</TableCell>
 								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
 									<Typography sx={{ color: '#160449' }}>{row.maintenance_title}</Typography>
