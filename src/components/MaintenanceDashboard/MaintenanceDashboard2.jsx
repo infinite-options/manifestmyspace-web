@@ -28,7 +28,7 @@ import WorkerMaintenanceStatusTable from '../Maintenance/Worker/WorkerMaintenanc
 import { format, isEqual, isAfter, parseISO } from 'date-fns';
 
 export default function MaintenanceDashboard2() {
-	const { user, getProfileId, } = useUser();
+	const { user, getProfileId } = useUser();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
@@ -36,11 +36,12 @@ export default function MaintenanceDashboard2() {
 	const [cashflowData, setcashflowData] = useState([]);
 	const [revenueData, setrevenueData] = useState([]);
 	const [todayData, settodayData] = useState([]);
+	const [nextScheduleData, setnextScheduleData] = useState([]);
 
 	useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
-      console.log('---getProfileId()---', getProfileId());
+			console.log('---getProfileId()---', getProfileId());
 			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
 
 			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
@@ -101,28 +102,33 @@ export default function MaintenanceDashboard2() {
 			console.log('-----maintainance_info----', maintainance_info.SCHEDULED);
 			const today = new Date().toISOString().split('T')[0];
 
-      const parseDate = (dateString) => {
-        const [month, day, year] = dateString.split('-');
-        return `${year}-${month}-${day}`;
-      };
+			const parseDate = (dateString) => {
+				const [month, day, year] = dateString.split('-');
+				return `${year}-${month}-${day}`;
+			};
 
 			// Filter the data
 			const currentDateData = maintainance_info.SCHEDULED.filter(
 				(item) => item.maintenance_scheduled_date === today
 			);
-      console.log('---currentDateData---', currentDateData);
+			console.log('---currentDateData---', currentDateData);
+			let filteredTodayData = [];
 			let filteredData = [];
 
 			if (currentDateData.length > 0) {
-        console.log('--inside if--');
-				filteredData = currentDateData;
+				console.log('--inside if--');
+				filteredTodayData = currentDateData;
 			} else {
-        console.log('--inside else--', maintainance_info.SCHEDULED);
-        console.log('--inside else today--', today);
+				console.log('--inside else--', maintainance_info.SCHEDULED);
+				console.log('--inside else today--', today);
 				filteredData = maintainance_info.SCHEDULED.filter((item) => {
-          return isAfter(parseISO(parseDate(item.maintenance_scheduled_date)), parseISO(today));
-        }).sort((a, b) => new Date(parseDate(a.maintenance_scheduled_date)) - new Date(parseDate(b.maintenance_scheduled_date)));
-        }
+					return isAfter(parseISO(parseDate(item.maintenance_scheduled_date)), parseISO(today));
+				}).sort(
+					(a, b) =>
+						new Date(parseDate(a.maintenance_scheduled_date)) -
+						new Date(parseDate(b.maintenance_scheduled_date))
+				);
+			}
 
 			console.log('-----maintainance_info filteredData----', filteredData);
 
@@ -143,7 +149,8 @@ export default function MaintenanceDashboard2() {
 			await setcashflowData(currentActivities);
 			console.log('----graph data---', graphData);
 			await setrevenueData(CurrentQuotes);
-			await settodayData(filteredData);
+			await settodayData(filteredTodayData);
+			await setnextScheduleData(filteredData);
 			setShowSpinner(false);
 		};
 
@@ -180,7 +187,11 @@ export default function MaintenanceDashboard2() {
 						</Box>
 					</Grid>
 					<Grid item xs={12} md={4}>
-						<WorkOrdersWidget maintenanceRequests={maintenanceRequests} todayData={todayData} />
+						<WorkOrdersWidget
+							maintenanceRequests={maintenanceRequests}
+							todayData={todayData}
+							nextScheduleData={nextScheduleData}
+						/>
 					</Grid>
 					<Grid container item xs={12} md={8} columnSpacing={6} rowGap={4}>
 						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '400px' }}>
@@ -223,16 +234,16 @@ export default function MaintenanceDashboard2() {
 	);
 }
 
-const WorkOrdersWidget = ({ maintenanceRequests, todayData }) => {
+const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) => {
 	const [showSpinner, setShowSpinner] = useState(false);
-  const convertTimeTo12HourFormat = (time) => {
-    const [hours, minutes] = time.split(':');
-    const date = new Date();
-    date.setHours(hours);
-    date.setMinutes(minutes);
-  
-    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-  };
+	const convertTimeTo12HourFormat = (time) => {
+		const [hours, minutes] = time.split(':');
+		const date = new Date();
+		date.setHours(hours);
+		date.setMinutes(minutes);
+
+		return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+	};
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -317,65 +328,135 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData }) => {
 								}}
 							>
 								<Grid item xs={12}>
-  <Typography align="center" sx={{ fontSize: '24px', fontWeight: 'bold', color: '#160449' }}>
-    Work Orders Today
-  </Typography>
-  {todayData.length === 0 ? (
-    <Typography align="center" sx={{ fontSize: '20px', fontWeight: 'bold', color: '#3D5CAC' }}>
-      None
-    </Typography>
-  ) :  (
-    todayData.map((row, index) => {
-      const formattedTime = convertTimeTo12HourFormat(row.maintenance_scheduled_time);
-      return (
-        <Box
-          key={index}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: '#B33A3A', // Use the desired background color
-            color: 'white', // Use the desired text color
-            borderRadius: '10px',
-            marginBottom: 2,
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for better appearance
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-            }}
-          >
-            <Typography sx={{ fontWeight: 'bold', fontSize: '1rem'}}>
-              {formattedTime}
-            </Typography>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                maxWidth: 'calc(100% - 4rem)', // Adjust based on the layout needs
-               
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                marginLeft: 1,
-              }}
-            >
-              <Typography sx={{ marginLeft: 6, fontSize: '0.8rem' }}>
-                <strong>Address:</strong> {row.property_address}, {row.property_city}, {row.property_state} {row.property_zip}
-              </Typography>
-              <Typography sx={{ marginLeft: 6, marginTop: 1, fontSize: '0.8rem' }}>
-                <strong>Issue:</strong> {row.maintenance_title}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-      );
-    })
-  )}
-</Grid>
+									<Typography
+										align="center"
+										sx={{ fontSize: '24px', fontWeight: 'bold', color: '#160449' }}
+									>
+										Work Orders Today
+									</Typography>
+									{todayData.length === 0 ? (
+										<Typography
+											align="center"
+											sx={{ fontSize: '20px', fontWeight: 'bold', color: '#3D5CAC' }}
+										>
+											None
+										</Typography>
+									) : (
+										todayData.map((row, index) => {
+											const formattedTime = convertTimeTo12HourFormat(
+												row.maintenance_scheduled_time
+											);
+											return (
+												<Box
+													key={index}
+													sx={{
+														display: 'flex',
+														flexDirection: 'column',
+														backgroundColor: '#B33A3A', // Use the desired background color
+														color: 'white', // Use the desired text color
+														borderRadius: '10px',
+														marginBottom: 2,
+														boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for better appearance
+													}}
+												>
+													<Box
+														sx={{
+															display: 'flex',
+															flexDirection: 'row',
+															justifyContent: 'flex-start',
+															alignItems: 'center',
+														}}
+													>
+														<Typography sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
+															{formattedTime}
+														</Typography>
+														<Box
+															sx={{
+																display: 'flex',
+																flexDirection: 'column',
+																maxWidth: 'calc(100% - 4rem)', // Adjust based on the layout needs
 
+																overflow: 'hidden',
+																textOverflow: 'ellipsis',
+																marginLeft: 1,
+															}}
+														>
+															<Typography sx={{ marginLeft: 6, fontSize: '0.8rem' }}>
+																<strong>Address:</strong> {row.property_address},{' '}
+																{row.property_city}, {row.property_state}{' '}
+																{row.property_zip}
+															</Typography>
+															<Typography
+																sx={{ marginLeft: 6, marginTop: 1, fontSize: '0.8rem' }}
+															>
+																<strong>Issue:</strong> {row.maintenance_title}
+															</Typography>
+														</Box>
+													</Box>
+												</Box>
+											);
+										})
+									)}
+								 {nextScheduleData.length > 0 && (
+                    <>
+                      <Typography align="left" sx={{ fontSize: '20px', fontWeight: 'bold', color: '#3D5CAC' }}>
+                        Next Appointment: {nextScheduleData[0].maintenance_scheduled_date}
+                      </Typography>
+                      {nextScheduleData.map((row, index) => {
+                        const formattedTime = convertTimeTo12HourFormat(row.maintenance_scheduled_time);
+                        return (
+                          <Box
+                            key={index}
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              backgroundColor: '#B33A3A', // Use the desired background color
+                              color: 'white', // Use the desired text color
+                              borderRadius: '10px',
+                              marginBottom: 2,
+                              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for better appearance
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'flex-start',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <Typography sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
+                                {formattedTime}
+                              </Typography>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  maxWidth: 'calc(100% - 4rem)', // Adjust based on the layout needs
+  
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  marginLeft: 1,
+                                }}
+                              >
+                                <Typography sx={{ marginLeft: 6, fontSize: '0.8rem' }}>
+                                  <strong>Address:</strong> {row.property_address},{' '}
+                                  {row.property_city}, {row.property_state}{' '}
+                                  {row.property_zip}
+                                </Typography>
+                                <Typography
+                                  sx={{ marginLeft: 6, marginTop: 1, fontSize: '0.8rem' }}
+                                >
+                                  <strong>Issue:</strong> {row.maintenance_title}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </Box>
+                        );
+                      })}
+                    </>
+                  )}
+								</Grid>
 							</Paper>
 						</Grid>
 					</Grid>
