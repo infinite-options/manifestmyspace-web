@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
 import theme from "../../theme/theme";
@@ -7,17 +7,15 @@ import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
+import { formatPhoneNumber, headers, maskNumber, photoFields } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
     Box,
     Button,
     TextField,
     Typography,
-    Avatar,
     Stack,
     Checkbox,
-    FormControlLabel,
     Grid,
     CircularProgress,
     Backdrop,
@@ -32,7 +30,7 @@ import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
 import { useCookies } from "react-cookie";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         "& .MuiFilledInput-root": {
             backgroundColor: "#D6D5DA",
@@ -44,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const OwnerOnBoardDeskTopForm = () => {
+const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
@@ -52,8 +50,9 @@ const OwnerOnBoardDeskTopForm = () => {
     const [showSpinner, setShowSpinner] = useState(false);
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
-    const { user, isBusiness, isManager, roleName, selectedRole, updateProfileUid, isLoggedIn } = useUser();
-    const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
+    const { user, updateProfileUid, selectRole, setLoggedIn } = useUser();
+    const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
+    const { firstName, setFirstName, lastName, setLastName,  email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
         paypal: { value: "", checked: false },
@@ -65,14 +64,16 @@ const OwnerOnBoardDeskTopForm = () => {
         bank_account: { account_number: "", routing_number: "", checked: false },
     });
 
+    useEffect(() => {
+        onChange(); // Notify parent on component mount (indicating form change)
+    }, []);
 
     const createProfile = async (form) => {
-        const  profileApi  = "/ownerProfile"
+        const profileApi = "/ownerProfile"
         const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
         return data;
-      };
+    };
 
-      
     const handlePhotoChange = (e) => {
         const file = {
             index: 0,
@@ -90,36 +91,40 @@ const OwnerOnBoardDeskTopForm = () => {
 
     const handleFirstNameChange = (event) => {
         setFirstName(event.target.value);
-      };
-    
-      const handleLastNameChange = (event) => {
-        setLastName(event.target.value);
-      };
+        onChange();
+    };
 
-      const handleEmailChange = (event) => {
+    const handleLastNameChange = (event) => {
+        setLastName(event.target.value);
+        onChange();
+    };
+
+    const handleEmailChange = (event) => {
         setEmail(event.target.value);
-      };
-    
-      const handleSsnChange = (event) => {
+        onChange();
+    };
+
+    const handleSsnChange = (event) => {
         let value = event.target.value;
         if (!value) {
-          setSsn("");
-          setMask("");
-          return;
+            setSsn("");
+            setMask("");
+            onChange();
+            return;
         }
         if (value.length > 11) return;
         const lastChar = value.charAt(value.length - 1);
         if (mask.length > value.length) {
-          if (lastChar !== "-") setSsn(ssn.slice(0, ssn.length - 1));
-          setMask(value);
+            if (lastChar !== "-") setSsn(ssn.slice(0, ssn.length - 1));
+            setMask(value);
         } else {
-          setSsn(ssn + lastChar);
-          setMask(maskNumber(ssn + lastChar));
+            setSsn(ssn + lastChar);
+            setMask(maskNumber(ssn + lastChar));
         }
-      };
-      
-      const getPayload = () => {
+        onChange();
+    };
 
+    const getPayload = () => {
         return {
             owner_user_id: user.user_uid,
             owner_first_name: firstName,
@@ -134,37 +139,43 @@ const OwnerOnBoardDeskTopForm = () => {
             owner_state: state,
             owner_zip: zip,
             owner_photo: photo,
-          };           
-      };
+        };
+    };
 
-      const handlePhoneNumberChange = (event) => {
+    const handlePhoneNumberChange = (event) => {
         setPhoneNumber(formatPhoneNumber(event.target.value));
-      };
-    
-      const handleUnitChange = (event) => {
+        onChange();
+    };
+
+    const handleUnitChange = (event) => {
         setUnit(event.target.value);
-      };
-    
-      const handleCityChange = (event) => {
+        onChange();
+    };
+
+    const handleCityChange = (event) => {
         setCity(event.target.value);
-      };
-    
-      const handleStateChange = (event) => {
+        onChange();
+    };
+
+    const handleStateChange = (event) => {
         setState(event.target.value);
-      };
-    
-      const handleAddressSelect = (address) => {
+        onChange();
+    };
+
+    const handleAddressSelect = (address) => {
         setAddress(address.street ? address.street : "");
         setCity(address.city ? address.city : "");
         setState(address.state ? address.state : "");
         setZip(address.zip ? address.zip : "");
-      };
+        onChange();
+    };
 
     const readImage = (file) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             file.image = e.target.result;
             setPhoto(file);
+            onChange();
         };
         reader.readAsDataURL(file.file);
     };
@@ -185,71 +196,77 @@ const OwnerOnBoardDeskTopForm = () => {
                 [name]: { ...prevState[name], value },
             }));
         }
+        onChange();
     };
 
     const encodeForm = (payload) => {
         const form = new FormData();
         for (let key in payload) {
-          if (photoFields.has(key)) {
-            if (payload[key]) form.append(key, payload[key].file);
-          } else {
-            form.append(key, payload[key]);
-          }
+            if (photoFields.has(key)) {
+                if (payload[key]) form.append(key, payload[key].file);
+            } else {
+                form.append(key, payload[key]);
+            }
         }
         return form;
-      };
+    };
 
-    const handleNextStep = async() => {
-       
+    const handleNextStep = async () => {
         setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
-          if (firstName === "") {
+        if (firstName === "") {
             alert("Please enter first name");
             return;
-          }
-          if (lastName === "") {
+        }
+        if (lastName === "") {
             alert("Please enter last name");
             return;
-          }
+        }
 
-          if (!DataValidator.email_validate(email)) {
+        if (!DataValidator.email_validate(email)) {
             alert("Please enter a valid email");
             return false;
-          }
-    
-          if (!DataValidator.phone_validate(phoneNumber)) {
+        }
+
+        if (!DataValidator.phone_validate(phoneNumber)) {
             alert("Please enter a valid phone number");
             return false;
-          }
-    
-          if (!DataValidator.zipCode_validate(zip)) {
+        }
+
+        if (!DataValidator.zipCode_validate(zip)) {
             alert("Please enter a valid zip code");
             return false;
-          }
-    
-          if (!DataValidator.ssn_validate(ssn)) {
+        }
+
+        if (!DataValidator.ssn_validate(ssn)) {
             alert("Please enter a valid SSN");
             return false;
-          }
-          
-          const payload = getPayload();
-          const form = encodeForm(payload);
-          const data = await createProfile(form);
-          setShowSpinner(false);
-          if (data.owner_uid) {
+        }
+
+        const payload = getPayload();
+        const form = encodeForm(payload);
+        const data = await createProfile(form);
+        setShowSpinner(false);
+        if (data.owner_uid) {
             updateProfileUid({ owner_id: data.owner_uid });
             let role_id = {};
             role_id = { owner_id: data.owner_uid };
             setCookie("user", { ...user, ...role_id });
             const paymentSetup = await handlePaymentStep(data.owner_uid);
             console.log(paymentSetup);
-          }
-          setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
-          //navigate("/onboardingRouter");
-          return ;
-         
-       
-      };
+            selectRole('OWNER');
+            // setLoggedIn(true);
+            onSave(); // Notify parent that the form has been saved
+        }
+        setDashboardButtonEnabled(true)
+        setNextStepDisabled(true);
+        setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
+    };
 
+    const handleNavigation =(e) => {
+        selectRole('OWNER');
+        setLoggedIn(true);
+        navigate("/ownerDashboard")
+    }
     const handleChangeChecked = (e) => {
         const { name, checked } = e.target;
         const map = { ...paymentMethods };
@@ -265,6 +282,7 @@ const OwnerOnBoardDeskTopForm = () => {
             }
         }
         setPaymentMethods(map);
+        onChange();
     };
 
     useEffect(() => {
@@ -284,7 +302,7 @@ const OwnerOnBoardDeskTopForm = () => {
         setNextStepDisabled(disable_state);
     }, [paymentMethods]);
 
-    const handlePaymentStep = async ( owner_id) => {
+    const handlePaymentStep = async (owner_id) => {
         setShowSpinner(true);
         const keys = Object.keys(paymentMethods);
         const payload = [];
@@ -316,7 +334,6 @@ const OwnerOnBoardDeskTopForm = () => {
         console.log("POST response: ", response);
         setShowSpinner(false);
         setCookie("default_form_vals", { ...cookiesData, paymentMethods });
-        // Handle navigation based on user type, if needed
     };
 
     const paymentMethodsArray = [
@@ -519,12 +536,12 @@ const OwnerOnBoardDeskTopForm = () => {
                             {"Zip"}
                         </Typography>
                     </Stack>
-                    <Stack spacing={2} direction="row">
-                        {/* <TextField name="PersonalAddress" value={"Personal Address"} variant="filled" sx={{ width: '50%' }} placeholder="Personal Address" className={classes.root} /> */}
-                        <AddressAutocompleteInput sx={{ width: '50%' }} onAddressSelect={handleAddressSelect} gray={true} />
-                        <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
 
-                        {/* <TextField name="Unit" value={"Unit"} variant="filled" sx={{ width: '10%' }} placeholder="Unit" className={classes.root} /> */}
+                    <Stack spacing={2} direction="row">
+                        <Box sx={{ width: '50%' }}>
+                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
+                        </Box>
+                        <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
                         <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
                         <TextField name="State" value={state} onChange={handleStateChange} variant="filled" sx={{ width: '10%' }} placeholder="State" className={classes.root} />
                         <TextField name="Zip" value={zip} variant="filled" sx={{ width: '10%' }} placeholder="Zip" className={classes.root} />
@@ -553,15 +570,15 @@ const OwnerOnBoardDeskTopForm = () => {
                     <Stack spacing={2} direction="row" >
                         <TextField name="PersonalEmail" value={email} variant="filled" fullWidth onChange={handleEmailChange} placeholder="email@site.com" className={classes.root} />
                         <TextField
-              value={phoneNumber}
-              type="tel"
-              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-              onChange={handlePhoneNumberChange}
-              placeholder="(000)000-0000"
-              variant="filled"
-              fullWidth
-              className={classes.root}
-            ></TextField>
+                            value={phoneNumber}
+                            type="tel"
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                            onChange={handlePhoneNumberChange}
+                            placeholder="(000)000-0000"
+                            variant="filled"
+                            fullWidth
+                            className={classes.root}
+                        ></TextField>
                     </Stack>
                     <Stack spacing={2} direction="row"  >
                         <Typography
@@ -575,8 +592,8 @@ const OwnerOnBoardDeskTopForm = () => {
                         </Typography>
                     </Stack>
                     <Stack spacing={2} direction="row" >
-                    <TextField value={mask} onChange={handleSsnChange} variant="filled" sx={{ width: '50%' }} placeholder="Enter SSN" className={classes.root}></TextField>
-                 </Stack>
+                        <TextField value={mask} onChange={handleSsnChange} variant="filled" sx={{ width: '50%' }} placeholder="Enter SSN" className={classes.root}></TextField>
+                    </Stack>
                 </Box>
             </Box>
             <hr />
@@ -590,23 +607,31 @@ const OwnerOnBoardDeskTopForm = () => {
                 >
                     <CircularProgress color="inherit" />
                 </Backdrop>
-
-                {/* <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
-                Payment Methods
-            </Typography> */}
                 <Paper elevation={3} sx={{ padding: 3, mb: 3 }}>
                     {renderPaymentMethods()}
                 </Paper>
-
             </Box>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNextStep}
-                disabled={nextStepDisabled}
-            >
-                Save
-            </Button>
+            <hr />
+            <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" p={5}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNextStep}
+                    disabled={nextStepDisabled}
+                    sx={{ mb: 2 }}
+                >
+                    Save
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleNavigation}
+                   
+                    disabled={!dashboardButtonEnabled}
+                >
+                    Go to Dashboard
+                </Button>
+            </Box>
         </div>
     );
 };
