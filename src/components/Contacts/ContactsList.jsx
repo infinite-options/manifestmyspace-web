@@ -57,7 +57,7 @@ const tabsManager = [
     {
       label: "Employees",
       value: "Employee"
-    }
+    },
   ];
   
   const tabsOwner = [
@@ -68,6 +68,32 @@ const tabsManager = [
     {
       label: "Tenants",
       value: "Tenant"
+    }
+  ];
+
+  const tabsTenant = [
+    {
+      label: "Managers",
+      value: "Manager"
+    },
+    {
+      label: "Maintenance",
+      value: "Maintenance"
+    }
+  ];
+
+  const tabsMaintenance = [
+    {
+      label: "Managers",
+      value: "Manager"
+    },
+    {
+      label: "Tenants",
+      value: "Tenant"
+    },
+    {
+      label: "Employees",
+      value: "Employee"
     }
   ];
 
@@ -186,7 +212,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
         case "Employee":
           dataDetails = displayedEmployeesData;
           break;
-        case "Employee":
+        case "Manager":
           dataDetails = displayedManagersData;
           break;
         default:
@@ -288,6 +314,26 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
                     }
                     {selectedRole === "OWNER" && 
                         tabsOwner.map(tab => (
+                            <Tab 
+                                key={tab.value}
+                                label={tab.label}
+                                value={tab.value}
+                                sx={tabStyle(tab.value)}
+                            />
+                        ))
+                    }
+                    {selectedRole === "MAINTENANCE" && 
+                        tabsMaintenance.map(tab => (
+                            <Tab 
+                                key={tab.value}
+                                label={tab.label}
+                                value={tab.value}
+                                sx={tabStyle(tab.value)}
+                            />
+                        ))
+                    }
+                    {selectedRole === "TENANT" && 
+                        tabsTenant.map(tab => (
                             <Tab 
                                 key={tab.value}
                                 label={tab.label}
@@ -407,7 +453,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
     const manager = props.data;
     const handleSetSelectedCard = props.selected;
     const index = props.index;
-    const managerProperties = manager.properties.length > 0? JSON.parse(manager.properties).filter( property => property.contract_status === "ACTIVE") : [];
+    const managerProperties = manager?.properties?.length > 0? JSON.parse(manager?.properties).filter( property => property?.contract_status === "ACTIVE") : [];
     const activeProperties = managerProperties;
   
     const handleSelection = () => {
