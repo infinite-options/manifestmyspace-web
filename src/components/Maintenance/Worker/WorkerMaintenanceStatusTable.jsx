@@ -36,7 +36,7 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
   // console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
   // console.log("----MaintenanceStatusTable----", status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount);
-
+const [data, setdata] = useState({});
   const tableTextStyle = {
     backgroundColor: color,
     color: "#FFFFFF",
@@ -140,14 +140,19 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
         ];
 
         const result = {};
+        const tempdata = {};
+
         statusMappings.forEach((mapping) => {
           const key = mapping.mapping;
           if (data.result[key]) {
             result[mapping.status] = data.result[key].maintenance_items;
+            tempdata[key] = data.result[key].maintenance_items;
           }
         });
+        console.log('status table---', result);
 
-        setMaintenanceRequests(result);
+        await setMaintenanceRequests(result);
+        await setdata(tempdata);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -163,14 +168,14 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
     //console.log("maintenance_request_index", maintenance_request_index)
     //console.log("status", status);
     //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
-    //console.log("maintenanceRequests", maintenanceRequests[status]);
+    //console.log("inside func allMaintenanceData", allMaintenanceData);
 
     navigate(`/workerMaintenance/detail`, {
       state: {
         maintenance_request_index,
         status,
         maintenanceItemsForStatus: maintenanceRequests[status],
-        allMaintenanceData,
+        data,
       },
     });
   }

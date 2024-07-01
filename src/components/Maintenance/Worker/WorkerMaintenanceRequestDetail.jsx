@@ -75,7 +75,7 @@ export default function WorkerMaintenanceRequestDetail(){
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
-    const allData = location.state.allMaintenanceData;
+    const allData = location.state.data;
 
 
     function navigateToAddMaintenanceItem(){
