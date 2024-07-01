@@ -285,7 +285,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         if (!currentFeeRow.frequency) newError.frequency = "Frequency is required";
 
         if (Object.keys(newError).length === 0) {
-            if (setIsFeeEditing) {
+            if (isEditing === true) {
                 setLeaseFees(leaseFees.map(fee => (fee.leaseFees_uid === currentFeeRow.leaseFees_uid ? currentFeeRow : fee)));
                 // if (currentFeeRow.fee_name === "Rent") {
                 //     setRent(currentFeeRow);
@@ -354,16 +354,13 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         setIsRenewNeeded(true);
     };
 
-    function formatDate(date) {
-        var d = new Date(date),
-            month = "" + (d.getMonth() + 1),
-            day = "" + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2) month = "0" + month;
-        if (day.length < 2) day = "0" + day;
-
-        return [month, day, year].join("-");
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        console.log('check date', dateString, date)
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}-${day}-${year}`;
     }
 
     const handleEndLease = () => {
@@ -461,17 +458,17 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
                 }
 
-                axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                    .then((response) => {
-                        console.log('Data updated successfully');
-                        showSnackbar("Successfully Renewed the lease.", "success");
-                    })
-                    .catch((error) => {
-                        if (error.response) {
-                            console.log(error.response.data);
-                            showSnackbar("Cannot Renew the lease. Please Try Again", "error");
-                        }
-                    });
+                // axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                //     .then((response) => {
+                //         console.log('Data updated successfully');
+                //         showSnackbar("Successfully Renewed the lease.", "success");
+                //     })
+                //     .catch((error) => {
+                //         if (error.response) {
+                //             console.log(error.response.data);
+                //             showSnackbar("Cannot Renew the lease. Please Try Again", "error");
+                //         }
+                //     });
             }
         } catch (error) {
             console.log("Cannot Renew the lease");
@@ -623,8 +620,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 <DataGrid
                                     rows={tenantWithId}
                                     columns={tenantColumns}
-                                    pageSize={5}
-                                    rowsPerPageOptions={[5]}
+                                    hideFooterPagination={true}
+                                    rowsPerPageOptions={[]}
                                     getRowId={(row) => row.tenant_uid}
                                     sx={{
                                         '& .MuiDataGrid-columnHeader': {
@@ -711,7 +708,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>End Date</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_end}</Typography>
+                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{formatDate(currentLease.lease_end)}</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -750,7 +747,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-In Date</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date ? currentLease.lease_move_in_date : "-"}</Typography>
+                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date ? formatDate(currentLease.lease_move_in_date) : "-"}</Typography>
                                             </Grid>
                                             <Grid item xs={3} />
                                         </Grid>

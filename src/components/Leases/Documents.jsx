@@ -28,9 +28,10 @@ const useStyles = makeStyles((theme) => ({
 const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles }) => {
     const [open, setOpen] = useState(false);
     const [currentRow, setcurrentRow] = useState(null);
-    const [docs, setDocs] = useState([]);
+    // const [docs, setDocs] = useState([]);
     const color = theme.palette.form.main;
     const [isEditing, setIsEditing] = useState(false);
+    const [newFiles, setNewFiles] = useState(null);
     const classes = useStyles();
 
     const handleOpen = () => setOpen(true);
@@ -42,12 +43,25 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
         const curr = { ...currentRow, filename: e.target.files[0].name, id: documents.length };
         console.log(curr);
         setcurrentRow(curr);
-        setDocs((prevFiles) => [...prevFiles, ...e.target.files]);
-        setuploadedFiles((prevFiles => [...prevFiles, ...e.target.files]));
+        // setDocs((prevFiles) => [...prevFiles, ...e.target.files]);
+        const filesArray = Array.from(e.target.files).map(file => ({
+            name: file.name,
+            type: currentRow.type,
+            file: file
+          }));
+        setNewFiles(filesArray);
     };
 
     const handleSubmit = () => {
-        setDocuments((prevFiles) => [...prevFiles, currentRow]);
+        if(isEditing === true){
+          setDocuments(documents.map(doc => (doc.id === currentRow.id ? currentRow : doc)))
+
+        } else{
+            console.log('arr', newFiles);
+            setDocuments((prevFiles) => [...prevFiles, currentRow]);
+            setuploadedFiles((prevFiles => [...prevFiles, ...newFiles]));
+            setNewFiles(null);
+        }
         handleClose();
     };
 
@@ -59,7 +73,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
 
 
     const handleDeleteClick = (id) => {
-        setDocs(docs.filter(doc => doc.id !== id));
+        setDocuments(documents.filter(doc => doc.id !== id));
     };
 
     const docsColumns = [
@@ -220,7 +234,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                     p: 4,
                 }}>
                     <Typography id="add-document-modal" variant="h6" component="h2">
-                        Add Document
+                    {isEditing ? 'Edit Document' : 'Add Document'}
                     </Typography>
                     <FormControl fullWidth sx={{ marginTop: "10px" }}>
                         <InputLabel sx={{ color: theme.palette.grey }}>Type</InputLabel>
@@ -240,8 +254,8 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                             <MenuItem value="Other">Other</MenuItem>
                         </Select>
                     </FormControl>
-                    <Box sx={{ alignItems: "center", justifyContent: "center" }}>
-                        <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+                    <Box sx={{ alignItems: "center", justifyContent: "center", marginTop: "10px" }}>
+                        <label htmlFor="file-upload" style={{ cursor: "pointer", display: "flex", }}>
                             <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} /> Add Document
                         </label>
                         <input
@@ -253,13 +267,27 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                         />
                     </Box>
                     {currentRow && currentRow.filename &&
-                        <Box sx={{ marginTop: "15px" }}>
+                        <Box sx={{ marginTop: "25px" }}>
                             <Typography>Added File: {currentRow.filename}</Typography>
                         </Box>
                     }
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Button onClick={handleClose} sx={{ marginRight: '10px' }}>Cancel</Button>
-                        <Button onClick={handleSubmit} variant="contained">Add</Button>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop:"20px" }}>
+                        <Button onClick={handleClose} sx={{
+                            marginRight: '5px', background: "#3D5CAC",
+                            color: theme.palette.background.default,
+                            cursor: "pointer",
+                            width: "20%",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                        }}>Cancel</Button>
+                        <Button onClick={handleSubmit} sx={{
+                            background: "#3D5CAC",
+                            color: theme.palette.background.default,
+                            cursor: "pointer",
+                            width: "20%",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                        }}>{isEditing ? "Edit" : "Add"}</Button>
                     </Box>
                 </Box>
             </Modal>
