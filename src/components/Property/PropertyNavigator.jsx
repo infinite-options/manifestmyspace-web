@@ -1487,7 +1487,7 @@ export default function PropertyNavigator({
 													fontSize: theme.typography.smallFont,
 												}}
 											>
-												Lease Expires (or Vacant):
+												Lease Expires:
 											</Typography>
 										</Grid>
 										<Grid item xs={6} md={6}>
