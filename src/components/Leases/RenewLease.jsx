@@ -22,6 +22,7 @@ import ChildrenOccupant from "./ChildrenOccupant";
 import PetsOccupant from "./PetsOccupant";
 import VehiclesOccupant from "./VehiclesOccupant";
 import EndLeaseButton from "./EndLeaseButton";
+import Documents from "./Documents";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import RenewLeaseButton from "./RenewLeaseButton";
@@ -77,8 +78,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [relationships, setRelationships] = useState([]);
     const [states, setStates] = useState([]);
     const [endLeaseStatus, setEndLeaseStatus] = useState("");
+    const [isRenewNeeded, setIsRenewNeeded] = useState(false);
     const alertRef = useRef(null);
-
+    const [uploadedFiles, setuploadedFiles] = useState([]);
 
     useEffect(() => {
         const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
@@ -118,8 +120,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             id: index
         }));
 
+        console.log('initial docs', docs);
         setDocuments(docs);
-        const leaseDoc = docs.find(doc => doc.description.trim().toLowerCase() === "modified unsigned lease".trim().toLowerCase());
+        const leaseDoc = docs.find(doc => doc.type && doc.type === "Lease Contract");
         console.log('leaselink', leaseDoc);
         setSignedLease(leaseDoc);
 
@@ -287,8 +290,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                 // if (currentFeeRow.fee_name === "Rent") {
                 //     setRent(currentFeeRow);
                 // }
+                setIsRenewNeeded(true);
             } else {
                 setLeaseFees([...leaseFees, { ...currentFeeRow, lease_uid: uuidv4() }]);
+                setIsRenewNeeded(true);
             }
             handleFeeModalClose();
 
@@ -304,49 +309,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
     };
-
-
-    const docsColumns = [
-        {
-            field: "id",
-            headerName: "UID",
-            flex: 0.5,
-        },
-        {
-            field: "description",
-            headerName: "Document",
-            flex: 1,
-        },
-        {
-            field: "created_date",
-            headerName: "Date Added",
-            flex: 1,
-        },
-        {
-            field: "link",
-            headerName: "Action",
-            flex: 0.5,
-            renderCell: (params) => {
-                // console.log('params', params);
-                return (
-                    <Button
-                        sx={{
-                            padding: "0px",
-                            '&:hover': {
-                                backgroundColor: theme.palette.form.main,
-                            },
-                        }}
-                        className=".MuiButton-icon"
-                        onClick={() =>
-                            window.open(params.value, "_blank", "rel=noopener noreferrer")
-                        }
-                    >
-                        <img src={LeaseIcon} />
-                    </Button>
-                )
-            },
-        },
-    ]
 
     const onAddUtilitiesClick = () => {
         const utilityTypeId = selectedAddUtil;
@@ -370,6 +332,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     newUtils.delete(utilityTypeId);
                     return newUtils;
                 });
+                setIsRenewNeeded(true);
             }
         }
     }
@@ -388,6 +351,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             console.log('updated util', updatedUtilities);
             return updatedUtilities;
         });
+        setIsRenewNeeded(true);
     };
 
     function formatDate(date) {
@@ -415,6 +379,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         leaseApplicationFormData.append("lease_uid", currentLease.lease_uid);
         leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);
         leaseApplicationFormData.append("lease_status", endLeaseStatus);
+        if (endLeaseStatus === "EARLY TERMINATION") {
+            const currentDate = new Date();
+            const currentDateFormatted = dayjs(currentDate).format("MM-DD-YYYY");
+            leaseApplicationFormData.append("lease_early_end_date", currentDateFormatted);
+        }
 
         console.log('formattedMoveOutDate', formattedMoveOutDate, typeof (formattedMoveOutDate))
         console.log('end form', leaseApplicationFormData);
@@ -436,6 +405,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         try {
             //Renew the lease by creating a new lease row in DB with lease status - "PROCESSING" if requested by Manager 
             //or "NEW" if requested by tenant
+            console.log(uploadedFiles);
             const headers = {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "*",
@@ -453,29 +423,42 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                 leaseApplicationFormData.append("lease_end", formatDate(newEndDate));
                 leaseApplicationFormData.append("lease_end_notice_period", currentLease.lease_end_notice_period);
                 leaseApplicationFormData.append('lease_assigned_contacts', currentLease.lease_assigned_contacts);
-                leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
+                //leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
                 leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
                 leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
                 leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
                 leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
-                leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString());
+                leaseApplicationFormData.append('lease_application_date', formatDate(date.toLocaleDateString()));
                 leaseApplicationFormData.append('tenant_uid', tenantWithId[i].tenant_uid);
                 leaseApplicationFormData.append('lease_referred', currentLease.lease_referred)
                 leaseApplicationFormData.append("lease_move_in_date", currentLease.lease_move_in_date);
                 leaseApplicationFormData.append("property_listed_rent", newRent);
                 leaseApplicationFormData.append("frequency", newFreq);
-                //leaseApplicationFormData.append("lease_rent_late_by", newLateBy);
-                // leaseApplicationFormData.append("lease_rent_late_fee", newLateFee);
-                // leaseApplicationFormData.append("lease_rent_due_by", newDueBy);
-                // leaseApplicationFormData.append("lease_rent_available_topay", newAvlToPay);
-                // leaseApplicationFormData.append("lease_rent_perDay_late_fee", newLateFeePerDay);
-                const feesJSON =  JSON.stringify(leaseFees)
+                const feesJSON = JSON.stringify(leaseFees)
                 leaseApplicationFormData.append("lease_fees", feesJSON);
 
-                if(selectedRole === "MANAGER"){
+                if (selectedRole === "MANAGER") {
                     leaseApplicationFormData.append('lease_status', "PROCESSING");
                 } else {
                     leaseApplicationFormData.append('lease_status', "NEW");
+                }
+
+                if (uploadedFiles.length) {
+                    const documentsDetails = [];
+                    [...uploadedFiles].forEach((file, i) => {
+                        leaseApplicationFormData.append(`file-${i}`, file, file.name);
+                        // const fileType = contractFileTypes[i] || '';
+                        const fileType = 'pdf';
+                        const documentObject = {
+                            // file: file,
+                            fileIndex: i,
+                            fileName: file.name,
+                            fileType: fileType,
+                            type: "Lease Agreement",
+                        };
+                        documentsDetails.push(documentObject);
+                    });
+                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
                 }
 
                 axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
@@ -492,6 +475,65 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
             }
         } catch (error) {
             console.log("Cannot Renew the lease");
+        }
+    }
+
+    const handleUpdateLease = async () => {
+        try {
+            const headers = {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Credentials": "*",
+            };
+
+            if (isRenewNeeded) {
+                //step 1 - END the current lease
+
+                const leaseApplicationFormData = new FormData();
+                const formattedMoveOutDate = formatDate(moveoutDate);;
+                leaseApplicationFormData.append("lease_uid", currentLease.lease_uid);
+                leaseApplicationFormData.append("lease_status", "ENDED");
+
+                console.log('formattedMoveOutDate', formattedMoveOutDate, typeof (formattedMoveOutDate))
+                console.log('end form', leaseApplicationFormData);
+                axios
+                    .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+                    .then((response) => {
+                        console.log("Data updated successfully", response);
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            showSnackbar("Cannot Update the lease. Please Try Again", "error");
+                            console.log(error.response.data);
+                        }
+                    });
+
+                //Step 2 - Create a new row for the lease
+                handleRenewLease();
+            } else {
+                for (let i = 0; i < tenantWithId.length; i++) {
+                    const leaseApplicationFormData = new FormData();
+
+                    leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
+                    const feesJSON = JSON.stringify(leaseFees)
+                    leaseApplicationFormData.append("lease_fees", feesJSON);
+
+                    axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                        .then((response) => {
+                            console.log('Data updated successfully');
+                            showSnackbar("Successfully Updated the lease.", "success");
+                        })
+                        .catch((error) => {
+                            if (error.response) {
+                                console.log(error.response.data);
+                                showSnackbar("Cannot Update the lease. Please Try Again", "error");
+                            }
+                        });
+                }
+            }
+        } catch (error) {
+            console.log("Cannot Update the lease");
         }
     }
 
@@ -547,7 +589,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                             >
                                 {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
                             </Typography>
-                            {signedLease !== null && <Button
+                            {signedLease && <Button
                                 sx={{
                                     padding: "0px",
                                     '&:hover': {
@@ -639,7 +681,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                         value={newStartDate}
                                                         onChange={e => {
                                                             const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                            setNewStartDate(dayjs(formattedDate))
+                                                            setNewStartDate(dayjs(formattedDate));
+                                                            setIsRenewNeeded(true);
                                                         }}
                                                         renderInput={(params) => (
                                                             <TextField
@@ -676,7 +719,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                         value={newEndDate}
                                                         onChange={e => {
                                                             const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                            setNewEndDate(dayjs(formattedDate))
+                                                            setNewEndDate(dayjs(formattedDate));
+                                                            setIsRenewNeeded(true);
                                                         }
                                                         }
                                                         renderInput={(params) => (
@@ -724,7 +768,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                         value={moveoutDate}
                                                         onChange={e => {
                                                             const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                            setMoveoutDate(dayjs(formattedDate))
+                                                            setMoveoutDate(dayjs(formattedDate));
+                                                            setIsRenewNeeded(true);
                                                         }}
                                                         renderInput={(params) => (
                                                             <TextField
@@ -906,7 +951,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                             sx={{ height: "42px", fontSize: "14px" }}
                                                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                                             value={newRent}
-                                                            onChange={e => setNewRent(e.target.value)}
+                                                            onChange={e => {
+                                                                setNewRent(e.target.value);
+                                                                setIsRenewNeeded(true);
+                                                            }
+                                                            }
                                                         />
                                                     </FormControl>
                                                 </Grid>
@@ -931,7 +980,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                             placeholder="Select frequency"
                                                             className={classes.select}
                                                             sx={{ fontSize: "14px" }}
-                                                            onChange={e => setNewFreq(e.target.value)}
+                                                            onChange={e => {
+                                                                setNewFreq(e.target.value);
+                                                                setIsRenewNeeded(true);
+                                                            }
+                                                            }
                                                         >
                                                             <MenuItem value="One-time">One-time</MenuItem>
                                                             <MenuItem value="Weekly">Weekly</MenuItem>
@@ -964,7 +1017,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                             }}
                                                             sx={{ height: "42px", fontSize: "14px" }}
                                                             value={newDueBy}
-                                                            onChange={e => setNewDueBy(e.target.value)}
+                                                            onChange={e => {
+                                                                setNewDueBy(e.target.value);
+                                                                setIsRenewNeeded(true);
+                                                            }}
                                                         />
                                                     </FormControl>
                                                 </Grid>
@@ -994,7 +1050,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                             }}
                                                             sx={{ height: "42px", fontSize: "14px" }}
                                                             value={newAvlToPay}
-                                                            onChange={e => setNewAvlToPay(e.target.value)}
+                                                            onChange={e => { setNewAvlToPay(e.target.value); setIsRenewNeeded(true); }}
                                                         />
                                                     </FormControl>
                                                 </Grid>
@@ -1028,7 +1084,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                                 },
                                                             }}
                                                             value={newLateBy}
-                                                            onChange={e => setNewLateBy(e.target.value)}
+                                                            onChange={e => {
+                                                                setNewLateBy(e.target.value);
+                                                                setIsRenewNeeded(true);
+                                                            }}
                                                         />
                                                     </FormControl>
                                                 </Grid>
@@ -1055,7 +1114,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                             }}
                                                             sx={{ height: "42px", fontSize: "14px" }}
                                                             value={rent.late_fee}
-                                                            onChange={e => setNewLateFee(e.target.value)}
+                                                            onChange={e => {
+                                                                setNewLateFee(e.target.value);
+                                                                setIsRenewNeeded(true);
+                                                            }}
                                                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                                         />
                                                     </FormControl>
@@ -1084,7 +1146,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                             sx={{ height: "42px", fontSize: "14px" }}
                                                             value={newLateFeePerDay}
                                                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                                            onChange={e => setNewLateFeePerDay(e.target.value)}
+                                                            onChange={e => {
+                                                                setNewLateFeePerDay(e.target.value);
+                                                                setIsRenewNeeded(true);
+                                                            }}
                                                         />
                                                     </FormControl>
                                                 </Grid>
@@ -1329,91 +1394,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <Accordion sx={{ backgroundColor: color }}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="occupants-content"
-                                    id="occupants-header"
-                                >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                        <Typography
-                                            sx={{
-                                                color: theme.typography.primary.black,
-                                                fontWeight: theme.typography.primary.fontWeight,
-                                                fontSize: theme.typography.small,
-                                                textAlign: 'center',
-                                                paddingBottom: "10px",
-                                                paddingTop: "5px",
-                                                flexGrow: 1,
-                                            }}
-                                            paddingTop="5px"
-                                            paddingBottom="10px"
-                                        >
-                                            Documents
-                                        </Typography>
-                                        <Button variant="outlined"
-                                            sx={{
-                                                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-                                                cursor: "pointer",
-                                                textTransform: "none",
-                                                minWidth: "40px",
-                                                minHeight: "40px",
-                                                width: "40px",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}
-                                            size="small"
-                                        // onClick={() => {
-                                        //     setcurrentFeeRow({
-                                        //         fee_Type: '',
-                                        //         available_topay: '',
-                                        //         charge: '',
-                                        //         due_by: '',
-                                        //         due_by_date: dayjs(),
-                                        //         fee_name: '',
-                                        //         fee_type: '',
-                                        //         frequency: '',
-                                        //         late_by: '',
-                                        //         late_fee: '',
-                                        //         perDay_late_fee: '',
-                                        //     });
-                                        //     setIsFeeEditing(false);
-                                        //     handleFeeModalOpen();
-                                        // }}
-                                        >
-                                            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                                        </Button>
-                                    </Box>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <DataGrid
-                                        rows={documents}
-                                        columns={docsColumns}
-                                        pageSize={5}
-                                        rowsPerPageOptions={[5]}
-                                        getRowId={(row) => row.id}
-                                        sx={{
-                                            '& .MuiDataGrid-columnHeader': {
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                color: "#3D5CAC",
-                                            },
-                                            '& .MuiDataGrid-columnHeaderTitle': {
-                                                font: "bold",
-                                                width: '100%',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                fontWeight: "bold",
-                                            },
-                                            '& .MuiDataGrid-cell': {
-                                                color: "#3D5CAC",
-                                                fontWeight: "bold",
-                                            },
-
-                                        }}
-                                    />
-                                </AccordionDetails>
-                            </Accordion>
+                            <Documents documents={documents} setDocuments={setDocuments}
+                                uploadedFiles={uploadedFiles} setuploadedFiles={setuploadedFiles} />
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
@@ -1462,7 +1444,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
                             <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
-                                    moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={false}/>
+                                    moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={false} />
                             </Grid>
 
                             <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
@@ -1486,7 +1468,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         },
                                     }}
                                     size="small"
-                                    // onClick={}
+                                    onClick={handleUpdateLease}
                                 >
                                     <Typography sx={{
                                         textTransform: "none",
@@ -1501,8 +1483,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 </Button>
                             </Grid>
                             <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                 <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
-                                    moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={true}/>
+                                <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
+                                    moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={true} />
                             </Grid>
                         </Grid>
                     </Grid>
