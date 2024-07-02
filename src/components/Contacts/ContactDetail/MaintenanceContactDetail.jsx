@@ -323,7 +323,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
   
   const WorkOrdersAccordion = ({ data }) => {
     const colorStatus = theme.colorStatusMM;
-    console.log("ROHIT - WorkOrdersAccordion - data - ", data);
+    console.log("WorkOrdersAccordion - data - ", data);
     // const allMaintenanceRequests = [];
     const [ maintenanceRequests, setMaintenanceRequests ] = useState({})
   
@@ -354,7 +354,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
     }, [data]);
   
     useEffect(() => {
-      console.log("ROHIT - WorkOrdersAccordion - maintenanceRequests - ", maintenanceRequests);
+      console.log("WorkOrdersAccordion - maintenanceRequests - ", maintenanceRequests);
     }, [maintenanceRequests]);
   
     
@@ -428,9 +428,9 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
                     let maintenanceArray = maintenanceRequests[mappingKey];
                     // let maintenanceItems = maintenanceArray? JSON.parse(maintenanceArray?.maintenance_request_info) : []
                     let maintenanceItems = maintenanceArray? maintenanceArray?.maintenance_request_info : []
-                    console.log("ROHIT - maintenanceArray - ", maintenanceArray);
-                    console.log("ROHIT - maintenanceArray.maintenance_request_info - ", maintenanceArray?.maintenance_request_info);                  
-                    console.log("ROHIT - maintenanceItems - ", maintenanceItems);
+                    console.log("maintenanceArray - ", maintenanceArray);
+                    console.log("maintenanceArray.maintenance_request_info - ", maintenanceArray?.maintenance_request_info);                  
+                    console.log("maintenanceItems - ", maintenanceItems);
   
                     // let maintenanceArray = maintenanceRequests[mappingKey]?  JSON.parse(maintenanceRequests[mappingKey]?.maintenance_request_info) : [];
   
@@ -479,7 +479,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
     const location = useLocation();
     let navigate = useNavigate();
   
-    console.log("ROHIT - WorkerMaintenanceStatusTable - maintenanceItemsForStatus - ", maintenanceItemsForStatus);
+    console.log("WorkerMaintenanceStatusTable - maintenanceItemsForStatus - ", maintenanceItemsForStatus);
     // console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
   
     const tableTextStyle = {
@@ -703,7 +703,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
     }, [data]);
   
     useEffect(() => {
-      console.log("ROHIT - MaintenanceCashflowWidget - maintenanceRequests - ", maintenanceRequests);
+      console.log("MaintenanceCashflowWidget - maintenanceRequests - ", maintenanceRequests);
     }, [maintenanceRequests]);
   
   
