@@ -83,7 +83,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(isMobile ? location.state.maintenanceItemsForStatus : propmaintenanceItemsForStatus);
     const allData = isMobile ? location.state.data : alldata;
 
-    const [maintenanceRequestId, setMaintenanceRequestId] = useState(isMobile ? location.state.maintenance_request_uid: maintenance_request_uid);
+    const [maintenanceRequestId, setMaintenanceRequestId] =  useState(isMobile ? location.state.maintenance_request_uid: maintenance_request_uid);
 
 
     function navigateToAddMaintenanceItem(){
@@ -93,7 +93,22 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
 
     function handleBackButton(){
         // console.log("handleBackButton")
-        navigate(-1); 
+        if(isMobile){
+            navigate(-1); 
+        } else {
+            sessionStorage.removeItem('workerselectedRequestIndex');
+			sessionStorage.removeItem('workerselectedStatus');
+			sessionStorage.removeItem('workermaintenanceItemsForStatus');
+			sessionStorage.removeItem('workerallMaintenanceData');
+			sessionStorage.removeItem('workermaintenance_request_uid');
+            sessionStorage.removeItem('workerMaintenanceView');
+
+            window.dispatchEvent(new Event('storage'));
+			// Dispatch the custom event
+            setTimeout(() => {
+				window.dispatchEvent(new Event('removeworkermaintenanceRequestSelected'));
+			}, 0);
+        }
     }
 
     function deactivateTab(key, maintenanceData){
@@ -202,7 +217,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
                     width: '100%', // Take up full screen width
                     // maxWidth: '60%',
                     minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
+                    marginTop: theme.spacing(-5), // Set the margin to 20px
                 }}
             >
                 <Paper
@@ -224,7 +239,10 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
                             paddingRight: "0px",
                         }}
                     >
-                        <Box position="absolute" left={30}>
+                        <Box sx={{
+								position: 'absolute',
+								left: isMobile ? '30px' : '35%',
+							}}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
                             </Button>
