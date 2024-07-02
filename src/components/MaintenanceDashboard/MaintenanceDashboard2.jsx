@@ -26,6 +26,8 @@ import APIConfig from '../../utils/APIConfig';
 import Chart from 'react-apexcharts';
 import WorkerMaintenanceStatusTable from '../Maintenance/Worker/WorkerMaintenanceStatusTable';
 import { format, isEqual, isAfter, parseISO } from 'date-fns';
+import useSessionStorage from '../Maintenance/useSessionStorage';
+import WorkerMaintenanceRequestDetail from '../Maintenance/Worker/WorkerMaintenanceRequestDetail';
 
 export default function MaintenanceDashboard2() {
 	const { user, getProfileId } = useUser();
@@ -38,13 +40,24 @@ export default function MaintenanceDashboard2() {
 	const [todayData, settodayData] = useState([]);
 	const [nextScheduleData, setnextScheduleData] = useState([]);
 
+	const [workerMaintenanceView, setWorkerMaintenanceView] = useSessionStorage('workerMaintenanceView', false);
+	const [showMaintenanceDetail, setShowMaintenanceDetail] = useState(workerMaintenanceView);
+
+  const [sessionData, setSessionData] = useState({
+		maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
+		propstatus: sessionStorage.getItem('workerselectedStatus'),
+		propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
+		alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
+		maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
+	});
+
 	useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
 			console.log('---getProfileId()---', getProfileId());
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
 
-			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
@@ -149,6 +162,37 @@ export default function MaintenanceDashboard2() {
 		getMaintenanceData();
 	}, []);
 
+	useEffect(() => {
+		const handleWorkerMaintenanceRequestSelected = () => {
+			setShowMaintenanceDetail(true);
+      setSessionData({
+				maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
+				propstatus: sessionStorage.getItem('workerselectedStatus'),
+				propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
+				alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
+				maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
+			});
+		};
+
+		window.addEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
+
+		return () => {
+			window.removeEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
+		};
+	}, []);
+
+  useEffect(() => {
+		const handleremoveworkermaintenanceRequestSelected = () => {
+			setShowMaintenanceDetail(false);
+		};
+
+		window.addEventListener('removeworkermaintenanceRequestSelected', handleremoveworkermaintenanceRequestSelected);
+
+		return () => {
+			window.removeEventListener('removeworkermaintenanceRequestSelected', handleremoveworkermaintenanceRequestSelected);
+		};
+	}, []);
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -178,6 +222,7 @@ export default function MaintenanceDashboard2() {
 							</Typography>
 						</Box>
 					</Grid>
+
 					<Grid item xs={12} md={4}>
 						<WorkOrdersWidget
 							maintenanceRequests={maintenanceRequests}
@@ -186,39 +231,59 @@ export default function MaintenanceDashboard2() {
 						/>
 					</Grid>
 					<Grid container item xs={12} md={8} columnSpacing={6} rowGap={4}>
-						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '400px' }}>
-							<Stack
-								direction="row"
-								justifyContent="center"
-								width="100%"
-								sx={{ marginBottom: '15px', marginTop: '15px' }}
-							>
-								<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
-									Current Activity
-								</Typography>
-							</Stack>
-							<Grid container spacing={2}>
-								<Grid item xs={12} md={6} sx={{ marginBottom: '0px', marginTop: '0px' }}>
-									<RadialBarChart data={graphData} />
+						{showMaintenanceDetail ? (
+							<WorkerMaintenanceRequestDetail
+              maintenance_request_index={sessionData.maintenance_request_index}
+              propstatus={sessionData.propstatus}
+              propmaintenanceItemsForStatus={sessionData.propmaintenanceItemsForStatus}
+              alldata={sessionData.alldata}
+              maintenance_request_uid={sessionData.maintenance_request_uid}
+							/>
+						) : (
+							<>
+								<Grid
+									item
+									xs={12}
+									sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '400px' }}
+								>
+									<Stack
+										direction="row"
+										justifyContent="center"
+										width="100%"
+										sx={{ marginBottom: '15px', marginTop: '15px' }}
+									>
+										<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
+											Current Activity
+										</Typography>
+									</Stack>
+									<Grid container spacing={2}>
+										<Grid item xs={12} md={6} sx={{ marginBottom: '0px', marginTop: '0px' }}>
+											<RadialBarChart data={graphData} />
+										</Grid>
+										<Grid item xs={12} md={6} sx={{ marginBottom: '15px', marginTop: '25px' }}>
+											<MaintenanceCashflowWidget data={cashflowData}></MaintenanceCashflowWidget>
+										</Grid>
+									</Grid>
 								</Grid>
-								<Grid item xs={12} md={6} sx={{ marginBottom: '15px', marginTop: '25px' }}>
-									<MaintenanceCashflowWidget data={cashflowData}></MaintenanceCashflowWidget>
+								<Grid
+									item
+									xs={12}
+									sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '600px' }}
+								>
+									<Stack
+										direction="row"
+										justifyContent="center"
+										width="100%"
+										sx={{ marginBottom: '15px', marginTop: '15px' }}
+									>
+										<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
+											Revenue
+										</Typography>
+									</Stack>
+									<RevenueTable data={revenueData}></RevenueTable>
 								</Grid>
-							</Grid>
-						</Grid>
-						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '600px' }}>
-							<Stack
-								direction="row"
-								justifyContent="center"
-								width="100%"
-								sx={{ marginBottom: '15px', marginTop: '15px' }}
-							>
-								<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
-									Revenue
-								</Typography>
-							</Stack>
-							<RevenueTable data={revenueData}></RevenueTable>
-						</Grid>
+							</>
+						)}
 					</Grid>
 				</Grid>
 			</Container>
@@ -237,7 +302,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 		return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
 	};
 
-  const colors = ['#B33A3A', '#FFAA00', '#FFC107'];
+	const colors = ['#B33A3A', '#FFAA00', '#FFC107'];
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -391,65 +456,74 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 											);
 										})
 									)}
-								 {nextScheduleData.length > 0 && (
-                    <>
-                      <Typography align="left" sx={{ fontSize: '20px', fontWeight: 'bold', color: '#3D5CAC' }}>
-                        Next Appointment: {nextScheduleData[0].maintenance_scheduled_date}
-                      </Typography>
-                      {nextScheduleData.map((row, index) => {
-                        const formattedTime = convertTimeTo12HourFormat(row.maintenance_scheduled_time);
-                        return (
-                          <Box
-                            key={index}
-                            sx={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              backgroundColor: colors[index % colors.length], // Use the desired background color
-                              color: 'white', // Use the desired text color
-                              borderRadius: '10px',
-                              marginBottom: 2,
-                              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for better appearance
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'flex-start',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <Typography sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
-                                {formattedTime}
-                              </Typography>
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  maxWidth: 'calc(100% - 4rem)', // Adjust based on the layout needs
-  
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  marginLeft: 1,
-                                }}
-                              >
-                                <Typography sx={{ marginLeft: 6, fontSize: '0.8rem' }}>
-                                  <strong>Address:</strong> {row.property_address},{' '}
-                                  {row.property_city}, {row.property_state}{' '}
-                                  {row.property_zip}
-                                </Typography>
-                                <Typography
-                                  sx={{ marginLeft: 6, marginTop: 1, fontSize: '0.8rem' }}
-                                >
-                                  <strong>Issue:</strong> {row.maintenance_title}
-                                </Typography>
-                              </Box>
-                            </Box>
-                          </Box>
-                        );
-                      })}
-                    </>
-                  )}
+									{nextScheduleData.length > 0 && (
+										<>
+											<Typography
+												align="left"
+												sx={{ fontSize: '20px', fontWeight: 'bold', color: '#3D5CAC' }}
+											>
+												Next Appointment: {nextScheduleData[0].maintenance_scheduled_date}
+											</Typography>
+											{nextScheduleData.map((row, index) => {
+												const formattedTime = convertTimeTo12HourFormat(
+													row.maintenance_scheduled_time
+												);
+												return (
+													<Box
+														key={index}
+														sx={{
+															display: 'flex',
+															flexDirection: 'column',
+															backgroundColor: colors[index % colors.length], // Use the desired background color
+															color: 'white', // Use the desired text color
+															borderRadius: '10px',
+															marginBottom: 2,
+															boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for better appearance
+														}}
+													>
+														<Box
+															sx={{
+																display: 'flex',
+																flexDirection: 'row',
+																justifyContent: 'flex-start',
+																alignItems: 'center',
+															}}
+														>
+															<Typography sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
+																{formattedTime}
+															</Typography>
+															<Box
+																sx={{
+																	display: 'flex',
+																	flexDirection: 'column',
+																	maxWidth: 'calc(100% - 4rem)', // Adjust based on the layout needs
+
+																	overflow: 'hidden',
+																	textOverflow: 'ellipsis',
+																	marginLeft: 1,
+																}}
+															>
+																<Typography sx={{ marginLeft: 6, fontSize: '0.8rem' }}>
+																	<strong>Address:</strong> {row.property_address},{' '}
+																	{row.property_city}, {row.property_state}{' '}
+																	{row.property_zip}
+																</Typography>
+																<Typography
+																	sx={{
+																		marginLeft: 6,
+																		marginTop: 1,
+																		fontSize: '0.8rem',
+																	}}
+																>
+																	<strong>Issue:</strong> {row.maintenance_title}
+																</Typography>
+															</Box>
+														</Box>
+													</Box>
+												);
+											})}
+										</>
+									)}
 								</Grid>
 							</Paper>
 						</Grid>
@@ -697,7 +771,7 @@ const MaintenanceCashflowWidget = ({ data }) => {
 };
 
 const RevenueTable = ({ data }) => {
-  console.log('---inside RevenueTable---', data);
+	console.log('---inside RevenueTable---', data);
 	return (
 		<Box sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', p: 3 }}>
 			<TableContainer
@@ -759,7 +833,7 @@ const RevenueTable = ({ data }) => {
 									Business Name
 								</Typography>
 							</TableCell>
-              <TableCell
+							<TableCell
 								sx={{
 									position: 'sticky',
 									top: 0,
@@ -849,7 +923,7 @@ const RevenueTable = ({ data }) => {
 								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
 									<Typography sx={{ color: '#160449' }}>{row.business_name}</Typography>
 								</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
+								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
 									<Typography sx={{ color: '#160449' }}>{row.maintenance_status}</Typography>
 								</TableCell>
 								<TableCell sx={{ whiteSpace: 'nowrap', padding: '10px 20px' }}>
