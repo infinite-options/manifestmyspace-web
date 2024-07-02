@@ -102,7 +102,7 @@ const PropertiesInformation = ({ owner }) => {
   }
 
   const PropertiesDataGrid = ({ data }) => {
-    console.log("ROHIT - PropertiesDataGrid - props.data -", data);
+    console.log("PropertiesDataGrid - props.data -", data);
     const paymentStatusColorMap = {
       "Paid On Time": theme.palette.priority.clear,
       "Partially Paid": theme.palette.priority.medium,

@@ -44,12 +44,12 @@ const ProfileInformation = ({ contactDetails, type }) => {
     const [ paymentMethods, setPaymentMethods ] = useState([]);  
   
     useEffect( () => {
-      console.log("ROHIT - ProfileInformation - contactDetails - ", contactDetails);                        
+      console.log("ProfileInformation - contactDetails - ", contactDetails);                        
       setPaymentMethods( JSON.parse(contactDetails?.payment_method || '[]') );    
     }, [contactDetails]);
   
     useEffect( () => {        
-      console.log("ROHIT - ProfileInformation - paymentMethods - ", paymentMethods);        
+      console.log("ProfileInformation - paymentMethods - ", paymentMethods);        
     }, [paymentMethods]);
   
     const formatPaymentMethodType = (type) => {

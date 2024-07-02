@@ -33,7 +33,7 @@ const TenantContacts = () => {
     console.log("ROHIT - currentIndex", currentIndex)
   }, [currentIndex]);
   useEffect(() => {
-    console.log("ROHIT - contactsTab", contactsTab)
+    console.log("ROHIT  - contactsTab", contactsTab)
     setCurrentIndex(0); 
   }, [contactsTab]);
   

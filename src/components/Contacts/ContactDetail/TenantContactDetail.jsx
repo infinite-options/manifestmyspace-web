@@ -235,7 +235,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                         contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
                           <TenantPropertyInformation 
                             // propertyData={contactDetails[currentIndex]?.property}
-                            propertyData={(selectedRole === "OWNER" || selectedRole === "MAINTENANCE" )  ? contactDetails[currentIndex]?.properties : contactDetails[currentIndex]?.property} //rohit - fix later
+                            propertyData={(selectedRole === "OWNER" || selectedRole === "MAINTENANCE" )  ? contactDetails[currentIndex]?.properties : contactDetails[currentIndex]?.property} //fix later
                             index={0}
                           />
                         ) :
@@ -504,7 +504,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
   }
   
   const RentHistoryDataGrid = ({ data }) => {
-    console.log("ROHIT - RentHistoryDataGrid - props.data -", data);
+    console.log("RentHistoryDataGrid - props.data -", data);
     
     const columns = [
       { 
