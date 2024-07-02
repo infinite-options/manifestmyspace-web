@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, } from '@mui/material';
 import dayjs from 'dayjs';
 
-const RenewLeaseButton = ({ theme, handleRenewLease, leaseData }) => {
+const RenewLeaseButton = ({ theme, handleRenewLease, leaseData, setIsPageUpdateOrRenew }) => {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -15,6 +15,7 @@ const RenewLeaseButton = ({ theme, handleRenewLease, leaseData }) => {
 
     const handleConfirm = () => {
         handleRenewLease();
+        setIsPageUpdateOrRenew(false);
         setOpen(false);
     };
 
@@ -23,11 +24,11 @@ const RenewLeaseButton = ({ theme, handleRenewLease, leaseData }) => {
             <Button
                 variant="outlined"
                 sx={{
-                    background: "#6788B3",
+                    background: "#6788B3", 
                     color: theme.palette.background.default,
                     cursor: "pointer",
                     textTransform: "none",
-                    minWidth: "200px",
+                    minWidth: "150px",
                     minHeight: "35px",
                     // width: "100%",
                     display: "flex",
@@ -48,7 +49,7 @@ const RenewLeaseButton = ({ theme, handleRenewLease, leaseData }) => {
                     whiteSpace: "nowrap",
                     marginLeft: "1%",
                 }}>
-                    {"Renew Lease"}
+                    {"Renew Lease (Signature Required)"}
                 </Typography>
             </Button>
             <Dialog
