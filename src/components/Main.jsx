@@ -8,6 +8,7 @@ import OwnerOnBoardDeskTopForm from "./Onboarding/OwnerOnBoardDesktopForm";
 import MaintenanceOnBoardDesktopForm from "./Onboarding/MaintenanceOnBoardDesktopForm";
 import PMEmpOnBoardDesktopForm from "./Onboarding/PMEmpOnBoardDesktopForm";
 import MaintEmpOnBoardDesktopForm from "./Onboarding/MaintEmpOnBoardDesktopForm";
+import ProfileManager from "./Profile/ProfileManager"
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -195,7 +196,7 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/tt" element={<ManagerOnBoardDesktopForm />} />
+         
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
             <Route path="newUser" element={<NewUser />} />
@@ -217,7 +218,7 @@ function Main() {
 
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
-           
+          <Route path="tt" element={<ProfileManager />} /> 
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />

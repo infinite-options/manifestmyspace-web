@@ -48,6 +48,16 @@ const ManagerOnBoardDesktopForm = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
+  /// new States
+
+  const [cookie] = useCookies(["user"]);  // Removed setCookie since it is unused
+  const cookiesDataUser = cookie["user"];
+
+  const userRoles =  cookiesDataUser?.role.split(",") ;
+  console.log("cookiesData ", cookiesDataUser);
+  console.log("Current User Roles in management: ", userRoles);
+  
+  // 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
   const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
@@ -59,6 +69,8 @@ const ManagerOnBoardDesktopForm = () => {
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
   const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
   const { user, isBusiness, isManager, roleName,selectRole, selectedRole,setLoggedIn, updateProfileUid, isLoggedIn } = useUser();
+  
+  console.log("user from Useuser ", user);
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [paymentMethods, setPaymentMethods] = useState({
@@ -688,7 +700,7 @@ const ManagerOnBoardDesktopForm = () => {
           </Typography>
           <Box display="flex">
               <Box width="20%" p={2}>
-                  <h1> Profile pic</h1>
+                  {/* <h1> Profile pic</h1> */}
                   <Stack direction="row" justifyContent="center">
                       {photo && photo.image ? (
                           <img
@@ -726,6 +738,7 @@ const ManagerOnBoardDesktopForm = () => {
                               },
                           }}
                       >
+                          Add Business Pic
                           <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
                       </Button>
                   </Box>
@@ -880,7 +893,7 @@ const ManagerOnBoardDesktopForm = () => {
           </Typography>
           <Box display="flex" p={3}>
               <Box width="20%" p={2}>
-                  <Typography>Personal pic</Typography>
+                  {/* <Typography>Personal pic</Typography> */}
                   <Stack direction="row" justifyContent="center">
                       <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
                   </Stack>
@@ -903,7 +916,7 @@ const ManagerOnBoardDesktopForm = () => {
                                   backgroundColor: "transparent",
                               },
                           }}
-                      >
+                      >   Add Profile Pic
                           <input type="file" hidden accept="image/*" />
                       </Button>
                   </Box>

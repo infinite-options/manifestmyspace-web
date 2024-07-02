@@ -37,6 +37,9 @@ export default function UserNavBar(props){
     }
 };
 const getProfileButtonNav = () => {
+  console.log("nn selectedRole",selectedRole)
+
+  return '/tt'
     switch (selectedRole) {
       case 'OWNER':
         return '/ownerProfile';

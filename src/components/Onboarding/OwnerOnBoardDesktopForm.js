@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
+import CryptoJS from "crypto-js";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
@@ -42,17 +43,18 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
+const OwnerOnBoardDeskTopForm = () => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookies["default_form_vals"];
     const [showSpinner, setShowSpinner] = useState(false);
     const [addPhotoImg, setAddPhotoImg] = useState();
+    const [isSave, setIsSave] = useState(false);
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
-    const { user, updateProfileUid, selectRole, setLoggedIn } = useUser();
+    const { user, updateProfileUid, selectRole, setLoggedIn, getProfileId } = useUser();
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-    const { firstName, setFirstName, lastName, setLastName,  email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
+    const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
         paypal: { value: "", checked: false },
@@ -65,12 +67,68 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
     });
 
     useEffect(() => {
-        onChange(); // Notify parent on component mount (indicating form change)
-    }, []);
+        console.log("calling useeffect")
+        setIsSave(false)
+        const fetchProfileData = async () => {
+            setShowSpinner(true);
+            try {
+                const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+                const profileData = profileResponse.data.profile.result[0];
+                setFirstName(profileData.owner_first_name || "");
+                setLastName(profileData.owner_last_name || "");
+                setEmail(profileData.owner_email || "");
+                setPhoneNumber(formatPhoneNumber(profileData.owner_phone_number || ""));
+                setPhoto(profileData.owner_photo ? { image: profileData.owner_photo } : null);
+                setSsn(profileData.owner_ssn ? AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+                setMask(profileData.owner_ssn ? maskNumber(AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+                setAddress(profileData.owner_address || "");
+                setUnit(profileData.owner_unit || "");
+                setCity(profileData.owner_city || "");
+                setState(profileData.owner_state || "");
+                setZip(profileData.owner_zip || "");
+
+                const paymentMethods = JSON.parse(profileData.paymentMethods);
+                const updatedPaymentMethods = {
+                    paypal: { value: "", checked: false },
+                    apple_pay: { value: "", checked: false },
+                    stripe: { value: "", checked: false },
+                    zelle: { value: "", checked: false },
+                    venmo: { value: "", checked: false },
+                    credit_card: { value: "", checked: false },
+                    bank_account: { account_number: "", routing_number: "", checked: false },
+                };
+                paymentMethods.forEach((method) => {
+                    if (method.paymentMethod_type === "bank_account") {
+                        updatedPaymentMethods.bank_account = {
+                            account_number: method.paymentMethod_account_number || "",
+                            routing_number: method.paymentMethod_routing_number || "",
+                            checked: true,
+                        };
+                    } else {
+                        updatedPaymentMethods[method.paymentMethod_type] = {
+                            value: method.paymentMethod_name,
+                            checked: true,
+                        };
+                    }
+                });
+                setPaymentMethods(updatedPaymentMethods);
+
+                setShowSpinner(false);
+            } catch (error) {
+                console.error("Error fetching profile data:", error);
+                setShowSpinner(false);
+            }
+        };
+
+        fetchProfileData();
+    }, [isSave]);
+    // getProfileId, setFirstName, setLastName, setEmail, setPhoneNumber, setPhoto, setSsn, setMask, setAddress, setUnit, setCity, setState, setZip]);
+
 
     const createProfile = async (form) => {
-        const profileApi = "/ownerProfile"
-        const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+        const profileApi = "/profile";
+        const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+        setIsSave(true)
         return data;
     };
 
@@ -91,17 +149,14 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
 
     const handleFirstNameChange = (event) => {
         setFirstName(event.target.value);
-        onChange();
     };
 
     const handleLastNameChange = (event) => {
         setLastName(event.target.value);
-        onChange();
     };
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
-        onChange();
     };
 
     const handleSsnChange = (event) => {
@@ -109,7 +164,6 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
         if (!value) {
             setSsn("");
             setMask("");
-            onChange();
             return;
         }
         if (value.length > 11) return;
@@ -121,12 +175,12 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
             setSsn(ssn + lastChar);
             setMask(maskNumber(ssn + lastChar));
         }
-        onChange();
     };
 
     const getPayload = () => {
         return {
             owner_user_id: user.user_uid,
+            owner_uid: getProfileId(),
             owner_first_name: firstName,
             owner_last_name: lastName,
             owner_phone_number: phoneNumber,
@@ -144,22 +198,18 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
 
     const handlePhoneNumberChange = (event) => {
         setPhoneNumber(formatPhoneNumber(event.target.value));
-        onChange();
     };
 
     const handleUnitChange = (event) => {
         setUnit(event.target.value);
-        onChange();
     };
 
     const handleCityChange = (event) => {
         setCity(event.target.value);
-        onChange();
     };
 
     const handleStateChange = (event) => {
         setState(event.target.value);
-        onChange();
     };
 
     const handleAddressSelect = (address) => {
@@ -167,7 +217,6 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
         setCity(address.city ? address.city : "");
         setState(address.state ? address.state : "");
         setZip(address.zip ? address.zip : "");
-        onChange();
     };
 
     const readImage = (file) => {
@@ -175,7 +224,6 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
         reader.onload = (e) => {
             file.image = e.target.result;
             setPhoto(file);
-            onChange();
         };
         reader.readAsDataURL(file.file);
     };
@@ -196,7 +244,6 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
                 [name]: { ...prevState[name], value },
             }));
         }
-        onChange();
     };
 
     const encodeForm = (payload) => {
@@ -253,20 +300,18 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
             setCookie("user", { ...user, ...role_id });
             const paymentSetup = await handlePaymentStep(data.owner_uid);
             console.log(paymentSetup);
-            selectRole('OWNER');
-            // setLoggedIn(true);
-            onSave(); // Notify parent that the form has been saved
+            setDashboardButtonEnabled(true);
+            setNextStepDisabled(true);
+            setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
         }
-        setDashboardButtonEnabled(true)
-        setNextStepDisabled(true);
-        setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
     };
 
-    const handleNavigation =(e) => {
+    const handleNavigation = (e) => {
         selectRole('OWNER');
         setLoggedIn(true);
-        navigate("/ownerDashboard")
-    }
+        navigate("/ownerDashboard");
+    };
+
     const handleChangeChecked = (e) => {
         const { name, checked } = e.target;
         const map = { ...paymentMethods };
@@ -282,7 +327,6 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
             }
         }
         setPaymentMethods(map);
-        onChange();
     };
 
     useEffect(() => {
@@ -309,8 +353,11 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
         keys.forEach((key) => {
             if (paymentMethods[key].value !== "") {
                 let paymentMethodPayload = {
+                    
                     paymentMethod_profile_id: owner_id, // Replace with actual profile id
                     paymentMethod_type: key,
+                    paymentMethod_uid: user.user_uid,
+
                 };
                 if (key === "bank_account") {
                     const bankAccount = paymentMethods[key];
@@ -320,7 +367,7 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
                         payload.push(paymentMethodPayload);
                     }
                 } else {
-                    paymentMethodPayload.paymentMethod_value = paymentMethods[key].value;
+                    paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
                     payload.push(paymentMethodPayload);
                 }
             }
@@ -350,7 +397,6 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
         return paymentMethodsArray.map((method, index) => (
             <Grid
                 container
-
                 rowSpacing={1}
                 columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                 key={index}
@@ -420,7 +466,6 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
                     width="20%"
                     p={2}
                 >
-                    <h1> Profile pic</h1>
                     <Stack direction="row" justifyContent="center">
                         {photo && photo.image ? (
                             <img
@@ -457,7 +502,7 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
                                     backgroundColor: "transparent",
                                 },
                             }}
-                        >
+                        >    Add Profile Pic
                             <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
                         </Button>
                     </Box>
@@ -539,7 +584,7 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
 
                     <Stack spacing={2} direction="row">
                         <Box sx={{ width: '50%' }}>
-                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
+                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address}/>
                         </Box>
                         <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
                         <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
@@ -626,7 +671,6 @@ const OwnerOnBoardDeskTopForm = ({ onChange, onSave }) => {
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
-                   
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
