@@ -136,6 +136,8 @@ import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 import Onboarding from "./Onboarding/Onboarding";
 import OnBoardDesktop from "./Onboarding/OnBoardDesktop";
 import NewUser from "./Onboarding/NewUser";
+import NewUser2 from "./Onboarding/NewUser2";
+import CreateProfile from "./Onboarding/CreateProfile";
 import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
@@ -200,7 +202,8 @@ function Main() {
             <Route path="/tt" element={<ManagerOnBoardDesktopForm />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
-            <Route path="newUser" element={<NewUser />} />
+            <Route path="newUser" element={<NewUser2 />} />            
+            <Route path="createProfile" element={<CreateProfile />} /> 
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
             <Route path="userLogin" element={<UserLogin />} />
@@ -387,5 +390,5 @@ const PrivateRoutes = () => {
 
 const PublicRoutes = () => {
   const { isLoggedIn, selectedRole } = useUser();
-  return isLoggedIn ? <Navigate to={roleMap[selectedRole].dashboardUrl} /> : <Outlet />;
+  return isLoggedIn ? <Navigate to={roleMap[selectedRole]?.dashboardUrl} /> : <Outlet />;
 };

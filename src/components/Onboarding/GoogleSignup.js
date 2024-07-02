@@ -109,7 +109,12 @@ const GoogleSignup = (props) => {
                       if (isReferral) {                        
                         navigate(`/referralGoogleSignup/${userID}`, { state: { googleUserInfo: user, } });
                       } else {
-                        navigate("/selectRole", {
+                        // navigate("/selectRole", {
+                        //   state: {
+                        //     user: user,
+                        //   },
+                        // });
+                        navigate("/createProfile", {
                           state: {
                             user: user,
                           },
