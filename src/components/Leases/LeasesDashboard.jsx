@@ -8,16 +8,18 @@ import Leases from "./Leases";
 import axios from "axios";
 import theme from "../../theme/theme";
 import RenewLease from "./RenewLease";
+import { useUser } from '../../contexts/UserContext';
 
 
 export default function LeasesDashboard() {
     const [leaseDetails, setLeaseDetails] = useState([]);
     const [selectedLeaseId, setSelectedLeaseId] = useState(null);
     const [dataReady, setDataReady] = useState(false);
+    const { getProfileId, isManager, roleName, selectedRole } = useUser();
 
     useEffect(() => {
-        // axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
-        axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
+        axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
+        //axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
             const fetchData = res.data["Lease_Details"].result;
             if (res.status === 200) {
                 console.log('In Leases dashboard', fetchData);

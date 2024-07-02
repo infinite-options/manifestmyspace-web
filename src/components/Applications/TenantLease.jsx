@@ -112,7 +112,7 @@ const TenantLease = () => {
   const [endDate, setEndDate] = useState(application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day"));
   const [moveInDate, setMoveInDate] = useState(dayjs()); // fix me
 
-  const [noOfOccupants, setNoOfOccupants] = useState(JSON.parse(application.lease_adults).length + JSON.parse(application.lease_children).length);
+  const [noOfOccupants, setNoOfOccupants] = useState(0);
   const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 0);
 
   console.log("# of Occupants", noOfOccupants);
@@ -154,7 +154,6 @@ const TenantLease = () => {
 
       setFees(feesList);
     };
-
     getLeaseFees();
   }, []);
 

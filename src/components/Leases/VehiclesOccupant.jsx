@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography,  
+    FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,7 +11,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles }) => {
+const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
     console.log('Inside vehicles occupants', leaseVehicles);
     const [vehicles, setVehicles] = useState([]);
     const [open, setOpen] = useState(false);
@@ -176,14 +177,24 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles }) => {
                         value={currentRow?.license || ''}
                         onChange={(e) => setCurrentRow({ ...currentRow, license: e.target.value })}
                     />
-                    <TextField
-                        margin="dense"
-                        label="State"
-                        fullWidth
-                        variant="outlined"
-                        value={currentRow?.state || ''}
-                        onChange={(e) => setCurrentRow({ ...currentRow, state: e.target.value })}
-                    />
+                     <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
+                        <InputLabel required>State</InputLabel>
+                        <Select
+                            margin="dense"
+                            label="State"
+                            fullWidth
+                            required
+                            variant="outlined"
+                            value={currentRow?.state.toUpperCase() || ''}
+                            onChange={(e) => setCurrentRow({ ...currentRow, state: e.target.value })}
+                        >
+                            {states && states.map((state) => (
+                            <MenuItem key={state.list_uid} value={state.list_item}>
+                              {state.list_item}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                    </FormControl>
                     <TextField
                         margin="dense"
                         label="Owner"
