@@ -80,7 +80,7 @@ function TenantDashboard(props) {
 
   const [userLeases, setUserLeases] = useState(null);
   const [selectedLease, setSelectedLease] = useState(null);
-  // const [refresh, setRefresh] = useState(false || location.state?.refresh);
+  const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
   const open = Boolean(anchorEl);
 
@@ -195,7 +195,7 @@ function TenantDashboard(props) {
       setShowSpinner(false);
     };
     getTenantData();
-    // setRefresh(false);
+    setRefresh(false); //refersh set for image
   }, [getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance]); // NOTE:  removed refresh from dependancies array to reduce endpoint calls by 1 set.  Not sure what the impact of removing refresh is.
 
   useEffect(() => {
@@ -1035,10 +1035,16 @@ function TenantPaymentHistoryTable(props) {
 }
 
 function TenantMaintenanceRequestsTable(props) {
-  // console.log("In Maintenance Request Table from Stack")
+  console.log("In Maintenance Request Table from Stack")
   const data = props.data;
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;
+  // const getColorForPriority = (priority) => {
+  //   const colorObj = theme.colorStatusMaintenancePriorityTenant.find(item => item.status.toLowerCae() == priority.toLowerCase());
+  //   const color = colorObj? colorObj.color : '#000000';
+  //   console.log('Priority: ${priority}, color: ${color}');
+  //   return color;
+  // }
   console.log("TenantMaintenanceRequestTable", isMobile);
   // console.log("Data in MRD from props: ", data)
   // console.log( theme.colorStatusMaintenanceTenant.find(item => item.status === "NEW REQUEST") )
@@ -1081,6 +1087,26 @@ function TenantMaintenanceRequestsTable(props) {
     item.favorite_image = favoriteImage;
   });
 
+  // Function for status color
+  const getColorForStatus = (status) => {
+    switch (status) {
+      case "NEW":
+        return "#B62C2A"; // Red
+      case "INFO REQUESTED":
+        return "#D4736D"; // Light Red
+      case "PROCESSING":
+        return "#DEA19C"; // Lighter Red
+      case "SCHEDULED":
+        return "#99CCFF"; // Lighter Blue
+      case "COMPLETED":
+        return "#6699FF"; // Light Blue
+      case "CANCELLED":
+        return "#0000FF"; // Blue
+      default:
+        return "#000000"; // Black
+    }
+  };
+
   const columnsListDefault = [
     {
       field: "maintenance_title",
@@ -1091,9 +1117,10 @@ function TenantMaintenanceRequestsTable(props) {
           sx={{
             fontWeight: "bold",
             textAlign: "center",
-            backgroundColor: theme.colorStatusMaintenanceTenant.find((item) => item.status === params.row.maintenance_request_status)?.color || "#000000",
+            background: getColorForStatus(params.row.maintenance_request_status),
+            //backgroundColor: theme.colorStatusMaintenanceTenant.find((item) => item.status === params.row.maintenance_request_status)?.color || "#FF0000", // checking 2
             padding: "5px",
-            color: "#FFFFFF",
+            color: "#FFFFFF", //checking 1
             borderRadius: "4px",
           }}
         >

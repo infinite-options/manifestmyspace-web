@@ -19,8 +19,7 @@ function Header(props) {
   const { user, selectedRole, selectRole, roleName, isLoggedIn } = useUser();
   const [cookie] = useCookies(["user"]);  // Removed setCookie since it is unused
   const cookiesData = cookie["user"];
-
-  const userRoles = user ? cookiesData?.role.split(",") : [];
+  const userRoles = user && cookiesData?.role ? cookiesData.role.split(",") : [];
   console.log("cookiesData ", cookiesData);
   console.log("Current User Roles: ", userRoles);
 
