@@ -1,8 +1,8 @@
 import { ThemeProvider, Accordion, AccordionSummary, AccordionDetails, Typography, Chip } from "@mui/material";
-
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { useState, useEffect } from 'react';
+import { useUser } from '../../../contexts/UserContext';
+import APIConfig from '../../../utils/APIConfig';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import theme from "../../../theme/theme";
 import { DataGrid } from "@mui/x-data-grid";
@@ -32,10 +32,10 @@ export const getChipColor = (priority) => {
 export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount }) {
   const location = useLocation();
   let navigate = useNavigate();
-
+  const { user, getProfileId, } = useUser();
   // console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
-
-  // console.log("----MaintenanceStatusTable", allMaintenanceData, maintenanceRequestsCount);
+	const [maintenanceRequests, setMaintenanceRequests] = useState({});
+  // console.log("----MaintenanceStatusTable----", status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount);
 
   const tableTextStyle = {
     backgroundColor: color,
@@ -123,18 +123,53 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
     },
   ];
 
-  function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+        const data = await response.json();
+        //console.log('-----data inside workerMaintenanceTable----', data);
+
+        const statusMappings = [
+          { status: 'Quotes Requested', mapping: 'REQUESTED' },
+          { status: 'Quotes Submitted', mapping: 'SUBMITTED' },
+          { status: 'Quotes Accepted', mapping: 'ACCEPTED' },
+          { status: 'Scheduled', mapping: 'SCHEDULED' },
+          { status: 'Finished', mapping: 'FINISHED' },
+          { status: 'Paid', mapping: 'PAID' },
+        ];
+
+        const result = {};
+        statusMappings.forEach((mapping) => {
+          const key = mapping.mapping;
+          if (data.result[key]) {
+            result[mapping.status] = data.result[key].maintenance_items;
+          }
+        });
+
+        setMaintenanceRequests(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
+
+
+  async function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
+    
     // console.log("handleRequestDetailPage")
-    // console.log("maintenance_request_index", maintenance_request_index)
-    // console.log("status", status)
-    // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-    // console.log("allMaintenanceData", allMaintenanceData)
+    //console.log("maintenance_request_index", maintenance_request_index)
+    //console.log("status", status);
+    //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
+    //console.log("maintenanceRequests", maintenanceRequests[status]);
 
     navigate(`/workerMaintenance/detail`, {
       state: {
         maintenance_request_index,
         status,
-        maintenanceItemsForStatus,
+        maintenanceItemsForStatus: maintenanceRequests[status],
         allMaintenanceData,
       },
     });
