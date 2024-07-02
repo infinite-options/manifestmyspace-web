@@ -67,7 +67,7 @@ function a11yProps(index) {
 
 export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid}){
     console.log("----inside WorkerMaintenanceRequestDetail----");
-    console.log(maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid);
+    console.log(propstatus, propmaintenanceItemsForStatus);
     const location = useLocation();
     let navigate = useNavigate();
     const colorStatus = theme.colorStatusMM
@@ -77,17 +77,26 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
     //const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
 
     const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(isMobile ? location.state.maintenance_request_index : maintenance_request_index);
-  
     const [status, setStatus] = useState(isMobile ? location.state.status : propstatus);
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(isMobile ? location.state.maintenanceItemsForStatus : propmaintenanceItemsForStatus);
     const allData = isMobile ? location.state.data : alldata;
-
     const [maintenanceRequestId, setMaintenanceRequestId] =  useState(isMobile ? location.state.maintenance_request_uid: maintenance_request_uid);
+    
 
-
+    useEffect(() => {
+        if (!isMobile) {
+          setMaintenanceRequestIndex(maintenance_request_index);
+          setStatus(propstatus);
+          setMaintenanceItemsForStatus(propmaintenanceItemsForStatus);
+          setMaintenanceRequestId(maintenance_request_uid);
+        }
+      }, [isMobile, maintenance_request_index, propstatus, propmaintenanceItemsForStatus, maintenance_request_uid]);
+    
+ 
+      
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
@@ -156,6 +165,8 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
         })
 
     }, [maintenanceRequestIndex, status])
+
+  
 
 
     const handleChange = (event, newValue) => {
@@ -243,7 +254,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
                     >
                         <Box sx={{
 								position: 'absolute',
-								left: isMobile ? '30px' : '35%',
+								left: isMobile ? '30px' : '40%',
 							}}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>

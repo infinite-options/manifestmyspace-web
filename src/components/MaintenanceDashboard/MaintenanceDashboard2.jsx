@@ -42,6 +42,15 @@ export default function MaintenanceDashboard2() {
 
 	const [workerMaintenanceView, setWorkerMaintenanceView] = useSessionStorage('workerMaintenanceView', false);
 	const [showMaintenanceDetail, setShowMaintenanceDetail] = useState(workerMaintenanceView);
+
+  const [sessionData, setSessionData] = useState({
+		maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
+		propstatus: sessionStorage.getItem('workerselectedStatus'),
+		propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
+		alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
+		maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
+	});
+
 	useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
@@ -156,6 +165,13 @@ export default function MaintenanceDashboard2() {
 	useEffect(() => {
 		const handleWorkerMaintenanceRequestSelected = () => {
 			setShowMaintenanceDetail(true);
+      setSessionData({
+				maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
+				propstatus: sessionStorage.getItem('workerselectedStatus'),
+				propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
+				alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
+				maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
+			});
 		};
 
 		window.addEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
@@ -217,13 +233,11 @@ export default function MaintenanceDashboard2() {
 					<Grid container item xs={12} md={8} columnSpacing={6} rowGap={4}>
 						{showMaintenanceDetail ? (
 							<WorkerMaintenanceRequestDetail
-								maintenance_request_index={sessionStorage.getItem('workerselectedRequestIndex')}
-								propstatus={sessionStorage.getItem('workerselectedStatus')}
-								propmaintenanceItemsForStatus={JSON.parse(
-									sessionStorage.getItem('workermaintenanceItemsForStatus')
-								)}
-								alldata={JSON.parse(sessionStorage.getItem('workerallMaintenanceData'))}
-								maintenance_request_uid={sessionStorage.getItem('workermaintenance_request_uid')}
+              maintenance_request_index={sessionData.maintenance_request_index}
+              propstatus={sessionData.propstatus}
+              propmaintenanceItemsForStatus={sessionData.propmaintenanceItemsForStatus}
+              alldata={sessionData.alldata}
+              maintenance_request_uid={sessionData.maintenance_request_uid}
 							/>
 						) : (
 							<>
