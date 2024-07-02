@@ -122,7 +122,7 @@ const CreateProfile = () => {
       };
 
     const createUserProfile = async ( userUID, userData ) => {
-        console.log("ROHIT - USER UID - ", userUID);
+        console.log("createUserProfile - USER UID - ", userUID);
         const payload = getPayload(user.role, userUID);
         const form = encodeForm(payload);
         const data = await createProfile(form, user.role);
@@ -182,7 +182,7 @@ const CreateProfile = () => {
                 return response.json();
             })
             .then(responseJSON => {                    
-                console.log("ROHIT - responseJSON - ", responseJSON);
+                console.log("createProfile - responseJSON - ", responseJSON);
                 if (responseJSON.message === "User already exists") {
                     alert(responseJSON.message);
                     return;
@@ -223,7 +223,7 @@ const CreateProfile = () => {
                 return response.json();
             })
             .then(responseJSON => {                    
-                console.log("ROHIT - responseJSON - ", responseJSON);
+                console.log("createProfile - responseJSON - ", responseJSON);
                 if (responseJSON.message === "User already exists") {
                     alert(responseJSON.message);
                     return;

@@ -164,7 +164,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
     };
   
     useEffect(() => {
-      console.log("ROHIT - contactsTab - ", contactsTab);
+      console.log("contactsTab - ", contactsTab);
     }, [contactsTab]);
   
     useEffect(() => {

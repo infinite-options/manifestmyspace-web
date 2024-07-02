@@ -28,17 +28,17 @@ const MaintenanceContacts = () => {
 
   const [ currentIndex, setCurrentIndex ] = useState(0);
 
-  useEffect(() => {
-    console.log("ROHIT - contactsData - ", contactsData);
-  }, [contactsData]);
+  // useEffect(() => {
+  //   console.log("contactsData - ", contactsData);
+  // }, [contactsData]);
 
-  useEffect(() => {
-    console.log("ROHIT - currentIndex", currentIndex)
-  }, [currentIndex]);
-  useEffect(() => {
-    console.log("ROHIT - contactsTab", contactsTab)
-    setCurrentIndex(0); 
-  }, [contactsTab]);
+  // useEffect(() => {
+  //   console.log("currentIndex", currentIndex)
+  // }, [currentIndex]);
+  // useEffect(() => {
+  //   console.log("contactsTab", contactsTab)
+  //   setCurrentIndex(0); 
+  // }, [contactsTab]);
   
 
   const fetchData = async () => {
