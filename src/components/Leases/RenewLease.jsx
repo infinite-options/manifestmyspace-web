@@ -28,6 +28,8 @@ import { useUser } from "../../contexts/UserContext";
 import RenewLeaseButton from "./RenewLeaseButton";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import APIConfig from '../../utils/APIConfig';
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -83,8 +85,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [uploadedFiles, setuploadedFiles] = useState([]);
     const [isPageUpdateOrRenew, setIsPageUpdateOrRenew] = useState(false);
     const [tenantUtils, setTenantUtils] = useState("");
+    const [showSpinner, setShowSpinner] = useState(false);
 
     useEffect(() => {
+        setShowSpinner(true);
         const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
         setCurrentLease(filtered);
         console.log('In Renew Lease', leaseDetails, selectedLeaseId, filtered);
@@ -157,6 +161,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         setLeasePets(pets);
         setLeaseVehicles(vehicles);
         getListDetails();
+        setShowSpinner(false);
     }, [leaseDetails, selectedLeaseId])
 
     useEffect(() => {
@@ -602,6 +607,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     width: "100%", // Occupy full width with 25px margins on each side
                 }}
             >
+                <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
                 <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
                     <Grid item xs={12} md={12}>
                         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
@@ -1606,7 +1614,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 </Grid>
 
                                 <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                <Button
+                                    <Button
                                         variant="outlined"
                                         sx={{
                                             background: "#ffa500",
@@ -1672,7 +1680,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                             },
                                         }}
                                         size="small"
-                                        // onClick={handleUpdateLease}
+                                    // onClick={handleUpdateLease}
                                     >
                                         <Typography sx={{
                                             textTransform: "none",
@@ -1688,8 +1696,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 </Grid>
 
                                 <Grid item xs={6} md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                    <RenewLeaseButton theme={theme} handleRenewLease={handleRenewLease} 
-                                    leaseData={currentLease} setIsPageUpdateOrRenew={setIsPageUpdateOrRenew}/>
+                                    <RenewLeaseButton theme={theme} handleRenewLease={handleRenewLease}
+                                        leaseData={currentLease} setIsPageUpdateOrRenew={setIsPageUpdateOrRenew} />
                                 </Grid>
                             </Grid>
                         </Grid>
