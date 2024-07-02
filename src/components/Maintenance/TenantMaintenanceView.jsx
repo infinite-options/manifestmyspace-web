@@ -25,7 +25,7 @@ export default function TenantMaintenanceView({tenantMaintenanceData, handleNewR
 
     const tableTextStyle = {
         backgroundColor: color, 
-        color: '#FF0000', // changing color to test
+        color: '#FFFFFF', // changing color to test
         fontFamily: 'Source Sans Pro', 
         fontSize: '15px', 
         fontWeight:600,
