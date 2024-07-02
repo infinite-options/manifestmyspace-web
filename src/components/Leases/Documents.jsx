@@ -155,6 +155,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                 paddingBottom: "10px",
                                 paddingTop: "5px",
                                 flexGrow: 1,
+                                paddingLeft:"50px"
                             }}
                         >
                             Documents
