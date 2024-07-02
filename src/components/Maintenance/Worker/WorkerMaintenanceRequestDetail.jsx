@@ -30,6 +30,7 @@ import WorkerFinishedMaintenance from "./WorkerFinishedMaintenance";
 import WorkerQuotesRequestedAction from "./WorkerQuotesRequestedAction";
 import WorkerQuotesSubmittedAction from "./WorkerQuotesSubmittedAction";
 
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -64,18 +65,25 @@ function a11yProps(index) {
   }
 
 
-export default function WorkerMaintenanceRequestDetail(){
+export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid}){
     const location = useLocation();
     let navigate = useNavigate();
     const colorStatus = theme.colorStatusMM
 
-    const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-    const [status, setStatus] = useState(location.state.status);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    //const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
+
+    const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(isMobile ? location.state.maintenance_request_index : maintenance_request_index);
+  
+    const [status, setStatus] = useState(isMobile ? location.state.status : propstatus);
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
-    const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
-    const allData = location.state.data;
+    const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(isMobile ? location.state.maintenanceItemsForStatus : propmaintenanceItemsForStatus);
+    const allData = isMobile ? location.state.data : alldata;
+
+    const [maintenanceRequestId, setMaintenanceRequestId] = useState(isMobile ? location.state.maintenance_request_uid: maintenance_request_uid);
 
 
     function navigateToAddMaintenanceItem(){

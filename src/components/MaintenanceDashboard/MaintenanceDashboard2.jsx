@@ -26,6 +26,8 @@ import APIConfig from '../../utils/APIConfig';
 import Chart from 'react-apexcharts';
 import WorkerMaintenanceStatusTable from '../Maintenance/Worker/WorkerMaintenanceStatusTable';
 import { format, isEqual, isAfter, parseISO } from 'date-fns';
+import useSessionStorage from '../Maintenance/useSessionStorage';
+import WorkerMaintenanceRequestDetail from '../Maintenance/Worker/WorkerMaintenanceRequestDetail';
 
 export default function MaintenanceDashboard2() {
 	const { user, getProfileId } = useUser();
@@ -38,13 +40,15 @@ export default function MaintenanceDashboard2() {
 	const [todayData, settodayData] = useState([]);
 	const [nextScheduleData, setnextScheduleData] = useState([]);
 
-	useEffect(() => {
+	const [workerMaintenanceView, setWorkerMaintenanceView] = useSessionStorage('workerMaintenanceView', false);
+	const [showMaintenanceDetail, setShowMaintenanceDetail] = useState(workerMaintenanceView);
+  useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
 			console.log('---getProfileId()---', getProfileId());
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
 
-			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
@@ -149,6 +153,18 @@ export default function MaintenanceDashboard2() {
 		getMaintenanceData();
 	}, []);
 
+	useEffect(() => {
+		const handleWorkerMaintenanceRequestSelected = () => {
+			setShowMaintenanceDetail(true);
+		};
+
+		window.addEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
+
+		return () => {
+			window.removeEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
+		};
+	}, []);
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -178,48 +194,61 @@ export default function MaintenanceDashboard2() {
 							</Typography>
 						</Box>
 					</Grid>
-					<Grid item xs={12} md={4}>
-						<WorkOrdersWidget
-							maintenanceRequests={maintenanceRequests}
-							todayData={todayData}
-							nextScheduleData={nextScheduleData}
-						/>
-					</Grid>
-					<Grid container item xs={12} md={8} columnSpacing={6} rowGap={4}>
-						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '400px' }}>
-							<Stack
-								direction="row"
-								justifyContent="center"
-								width="100%"
-								sx={{ marginBottom: '15px', marginTop: '15px' }}
-							>
-								<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
-									Current Activity
-								</Typography>
-							</Stack>
-							<Grid container spacing={2}>
-								<Grid item xs={12} md={6} sx={{ marginBottom: '0px', marginTop: '0px' }}>
-									<RadialBarChart data={graphData} />
-								</Grid>
-								<Grid item xs={12} md={6} sx={{ marginBottom: '15px', marginTop: '25px' }}>
-									<MaintenanceCashflowWidget data={cashflowData}></MaintenanceCashflowWidget>
-								</Grid>
+					
+							<Grid item xs={12} md={4}>
+								<WorkOrdersWidget
+									maintenanceRequests={maintenanceRequests}
+									todayData={todayData}
+									nextScheduleData={nextScheduleData}
+								/>
 							</Grid>
-						</Grid>
-						<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '600px' }}>
-							<Stack
-								direction="row"
-								justifyContent="center"
-								width="100%"
-								sx={{ marginBottom: '15px', marginTop: '15px' }}
-							>
-								<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
-									Revenue
-								</Typography>
-							</Stack>
-							<RevenueTable data={revenueData}></RevenueTable>
-						</Grid>
-					</Grid>
+							<Grid container item xs={12} md={8} columnSpacing={6} rowGap={4}>
+							{showMaintenanceDetail ? (
+							<WorkerMaintenanceRequestDetail
+								maintenance_request_index={sessionStorage.getItem('workerselectedRequestIndex')}
+								propstatus={sessionStorage.getItem('workerselectedStatus')}
+								propmaintenanceItemsForStatus={JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus'))}
+								alldata={JSON.parse(sessionStorage.getItem('workerallMaintenanceData'))}
+								maintenance_request_uid={sessionStorage.getItem('workermaintenance_request_uid')}
+							/>
+						) : (
+							<>
+								<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '400px' }}>
+									<Stack
+										direction="row"
+										justifyContent="center"
+										width="100%"
+										sx={{ marginBottom: '15px', marginTop: '15px' }}
+									>
+										<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
+											Current Activity
+										</Typography>
+									</Stack>
+									<Grid container spacing={2}>
+										<Grid item xs={12} md={6} sx={{ marginBottom: '0px', marginTop: '0px' }}>
+											<RadialBarChart data={graphData} />
+										</Grid>
+											<Grid item xs={12} md={6} sx={{ marginBottom: '15px', marginTop: '25px' }}>
+											<MaintenanceCashflowWidget data={cashflowData}></MaintenanceCashflowWidget>
+										</Grid>
+									</Grid>
+								</Grid>
+								<Grid item xs={12} sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', height: '600px' }}>
+									<Stack
+										direction="row"
+										justifyContent="center"
+										width="100%"
+										sx={{ marginBottom: '15px', marginTop: '15px' }}
+									>
+										<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
+											Revenue
+										</Typography>
+									</Stack>
+									<RevenueTable data={revenueData}></RevenueTable>
+								</Grid>
+							</>
+						)}
+            </Grid>
 				</Grid>
 			</Container>
 		</ThemeProvider>

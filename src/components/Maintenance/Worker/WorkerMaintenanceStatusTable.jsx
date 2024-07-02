@@ -7,6 +7,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import theme from "../../../theme/theme";
 import { DataGrid } from "@mui/x-data-grid";
 import dayjs from "dayjs";
+import { useMediaQuery } from '@mui/material';
 
 export const getChipColor = (priority) => {
   switch (priority) {
@@ -33,6 +34,7 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId, } = useUser();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   // console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
   // console.log("----MaintenanceStatusTable----", status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount);
@@ -126,7 +128,8 @@ const [data, setdata] = useState({});
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+        //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+        const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
         const data = await response.json();
         //console.log('-----data inside workerMaintenanceTable----', data);
 
@@ -161,7 +164,6 @@ const [data, setdata] = useState({});
     fetchData();
   }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
 
-
   async function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
     
     // console.log("handleRequestDetailPage")
@@ -169,15 +171,34 @@ const [data, setdata] = useState({});
     //console.log("status", status);
     //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
     //console.log("inside func allMaintenanceData", allMaintenanceData);
+    if (isMobile) {
 
-    navigate(`/workerMaintenance/detail`, {
-      state: {
-        maintenance_request_index,
-        status,
-        maintenanceItemsForStatus: maintenanceRequests[status],
-        data,
-      },
-    });
+      navigate(`/workerMaintenance/detail`, {
+        state: {
+          maintenance_request_index,
+          status,
+          maintenanceItemsForStatus: maintenanceRequests[status],
+          data,
+          maintenance_request_uid,
+        },
+      });
+    } else {
+			// Save data to session storage
+
+			sessionStorage.setItem('workerselectedRequestIndex', maintenance_request_index);
+			sessionStorage.setItem('workerselectedStatus', status);
+			sessionStorage.setItem(
+				'workermaintenanceItemsForStatus',
+				JSON.stringify(maintenanceRequests[status])
+			);
+			sessionStorage.setItem('workerallMaintenanceData', JSON.stringify(data));
+      sessionStorage.setItem('workermaintenance_request_uid', maintenance_request_uid);
+ 
+			sessionStorage.setItem('workerMaintenanceView', true);
+      
+			// Trigger the custom event
+			window.dispatchEvent(new Event('workermaintenanceRequestSelected'));
+		}
   }
 
   return (
