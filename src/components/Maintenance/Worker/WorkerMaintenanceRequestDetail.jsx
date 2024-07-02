@@ -67,7 +67,7 @@ function a11yProps(index) {
 
 export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid}){
     console.log("----inside WorkerMaintenanceRequestDetail----");
-    console.log(propstatus, propmaintenanceItemsForStatus);
+    //console.log(maintenance_request_index, propstatus);
     const location = useLocation();
     let navigate = useNavigate();
     const colorStatus = theme.colorStatusMM

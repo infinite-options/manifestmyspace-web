@@ -184,7 +184,6 @@ const [data, setdata] = useState({});
       });
     } else {
 			// Save data to session storage
-
 			sessionStorage.setItem('workerselectedRequestIndex', maintenance_request_index);
 			sessionStorage.setItem('workerselectedStatus', status);
 			sessionStorage.setItem(

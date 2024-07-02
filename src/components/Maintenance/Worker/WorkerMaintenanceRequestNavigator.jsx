@@ -35,6 +35,11 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
   const navigate = useNavigate();
 
   useEffect(() => {
+      setCurrentIndex(requestIndex);
+    
+  }, [requestIndex]);
+
+  useEffect(() => {
     const fetchImages = async () => {
         const initialImages = await getInitialImages(requestData, currentIndex);
         setImages(initialImages);
