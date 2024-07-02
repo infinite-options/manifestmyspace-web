@@ -43,7 +43,7 @@ export default function MaintenanceDashboard2() {
 	const [workerMaintenanceView, setWorkerMaintenanceView] = useSessionStorage('workerMaintenanceView', false);
 	const [showMaintenanceDetail, setShowMaintenanceDetail] = useState(workerMaintenanceView);
 
-  const [sessionData, setSessionData] = useState({
+	const [sessionData, setSessionData] = useState({
 		maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
 		propstatus: sessionStorage.getItem('workerselectedStatus'),
 		propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
@@ -55,9 +55,9 @@ export default function MaintenanceDashboard2() {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
 			console.log('---getProfileId()---', getProfileId());
-			//const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
 
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
+			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
@@ -163,9 +163,9 @@ export default function MaintenanceDashboard2() {
 	}, []);
 
 	useEffect(() => {
-		const handleWorkerMaintenanceRequestSelected = () => {
+		const handleWorkerMaintenanceRequestSelected = async () => {
 			setShowMaintenanceDetail(true);
-      setSessionData({
+			await setSessionData({
 				maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
 				propstatus: sessionStorage.getItem('workerselectedStatus'),
 				propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
@@ -181,7 +181,7 @@ export default function MaintenanceDashboard2() {
 		};
 	}, []);
 
-  useEffect(() => {
+	useEffect(() => {
 		const handleremoveworkermaintenanceRequestSelected = () => {
 			setShowMaintenanceDetail(false);
 		};
@@ -189,7 +189,10 @@ export default function MaintenanceDashboard2() {
 		window.addEventListener('removeworkermaintenanceRequestSelected', handleremoveworkermaintenanceRequestSelected);
 
 		return () => {
-			window.removeEventListener('removeworkermaintenanceRequestSelected', handleremoveworkermaintenanceRequestSelected);
+			window.removeEventListener(
+				'removeworkermaintenanceRequestSelected',
+				handleremoveworkermaintenanceRequestSelected
+			);
 		};
 	}, []);
 
@@ -230,17 +233,28 @@ export default function MaintenanceDashboard2() {
 							nextScheduleData={nextScheduleData}
 						/>
 					</Grid>
-					<Grid container item xs={12} md={8} columnSpacing={6} rowGap={4}>
-						{showMaintenanceDetail ? (
+
+					{showMaintenanceDetail ? (
+						<Grid item xs={12} md={8} columnSpacing={6} sx={{ position: 'relative' }}>
 							<WorkerMaintenanceRequestDetail
-              maintenance_request_index={sessionData.maintenance_request_index}
-              propstatus={sessionData.propstatus}
-              propmaintenanceItemsForStatus={sessionData.propmaintenanceItemsForStatus}
-              alldata={sessionData.alldata}
-              maintenance_request_uid={sessionData.maintenance_request_uid}
+								maintenance_request_index={sessionData.maintenance_request_index}
+								propstatus={sessionData.propstatus}
+								propmaintenanceItemsForStatus={sessionData.propmaintenanceItemsForStatus}
+								alldata={sessionData.alldata}
+								maintenance_request_uid={sessionData.maintenance_request_uid}
 							/>
-						) : (
-							<>
+						</Grid>
+					) : (
+						<>
+							<Grid
+								
+								item
+								xs={12}
+								md={8}
+								columnSpacing={6}
+								rowGap={4}
+								sx={{ position: 'relative' }}
+							>
 								<Grid
 									item
 									xs={12}
@@ -250,7 +264,7 @@ export default function MaintenanceDashboard2() {
 										direction="row"
 										justifyContent="center"
 										width="100%"
-										sx={{ marginBottom: '15px', marginTop: '15px' }}
+										sx={{ marginBottom: '15px', marginTop: '0px' }}
 									>
 										<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#160449' }}>
 											Current Activity
@@ -282,9 +296,9 @@ export default function MaintenanceDashboard2() {
 									</Stack>
 									<RevenueTable data={revenueData}></RevenueTable>
 								</Grid>
-							</>
-						)}
-					</Grid>
+							</Grid>
+						</>
+					)}
 				</Grid>
 			</Container>
 		</ThemeProvider>
