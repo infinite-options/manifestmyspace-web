@@ -49,8 +49,10 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
 
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => {
-      let newIndex = (prevIndex + 1);
+      let newIndex = (Number(prevIndex) + 1);
       if(prevIndex < requestData.length-1){
+        console.log('----requestData[newIndex]---',requestData );
+        console.log('----[newIndex]---',newIndex );
         
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
@@ -66,7 +68,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => {
-        let newIndex = (prevIndex - 1);
+        let newIndex = (Number(prevIndex) - 1);
         if(prevIndex > 0){
             let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
             updateRequestIndex(newIndex, {changeTab:'noChange'})
