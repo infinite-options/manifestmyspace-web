@@ -11,7 +11,7 @@ const [isLoggedIn, setLoggedIn] = useState(!!cookies.user);
 const [onboardingState, setOnboardingState] = useState();
 const [supervisor, setSupervisor]= useState(null)
 const setAuthData = (data) => {
-console.log("data is", data.user);
+console.log("setAuthData - data - ", data);
 
 // Update user state
 setUser(prevUser => {
