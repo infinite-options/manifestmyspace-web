@@ -128,8 +128,8 @@ const [data, setdata] = useState({});
   useEffect(() => {
     const fetchData = async () => {
       try {
-        //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
-        const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
+        const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+        //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
         const data = await response.json();
         //console.log('-----data inside workerMaintenanceTable----', data);
 
