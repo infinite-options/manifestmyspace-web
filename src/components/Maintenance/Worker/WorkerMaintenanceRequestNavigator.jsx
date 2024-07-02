@@ -25,11 +25,8 @@ async function getInitialImages(requestData, currentIndex) {
 
 export default function WorkerMaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
   console.log('----inside WorkerMaintenanceRequestNavigator----');
-  console.log('----requestIndex----', requestIndex);
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
-  console.log('----currentIndex---', currentIndex);
   const [activeStep, setActiveStep] = useState(0);
-  console.log('----activeStep---', activeStep);
   const [formattedDate, setFormattedDate] = useState("");
   const [numOpenRequestDays, setNumOpenRequestDays] = useState("");
   const [images, setImages] = useState([maintenanceRequestImage]);
