@@ -21,10 +21,11 @@ export default function TenantMaintenanceView({tenantMaintenanceData, handleNewR
     const color = "#000000"
 
     const colorStatus = theme.colorStatusTenant;
+    console.log('color status', colorStatus);
 
     const tableTextStyle = {
         backgroundColor: color, 
-        color: '#FFFFFF', 
+        color: '#FFFFFF', // changing color to test
         fontFamily: 'Source Sans Pro', 
         fontSize: '15px', 
         fontWeight:600,
