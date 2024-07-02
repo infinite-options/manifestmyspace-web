@@ -81,6 +81,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
     const [isRenewNeeded, setIsRenewNeeded] = useState(false);
     const alertRef = useRef(null);
     const [uploadedFiles, setuploadedFiles] = useState([]);
+    const [isPageUpdateOrRenew, setIsPageUpdateOrRenew] = useState(false);
+    const [tenantUtils, setTenantUtils] = useState("");
 
     useEffect(() => {
         const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
@@ -94,6 +96,14 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         setUtilities(utils);
         setNewUtilities(utils);
         console.log('utils', utils);
+        const tenantUtils = utils
+            .filter((util) => util.utility_payer_id === "050-000043")
+            .map((util) => util.utility_desc)
+            .join(", ");
+        setTenantUtils(tenantUtils)
+        console.log('tenantUtils', tenantUtils);
+
+        //Set fees details
         const fees = JSON.parse(filtered.lease_fees);
         setLeaseFees(fees)
 
@@ -458,24 +468,28 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
                 }
 
-                // axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                //     .then((response) => {
-                //         console.log('Data updated successfully');
-                //         showSnackbar("Successfully Renewed the lease.", "success");
-                //     })
-                //     .catch((error) => {
-                //         if (error.response) {
-                //             console.log(error.response.data);
-                //             showSnackbar("Cannot Renew the lease. Please Try Again", "error");
-                //         }
-                //     });
+                axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                    .then((response) => {
+                        console.log('Data updated successfully');
+                        showSnackbar("Successfully Renewed the lease.", "success");
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            console.log(error.response.data);
+                            showSnackbar("Cannot Renew the lease. Please Try Again", "error");
+                        }
+                    });
             }
         } catch (error) {
             console.log("Cannot Renew the lease");
         }
     }
 
-    const handleUpdateLease = async () => {
+    const handlePageToggle = () => {
+        setIsPageUpdateOrRenew(true);
+    }
+
+    const updateLease = async () => {
         try {
             const headers = {
                 "Access-Control-Allow-Origin": "*",
@@ -557,6 +571,21 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         }
     }
 
+    const getDateAdornmentString = (d) => {
+        if (d === null || d === 0) return "";
+        if (d > 3 && d < 21) return "th";
+        switch (d % 10) {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    };
+
     return (
         <Box
             style={{
@@ -602,8 +631,107 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                             </Button>}
                         </Box>
                     </Grid>
+                    {isPageUpdateOrRenew === false &&
+                        <>
+                            <Grid item xs={12} md={6}>
+                                <Paper sx={{ margin: "10px 5px 10px 10px", backgroundColor: color, paddingBottom: "10px" }}>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.primary.fontWeight,
+                                            fontSize: theme.typography.small,
+                                            textAlign: 'center'
+                                        }}
+                                        paddingBottom="10px"
+                                        paddingTop="5px"
+                                    >
+                                        Lease Details
+                                    </Typography>
+                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Start Date</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_start}</Typography>
+                                        </Grid>
+
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>End Date</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{formatDate(currentLease.lease_end)}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Move-In Date</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date}</Typography>
+                                        </Grid>
+
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Move-Out Date</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.move_out_date ? currentLease.move_out_date : "-"}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
+                                        <Grid item md={1} />
+                                        <Grid item md={11}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Utilities Paid By Tenant</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{tenantUtils}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                </Paper>
+                            </Grid>
+
+                            <Grid item xs={12} md={6}>
+                                <Paper sx={{ margin: "10px 10px 10px 5px", backgroundColor: color, paddingBottom: "10px" }}>
+                                    <Typography
+                                        sx={{
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.primary.fontWeight,
+                                            fontSize: theme.typography.small,
+                                            textAlign: 'center'
+                                        }}
+                                        paddingBottom="10px"
+                                        paddingTop="5px"
+                                    >
+                                        Rent Details
+                                    </Typography>
+                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Rent</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>${rent.charge}</Typography>
+                                        </Grid>
+
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Frequency</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.frequency}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Due Date</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
+                                        </Grid>
+
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Available To Pay</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.available_topay} Days Before</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Late Fee After</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.late_by} Days</Typography>
+                                        </Grid>
+
+                                        <Grid item md={5}>
+                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Late Fee Per Day</Typography>
+                                            <Typography sx={{ fontSize: "14px", color: "black" }}>${rent.perDay_late_fee}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                </Paper>
+                            </Grid>
+                        </>}
+
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "10px 10px 15px 10px", backgroundColor: color }}>
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Typography
                                 sx={{
                                     color: theme.typography.primary.black,
@@ -646,517 +774,519 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                             )}
                         </Paper>
                     </Grid>
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <Box sx={{ color: "#3D5CAC", fontSize: "14px" }}>
-                                <Grid container spacing={2} alignItems="center" sx={{ padding: "10px" }}>
-                                    <Grid item xs={12}>
-                                        <Grid container>
-                                            <Grid item xs={1} />
-                                            <Grid item xs={4} />
-                                            <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>CURRENT</Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>NEW</Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                            <Grid item xs={1} />
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Start Date</Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_start}</Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DatePicker
-                                                        value={newStartDate}
-                                                        onChange={e => {
-                                                            const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                            setNewStartDate(dayjs(formattedDate));
-                                                            setIsRenewNeeded(true);
-                                                        }}
-                                                        renderInput={(params) => (
-                                                            <TextField
-                                                                {...params}
-                                                                size="small" // Reduce the size of the TextField
-                                                                sx={{
-                                                                    '& .MuiInputBase-root': {
-                                                                        fontSize: '14px', // Adjust the font size
-                                                                    },
-                                                                    '& .MuiSvgIcon-root': {
-                                                                        fontSize: '20px', // Adjust the icon size
-                                                                    },
-                                                                }}
-                                                            />
-                                                        )}
-                                                    />
-                                                </LocalizationProvider>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                            <Grid item xs={1} />
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>End Date</Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{formatDate(currentLease.lease_end)}</Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DatePicker
-                                                        value={newEndDate}
-                                                        onChange={e => {
-                                                            const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                            setNewEndDate(dayjs(formattedDate));
-                                                            setIsRenewNeeded(true);
-                                                        }
-                                                        }
-                                                        renderInput={(params) => (
-                                                            <TextField
-                                                                {...params}
-                                                                size="small" // Reduce the size of the TextField
-                                                                sx={{
-                                                                    '& .MuiInputBase-root': {
-                                                                        fontSize: '14px', // Adjust the font size
-                                                                    },
-                                                                    '& .MuiSvgIcon-root': {
-                                                                        fontSize: '20px', // Adjust the icon size
-                                                                    },
-                                                                }}
-                                                            />
-                                                        )}
-                                                    />
-                                                </LocalizationProvider>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <Grid container sx={{ marginBottom: "5px" }}>
-                                            <Grid item xs={1} />
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-In Date</Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date ? formatDate(currentLease.lease_move_in_date) : "-"}</Typography>
-                                            </Grid>
-                                            <Grid item xs={3} />
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                            <Grid item xs={1} />
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-Out Date</Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DatePicker
-                                                        value={moveoutDate}
-                                                        onChange={e => {
-                                                            const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                            setMoveoutDate(dayjs(formattedDate));
-                                                            setIsRenewNeeded(true);
-                                                        }}
-                                                        renderInput={(params) => (
-                                                            <TextField
-                                                                {...params}
-                                                                size="small" // Reduce the size of the TextField
-                                                                sx={{
-                                                                    '& .MuiInputBase-root': {
-                                                                        fontSize: '14px', // Adjust the font size
-                                                                    },
-                                                                    '& .MuiSvgIcon-root': {
-                                                                        fontSize: '20px', // Adjust the icon size
-                                                                    },
-                                                                }}
-                                                            />
-                                                        )}
-                                                    />
-                                                </LocalizationProvider>
-                                            </Grid>
-                                            <Grid item xs={3} />
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <Grid container sx={{ marginBottom: "5px" }}>
-                                            <Grid item xs={1} />
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Utilities Responsibilities</Typography>
-                                            </Grid>
-                                            <Grid item xs={7} />
-
-                                            <Grid item xs={5} />
-                                            <Grid item xs={3}>
-                                                <Grid container>
-                                                    <Grid item xs={4} md={4}>
-                                                        <Typography sx={{ fontSize: "14px" }}>Owner</Typography>
-                                                    </Grid>
-                                                    <Grid item xs={4} md={4}>
-                                                        <Typography sx={{ fontSize: "14px" }}>Tenant</Typography>
-                                                    </Grid>
+                    {isPageUpdateOrRenew === true &&
+                        <Grid item xs={12} md={12}>
+                            <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                                <Box sx={{ color: "#3D5CAC", fontSize: "14px" }}>
+                                    <Grid container spacing={2} alignItems="center" sx={{ padding: "10px" }}>
+                                        <Grid item xs={12}>
+                                            <Grid container>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4} />
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>CURRENT</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>NEW</Typography>
                                                 </Grid>
                                             </Grid>
-                                            <Grid item xs={3}>
-                                                <Grid container sx={{ marginBottom: "5px" }}>
-                                                    <Grid item xs={4} md={4}>
-                                                        <Typography sx={{ fontSize: "14px" }}>Owner</Typography>
-                                                    </Grid>
-                                                    <Grid item xs={4} md={4}>
-                                                        <Typography sx={{ fontSize: "14px" }}>Tenant</Typography>
-                                                    </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Start Date</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_start}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DatePicker
+                                                            value={newStartDate}
+                                                            onChange={e => {
+                                                                const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                                                setNewStartDate(dayjs(formattedDate));
+                                                                setIsRenewNeeded(true);
+                                                            }}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    size="small" // Reduce the size of the TextField
+                                                                    sx={{
+                                                                        '& .MuiInputBase-root': {
+                                                                            fontSize: '14px', // Adjust the font size
+                                                                        },
+                                                                        '& .MuiSvgIcon-root': {
+                                                                            fontSize: '20px', // Adjust the icon size
+                                                                        },
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        />
+                                                    </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
+                                        </Grid>
 
-                                            {/* utilities map */}
-                                            {newUtilities && newUtilities.map((newUtility, index) => {
-                                                // Find the corresponding utility in newUtilities
-                                                const utilityIndex = utilities.findIndex(u => u.utility_type_id === newUtility.utility_type_id);
-                                                const utility = utilityIndex !== -1 ? utilities[utilityIndex] : null;
-                                                console.log('map', utilityIndex, utility, newUtilities);
-                                                return (
-                                                    <React.Fragment key={newUtility.utility_type_id}>
-                                                        <Grid item xs={2} />
-                                                        <Grid item xs={3} container alignItems="center">
-                                                            <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{formatUtilityName(utilitiesMap.get(newUtility.utility_type_id))}</Typography>
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>End Date</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{formatDate(currentLease.lease_end)}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DatePicker
+                                                            value={newEndDate}
+                                                            onChange={e => {
+                                                                const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                                                setNewEndDate(dayjs(formattedDate));
+                                                                setIsRenewNeeded(true);
+                                                            }
+                                                            }
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    size="small" // Reduce the size of the TextField
+                                                                    sx={{
+                                                                        '& .MuiInputBase-root': {
+                                                                            fontSize: '14px', // Adjust the font size
+                                                                        },
+                                                                        '& .MuiSvgIcon-root': {
+                                                                            fontSize: '20px', // Adjust the icon size
+                                                                        },
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        />
+                                                    </LocalizationProvider>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-In Date</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date ? formatDate(currentLease.lease_move_in_date) : "-"}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3} />
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-Out Date</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DatePicker
+                                                            value={moveoutDate}
+                                                            onChange={e => {
+                                                                const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                                                setMoveoutDate(dayjs(formattedDate));
+                                                                setIsRenewNeeded(true);
+                                                            }}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    size="small" // Reduce the size of the TextField
+                                                                    sx={{
+                                                                        '& .MuiInputBase-root': {
+                                                                            fontSize: '14px', // Adjust the font size
+                                                                        },
+                                                                        '& .MuiSvgIcon-root': {
+                                                                            fontSize: '20px', // Adjust the icon size
+                                                                        },
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        />
+                                                    </LocalizationProvider>
+                                                </Grid>
+                                                <Grid item xs={3} />
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Grid container sx={{ marginBottom: "5px" }}>
+                                                <Grid item xs={1} />
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Utilities Responsibilities</Typography>
+                                                </Grid>
+                                                <Grid item xs={7} />
+
+                                                <Grid item xs={5} />
+                                                <Grid item xs={3}>
+                                                    <Grid container>
+                                                        <Grid item xs={4} md={4}>
+                                                            <Typography sx={{ fontSize: "14px" }}>Owner</Typography>
                                                         </Grid>
-                                                        <Grid item xs={3}>
-                                                            {utility !== null && (
+                                                        <Grid item xs={4} md={4}>
+                                                            <Typography sx={{ fontSize: "14px" }}>Tenant</Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Grid container sx={{ marginBottom: "5px" }}>
+                                                        <Grid item xs={4} md={4}>
+                                                            <Typography sx={{ fontSize: "14px" }}>Owner</Typography>
+                                                        </Grid>
+                                                        <Grid item xs={4} md={4}>
+                                                            <Typography sx={{ fontSize: "14px" }}>Tenant</Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+
+                                                {/* utilities map */}
+                                                {newUtilities && newUtilities.map((newUtility, index) => {
+                                                    // Find the corresponding utility in newUtilities
+                                                    const utilityIndex = utilities.findIndex(u => u.utility_type_id === newUtility.utility_type_id);
+                                                    const utility = utilityIndex !== -1 ? utilities[utilityIndex] : null;
+                                                    console.log('map', utilityIndex, utility, newUtilities);
+                                                    return (
+                                                        <React.Fragment key={newUtility.utility_type_id}>
+                                                            <Grid item xs={2} />
+                                                            <Grid item xs={3} container alignItems="center">
+                                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{formatUtilityName(utilitiesMap.get(newUtility.utility_type_id))}</Typography>
+                                                            </Grid>
+                                                            <Grid item xs={3}>
+                                                                {utility !== null && (
+                                                                    <RadioGroup
+                                                                        row
+                                                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                                                        name="row-radio-buttons-group"
+                                                                        value={utility.utility_payer_id === "050-000041" ? "owner" : "tenant"}
+                                                                    >
+                                                                        <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
+                                                                        <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
+                                                                    </RadioGroup>)
+                                                                }
+                                                            </Grid>
+                                                            <Grid item xs={3}>
                                                                 <RadioGroup
                                                                     row
                                                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                                                     name="row-radio-buttons-group"
-                                                                    value={utility.utility_payer_id === "050-000041" ? "owner" : "tenant"}
+                                                                    value={newUtility.utility_payer_id === "050-000041" ? "owner" : "tenant"}
+                                                                    onChange={(e, newUtility, utilityIndex) => handleNewUtilityChange(e, newUtility, index)}
                                                                 >
                                                                     <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
                                                                     <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
-                                                                </RadioGroup>)
-                                                            }
-                                                        </Grid>
-                                                        <Grid item xs={3}>
-                                                            <RadioGroup
-                                                                row
-                                                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                                                name="row-radio-buttons-group"
-                                                                value={newUtility.utility_payer_id === "050-000041" ? "owner" : "tenant"}
-                                                                onChange={(e, newUtility, utilityIndex) => handleNewUtilityChange(e, newUtility, index)}
+                                                                </RadioGroup>
+                                                            </Grid>
+                                                        </React.Fragment>
+                                                    )
+                                                }
+                                                )}
+
+                                                {/* Utilities map end */}
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                    <Grid item xs={1} md={2} />
+                                                    <Grid item sx={{ alignItems: 'center', justifyContent: 'center' }}>
+                                                        <Box sx={{ alignItems: 'center', justifyContent: 'center' }}>
+                                                            <TextField
+                                                                id="addUtilityText"
+                                                                select
+                                                                label="Add Utility"
+                                                                textAlign="center"
+                                                                sx={{
+                                                                    whiteSpace: 'nowrap',
+                                                                    overflow: 'visible',
+                                                                    textOverflow: 'clip',
+                                                                    width: "150px",
+                                                                    '& .MuiOutlinedInput-root': {
+                                                                        height: '40px',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        '& .MuiInputLabel-root': {
+                                                                            top: '50%',
+                                                                            transform: 'translateY(-50%)',
+                                                                            textAlign: 'center',
+                                                                        },
+                                                                        '& fieldset': {
+                                                                            borderColor: '#6e6e6e',
+                                                                        },
+                                                                        '&:hover fieldset': {
+                                                                            borderColor: '#6e6e6e',
+                                                                        },
+                                                                        '&.Mui-focused fieldset': {
+                                                                            borderColor: '#6e6e6e',
+                                                                        },
+                                                                    },
+                                                                }}
+                                                                onChange={(e) => {
+                                                                    onAddUtilTextChange(e)
+                                                                }}
                                                             >
-                                                                <FormControlLabel sx={{ marginLeft: "0px" }} value="owner" control={<Radio size="small" />} />
-                                                                <FormControlLabel sx={{ marginLeft: "0px" }} value="tenant" control={<Radio size="small" />} />
-                                                            </RadioGroup>
-                                                        </Grid>
-                                                    </React.Fragment>
-                                                )
-                                            }
-                                            )}
-
-                                            {/* Utilities map end */}
-                                        </Grid>
-
-                                        <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                                <Grid item xs={1} md={2} />
-                                                <Grid item sx={{ alignItems: 'center', justifyContent: 'center' }}>
-                                                    <Box sx={{ alignItems: 'center', justifyContent: 'center' }}>
-                                                        <TextField
-                                                            id="addUtilityText"
-                                                            select
-                                                            label="Add Utility"
-                                                            textAlign="center"
-                                                            sx={{
-                                                                whiteSpace: 'nowrap',
-                                                                overflow: 'visible',
-                                                                textOverflow: 'clip',
-                                                                width: "150px",
-                                                                '& .MuiOutlinedInput-root': {
-                                                                    height: '40px',
-                                                                    display: 'flex',
+                                                                {remainingUtils && Array.from(remainingUtils.entries()).map(([key, value]) => (
+                                                                    <MenuItem key={key} value={key}>
+                                                                        {value}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </TextField>
+                                                            <Button
+                                                                sx={{
+                                                                    minWidth: "40px",
+                                                                    minHeight: "40px",
+                                                                    marginLeft: "5px",
                                                                     alignItems: 'center',
-                                                                    '& .MuiInputLabel-root': {
-                                                                        top: '50%',
-                                                                        transform: 'translateY(-50%)',
-                                                                        textAlign: 'center',
+                                                                    justifyContent: 'center',
+                                                                    "&:hover, &:focus, &:active": { background: theme.palette.primary.main }
+                                                                }}
+                                                                onClick={onAddUtilitiesClick}
+                                                            >
+                                                                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
+                                                            </Button>
+                                                        </Box>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                    <Grid item xs={1} />
+                                                    <Grid item xs={4}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Rent</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <Typography sx={{ fontSize: "14px", color: "black" }}>${rent.charge}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <FormControl sx={{ m: 1 }} variant="outlined">
+                                                            <OutlinedInput
+                                                                id="outlined-adornment-weight"
+
+                                                                aria-describedby="outlined-weight-helper-text"
+                                                                inputProps={{
+                                                                    'aria-label': 'weight',
+                                                                }}
+                                                                sx={{ height: "42px", fontSize: "14px" }}
+                                                                startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                                                value={newRent}
+                                                                onChange={e => {
+                                                                    setNewRent(e.target.value);
+                                                                    setIsRenewNeeded(true);
+                                                                }
+                                                                }
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                    <Grid item xs={1} />
+                                                    <Grid item xs={4}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Frequency</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.frequency}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        {newFreq &&
+                                                            <Select
+                                                                value={newFreq}
+                                                                size="small"
+                                                                fullWidth
+                                                                placeholder="Select frequency"
+                                                                className={classes.select}
+                                                                sx={{ fontSize: "14px" }}
+                                                                onChange={e => {
+                                                                    setNewFreq(e.target.value);
+                                                                    setIsRenewNeeded(true);
+                                                                }
+                                                                }
+                                                            >
+                                                                <MenuItem value="One-time">One-time</MenuItem>
+                                                                <MenuItem value="Weekly">Weekly</MenuItem>
+                                                                <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
+                                                                <MenuItem value="Monthly">Monthly</MenuItem>
+                                                                <MenuItem value="Annually">Annually</MenuItem>
+                                                            </Select>
+                                                        }
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                    <Grid item xs={1} />
+                                                    <Grid item xs={4}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Due Date</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.due_by}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <FormControl sx={{ m: 1 }} variant="outlined">
+                                                            <OutlinedInput
+                                                                id="outlined-adornment-weight"
+
+                                                                aria-describedby="outlined-weight-helper-text"
+                                                                inputProps={{
+                                                                    'aria-label': 'weight',
+                                                                }}
+                                                                sx={{ height: "42px", fontSize: "14px" }}
+                                                                value={newDueBy}
+                                                                onChange={e => {
+                                                                    setNewDueBy(e.target.value);
+                                                                    setIsRenewNeeded(true);
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                    <Grid item xs={1} />
+                                                    <Grid item xs={4}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Available to Pay</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.available_topay}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <FormControl sx={{ m: 1 }} variant="outlined">
+                                                            <InputLabel htmlFor="outlined-adornment-weight" sx={{ color: '#787878' }}>
+                                                                Days Before
+                                                            </InputLabel>
+                                                            <OutlinedInput
+                                                                id="outlined-adornment-weight"
+                                                                label="Days Befores"
+                                                                aria-describedby="outlined-weight-helper-text"
+                                                                inputProps={{
+                                                                    'aria-label': 'weight',
+                                                                }}
+                                                                sx={{ height: "42px", fontSize: "14px" }}
+                                                                value={newAvlToPay}
+                                                                onChange={e => { setNewAvlToPay(e.target.value); setIsRenewNeeded(true); }}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                    <Grid item xs={1} />
+                                                    <Grid item xs={4}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee After</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.late_by}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <FormControl sx={{ m: 1 }} variant="outlined">
+                                                            <InputLabel htmlFor="outlined-adornment-weight" sx={{ color: '#787878' }}>
+                                                                Days After
+                                                            </InputLabel>
+                                                            <OutlinedInput
+                                                                id="outlined-adornment-weight"
+                                                                label="Days After"
+                                                                aria-describedby="outlined-weight-helper-text"
+                                                                inputProps={{
+                                                                    'aria-label': 'weight',
+                                                                }}
+                                                                sx={{
+                                                                    height: "42px", fontSize: "14px", '& .MuiInputLabel-root': {
+                                                                        color: '#ffffff',
                                                                     },
-                                                                    '& fieldset': {
-                                                                        borderColor: '#6e6e6e',
-                                                                    },
-                                                                    '&:hover fieldset': {
-                                                                        borderColor: '#6e6e6e',
-                                                                    },
-                                                                    '&.Mui-focused fieldset': {
-                                                                        borderColor: '#6e6e6e',
-                                                                    },
-                                                                },
-                                                            }}
-                                                            onChange={(e) => {
-                                                                onAddUtilTextChange(e)
-                                                            }}
-                                                        >
-                                                            {remainingUtils && Array.from(remainingUtils.entries()).map(([key, value]) => (
-                                                                <MenuItem key={key} value={key}>
-                                                                    {value}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </TextField>
-                                                        <Button
-                                                            sx={{
-                                                                minWidth: "40px",
-                                                                minHeight: "40px",
-                                                                marginLeft: "5px",
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                                "&:hover, &:focus, &:active": { background: theme.palette.primary.main }
-                                                            }}
-                                                            onClick={onAddUtilitiesClick}
-                                                        >
-                                                            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                                                        </Button>
-                                                    </Box>
+                                                                }}
+                                                                value={newLateBy}
+                                                                onChange={e => {
+                                                                    setNewLateBy(e.target.value);
+                                                                    setIsRenewNeeded(true);
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
                                                 </Grid>
                                             </Grid>
-                                        </Grid>
 
-                                        <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                                <Grid item xs={1} />
-                                                <Grid item xs={4}>
-                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Rent</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>${rent.charge}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormControl sx={{ m: 1 }} variant="outlined">
-                                                        <OutlinedInput
-                                                            id="outlined-adornment-weight"
+                                            <Grid item xs={12}>
+                                                <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                    <Grid item xs={1} />
+                                                    <Grid item xs={4}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <Typography sx={{ fontSize: "14px", color: "black" }}>{newLateFee}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <FormControl sx={{ m: 1 }} variant="outlined">
+                                                            <OutlinedInput
+                                                                id="outlined-adornment-weight"
 
-                                                            aria-describedby="outlined-weight-helper-text"
-                                                            inputProps={{
-                                                                'aria-label': 'weight',
-                                                            }}
-                                                            sx={{ height: "42px", fontSize: "14px" }}
-                                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                                            value={newRent}
-                                                            onChange={e => {
-                                                                setNewRent(e.target.value);
-                                                                setIsRenewNeeded(true);
-                                                            }
-                                                            }
-                                                        />
-                                                    </FormControl>
+                                                                aria-describedby="outlined-weight-helper-text"
+                                                                inputProps={{
+                                                                    'aria-label': 'weight',
+                                                                }}
+                                                                sx={{ height: "42px", fontSize: "14px" }}
+                                                                value={rent.late_fee}
+                                                                onChange={e => {
+                                                                    setNewLateFee(e.target.value);
+                                                                    setIsRenewNeeded(true);
+                                                                }}
+                                                                startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
                                                 </Grid>
                                             </Grid>
-                                        </Grid>
 
-                                        <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                                <Grid item xs={1} />
-                                                <Grid item xs={4}>
-                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Frequency</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.frequency}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    {newFreq &&
-                                                        <Select
-                                                            value={newFreq}
-                                                            size="small"
-                                                            fullWidth
-                                                            placeholder="Select frequency"
-                                                            className={classes.select}
-                                                            sx={{ fontSize: "14px" }}
-                                                            onChange={e => {
-                                                                setNewFreq(e.target.value);
-                                                                setIsRenewNeeded(true);
-                                                            }
-                                                            }
-                                                        >
-                                                            <MenuItem value="One-time">One-time</MenuItem>
-                                                            <MenuItem value="Weekly">Weekly</MenuItem>
-                                                            <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
-                                                            <MenuItem value="Monthly">Monthly</MenuItem>
-                                                            <MenuItem value="Annually">Annually</MenuItem>
-                                                        </Select>
-                                                    }
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
+                                            <Grid item xs={12}>
+                                                <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
+                                                    <Grid item xs={1} />
+                                                    <Grid item xs={4}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee Per Day</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <Typography sx={{ fontSize: "14px", color: "black" }}>{newLateFeePerDay}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        <FormControl sx={{ m: 1 }} variant="outlined">
+                                                            <OutlinedInput
+                                                                id="outlined-adornment-weight"
 
-                                        <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                                <Grid item xs={1} />
-                                                <Grid item xs={4}>
-                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Due Date</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.due_by}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormControl sx={{ m: 1 }} variant="outlined">
-                                                        <OutlinedInput
-                                                            id="outlined-adornment-weight"
-
-                                                            aria-describedby="outlined-weight-helper-text"
-                                                            inputProps={{
-                                                                'aria-label': 'weight',
-                                                            }}
-                                                            sx={{ height: "42px", fontSize: "14px" }}
-                                                            value={newDueBy}
-                                                            onChange={e => {
-                                                                setNewDueBy(e.target.value);
-                                                                setIsRenewNeeded(true);
-                                                            }}
-                                                        />
-                                                    </FormControl>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                                <Grid item xs={1} />
-                                                <Grid item xs={4}>
-                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Available to Pay</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.available_topay}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormControl sx={{ m: 1 }} variant="outlined">
-                                                        <InputLabel htmlFor="outlined-adornment-weight" sx={{ color: '#787878' }}>
-                                                            Days Before
-                                                        </InputLabel>
-                                                        <OutlinedInput
-                                                            id="outlined-adornment-weight"
-                                                            label="Days Befores"
-                                                            aria-describedby="outlined-weight-helper-text"
-                                                            inputProps={{
-                                                                'aria-label': 'weight',
-                                                            }}
-                                                            sx={{ height: "42px", fontSize: "14px" }}
-                                                            value={newAvlToPay}
-                                                            onChange={e => { setNewAvlToPay(e.target.value); setIsRenewNeeded(true); }}
-                                                        />
-                                                    </FormControl>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                                <Grid item xs={1} />
-                                                <Grid item xs={4}>
-                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee After</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.late_by}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormControl sx={{ m: 1 }} variant="outlined">
-                                                        <InputLabel htmlFor="outlined-adornment-weight" sx={{ color: '#787878' }}>
-                                                            Days After
-                                                        </InputLabel>
-                                                        <OutlinedInput
-                                                            id="outlined-adornment-weight"
-                                                            label="Days After"
-                                                            aria-describedby="outlined-weight-helper-text"
-                                                            inputProps={{
-                                                                'aria-label': 'weight',
-                                                            }}
-                                                            sx={{
-                                                                height: "42px", fontSize: "14px", '& .MuiInputLabel-root': {
-                                                                    color: '#ffffff',
-                                                                },
-                                                            }}
-                                                            value={newLateBy}
-                                                            onChange={e => {
-                                                                setNewLateBy(e.target.value);
-                                                                setIsRenewNeeded(true);
-                                                            }}
-                                                        />
-                                                    </FormControl>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                                <Grid item xs={1} />
-                                                <Grid item xs={4}>
-                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{newLateFee}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormControl sx={{ m: 1 }} variant="outlined">
-                                                        <OutlinedInput
-                                                            id="outlined-adornment-weight"
-
-                                                            aria-describedby="outlined-weight-helper-text"
-                                                            inputProps={{
-                                                                'aria-label': 'weight',
-                                                            }}
-                                                            sx={{ height: "42px", fontSize: "14px" }}
-                                                            value={rent.late_fee}
-                                                            onChange={e => {
-                                                                setNewLateFee(e.target.value);
-                                                                setIsRenewNeeded(true);
-                                                            }}
-                                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                                        />
-                                                    </FormControl>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid item xs={12}>
-                                            <Grid container sx={{ marginBottom: "5px", alignItems: "center" }}>
-                                                <Grid item xs={1} />
-                                                <Grid item xs={4}>
-                                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Late Fee Per Day</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography sx={{ fontSize: "14px", color: "black" }}>{newLateFeePerDay}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormControl sx={{ m: 1 }} variant="outlined">
-                                                        <OutlinedInput
-                                                            id="outlined-adornment-weight"
-
-                                                            aria-describedby="outlined-weight-helper-text"
-                                                            inputProps={{
-                                                                'aria-label': 'weight',
-                                                            }}
-                                                            sx={{ height: "42px", fontSize: "14px" }}
-                                                            value={newLateFeePerDay}
-                                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                                            onChange={e => {
-                                                                setNewLateFeePerDay(e.target.value);
-                                                                setIsRenewNeeded(true);
-                                                            }}
-                                                        />
-                                                    </FormControl>
+                                                                aria-describedby="outlined-weight-helper-text"
+                                                                inputProps={{
+                                                                    'aria-label': 'weight',
+                                                                }}
+                                                                sx={{ height: "42px", fontSize: "14px" }}
+                                                                value={newLateFeePerDay}
+                                                                startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                                                onChange={e => {
+                                                                    setNewLateFeePerDay(e.target.value);
+                                                                    setIsRenewNeeded(true);
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                </Grid>
-                            </Box>
-                        </Paper>
-                    </Grid>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                    }
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Accordion sx={{ backgroundColor: color }}>
@@ -1175,6 +1305,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 paddingBottom: "10px",
                                                 paddingTop: "5px",
                                                 flexGrow: 1,
+                                                paddingLeft: "50px"
                                             }}
                                         >
                                             Fee Details
@@ -1412,6 +1543,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                             paddingBottom: "10px",
                                             paddingTop: "5px",
                                             flexGrow: 1,
+                                            paddingLeft: "50px",
                                         }}
                                         paddingTop="5px"
                                         paddingBottom="10px"
@@ -1437,54 +1569,131 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         </Paper>
                     </Grid>
 
-                    <Grid item xs={12} md={12}>
-                        <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                            <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
-                                    moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={false} />
-                            </Grid>
+                    {isPageUpdateOrRenew === false &&
+                        <Grid item xs={12} md={12}>
+                            <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
+                                <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                    <Button
+                                        variant="outlined"
+                                        sx={{
+                                            background: "#6788B3",
+                                            color: theme.palette.background.default,
+                                            cursor: "pointer",
+                                            textTransform: "none",
+                                            minWidth: "150px",
+                                            minHeight: "35px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            '&:hover': {
+                                                background: '#9ab0cd',
+                                            },
+                                        }}
+                                        size="small"
+                                        onClick={handlePageToggle}
+                                    >
+                                        <Typography sx={{
+                                            textTransform: "none",
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: theme.typography.smallFont,
+                                            whiteSpace: "nowrap",
+                                            marginLeft: "1%",
+                                        }}>
+                                            {"Edit/Update"}
+                                        </Typography>
+                                    </Button>
+                                </Grid>
 
-                            <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                <RenewLeaseButton theme={theme} handleRenewLease={handleRenewLease} leaseData={currentLease} />
-                            </Grid>
-                            <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <Button
-                                    variant="outlined"
-                                    sx={{
-                                        background: "#ffa500",
-                                        color: theme.palette.background.default,
-                                        cursor: "pointer",
-                                        textTransform: "none",
-                                        minWidth: "150px",
-                                        minHeight: "35px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        '&:hover': {
-                                            background: '#ffc04d',
-                                        },
-                                    }}
-                                    size="small"
-                                    onClick={handleUpdateLease}
-                                >
-                                    <Typography sx={{
-                                        textTransform: "none",
-                                        color: theme.typography.primary.black,
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                        whiteSpace: "nowrap",
-                                        marginLeft: "1%",
-                                    }}>
-                                        {"Update"}
-                                    </Typography>
-                                </Button>
-                            </Grid>
-                            <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                        variant="outlined"
+                                        sx={{
+                                            background: "#ffa500",
+                                            color: theme.palette.background.default,
+                                            cursor: "pointer",
+                                            textTransform: "none",
+                                            minWidth: "150px",
+                                            minHeight: "35px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            '&:hover': {
+                                                background: '#ffc04d',
+                                            },
+                                        }}
+                                        size="small"
+                                        onClick={handlePageToggle}
+                                    >
+                                        <Typography sx={{
+                                            textTransform: "none",
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: theme.typography.smallFont,
+                                            whiteSpace: "nowrap",
+                                            marginLeft: "1%",
+                                        }}>
+                                            {"Renew"}
+                                        </Typography>
+                                    </Button>
+                                </Grid>
+
+                                <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                    <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
+                                        moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={false} />
+                                </Grid>
+
+                                {/* <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
                                     moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={true} />
+                            </Grid> */}
                             </Grid>
                         </Grid>
-                    </Grid>
+                    }
+
+                    {isPageUpdateOrRenew === true &&
+                        <Grid item xs={12} md={12}>
+                            <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
+                                <Grid item xs={6} md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                    <Button
+                                        variant="outlined"
+                                        sx={{
+                                            background: "#D4736D",
+                                            color: theme.palette.background.default,
+                                            cursor: "pointer",
+                                            textTransform: "none",
+                                            minWidth: "150px",
+                                            minHeight: "35px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            '&:hover': {
+                                                background: '#DEA19C',
+                                            },
+                                        }}
+                                        size="small"
+                                        // onClick={handleUpdateLease}
+                                    >
+                                        <Typography sx={{
+                                            textTransform: "none",
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: theme.typography.smallFont,
+                                            whiteSpace: "nowrap",
+                                            marginLeft: "1%",
+                                        }}>
+                                            {"Update Lease (No Signature Required)"}
+                                        </Typography>
+                                    </Button>
+                                </Grid>
+
+                                <Grid item xs={6} md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                    <RenewLeaseButton theme={theme} handleRenewLease={handleRenewLease} 
+                                    leaseData={currentLease} setIsPageUpdateOrRenew={setIsPageUpdateOrRenew}/>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    }
                 </Grid>
             </Paper>
         </Box >
