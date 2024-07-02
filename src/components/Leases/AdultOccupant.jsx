@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, 
+    Typography, FormControl, InputLabel, Select, MenuItem} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,8 +11,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-const AdultOccupant = ({ leaseAdults, setLeaseAdults }) => {
-    console.log('Inside Adult occupants', leaseAdults);
+const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
+    console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -184,14 +185,25 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults }) => {
                         value={currentRow?.phone_number || ''}
                         onChange={(e) => setCurrentRow({ ...currentRow, phone_number: e.target.value })}
                     />
-                    <TextField
-                        margin="dense"
-                        label="Relationship"
-                        fullWidth
-                        variant="outlined"
-                        value={currentRow?.relationship || ''}
-                        onChange={(e) => setCurrentRow({ ...currentRow, relationship: e.target.value })}
-                    />
+                    <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
+                        <InputLabel required>Relationship</InputLabel>
+                        <Select
+                          margin="dense"
+                          label="Relationship"
+                          fullWidth
+                          required
+                          variant="outlined"
+                          value={currentRow?.relationship || ''}
+                          onChange={(e) => setCurrentRow({ ...currentRow, relationship: e.target.value })}
+                        >
+                          {relationships && relationships.map((reln) => (
+                            <MenuItem key={reln.list_uid} value={reln.list_item}>
+                              {reln.list_item}
+                            </MenuItem>
+                          ))}
+
+                        </Select>
+                      </FormControl>
                 </DialogContent>
                 <DialogActions>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mt: 2 }}>

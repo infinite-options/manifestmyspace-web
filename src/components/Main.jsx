@@ -66,7 +66,9 @@ import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWid
 import Contacts from "./Contacts/Contacts";
 import OwnerContacts from "./Contacts/OwnerContacts/OwnerContacts";
 import PMContacts from "./Contacts/PMContacts/PMContacts";
-import MaintenanceContacts from "./Contacts/MaintenanceContacts";
+import TenantContacts from "./Contacts/TenantContacts/TenantContacts";
+import MaintenanceContacts from "./Contacts/MaintenanceContacts/MaintenanceContacts";
+// import MaintenanceContacts from "./Contacts/MaintenanceContactsOld";
 import ContactDetails from "./Contacts/ContactDetails";
 import AddContacts from "./Contacts/AddContacts";
 // import TenantContactDetails from "./Contacts/TenantContactDetails";
@@ -135,6 +137,8 @@ import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 import Onboarding from "./Onboarding/Onboarding";
 import OnBoardDesktop from "./Onboarding/OnBoardDesktop";
 import NewUser from "./Onboarding/NewUser";
+import NewUser2 from "./Onboarding/NewUser2";
+import CreateProfile from "./Onboarding/CreateProfile";
 import Register from "./Onboarding/Register";
 import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
@@ -199,7 +203,8 @@ function Main() {
          
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
-            <Route path="newUser" element={<NewUser />} />
+            <Route path="newUser" element={<NewUser2 />} />            
+            <Route path="createProfile" element={<CreateProfile />} /> 
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
             <Route path="userLogin" element={<UserLogin />} />
@@ -299,6 +304,7 @@ function Main() {
             <Route path="contacts" element={<Contacts />} />
             <Route path="ownerContacts" element={<OwnerContacts />} />
             <Route path="PMContacts" element={<PMContacts />} />
+            <Route path="tenantContacts" element={<TenantContacts />} />
             <Route path="maintenanceContacts" element={<MaintenanceContacts />} />
             <Route path="contactDetails" element={<ContactDetails />} />
             <Route path="addContacts" element={<AddContacts />} />
@@ -385,5 +391,5 @@ const PrivateRoutes = () => {
 
 const PublicRoutes = () => {
   const { isLoggedIn, selectedRole } = useUser();
-  return isLoggedIn ? <Navigate to={roleMap[selectedRole].dashboardUrl} /> : <Outlet />;
+  return isLoggedIn ? <Navigate to={roleMap[selectedRole]?.dashboardUrl} /> : <Outlet />;
 };

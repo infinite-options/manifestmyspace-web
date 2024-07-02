@@ -30,6 +30,7 @@ import WorkerFinishedMaintenance from "./WorkerFinishedMaintenance";
 import WorkerQuotesRequestedAction from "./WorkerQuotesRequestedAction";
 import WorkerQuotesSubmittedAction from "./WorkerQuotesSubmittedAction";
 
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -64,20 +65,38 @@ function a11yProps(index) {
   }
 
 
-export default function WorkerMaintenanceRequestDetail(){
+export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid}){
+    console.log("----inside WorkerMaintenanceRequestDetail----");
+    console.log(propstatus, propmaintenanceItemsForStatus);
     const location = useLocation();
     let navigate = useNavigate();
     const colorStatus = theme.colorStatusMM
 
-    const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
-    const [status, setStatus] = useState(location.state.status);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    //const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(location.state.maintenance_request_index);
+
+    const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(isMobile ? location.state.maintenance_request_index : maintenance_request_index);
+    const [status, setStatus] = useState(isMobile ? location.state.status : propstatus);
     const [value, setValue] = useState(4); // this tab value is for the tab navigator and it needs to change
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
-    const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(location.state.maintenanceItemsForStatus);
-    const allData = location.state.allMaintenanceData;
+    const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(isMobile ? location.state.maintenanceItemsForStatus : propmaintenanceItemsForStatus);
+    const allData = isMobile ? location.state.data : alldata;
+    const [maintenanceRequestId, setMaintenanceRequestId] =  useState(isMobile ? location.state.maintenance_request_uid: maintenance_request_uid);
+    
 
-
+    useEffect(() => {
+        if (!isMobile) {
+          setMaintenanceRequestIndex(maintenance_request_index);
+          setStatus(propstatus);
+          setMaintenanceItemsForStatus(propmaintenanceItemsForStatus);
+          setMaintenanceRequestId(maintenance_request_uid);
+        }
+      }, [isMobile, maintenance_request_index, propstatus, propmaintenanceItemsForStatus, maintenance_request_uid]);
+    
+ 
+      
     function navigateToAddMaintenanceItem(){
         // console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
@@ -85,7 +104,22 @@ export default function WorkerMaintenanceRequestDetail(){
 
     function handleBackButton(){
         // console.log("handleBackButton")
-        navigate(-1); 
+        if(isMobile){
+            navigate(-1); 
+        } else {
+            sessionStorage.removeItem('workerselectedRequestIndex');
+			sessionStorage.removeItem('workerselectedStatus');
+			sessionStorage.removeItem('workermaintenanceItemsForStatus');
+			sessionStorage.removeItem('workerallMaintenanceData');
+			sessionStorage.removeItem('workermaintenance_request_uid');
+            sessionStorage.removeItem('workerMaintenanceView');
+
+            window.dispatchEvent(new Event('storage'));
+			// Dispatch the custom event
+            setTimeout(() => {
+				window.dispatchEvent(new Event('removeworkermaintenanceRequestSelected'));
+			}, 0);
+        }
     }
 
     function deactivateTab(key, maintenanceData){
@@ -131,6 +165,8 @@ export default function WorkerMaintenanceRequestDetail(){
         })
 
     }, [maintenanceRequestIndex, status])
+
+  
 
 
     const handleChange = (event, newValue) => {
@@ -194,7 +230,7 @@ export default function WorkerMaintenanceRequestDetail(){
                     width: '100%', // Take up full screen width
                     // maxWidth: '60%',
                     minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(2), // Set the margin to 20px
+                    marginTop: theme.spacing(-5), // Set the margin to 20px
                 }}
             >
                 <Paper
@@ -216,7 +252,10 @@ export default function WorkerMaintenanceRequestDetail(){
                             paddingRight: "0px",
                         }}
                     >
-                        <Box position="absolute" left={30}>
+                        <Box sx={{
+								position: 'absolute',
+								left: isMobile ? '30px' : '40%',
+							}}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
                             </Button>

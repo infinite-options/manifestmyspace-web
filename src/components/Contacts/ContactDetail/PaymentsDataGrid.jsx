@@ -40,7 +40,7 @@ import AES from "crypto-js/aes";
 import APIConfig from "../../../utils/APIConfig";
 
 const PaymentsDataGrid = ({ data }) => {
-    console.log("ROHIT - PaymentsDataGrid - props.data -", data);
+    console.log("PaymentsDataGrid - props.data -", data);
   
     // const payments = data; 
     // const payments = data.filter( property => property.payment_status == "PAID" || property.payment_status == "PAID LATE"  || property.payment_status == "UNPAID")
@@ -134,7 +134,7 @@ const PaymentsDataGrid = ({ data }) => {
         flex: 0.5,
         renderCell: (params) => (
           <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {`${params.row.total_amount_due}`}
+            {`${params.row.total_amount_due || params.row.pur_amount_due}`}
           </Typography>
         )
       },
