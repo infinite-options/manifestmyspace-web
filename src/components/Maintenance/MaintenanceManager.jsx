@@ -344,11 +344,11 @@ export default function MaintenanceManager() {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			<Grid container sx={{ padding: '10px' }}>
+			<Grid container  sx={{ padding: '10px' }}>
 				<Grid
 					item
 					xs={12}
-					sm={5}
+					md={4}
 					style={{
 						display: 'flex',
 						justifyContent: 'center',
@@ -528,7 +528,7 @@ export default function MaintenanceManager() {
 				</Grid>
 
 				{!isMobile && (
-					<Grid item xs={7}>
+					<Grid item xs={12} md={8}>
 						{editMaintenanceView && selectedRole === 'MANAGER'? (
 							<EditMaintenanceItem />
 						) :showNewMaintenance ? (
