@@ -292,6 +292,8 @@ const OwnerOnBoardDeskTopForm = () => {
         const payload = getPayload();
         const form = encodeForm(payload);
         const data = await createProfile(form);
+        const paymentSetup = await handlePaymentStep();
+        console.log(paymentSetup);
         setShowSpinner(false);
         if (data.owner_uid) {
             updateProfileUid({ owner_id: data.owner_uid });
@@ -346,7 +348,7 @@ const OwnerOnBoardDeskTopForm = () => {
         setNextStepDisabled(disable_state);
     }, [paymentMethods]);
 
-    const handlePaymentStep = async (owner_id) => {
+    const handlePaymentStep = async () => {
         setShowSpinner(true);
         const keys = Object.keys(paymentMethods);
         const payload = [];
@@ -354,9 +356,9 @@ const OwnerOnBoardDeskTopForm = () => {
             if (paymentMethods[key].value !== "") {
                 let paymentMethodPayload = {
                     
-                    paymentMethod_profile_id: owner_id, // Replace with actual profile id
+                    // Replace with actual profile id
                     paymentMethod_type: key,
-                    paymentMethod_uid: user.user_uid,
+                    paymentMethod_profile_id: getProfileId(),
 
                 };
                 if (key === "bank_account") {
