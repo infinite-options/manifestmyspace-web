@@ -1,5 +1,26 @@
 import React, {useEffect, useState, } from 'react';
-import { Paper, Box, Stack, ThemeProvider, Button, Typography, Accordion, AccordionSummary, AccordionDetails, Container, Grid, ToggleButtonGroup, ToggleButton, List, ListItem, OutlinedInput,  } from '@mui/material';
+import { 
+    Paper,
+    Box,
+    Stack,
+    ThemeProvider,
+    Button,
+    Typography,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Container,
+    Grid,
+    ToggleButtonGroup,
+    ToggleButton,
+    List,
+    ListItem,
+    OutlinedInput,
+    Dialog,
+    DialogContent,
+    DialogActions,
+    DialogTitle  
+} from '@mui/material';
 import theme from '../../theme/theme';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
@@ -9,6 +30,11 @@ import DataValidator from "../DataValidator";
 import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 
 import axios from "axios";
+
+import managerDashboardImage from './images/dashboard-images/manager-dashboard.png'; 
+import maintenanceDashboardImage from './images/dashboard-images/maintenance-dashboard.png'; 
+import ownerDashboardImage from './images/dashboard-images/owner-dashboard.png'; 
+import tenantDashboardImage from './images/dashboard-images/tenant-dashboard.png'; 
 
 
 
@@ -243,275 +269,323 @@ const CreateProfile = () => {
         }
             
     };
+
+    const getDashboardImage = () => {
+        switch(user?.role){
+            case "MANAGER":
+                return managerDashboardImage;
+                break;
+            case "MAINTENANCE":
+                return maintenanceDashboardImage;
+                break;
+            case "OWNER":
+                return ownerDashboardImage;
+                break;
+            case "TENANT":
+                return tenantDashboardImage;
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
     
 
     return (
         <ThemeProvider theme={theme}>
-            <Container maxWidth="lg"  sx={{ height: '100vh', backgroundColor: '#FFFFFF',  }}>
-                <Grid container>                    
-                    <Grid container item xs={12} justifyContent='center' spacing={2} >
-                        <Grid item xs={6}>
-                            <Typography sx={{ fontSize: '25px', color: '#160449',}}>
-                                First Name
-                            </Typography>
-                            <OutlinedInput 
-                                value={firstName} 
-                                onChange={ (e) => setFirstName(e.target.value)}
-                                id="filled-basic" 
-                                variant="filled"                                 
-                                sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography sx={{ fontSize: '25px', color: '#160449',}}>
-                                Last Name
-                            </Typography>
-                            <OutlinedInput 
-                                value={lastName} 
-                                onChange={ (e) => setLastName(e.target.value)}
-                                id="filled-basic" 
-                                variant="filled"                                 
-                                sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
-                            />
-                        </Grid>                         
-                    </Grid>
-
-                    {
-                        (user.role === "MANAGER" || user.role === "MAINTENANCE") && (                    
-                            <Grid item xs={12}>
-                                    <Typography sx={{ fontSize: '25px', color: '#160449',}}>
-                                        Business Name
-                                    </Typography>
-                                    <OutlinedInput 
-                                        value={businessName} 
-                                        onChange={ (e) => setBusinessName(e.target.value)}
-                                        id="filled-basic" 
-                                        variant="filled"                                 
-                                        sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
-                                    />
-                            </Grid>   
-                        )
-                    }
-
-                    {
-                        (user.role === "TENANT" || user.role === "OWNER") && (
-                            <Grid item xs={12}>
+            <Container
+                maxWidth="lg"
+            >
+                <Typography
+                    sx={{
+                    fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                    fontWeight: "600",
+                    }}
+                >
+                    Welcome, {firstName}!
+                </Typography>
+            </Container>
+            <Container
+                maxWidth="lg"
+                sx={{
+                    height: '90vh',
+                    backgroundImage: `url(${getDashboardImage()})`,
+                    backgroundSize: 'auto',
+                    backgroundRepeat: 'no-repeat',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    // filter: 'blur(5px)',                    
+                }}
+            >
+                <Container maxWidth="md"  sx={{ height: 'auto', backgroundColor: '#FFFFFF', padding: '50px', borderRadius: '60px',  }}>
+                    <Grid container justifyContent="center" rowGap={20}>                    
+                        <Grid container item xs={10} justifyContent='center' spacing={20} >
+                            <Grid item xs={6}>
                                 <Typography sx={{ fontSize: '25px', color: '#160449',}}>
-                                    Personal Email
+                                    First Name
                                 </Typography>
                                 <OutlinedInput 
-                                    value={email} 
-                                    onChange={ (e) => setEmail(e.target.value)}
-                                    id="filled-basic" 
-                                    variant="filled"                                 
-                                    sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
-                                />
-                            </Grid>
-                        )
-                    }
-
-                    {
-                        (user.role === "MANAGER" || user.role === "MAINTENANCE") && (
-                            <Grid item xs={12}>
-                                    <Typography sx={{ fontSize: '25px', color: '#160449',}}>
-                                        Business Email
-                                    </Typography>
-                                    <OutlinedInput 
-                                        value={businessEmail} 
-                                        onChange={ (e) => setBusinessEmail(e.target.value)}
-                                        id="filled-basic" 
-                                        variant="filled"                                 
-                                        sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
-                                    />
-                            </Grid>
-                        )
-                    }   
-
-                    {
-                        (user.role === "TENANT" || user.role === "OWNER") && (
-
-                            <Grid item xs={12}>
-                                    <Typography sx={{ fontSize: '25px', color: '#160449',}}>
-                                        Personal Phone Number
-                                    </Typography>
-                                    <OutlinedInput 
-                                        value={phoneNumber} 
-                                        onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
-                                        id="filled-basic" 
-                                        variant="filled"                                 
-                                        sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
-                                    />
-                            </Grid>
-                        )
-                    }
-
-
-                    {
-                        (user.role === "MANAGER" || user.role === "MAINTENANCE") && (
-                            <Grid item xs={12}>
-                                <Typography sx={{ fontSize: '25px', color: '#160449',}}>
-                                    Business Phone Number
-                                </Typography>
-                                <OutlinedInput 
-                                    value={businessPhoneNumber} 
-                                    onChange={(e) => setBusinessPhoneNumber(formatPhoneNumber(e.target.value))}
+                                    value={firstName} 
+                                    onChange={ (e) => setFirstName(e.target.value)}
                                     id="filled-basic" 
                                     variant="filled"                                 
                                     sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
                                 />
                             </Grid>
+                            <Grid item xs={6}>
+                                <Typography sx={{ fontSize: '25px', color: '#160449',}}>
+                                    Last Name
+                                </Typography>
+                                <OutlinedInput 
+                                    value={lastName} 
+                                    onChange={ (e) => setLastName(e.target.value)}
+                                    id="filled-basic" 
+                                    variant="filled"                                 
+                                    sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
+                                />
+                            </Grid>                         
+                        </Grid>
 
-                        )
-                    }
-
-                     <Grid item xs={12}>
-                        <Button
-                            onClick={handleSignup}
-                            sx={{
-                                marginTop: '20px',
-                                width: '100%',
-                                height: '57px',
-                                borderRadius: '15px',
-                                fontSize: '20px',
-                                backgroundColor: "#3D5CAC",
-                                textTransform: "none",
-                                color: "#FFFFFF",
-                                fontWeight: 'bold',
-                                '&:hover': {
-                                    backgroundColor: "#F2F2F2",
-                                    color: "#160449",
-                                },
-                                boxShadow: 1,
-                                justifyContent: 'space-evenly'                                                
-                            }}
-                        >
-                            Go to Dashboard
-                        </Button>
-                    </Grid>   
-                    
-                    {/* {
-                        role != null && (
-                            <>
-                                <Grid container item xs={12} justifyContent="center" sx={{marginTop: '50px', }}>
-                                    <Grid container direction="column" item xs={4} alignItems="center">
-                                        <GoogleSignup />
-                                        <Typography sx={{fontSize: '20px', color: '#3D5CAC', fontWeight: 'bold', marginTop: '20px',  }}>
-                                            Recommended
+                        {
+                            (user.role === "MANAGER" || user.role === "MAINTENANCE") && (                    
+                                <Grid item xs={10}>
+                                        <Typography sx={{ fontSize: '25px', color: '#160449',}}>
+                                            Business Name
                                         </Typography>
-                                        <List sx={{ listStyleType: 'disc' }}>
-                                            <ListItem sx={{ display: 'list-item' }}>No Separate Password</ListItem>
-                                            <ListItem sx={{ display: 'list-item' }}>Makes Scheduling Easier</ListItem>
-                                            <ListItem sx={{ display: 'list-item' }}>Faster Setup Process</ListItem>
-                                            <ListItem sx={{ display: 'list-item' }}>Secured by Google</ListItem>
-                                        </List>
+                                        <OutlinedInput 
+                                            value={businessName} 
+                                            onChange={ (e) => setBusinessName(e.target.value)}
+                                            id="filled-basic" 
+                                            variant="filled"                                 
+                                            sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
+                                        />
+                                </Grid>   
+                            )
+                        }
 
-                                    </Grid>
-                                    <Grid container direction="row" item xs={4} sx={{ padding: '7px',}}>
-                                        <Grid item xs={12}>
-                                            <Button
-                                                onClick={() => setShowEmailSignup( prevState => (!prevState))}
-                                                sx={{
-                                                    width: '350px',
-                                                    height: '57px',
-                                                    borderRadius: '15px',
-                                                    fontSize: '20px',
-                                                    backgroundColor: "#F2F2F2",
-                                                    textTransform: "none",
-                                                    color: "grey",
-                                                    fontWeight: 'bold',
-                                                    '&:hover': {
-                                                        backgroundColor: "#F2F2F2",
-                                                        color: "#160449",
-                                                    },
-                                                    boxShadow: 1,
-                                                    justifyContent: 'space-evenly'                                                
-                                                }}
-                                            >
-                                                Signup with Email   <KeyboardArrowDownIcon />
-                                            </Button>
-                                        </Grid>
-                                        {
-                                            showEmailSignup && (
-                                                <Grid container direction="column" item xs={12} sx={{marginTop: '30px', }}>
-                                                    <OutlinedInput 
-                                                        value={email} 
-                                                        onChange={ (e) => setEmail(e.target.value)}
-                                                        id="filled-basic" 
-                                                        variant="filled" 
-                                                        placeholder="Enter Email Address"
-                                                        sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
-                                                    />
-                                                    <OutlinedInput
-                                                        type={ showPassword ? 'text' : 'password'} 
-                                                        value={password}
-                                                        onChange={(e) => setPassword(e.target.value)}
-                                                        id="filled-basic"
-                                                        variant="filled"
-                                                        placeholder="Enter Password"
-                                                        sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
-                                                        endAdornment={
-                                                            <InputAdornment position="end">
-                                                              <IconButton
-                                                                aria-label="toggle password visibility"
-                                                                onClick={() => setShowPassword((show) => !show)}                                                                
-                                                                edge="end"
-                                                              >
-                                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                                              </IconButton>
-                                                            </InputAdornment>
-                                                        }
-                                                        
-                                                    />
-                                                    <OutlinedInput
-                                                        type={ showPassword ? 'text' : 'password'} 
-                                                        value={confirmPassword}
-                                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                                        id="filled-basic"
-                                                        variant="filled"
-                                                        placeholder="Verify Password"
-                                                        sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
-                                                        endAdornment={
-                                                            <InputAdornment position="end">
-                                                              <IconButton
-                                                                aria-label="toggle password visibility"
-                                                                onClick={() => setShowPassword((show) => !show)}                                                                
-                                                                edge="end"
-                                                              >
-                                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                                              </IconButton>
-                                                            </InputAdornment>
-                                                        }
-                                                        
-                                                    />
-                                                    <Button
-                                                        onClick={handleSignup}
-                                                        sx={{
-                                                            width: '350px',
-                                                            height: '57px',
-                                                            borderRadius: '5px',
-                                                            fontSize: '16px',
-                                                            backgroundColor: "#3D5CAC",
-                                                            textTransform: "none",
-                                                            color: "#FFFFFF",
-                                                            fontWeight: 'bold',
-                                                            '&:hover': {
-                                                                backgroundColor: "#160449",
-                                                                color: "#FFFFFF",
-                                                            },
-                                                            marginTop: '10px',                                                                                                                        
-                                                        }}
-                                                    >
-                                                        Sign Up
-                                                    </Button>
-                                                </Grid>
-                                            )
-                                        }
-                                    </Grid>
+                        {
+                            (user.role === "TENANT" || user.role === "OWNER") && (
+                                <Grid item xs={10}>
+                                    <Typography sx={{ fontSize: '25px', color: '#160449',}}>
+                                        Email
+                                    </Typography>
+                                    <OutlinedInput 
+                                        value={email} 
+                                        onChange={ (e) => setEmail(e.target.value)}
+                                        id="filled-basic" 
+                                        variant="filled"                                 
+                                        sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
+                                    />
                                 </Grid>
-                            </>
-                        )
-                    } */}                   
-                </Grid>
+                            )
+                        }
+
+                        {
+                            (user.role === "MANAGER" || user.role === "MAINTENANCE") && (
+                                <Grid item xs={10}>
+                                        <Typography sx={{ fontSize: '25px', color: '#160449',}}>
+                                            Business Email
+                                        </Typography>
+                                        <OutlinedInput 
+                                            value={businessEmail} 
+                                            onChange={ (e) => setBusinessEmail(e.target.value)}
+                                            id="filled-basic" 
+                                            variant="filled"                                 
+                                            sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
+                                        />
+                                </Grid>
+                            )
+                        }   
+
+                        {
+                            (user.role === "TENANT" || user.role === "OWNER") && (
+
+                                <Grid item xs={10}>
+                                        <Typography sx={{ fontSize: '25px', color: '#160449',}}>
+                                            Phone Number
+                                        </Typography>
+                                        <OutlinedInput 
+                                            value={phoneNumber} 
+                                            onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+                                            id="filled-basic" 
+                                            variant="filled"                                 
+                                            sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
+                                        />
+                                </Grid>
+                            )
+                        }
+
+
+                        {
+                            (user.role === "MANAGER" || user.role === "MAINTENANCE") && (
+                                <Grid item xs={10}>
+                                    <Typography sx={{ fontSize: '25px', color: '#160449',}}>
+                                        Business Phone Number
+                                    </Typography>
+                                    <OutlinedInput 
+                                        value={businessPhoneNumber} 
+                                        onChange={(e) => setBusinessPhoneNumber(formatPhoneNumber(e.target.value))}
+                                        id="filled-basic" 
+                                        variant="filled"                                 
+                                        sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
+                                    />
+                                </Grid>
+
+                            )
+                        }
+
+                        <Grid container item xs={5} justifyContent="center">
+                            <Button
+                                onClick={handleSignup}
+                                sx={{
+                                    marginTop: '20px',
+                                    marginBottom: '15px',
+                                    width: '100%',
+                                    height: '57px',
+                                    borderRadius: '15px',
+                                    fontSize: '20px',
+                                    backgroundColor: "#3D5CAC",
+                                    textTransform: "none",
+                                    color: "#FFFFFF",
+                                    fontWeight: 'bold',
+                                    '&:hover': {
+                                        backgroundColor: "#F2F2F2",
+                                        color: "#160449",
+                                    },
+                                    boxShadow: 1,
+                                    justifyContent: 'space-evenly'                                                
+                                }}
+                            >
+                                Go to Dashboard
+                            </Button>                            
+                            You can fill out additional info when needed.                                                        
+                        </Grid>                    
+                        
+                        {/* {
+                            role != null && (
+                                <>
+                                    <Grid container item xs={12} justifyContent="center" sx={{marginTop: '50px', }}>
+                                        <Grid container direction="column" item xs={4} alignItems="center">
+                                            <GoogleSignup />
+                                            <Typography sx={{fontSize: '20px', color: '#3D5CAC', fontWeight: 'bold', marginTop: '20px',  }}>
+                                                Recommended
+                                            </Typography>
+                                            <List sx={{ listStyleType: 'disc' }}>
+                                                <ListItem sx={{ display: 'list-item' }}>No Separate Password</ListItem>
+                                                <ListItem sx={{ display: 'list-item' }}>Makes Scheduling Easier</ListItem>
+                                                <ListItem sx={{ display: 'list-item' }}>Faster Setup Process</ListItem>
+                                                <ListItem sx={{ display: 'list-item' }}>Secured by Google</ListItem>
+                                            </List>
+
+                                        </Grid>
+                                        <Grid container direction="row" item xs={4} sx={{ padding: '7px',}}>
+                                            <Grid item xs={12}>
+                                                <Button
+                                                    onClick={() => setShowEmailSignup( prevState => (!prevState))}
+                                                    sx={{
+                                                        width: '350px',
+                                                        height: '57px',
+                                                        borderRadius: '15px',
+                                                        fontSize: '20px',
+                                                        backgroundColor: "#F2F2F2",
+                                                        textTransform: "none",
+                                                        color: "grey",
+                                                        fontWeight: 'bold',
+                                                        '&:hover': {
+                                                            backgroundColor: "#F2F2F2",
+                                                            color: "#160449",
+                                                        },
+                                                        boxShadow: 1,
+                                                        justifyContent: 'space-evenly'                                                
+                                                    }}
+                                                >
+                                                    Signup with Email   <KeyboardArrowDownIcon />
+                                                </Button>
+                                            </Grid>
+                                            {
+                                                showEmailSignup && (
+                                                    <Grid container direction="column" item xs={12} sx={{marginTop: '30px', }}>
+                                                        <OutlinedInput 
+                                                            value={email} 
+                                                            onChange={ (e) => setEmail(e.target.value)}
+                                                            id="filled-basic" 
+                                                            variant="filled" 
+                                                            placeholder="Enter Email Address"
+                                                            sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
+                                                        />
+                                                        <OutlinedInput
+                                                            type={ showPassword ? 'text' : 'password'} 
+                                                            value={password}
+                                                            onChange={(e) => setPassword(e.target.value)}
+                                                            id="filled-basic"
+                                                            variant="filled"
+                                                            placeholder="Enter Password"
+                                                            sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
+                                                            endAdornment={
+                                                                <InputAdornment position="end">
+                                                                <IconButton
+                                                                    aria-label="toggle password visibility"
+                                                                    onClick={() => setShowPassword((show) => !show)}                                                                
+                                                                    edge="end"
+                                                                >
+                                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                                </IconButton>
+                                                                </InputAdornment>
+                                                            }
+                                                            
+                                                        />
+                                                        <OutlinedInput
+                                                            type={ showPassword ? 'text' : 'password'} 
+                                                            value={confirmPassword}
+                                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                                            id="filled-basic"
+                                                            variant="filled"
+                                                            placeholder="Verify Password"
+                                                            sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
+                                                            endAdornment={
+                                                                <InputAdornment position="end">
+                                                                <IconButton
+                                                                    aria-label="toggle password visibility"
+                                                                    onClick={() => setShowPassword((show) => !show)}                                                                
+                                                                    edge="end"
+                                                                >
+                                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                                </IconButton>
+                                                                </InputAdornment>
+                                                            }
+                                                            
+                                                        />
+                                                        <Button
+                                                            onClick={handleSignup}
+                                                            sx={{
+                                                                width: '350px',
+                                                                height: '57px',
+                                                                borderRadius: '5px',
+                                                                fontSize: '16px',
+                                                                backgroundColor: "#3D5CAC",
+                                                                textTransform: "none",
+                                                                color: "#FFFFFF",
+                                                                fontWeight: 'bold',
+                                                                '&:hover': {
+                                                                    backgroundColor: "#160449",
+                                                                    color: "#FFFFFF",
+                                                                },
+                                                                marginTop: '10px',                                                                                                                        
+                                                            }}
+                                                        >
+                                                            Sign Up
+                                                        </Button>
+                                                    </Grid>
+                                                )
+                                            }
+                                        </Grid>
+                                    </Grid>
+                                </>
+                            )
+                        } */}                   
+                    </Grid>
+                </Container>
             </Container>
         </ThemeProvider>
     );
