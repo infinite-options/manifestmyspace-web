@@ -64,7 +64,6 @@ export default function MaintenanceDashboard2() {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
 			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
-
 			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
