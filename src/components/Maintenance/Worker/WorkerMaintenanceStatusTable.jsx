@@ -35,7 +35,8 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
   let navigate = useNavigate();
   const { user, getProfileId, } = useUser();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  // console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
+  //console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
+  //console.log('------allMaintenanceData----', allMaintenanceData);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
   // console.log("----MaintenanceStatusTable----", status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount);
 const [data, setdata] = useState({});
@@ -126,12 +127,49 @@ const [data, setdata] = useState({});
   ];
 
   useEffect(() => {
+    //console.log('======inside useEffect of mainstatus=====');
     const fetchData = async () => {
       try {
         const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
         //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
         const data = await response.json();
         //console.log('-----data inside workerMaintenanceTable----', data);
+       
+
+        const addresses = new Set();
+    for (const status in allMaintenanceData) {
+        if (Array.isArray(allMaintenanceData[status])) {
+          allMaintenanceData[status].forEach(item => {
+                addresses.add(item.property_address);
+            });
+        }
+    }
+
+        const filterMaintenanceRequests = (data, address) => {
+          const filteredRequests = {};
+          for (const status in data.result) {
+              
+              // Check if maintenance_items exists and is an array
+              if (data.result[status].maintenance_items.length > 0) {
+                  
+                  filteredRequests[status] = {
+                    ...data.result[status],
+                    maintenance_items: data.result[status].maintenance_items.filter(item => address.includes(item.property_address))
+                    
+                };
+              } else {
+                  filteredRequests[status] = {
+                      ...data.result[status],
+                      maintenance_items: []
+                  };
+              }
+          }
+          return filteredRequests;
+      };
+      const filteredMaintenanceRequests = filterMaintenanceRequests(data, Array.from(addresses));
+
+        //console.log('-----data inside workerMaintenanceTable----', data);
+        //console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
 
         const statusMappings = [
           { status: 'Quotes Requested', mapping: 'REQUESTED' },
@@ -147,12 +185,12 @@ const [data, setdata] = useState({});
 
         statusMappings.forEach((mapping) => {
           const key = mapping.mapping;
-          if (data.result[key]) {
-            result[mapping.status] = data.result[key].maintenance_items;
-            tempdata[key] = data.result[key].maintenance_items;
+          if (filteredMaintenanceRequests[key]) {
+            result[mapping.status] = filteredMaintenanceRequests[key].maintenance_items;
+            tempdata[key] = filteredMaintenanceRequests[key].maintenance_items;
           }
         });
-        console.log('status table---', result);
+        //console.log('status table---', result);
 
         await setMaintenanceRequests(result);
         await setdata(tempdata);
@@ -162,7 +200,7 @@ const [data, setdata] = useState({});
     };
 
     fetchData();
-  }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
+  }, [allMaintenanceData]); // Empty dependency array means this effect runs once, similar to componentDidMount
 
   async function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
     
