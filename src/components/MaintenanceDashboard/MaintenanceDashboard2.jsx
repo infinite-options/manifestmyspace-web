@@ -63,7 +63,6 @@ export default function MaintenanceDashboard2() {
 	useEffect(() => {
 		const getMaintenanceData = async () => {
 			setShowSpinner(true);
-			console.log('---getProfileId()---', getProfileId());
 			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
 
 			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
@@ -336,6 +335,28 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 	const [year, setYear] = useState(null);
 	const [filterPropertyList, setFilterPropertyList] = useState([]);
 
+  useEffect( () => {
+		if (maintenanceRequests) {
+			const propertyList = [];
+			const addedAddresses = [];
+			for (const key in maintenanceRequests) {
+				for (const item of maintenanceRequests[key]) {
+					if (!addedAddresses.includes(item.property_address)) {
+						addedAddresses.push(item.property_address);
+						if (!propertyList.includes(item.property_address)) {
+							propertyList.push({
+								address: item.property_address,
+								checked: true,
+							});
+						}
+					}
+				}
+			}
+			setFilterPropertyList(propertyList);
+
+		}
+	}, [maintenanceRequests]);
+
   function clearFilters() {
 		setMonth(null);
 		setYear(null);
@@ -363,6 +384,21 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 			return 'Selected ' + count + ' Properties';
 		}
 	}
+  const filterCheckedAddresses = (requests, filterList) => {
+    const checkedAddresses = new Set(
+        filterList.filter(property => property.checked).map(property => property.address)
+    );
+
+    const filteredRequests = {};
+    for (const status in requests) {
+        filteredRequests[status] = requests[status].filter(item => checkedAddresses.has(item.property_address));
+    }
+    return filteredRequests;
+};
+
+const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, filterPropertyList);
+
+//console.log('----filteredMaintenanceRequests-----', filteredMaintenanceRequests);
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -449,7 +485,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 </Grid>
 
 						<Grid item xs={12}>
-							<WorkOrdersAccordion maintenanceRequests={maintenanceRequests} />
+							<WorkOrdersAccordion maintenanceRequests={filteredMaintenanceRequests} />
 						</Grid>
 						<Grid item xs={12} sx={{ padding: '20px 0px 20px 0px' }}>
 							<Paper
@@ -847,7 +883,6 @@ const MaintenanceCashflowWidget = ({ data }) => {
 };
 
 const RevenueTable = ({ data }) => {
-	console.log('---inside RevenueTable---', data);
 	return (
 		<Box sx={{ backgroundColor: '#F2F2F2', borderRadius: '10px', p: 3 }}>
 			<TableContainer

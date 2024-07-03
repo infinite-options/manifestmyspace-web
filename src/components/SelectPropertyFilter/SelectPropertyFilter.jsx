@@ -18,8 +18,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 export default function SelectPropertyFilter({showPropertyFilter, setShowPropertyFilter, filterList, setFilterList}){
-    console.log('----inside SelectPropertyFilter----');
-    console.log(showPropertyFilter, filterList);
+    
     
     return (
         <Dialog open={showPropertyFilter} onClose={() => setShowPropertyFilter(false)} maxWidth="lg">
