@@ -595,10 +595,9 @@ export default function MaintenanceManager() {
 										maintenance_request_index={selectedRequestIndex}
 										status={selectedStatus}
 										maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-										allMaintenanceData={maintenanceData}
+										allMaintenanceData={newDataObject}
 									/>
-								)
-							)}
+							))}
 						</Grid>
 					)}
 				</Grid>

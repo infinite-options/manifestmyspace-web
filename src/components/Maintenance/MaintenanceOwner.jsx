@@ -124,6 +124,15 @@ export function MaintenanceOwner() {
 	const [editMaintenanceView] = useSessionStorage('editMaintenanceView', false);
 	const [showNewMaintenance, setshowNewMaintenance] = useState(false);
 
+	const newDataObject = {};
+	newDataObject['NEW REQUEST'] = [];
+	newDataObject['INFO REQUESTED'] = [];
+	newDataObject['PROCESSING'] = [];
+	newDataObject['SCHEDULED'] = [];
+	newDataObject['COMPLETED'] = [];
+	newDataObject['CANCELLED'] = [];
+
+
 	function navigateToAddMaintenanceItem() {
 		if (isMobile) {
 			navigate('/addMaintenanceItem', { state: { month, year, propertyId } });
@@ -442,6 +451,10 @@ export function MaintenanceOwner() {
 
 								let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
 
+								 for (const item of filteredArray) {
+									newDataObject[mappingKey].push(item);
+								} 
+
 								return (
 									<MaintenanceStatusTable
 										key={index}
@@ -499,7 +512,7 @@ export function MaintenanceOwner() {
 									maintenance_request_index={selectedRequestIndex}
 									status={selectedStatus}
 									maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-									allMaintenanceData={maintenanceData}
+									allMaintenanceData={newDataObject}
 								/>
 							)
 						)}

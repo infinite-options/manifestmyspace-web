@@ -168,11 +168,8 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
   }, [maintenanceRequestIndex, currentStatus]);
 
   useEffect(() => {
-    console.log("------useeffect 2------", maintenanceQuotes);
-    console.log("------useeffect 2------", maintenanceItemsForStatus);
-    console.log("------useeffect 2------", maintenanceRequestIndex);
     var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
-    console.log("------useeffect 2.1------", quotesFilteredById);
+ 
     quotesFilteredById.sort((a, b) => {
       if (a.quote_status === "SENT") {
         return -1;
