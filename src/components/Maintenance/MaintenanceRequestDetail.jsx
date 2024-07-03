@@ -53,8 +53,7 @@ function a11yProps(index) {
 
 export function MaintenanceRequestDetail({ maintenance_request_index, status: initialStatus, maintenanceItemsForStatus: initialMaintenanceItemsForStatus, allMaintenanceData }) {
   // console.log('----inside request detail----', maintenance_request_index, initialStatus);
-  console.log("----inside request detail----", initialStatus, initialMaintenanceItemsForStatus);
-  console.log("---allMaintenanceData---", allMaintenanceData);
+ 
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
   let navigate = useNavigate();
@@ -132,7 +131,7 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
   }
 
   useEffect(() => {
-    console.log("------UseEffect 0--------", initialStatus, maintenance_request_index);
+    //console.log("------UseEffect 0--------", initialStatus, maintenance_request_index);
     const stat = isMobile ? location.state.status : initialStatus;
     setCurrentStatus(stat);
     const selectedIndex = isMobile ? location.state.maintenance_request_index : maintenance_request_index;
@@ -140,7 +139,6 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
   }, [initialStatus, maintenance_request_index, isMobile, location.state]);
 
   useEffect(() => {
-    console.log("------useeffect 1------", filteredQuotes);
     setNavParams({
       maintenanceRequestIndex,
       status: currentStatus,
@@ -168,11 +166,8 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
   }, [maintenanceRequestIndex, currentStatus]);
 
   useEffect(() => {
-    console.log("------useeffect 2------", maintenanceQuotes);
-    console.log("------useeffect 2------", maintenanceItemsForStatus);
-    console.log("------useeffect 2------", maintenanceRequestIndex);
     var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
-    console.log("------useeffect 2.1------", quotesFilteredById);
+ 
     quotesFilteredById.sort((a, b) => {
       if (a.quote_status === "SENT") {
         return -1;
@@ -198,7 +193,6 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
   }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
 
   useEffect(() => {
-    console.log("------useeffect 3------");
     const getMaintenanceItemQuotes = async () => {
       const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
       const data = await response.json();
@@ -209,10 +203,8 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
   }, []);
 
   useEffect(() => {
-    console.log("------useeffect 4------");
     colorStatus.find((item, index) => {
       if (item.mapping === currentStatus) {
-        console.log("------useeffect 4 inside if------", index);
         setValue(index);
       }
     });
@@ -224,7 +216,7 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
       const status = sessionStorage.getItem("selectedStatus");
       const maintenanceItemsForStatus = JSON.parse(sessionStorage.getItem("maintenanceItemsForStatus"));
 
-      console.log("---new useEffect-----", index, status);
+      //console.log("---new useEffect-----", index, status);
       // Update state with the new values
       setMaintenanceRequestIndex(Number(index));
       setCurrentStatus(status);
@@ -477,4 +469,11 @@ MaintenanceRequestDetail.propTypes = {
   status: PropTypes.string.isRequired,
   maintenanceItemsForStatus: PropTypes.array.isRequired,
   allMaintenanceData: PropTypes.object.isRequired,
+};
+
+MaintenanceRequestDetail.defaultProps = {
+  maintenance_request_index: 0,
+  status: '',
+  maintenanceItemsForStatus: [],
+  allMaintenanceData: {},
 };
