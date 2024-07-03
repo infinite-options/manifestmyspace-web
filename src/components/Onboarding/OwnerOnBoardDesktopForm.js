@@ -370,10 +370,11 @@ const OwnerOnBoardDeskTopForm = () => {
                     }
                 } else {
                     paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-                    payload.push(paymentMethodPayload);
+                    payload.push(JSON.stringify(paymentMethodPayload));
                 }
             }
         });
+        // payload= JSON.stringify(payload);
         console.log("Payment payload: ", payload);
         const response = await axios.post(
             "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
