@@ -112,6 +112,7 @@ export default function ChangePasswordSettingsManager() {
                     }
                 )
                 .then((response) => {
+                     setEmailAddress("");
                     if (response.data.code === 200) {
                         console.log(response.data.message);    
                     }
@@ -174,7 +175,7 @@ export default function ChangePasswordSettingsManager() {
                 </Box>
             <Paper
               style={{
-                margin: '30px', // Margin around the paper
+                margin: '30px 30px 30px 100px', // Margin around the paper
                 padding: theme.spacing(2),
                 backgroundColor: theme.palette.primary.main,
                 width: '85%', // Occupy full width with 25px margins on each side

@@ -26,7 +26,8 @@ export default function ChangePasswordSettings() {
   const { user } = useUser();
   // console.log("USER - ", user);
   const location = useLocation();
-  let owner_data = location.state.owner_data;
+  let owner_data = location.state && location.state.owner_data ? location.state.owner_data:null;
+  console.log('inside owner password change', owner_data);
 
   const [modifiedData, setModifiedData] = useState({ user_uid: user?.user_uid });
   const [isEdited, setIsEdited] = useState(false);
@@ -106,6 +107,7 @@ export default function ChangePasswordSettings() {
             email: emailAddress,
           })
           .then((response) => {
+            setEmailAddress("");
             if (response.data.code === 200) {
               console.log(response.data.message);
             }
@@ -166,7 +168,7 @@ export default function ChangePasswordSettings() {
           </Box>
           <Paper
             style={{
-              margin: "30px", // Margin around the paper
+              margin: '30px 30px 30px 100px',
               padding: theme.spacing(2),
               backgroundColor: theme.palette.primary.main,
               width: "85%", // Occupy full width with 25px margins on each side
@@ -179,7 +181,7 @@ export default function ChangePasswordSettings() {
             }}
           >
             <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" flexDirection="column">
-              {owner_data.owner_photo_url !== null ? (
+              {owner_data && owner_data.owner_photo_url !== null ? (
                 <img
                   src={owner_data.owner_photo_url}
                   alt="Profile"
@@ -213,7 +215,7 @@ export default function ChangePasswordSettings() {
                       fontSize: theme.typography.largeFont,
                     }}
                   >
-                    {owner_data.owner_first_name ? owner_data.owner_first_name : "<FIRST_NAME>"} {owner_data.owner_last_name ? owner_data.owner_last_name : "<LAST_NAME>"}
+                    {owner_data && owner_data.owner_first_name ? owner_data.owner_first_name : "<FIRST_NAME>"} {owner_data && owner_data.owner_last_name ? owner_data.owner_last_name : "<LAST_NAME>"}
                   </Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="center">
