@@ -366,48 +366,60 @@ export default function MaintenanceManager() {
 						}}
 					>
 						<Stack
-							direction="row"
-							justifyContent="center"
-							alignItems="center"
-							sx={{
-								paddingBottom: '20px',
-								paddingLeft: '0px',
-								paddingRight: '0px',
-							}}
-						>
-							<Box position="absolute" left={30}>
-								<Button onClick={handleBackButton}>
-									<ArrowBackIcon
-										sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
-									/>
-								</Button>
-							</Box>
-							<Box direction="row" justifyContent="center" alignItems="center">
-								<Typography
-									sx={{
-										color: theme.typography.primary.black,
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.largeFont,
-									}}
-								>
-									Maintenance
-								</Typography>
-							</Box>
-							<Box
-								sx={{
-									position: 'absolute',
-									right: isMobile ? '10px' : '60%',
-								}}
-							>
-								<Button onClick={() => navigateToAddMaintenanceItem()} id="addMaintenanceButton">
-									<AddIcon
-										sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
-									/>
-								</Button>
-							</Box>
-						</Stack>
-
-						<Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
+    direction="row"
+    justifyContent="space-between"
+    alignItems="center"
+    sx={{
+        paddingBottom: '20px',
+        paddingLeft: '0px',
+        paddingRight: '0px',
+    }}
+>
+    <Box
+        component="span"
+        display="flex"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+        position="relative"
+    >
+        <Button onClick={handleBackButton}>
+            <ArrowBackIcon
+                sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
+            />
+        </Button>
+    </Box>
+    <Box
+        component="span"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        position="relative"
+        flex={1}
+    >
+        <Typography
+            sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+            }}
+        >
+            Maintenance
+        </Typography>
+    </Box>
+    <Box
+        position="relative"
+        display="flex"
+        justifyContent="flex-end"
+        alignItems="center"
+    >
+        <Button onClick={() => navigateToAddMaintenanceItem()} id="addMaintenanceButton">
+            <AddIcon
+                sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
+            />
+        </Button>
+    </Box>
+</Stack>
+<Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
 							<Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
 								<CalendarTodayIcon
 									sx={{
