@@ -11,6 +11,7 @@ import {
 	Tab,
 	Backdrop,
 	CircularProgress,
+	Container,
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AddIcon from '@mui/icons-material/Add';
@@ -35,7 +36,6 @@ import useSessionStorage from './useSessionStorage';
 import { useCookies } from 'react-cookie';
 import AddMaintenanceItem from './AddMaintenanceItem';
 import EditMaintenanceItem from './EditMaintenanceItem';
-
 
 export async function maintenanceManagerDataCollectAndProcess(
 	setMaintenanceData,
@@ -344,91 +344,156 @@ export default function MaintenanceManager() {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			<Grid container  sx={{ padding: '10px' }}>
-				<Grid
-					item
-					xs={12}
-					md={4}
-					style={{
-						display: 'flex',
-						justifyContent: 'center',
-						width: '100%',
-						minHeight: '100vh',
-					}}
-				>
-					<Paper
+			<Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px' }}>
+				<Grid container sx={{ padding: '10px' }}>
+					<Grid
+						item
+						xs={12}
+						md={4}
 						style={{
-							margin: '5px',
-							backgroundColor: theme.palette.primary.main,
-							width: '95%',
-							paddingTop: '10px',
-							paddingBottom: '30px',
+							display: 'flex',
+							justifyContent: 'center',
+							width: '100%',
+							minHeight: '100vh',
 						}}
 					>
-						<Stack
-    direction="row"
-    justifyContent="space-between"
-    alignItems="center"
-    sx={{
-        paddingBottom: '20px',
-        paddingLeft: '0px',
-        paddingRight: '0px',
-    }}
->
-    <Box
-        component="span"
-        display="flex"
-        justifyContent="flex-start"
-        alignItems="flex-start"
-        position="relative"
-    >
-        <Button onClick={handleBackButton}>
-            <ArrowBackIcon
-                sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
-            />
-        </Button>
-    </Box>
-    <Box
-        component="span"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        position="relative"
-        flex={1}
-    >
-        <Typography
-            sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.largeFont,
-            }}
-        >
-            Maintenance
-        </Typography>
-    </Box>
-    <Box
-        position="relative"
-        display="flex"
-        justifyContent="flex-end"
-        alignItems="center"
-    >
-        <Button onClick={() => navigateToAddMaintenanceItem()} id="addMaintenanceButton">
-            <AddIcon
-                sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
-            />
-        </Button>
-    </Box>
-</Stack>
-<Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
-							<Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
-								<CalendarTodayIcon
-									sx={{
-										color: theme.typography.common.blue,
-										fontWeight: theme.typography.common.fontWeight,
-										fontSize: theme.typography.smallFont,
-										margin: '5px',
-									}}
+						<Paper
+							style={{
+								margin: '5px',
+								backgroundColor: theme.palette.primary.main,
+								width: '95%',
+								paddingTop: '10px',
+								paddingBottom: '30px',
+							}}
+						>
+							<Stack
+								direction="row"
+								justifyContent="space-between"
+								alignItems="center"
+								sx={{
+									paddingBottom: '20px',
+									paddingLeft: '0px',
+									paddingRight: '0px',
+								}}
+							>
+								<Box
+									component="span"
+									display="flex"
+									justifyContent="flex-start"
+									alignItems="flex-start"
+									position="relative"
+								>
+									<Button onClick={handleBackButton}>
+										<ArrowBackIcon
+											sx={{
+												color: theme.typography.common.blue,
+												fontSize: '30px',
+												margin: '5px',
+											}}
+										/>
+									</Button>
+								</Box>
+								<Box
+									component="span"
+									display="flex"
+									justifyContent="center"
+									alignItems="center"
+									position="relative"
+									flex={1}
+								>
+									<Typography
+										sx={{
+											color: theme.typography.primary.black,
+											fontWeight: theme.typography.primary.fontWeight,
+											fontSize: theme.typography.largeFont,
+										}}
+									>
+										Maintenance
+									</Typography>
+								</Box>
+								<Box position="relative" display="flex" justifyContent="flex-end" alignItems="center">
+									<Button onClick={() => navigateToAddMaintenanceItem()} id="addMaintenanceButton">
+										<AddIcon
+											sx={{
+												color: theme.typography.common.blue,
+												fontSize: '30px',
+												margin: '5px',
+											}}
+										/>
+									</Button>
+								</Box>
+							</Stack>
+							<Box
+								component="span"
+								m={2}
+								display="flex"
+								justifyContent="space-between"
+								alignItems="center"
+							>
+								<Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
+									<CalendarTodayIcon
+										sx={{
+											color: theme.typography.common.blue,
+											fontWeight: theme.typography.common.fontWeight,
+											fontSize: theme.typography.smallFont,
+											margin: '5px',
+										}}
+									/>
+									<Typography
+										sx={{
+											color: theme.typography.common.blue,
+											fontWeight: theme.typography.common.fontWeight,
+											fontSize: theme.typography.smallFont,
+										}}
+									>
+										{displayFilterString(month, year)}
+									</Typography>
+								</Button>
+								<Button
+									sx={{ textTransform: 'capitalize' }}
+									onClick={() => setShowPropertyFilter(true)}
+								>
+									<HomeWorkIcon
+										sx={{
+											color: theme.typography.common.blue,
+											fontWeight: theme.typography.common.fontWeight,
+											fontSize: theme.typography.smallFont,
+											margin: '5px',
+										}}
+									/>
+									<Typography
+										sx={{
+											color: theme.typography.common.blue,
+											fontWeight: theme.typography.common.fontWeight,
+											fontSize: theme.typography.smallFont,
+										}}
+									>
+										{displayPropertyFilterTitle(filterPropertyList)}
+									</Typography>
+								</Button>
+
+								<SelectMonthComponent
+									month={month}
+									showSelectMonth={showSelectMonth}
+									setShowSelectMonth={setShowSelectMonth}
+									setMonth={setMonth}
+									setYear={setYear}
+								></SelectMonthComponent>
+								<SelectPropertyFilter
+									showPropertyFilter={showPropertyFilter}
+									setShowPropertyFilter={setShowPropertyFilter}
+									filterList={filterPropertyList}
+									setFilterList={setFilterPropertyList}
 								/>
+							</Box>
+							<Box
+								component="span"
+								m={2}
+								display="flex"
+								justifyContent="center"
+								alignItems="center"
+								position="relative"
+							>
 								<Typography
 									sx={{
 										color: theme.typography.common.blue,
@@ -437,156 +502,108 @@ export default function MaintenanceManager() {
 									}}
 								>
 									{displayFilterString(month, year)}
+									{displayFilterString(month, year) === 'Last 30 Days' ? null : (
+										<Button
+											onClick={() => clearFilters()}
+											sx={{
+												padding: '0px',
+												position: 'absolute',
+												right: 0,
+												opacity: displayFilterString(month, year) === 'Last 30 Days' ? 0 : 1,
+												pointerEvents:
+													displayFilterString(month, year) === 'Last 30 Days'
+														? 'none'
+														: 'auto',
+											}}
+										>
+											<CloseIcon sx={{ color: theme.typography.common.blue, fontSize: '14px' }} />
+										</Button>
+									)}
 								</Typography>
-							</Button>
-							<Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowPropertyFilter(true)}>
-								<HomeWorkIcon
-									sx={{
-										color: theme.typography.common.blue,
-										fontWeight: theme.typography.common.fontWeight,
-										fontSize: theme.typography.smallFont,
-										margin: '5px',
-									}}
-								/>
-								<Typography
-									sx={{
-										color: theme.typography.common.blue,
-										fontWeight: theme.typography.common.fontWeight,
-										fontSize: theme.typography.smallFont,
-									}}
-								>
-									{displayPropertyFilterTitle(filterPropertyList)}
-								</Typography>
-							</Button>
-
-							<SelectMonthComponent
-								month={month}
-								showSelectMonth={showSelectMonth}
-								setShowSelectMonth={setShowSelectMonth}
-								setMonth={setMonth}
-								setYear={setYear}
-							></SelectMonthComponent>
-							<SelectPropertyFilter
-								showPropertyFilter={showPropertyFilter}
-								setShowPropertyFilter={setShowPropertyFilter}
-								filterList={filterPropertyList}
-								setFilterList={setFilterPropertyList}
-							/>
-						</Box>
-						<Box
-							component="span"
-							m={2}
-							display="flex"
-							justifyContent="center"
-							alignItems="center"
-							position="relative"
-						>
-							<Typography
-								sx={{
-									color: theme.typography.common.blue,
-									fontWeight: theme.typography.common.fontWeight,
-									fontSize: theme.typography.smallFont,
+							</Box>
+							<div
+								style={{
+									borderRadius: '20px',
+									margin: '10px',
 								}}
 							>
-								{displayFilterString(month, year)}
-								{displayFilterString(month, year) === 'Last 30 Days' ? null : (
-									<Button
-										onClick={() => clearFilters()}
-										sx={{
-											padding: '0px',
-											position: 'absolute',
-											right: 0,
-											opacity: displayFilterString(month, year) === 'Last 30 Days' ? 0 : 1,
-											pointerEvents:
-												displayFilterString(month, year) === 'Last 30 Days' ? 'none' : 'auto',
-										}}
-									>
-										<CloseIcon sx={{ color: theme.typography.common.blue, fontSize: '14px' }} />
-									</Button>
-								)}
-							</Typography>
-						</Box>
-						<div
-							style={{
-								borderRadius: '20px',
-								margin: '10px',
-							}}
-						>
-							{colorStatus.map((item, index) => {
-								let mappingKey = item.mapping;
+								{colorStatus.map((item, index) => {
+									let mappingKey = item.mapping;
 
-								let maintenanceArray = maintenanceData[mappingKey] || [];
+									let maintenanceArray = maintenanceData[mappingKey] || [];
 
-								let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
+									let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
 
-								for (const item of filteredArray) {
-									newDataObject[mappingKey].push(item);
-								}
+									for (const item of filteredArray) {
+										newDataObject[mappingKey].push(item);
+									}
 
-								return (
-									<MaintenanceStatusTable
-										key={index}
-										status={item.status}
-										color={item.color}
-										maintenanceItemsForStatus={filteredArray}
-										allMaintenanceData={newDataObject}
-										maintenanceRequestsCount={filteredArray}
-										onRowClick={handleRowClick}
-									/>
-								);
-							})}
-						</div>
-					</Paper>
-				</Grid>
-
-				{!isMobile && (
-					<Grid item xs={12} md={8}>
-						{editMaintenanceView && selectedRole === 'MANAGER'? (
-							<EditMaintenanceItem />
-						) :showNewMaintenance ? (
-							<AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
-						) : desktopView && selectedRole === 'MANAGER' ? (
-							<>
-								<QuoteRequestForm
-									maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
-									navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
-								/>
-							</>
-						) : quoteAcceptView && selectedRole === 'MANAGER' ? (
-							<>
-								<QuoteAcceptForm
-									maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
-									navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
-								/>
-							</>
-						) : rescheduleView && selectedRole === 'MANAGER' ? (
-							<>
-								<RescheduleMaintenance
-									maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
-									navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
-									quotes={JSON.parse(sessionStorage.getItem('quotes'))}
-								/>
-							</>
-						) : payMaintenanceView && selectedRole === 'MANAGER' ? (
-							<>
-								<PayMaintenanceForm
-									maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
-									navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
-								/>
-							</>
-						) : (
-							Object.keys(maintenanceData).length > 0 && (
-								<MaintenanceRequestDetail
-									maintenance_request_index={selectedRequestIndex}
-									status={selectedStatus}
-									maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-									allMaintenanceData={maintenanceData}
-								/>
-							)
-						)}
+									return (
+										<MaintenanceStatusTable
+											key={index}
+											status={item.status}
+											color={item.color}
+											maintenanceItemsForStatus={filteredArray}
+											allMaintenanceData={newDataObject}
+											maintenanceRequestsCount={filteredArray}
+											onRowClick={handleRowClick}
+										/>
+									);
+								})}
+							</div>
+						</Paper>
 					</Grid>
-				)}
-			</Grid>
+
+					{!isMobile && (
+						<Grid item xs={12} md={8}>
+							{editMaintenanceView && selectedRole === 'MANAGER' ? (
+								<EditMaintenanceItem />
+							) : showNewMaintenance ? (
+								<AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
+							) : desktopView && selectedRole === 'MANAGER' ? (
+								<>
+									<QuoteRequestForm
+										maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+										navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+									/>
+								</>
+							) : quoteAcceptView && selectedRole === 'MANAGER' ? (
+								<>
+									<QuoteAcceptForm
+										maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+										navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+									/>
+								</>
+							) : rescheduleView && selectedRole === 'MANAGER' ? (
+								<>
+									<RescheduleMaintenance
+										maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+										navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+										quotes={JSON.parse(sessionStorage.getItem('quotes'))}
+									/>
+								</>
+							) : payMaintenanceView && selectedRole === 'MANAGER' ? (
+								<>
+									<PayMaintenanceForm
+										maintenanceItem={JSON.parse(sessionStorage.getItem('maintenanceItem'))}
+										navigateParams={JSON.parse(sessionStorage.getItem('navigateParams'))}
+									/>
+								</>
+							) : (
+								Object.keys(maintenanceData).length > 0 && (
+									<MaintenanceRequestDetail
+										maintenance_request_index={selectedRequestIndex}
+										status={selectedStatus}
+										maintenanceItemsForStatus={maintenanceData[selectedStatus]}
+										allMaintenanceData={maintenanceData}
+									/>
+								)
+							)}
+						</Grid>
+					)}
+				</Grid>
+			</Container>
 		</ThemeProvider>
 	);
+
 }
