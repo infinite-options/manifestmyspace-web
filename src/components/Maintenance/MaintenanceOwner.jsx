@@ -14,6 +14,7 @@ import {
 	Tab,
 	Backdrop,
 	CircularProgress,
+	Container,
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AddIcon from '@mui/icons-material/Add';
@@ -293,6 +294,7 @@ export function MaintenanceOwner() {
 
 	return (
 		<ThemeProvider theme={theme}>
+			<Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '50px' }}>
 			<Grid container sx={{ padding: '10px' }}>
 				<Grid
 					item
@@ -315,48 +317,63 @@ export function MaintenanceOwner() {
 						}}
 					>
 						<Stack
-							direction="row"
-							justifyContent="center"
-							alignItems="center"
-							sx={{
-								paddingBottom: '20px',
-								paddingLeft: '0px',
-								paddingRight: '0px',
-							}}
-						>
-							<Box position="absolute" left={30}>
-								<Button onClick={handleBackButton}>
-									<ArrowBackIcon
-										sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
-									/>
-								</Button>
-							</Box>
-							<Box direction="row" justifyContent="center" alignItems="center">
-								<Typography
-									sx={{
-										color: theme.typography.primary.black,
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.largeFont,
-									}}
-								>
-									Maintenance
-								</Typography>
-							</Box>
-							<Box
+								direction="row"
+								justifyContent="space-between"
+								alignItems="center"
 								sx={{
-									position: 'absolute',
-									right: isMobile ? '10px' : '60%',
+									paddingBottom: '20px',
+									paddingLeft: '0px',
+									paddingRight: '0px',
 								}}
 							>
-								<Button onClick={() => navigateToAddMaintenanceItem()} id="addMaintenanceButton">
-									<AddIcon
-										sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
-									/>
-								</Button>
-							</Box>
-						</Stack>
-
-						<Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
+								<Box
+									component="span"
+									display="flex"
+									justifyContent="flex-start"
+									alignItems="flex-start"
+									position="relative"
+								>
+									<Button onClick={handleBackButton}>
+										<ArrowBackIcon
+											sx={{
+												color: theme.typography.common.blue,
+												fontSize: '30px',
+												margin: '5px',
+											}}
+										/>
+									</Button>
+								</Box>
+								<Box
+									component="span"
+									display="flex"
+									justifyContent="center"
+									alignItems="center"
+									position="relative"
+									flex={1}
+								>
+									<Typography
+										sx={{
+											color: theme.typography.primary.black,
+											fontWeight: theme.typography.primary.fontWeight,
+											fontSize: theme.typography.largeFont,
+										}}
+									>
+										Maintenance
+									</Typography>
+								</Box>
+								<Box position="relative" display="flex" justifyContent="flex-end" alignItems="center">
+									<Button onClick={() => navigateToAddMaintenanceItem()} id="addMaintenanceButton">
+										<AddIcon
+											sx={{
+												color: theme.typography.common.blue,
+												fontSize: '30px',
+												margin: '5px',
+											}}
+										/>
+									</Button>
+								</Box>
+							</Stack>
+							<Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
 							<Button sx={{ textTransform: 'capitalize' }} onClick={() => setShowSelectMonth(true)}>
 								<CalendarTodayIcon
 									sx={{
@@ -489,6 +506,7 @@ export function MaintenanceOwner() {
 					</Grid>
 				)}
 			</Grid>
-		</ThemeProvider>
+			</Container>
+			</ThemeProvider>
 	);
 }
