@@ -16,6 +16,11 @@ import {
 	TableHead,
 	TableRow,
 } from '@mui/material';
+
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import { ReactComponent as HomeIcon } from '../../images/home_icon.svg';
 import { ReactComponent as CalendarIcon } from '../../images/calendar_icon.svg';
 import { useMediaQuery } from '@mui/material';
@@ -28,6 +33,9 @@ import WorkerMaintenanceStatusTable from '../Maintenance/Worker/WorkerMaintenanc
 import { format, isEqual, isAfter, parseISO } from 'date-fns';
 import useSessionStorage from '../Maintenance/useSessionStorage';
 import WorkerMaintenanceRequestDetail from '../Maintenance/Worker/WorkerMaintenanceRequestDetail';
+
+import SelectMonthComponent from '../SelectMonthComponent';
+import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 
 export default function MaintenanceDashboard2() {
 	const { user, getProfileId } = useUser();
@@ -50,6 +58,7 @@ export default function MaintenanceDashboard2() {
 		alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
 		maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
 	});
+
 
 	useEffect(() => {
 		const getMaintenanceData = async () => {
@@ -196,6 +205,8 @@ export default function MaintenanceDashboard2() {
 		};
 	}, []);
 
+
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -318,6 +329,41 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 
 	const colors = ['#B33A3A', '#FFAA00', '#FFC107'];
 
+
+  const [showSelectMonth, setShowSelectMonth] = useState(false);
+	const [showPropertyFilter, setShowPropertyFilter] = useState(false);
+	const [month, setMonth] = useState(null);
+	const [year, setYear] = useState(null);
+	const [filterPropertyList, setFilterPropertyList] = useState([]);
+
+  function clearFilters() {
+		setMonth(null);
+		setYear(null);
+		setFilterPropertyList([]);
+	}
+
+  function displayFilterString(month, year) {
+		if (month && year) {
+			return month + ' ' + year;
+		} else {
+			return 'Last 30 Days';
+		}
+	}
+
+  function displayPropertyFilterTitle(filterPropertyList) {
+		var count = 0;
+		for (const item of filterPropertyList) {
+			if (item.checked) {
+				count++;
+			}
+		}
+		if (count === filterPropertyList.length) {
+			return 'All Properties';
+		} else {
+			return 'Selected ' + count + ' Properties';
+		}
+	}
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -332,60 +378,76 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) 
 							</Typography>
 						</Stack>
 						<Grid item container xs={12}>
-							<Grid
-								item
-								xs={6}
-								sx={{
-									display: 'flex',
-									flexDirection: 'row',
-									justifyContent: 'flex-start',
-									alignItems: 'flex-start',
-								}}
-							>
-								<Button
-									variant="outlined"
-									id="revenue"
-									style={{
-										color: '#3D5CAC',
-										fontSize: '13px',
-										marginBottom: '10px',
-										borderRadius: '5px',
-									}}
-								>
-									<CalendarIcon
-										stroke="#3D5CAC"
-										width="20"
-										height="20"
-										style={{ marginRight: '4px' }}
-									/>
-									Last 30 days
-								</Button>
-							</Grid>
-							<Grid
-								item
-								xs={6}
-								sx={{
-									display: 'flex',
-									flexDirection: 'row',
-									justifyContent: 'flex-end',
-									alignItems: 'flex-start',
-								}}
-							>
-								<Button
-									variant="outlined"
-									id="revenue"
-									style={{
-										color: '#3D5CAC',
-										fontSize: '13px',
-										marginBottom: '10px',
-										borderRadius: '5px',
-									}}
-								>
-									<HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }} />
-									Select Property
-								</Button>
-							</Grid>
-						</Grid>
+    <Box
+        component="span"
+        m={2}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        width="100%"
+    >
+        <Button
+            sx={{ textTransform: 'capitalize' }}
+            onClick={() => setShowSelectMonth(true)}
+        >
+            <CalendarTodayIcon
+                sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    margin: '5px',
+                }}
+            />
+            <Typography
+                sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                }}
+            >
+                {displayFilterString(month, year)}
+            </Typography>
+        </Button>
+        <Box sx={{ flex: 1 }} />
+        <Button
+            sx={{ textTransform: 'capitalize' }}
+            onClick={() => setShowPropertyFilter(true)}
+        >
+            <HomeWorkIcon
+                sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    margin: '5px',
+                }}
+            />
+            <Typography
+                sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                }}
+            >
+                {displayPropertyFilterTitle(filterPropertyList)}
+            </Typography>
+        </Button>
+
+        <SelectMonthComponent
+            month={month}
+            showSelectMonth={showSelectMonth}
+            setShowSelectMonth={setShowSelectMonth}
+            setMonth={setMonth}
+            setYear={setYear}
+        />
+        <SelectPropertyFilter
+            showPropertyFilter={showPropertyFilter}
+            setShowPropertyFilter={setShowPropertyFilter}
+            filterList={filterPropertyList}
+            setFilterList={setFilterPropertyList}
+        />
+    </Box>
+</Grid>
+
 						<Grid item xs={12}>
 							<WorkOrdersAccordion maintenanceRequests={maintenanceRequests} />
 						</Grid>
