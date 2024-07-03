@@ -43,14 +43,14 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const OwnerOnBoardDeskTopForm = () => {
+const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookies["default_form_vals"];
     const [showSpinner, setShowSpinner] = useState(false);
     const [addPhotoImg, setAddPhotoImg] = useState();
-    const [isSave, setIsSave] = useState(false);
+    // const [isSave, setIsSave] = useState(false);
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
     const { user, updateProfileUid, selectRole, setLoggedIn, getProfileId } = useUser();
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
@@ -67,13 +67,15 @@ const OwnerOnBoardDeskTopForm = () => {
     });
 
     useEffect(() => {
-        console.log("calling useeffect")
+        
         setIsSave(false)
         const fetchProfileData = async () => {
             setShowSpinner(true);
             try {
-                const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
-                const profileData = profileResponse.data.profile.result[0];
+
+                //const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+                //const profileData = profileData.data.profile.result[0];
+              
                 setFirstName(profileData.owner_first_name || "");
                 setLastName(profileData.owner_last_name || "");
                 setEmail(profileData.owner_email || "");
@@ -88,6 +90,7 @@ const OwnerOnBoardDeskTopForm = () => {
                 setZip(profileData.owner_zip || "");
 
                 const paymentMethods = JSON.parse(profileData.paymentMethods);
+                console.log(" paymentMethods is &&", paymentMethods);
                 const updatedPaymentMethods = {
                     paypal: { value: "", checked: false },
                     apple_pay: { value: "", checked: false },
@@ -112,6 +115,7 @@ const OwnerOnBoardDeskTopForm = () => {
                     }
                 });
                 setPaymentMethods(updatedPaymentMethods);
+            
 
                 setShowSpinner(false);
             } catch (error) {
@@ -121,7 +125,7 @@ const OwnerOnBoardDeskTopForm = () => {
         };
 
         fetchProfileData();
-    }, [isSave]);
+    }, []);
     // getProfileId, setFirstName, setLastName, setEmail, setPhoneNumber, setPhoto, setSsn, setMask, setAddress, setUnit, setCity, setState, setZip]);
 
 
@@ -460,6 +464,7 @@ const OwnerOnBoardDeskTopForm = () => {
     };
 
     return (
+       
         <div>
             <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
                 Owner Profile Info
@@ -679,7 +684,7 @@ const OwnerOnBoardDeskTopForm = () => {
                     Go to Dashboard
                 </Button>
             </Box>
-        </div>
+        </div> 
     );
 };
 
