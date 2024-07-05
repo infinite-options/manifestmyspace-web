@@ -125,12 +125,12 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                     <IconButton
                         onClick={() => handleEditClick(params.row)}
                     >
-                        <EditIcon />
+                        <EditIcon sx={{color:"#3D5CAC"}}/>
                     </IconButton>
                     <IconButton
                         onClick={() => handleDeleteClick(params.row.id)}
                     >
-                        <DeleteIcon />
+                        <DeleteIcon sx={{color:"#3D5CAC"}}/>
                     </IconButton>
                 </Box>
             )
@@ -148,7 +148,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                         <Typography
                             sx={{
-                                color: theme.typography.primary.black,
+                                color: "#160449",
                                 fontWeight: theme.typography.primary.fontWeight,
                                 fontSize: theme.typography.small,
                                 textAlign: 'center',
@@ -198,7 +198,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                             '& .MuiDataGrid-columnHeader': {
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                // color: "#3D5CAC",
+                                color: "#160449",
                             },
                             '& .MuiDataGrid-columnHeaderTitle': {
                                 font: "bold",
@@ -208,7 +208,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                 fontWeight: "bold",
                             },
                             '& .MuiDataGrid-cell': {
-                                // color: "#3D5CAC",
+                                color: "#160449",
                                 fontWeight: "bold",
                             },
                         }}
