@@ -593,7 +593,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => 
                         {
                           contactDetails && contactDetails[currentIndex]?.business_locations ? (
                             <>
-                              Service Locations: <Typography component="span" sx={{fontSize: '20px', color: '#160449', }}>{JSON.parse(contactDetails[currentIndex]?.business_locations).map(location => (`${location.city}, ${location.state} (+-${location.miles} miles)` )).join(', ')}</Typography>
+                              Service Locations: <Typography component="span" sx={{ color: '#160449', }}>{JSON.parse(contactDetails[currentIndex]?.business_locations).map(location => (`${location.location} (+-${location.distance} miles)` )).join(', ')}</Typography>
                             </>
                           ) : (
                             <>Service Locations: </>
