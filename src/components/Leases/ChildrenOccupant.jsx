@@ -101,7 +101,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
                 <DataGrid
                     rows={children}
                     columns={columns}
-                    pageSize={5}
+                    hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
                     disableSelectionOnClick
@@ -109,7 +109,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
                         '& .MuiDataGrid-columnHeader': {
                             justifyContent: 'center',
                             alignItems: 'center',
-                            color: "#3D5CAC",
+                            // color: "#3D5CAC",
                         },
                         '& .MuiDataGrid-columnHeaderTitle': {
                             font: "bold",
@@ -119,7 +119,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
                             fontWeight: "bold",
                         },
                         '& .MuiDataGrid-cell': {
-                            color: "#3D5CAC",
+                            // color: "#3D5CAC",
                             fontWeight: "bold",
                         },
 
