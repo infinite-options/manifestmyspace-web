@@ -453,8 +453,17 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
     const manager = props.data;
     const handleSetSelectedCard = props.selected;
     const index = props.index;
-    const managerProperties = manager?.properties?.length > 0? JSON.parse(manager?.properties).filter( property => property?.contract_status === "ACTIVE") : [];
-    const activeProperties = managerProperties;
+    // const managerProperties = manager?.properties?.length > 0? JSON.parse(manager?.properties).filter( property => property?.contract_status === "ACTIVE") : [];
+    const allProperties = manager?.properties?.length > 0? JSON.parse(manager?.properties) : [];
+    const atleastOneActive = allProperties.find( property => property?.contract_status === "ACTIVE")
+        
+    let activeProperties = [];
+    if(atleastOneActive === undefined){
+      activeProperties = allProperties
+    } else {
+      activeProperties = allProperties.filter( property => property?.contract_status === "ACTIVE");
+    }
+    
   
     const handleSelection = () => {
       handleSetSelectedCard(manager, index);

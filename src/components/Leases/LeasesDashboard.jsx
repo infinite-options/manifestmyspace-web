@@ -40,7 +40,7 @@ export default function LeasesDashboard() {
                         <CircularProgress color="inherit" />
                     </Backdrop>
                 ) : (<Grid container spacing={5}>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={leaseDetails && leaseDetails.length > 0 ? 4: 12}>
                         <Leases leaseDetails={leaseDetails} setSelectedLeaseId={setSelectedLeaseId} />
                     </Grid>
                     {selectedLeaseId != null && (<Grid item xs={12} md={8}>

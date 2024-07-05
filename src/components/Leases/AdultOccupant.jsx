@@ -99,7 +99,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                 <DataGrid
                     rows={adults}
                     columns={columns}
-                    pageSize={5}
+                    hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
                     disableSelectionOnClick
@@ -107,7 +107,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                         '& .MuiDataGrid-columnHeader': {
                             justifyContent: 'center',
                             alignItems: 'center',
-                            color: "#3D5CAC",
+                            // color: "#3D5CAC",
                         },
                         '& .MuiDataGrid-columnHeaderTitle': {
                             font: "bold",
@@ -117,7 +117,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                             fontWeight: "bold",
                         },
                         '& .MuiDataGrid-cell': {
-                            color: "#3D5CAC",
+                            // color: "#3D5CAC",
                             fontWeight: "bold",
                         },
 

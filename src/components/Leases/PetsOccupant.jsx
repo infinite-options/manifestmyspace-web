@@ -98,7 +98,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                 <DataGrid
                     rows={pets}
                     columns={columns}
-                    pageSize={5}
+                    hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
                     disableSelectionOnClick
@@ -106,7 +106,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                         '& .MuiDataGrid-columnHeader': {
                             justifyContent: 'center',
                             alignItems: 'center',
-                            color: "#3D5CAC",
+                            // color: "#3D5CAC",
                         },
                         '& .MuiDataGrid-columnHeaderTitle': {
                             font: "bold",
@@ -116,7 +116,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                             fontWeight: "bold",
                         },
                         '& .MuiDataGrid-cell': {
-                            color: "#3D5CAC",
+                            // color: "#3D5CAC",
                             fontWeight: "bold",
                         },
 
