@@ -192,14 +192,13 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                     <DataGrid
                         rows={documents}
                         columns={docsColumns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
+                        hideFooter={true}
                         getRowId={(row) => row.id}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                color: "#3D5CAC",
+                                // color: "#3D5CAC",
                             },
                             '& .MuiDataGrid-columnHeaderTitle': {
                                 font: "bold",
@@ -209,7 +208,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                 fontWeight: "bold",
                             },
                             '& .MuiDataGrid-cell': {
-                                color: "#3D5CAC",
+                                // color: "#3D5CAC",
                                 fontWeight: "bold",
                             },
                         }}
