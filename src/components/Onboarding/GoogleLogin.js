@@ -173,6 +173,46 @@ function GoogleLogin(props) {
     setUserDoesntExist(false);
   };
 
+  // return (
+  //   <div
+  //     style={{
+  //       display: "flex",
+  //       justifyContent: "center",
+  //       alignItems: "center",
+  //       // paddingTop: "5%",
+  //     }}
+  //   >
+  //     <div className="w-100">
+  //       <div></div>
+  //       <div>
+  //         <div></div>
+  //         <div id="signUpDiv">
+  //           <Button
+  //             onClick={() => getAuthorizationCode()}
+  //             role="button"
+  //             sx={{
+  //               width: '100%',
+  //               textTransform: "none",
+  //               "&:hover, &:focus, &:active": {
+  //                 backgroundColor: "white",
+  //               },
+  //             }}
+  //           >
+  //             <img
+  //               style={{
+  //                 width: "100%",
+  //               }}
+  //               alt="Google sign-up"
+  //               src={googleImg}
+  //             />
+  //           </Button>
+  //         </div>
+  //       </div>
+  //       <div></div>
+  //     </div>
+  //   </div>
+  // );
+
   return (
     <div
       style={{
@@ -181,34 +221,26 @@ function GoogleLogin(props) {
         alignItems: "center",
         // paddingTop: "5%",
       }}
-    >
-      <div className="w-100">
-        <div></div>
-        <div>
-          <div></div>
-          <div id="signUpDiv">
-            <Button
-              onClick={() => getAuthorizationCode()}
-              role="button"
-              sx={{
-                textTransform: "none",
-                "&:hover, &:focus, &:active": {
-                  backgroundColor: "white",
-                },
-              }}
-            >
-              <img
-                style={{
-                  width: "100%",
-                }}
-                alt="Google sign-up"
-                src={googleImg}
-              />
-            </Button>
-          </div>
-        </div>
-        <div></div>
-      </div>
+    >                      
+      <Button
+        onClick={() => getAuthorizationCode()}
+        role="button"
+        sx={{
+          width: '375px',
+          textTransform: "none",
+          "&:hover, &:focus, &:active": {
+            backgroundColor: "white",
+          },
+        }}
+      >
+        <img
+          style={{
+            width: "100%",
+          }}
+          alt="Google sign-up"
+          src={googleImg}
+        />
+      </Button>                
     </div>
   );
 }
