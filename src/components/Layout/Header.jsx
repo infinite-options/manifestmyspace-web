@@ -168,7 +168,9 @@ function Header(props) {
                   <Box sx={{ display: { xs: "none", md: "flex" }, gap: "25px" }}>
                     <Button
                       variant="contained"
-                      onClick={() => navigate("/returningUser")}
+                      // onClick={() => navigate("/returningUser")}
+
+                      onClick={() => navigate("/", {state: { showLogin: true}})}
                       sx={{ background: "#FFFFFF", color: theme.palette.primary.main, "&:hover": { backgroundColor: darken("#FFFFFF", 0.3) } }}
                     >
                       <Typography

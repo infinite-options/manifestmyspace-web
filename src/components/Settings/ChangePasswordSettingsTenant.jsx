@@ -26,8 +26,8 @@ export default function ChangePasswordSettingsTenant() {
     const { user } = useUser();
     // console.log("USER - ", user);
     const location = useLocation();
-    let   tenant_data = location.state.tenant_data;
-    
+    let tenant_data = location.state && location.state.tenant_data ? location.state.tenant_data : null;
+    console.log('tenant_data', tenant_data)
 
     const [modifiedData, setModifiedData] = useState({'user_uid' : user?.user_uid});
     const [isEdited, setIsEdited] = useState(false);
@@ -112,6 +112,7 @@ export default function ChangePasswordSettingsTenant() {
                     }
                 )
                 .then((response) => {
+                    setEmailAddress("");
                     if (response.data.code === 200) {
                         console.log(response.data.message);    
                     }
@@ -174,7 +175,7 @@ export default function ChangePasswordSettingsTenant() {
                 </Box>
             <Paper
               style={{
-                margin: '30px', // Margin around the paper
+                margin: '30px 30px 30px 100px',
                 padding: theme.spacing(2),
                 backgroundColor: theme.palette.primary.main,
                 width: '85%', // Occupy full width with 25px margins on each side
@@ -193,7 +194,7 @@ export default function ChangePasswordSettingsTenant() {
                 alignItems= 'center'
                 position= 'relative'
                 flexDirection="column">
-                    {tenant_data.tenant_photo_url !== null ? (
+                    {tenant_data && tenant_data.tenant_photo_url !== null ? (
                         <img
                             src={tenant_data.tenant_photo_url}
                             alt="Profile"
@@ -228,7 +229,7 @@ export default function ChangePasswordSettingsTenant() {
                         color: theme.typography.primary.black, 
                         fontWeight: theme.typography.primary.fontWeight, 
                         fontSize:theme.typography.largeFont}}>
-                    {tenant_data.tenant_name? tenant_data.tenant_name : '<tenant_NAME>'}
+                    {tenant_data && tenant_data.tenant_first_name? tenant_data.tenant_first_name : "<FIRST_NAME>"} {tenant_data && tenant_data.tenant_last_name ? tenant_data.tenant_last_name : "<LAST_NAME>"}
                     </Typography>
                     </Stack>
                     <Stack

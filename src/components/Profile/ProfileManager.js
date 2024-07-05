@@ -100,6 +100,25 @@ const ProfileManager = () => {
   }
   };
 
+  const handleChangePasswordClick = (event) => {
+    event.preventDefault();
+    
+    if (profileData) {
+      if(selectedRole === "OWNER"){
+        navigate('/changePasswordSettings', { state: { owner_data: profileData } });
+      } else if (selectedRole === "MANAGER"){
+        navigate('/ChangePasswordSettingsManager', { state: { manager_data: profileData } });
+      } else if(selectedRole === "TENANT"){
+        navigate('/changePasswordSettingsTenant', { state: { tenant_data: profileData } });
+      } else {
+        navigate('/ChangePasswordSettingsMaintenance', { state: { maintenance_data: profileData } });
+      }
+     
+    } else {
+      console.log('Profile data is not loaded yet');
+    }
+  };
+
   return (
     <Box className={classes.container}>
       <Box className={classes.leftPanel}>
@@ -117,7 +136,7 @@ const ProfileManager = () => {
           <Link href="#" underline="hover">Terms and conditions</Link>
           <Link href="#" underline="hover">Add Role</Link>
           <Link href="#" underline="hover">Edit Profile</Link>
-          <Link href="#" underline="hover">Change password</Link>
+          <Link href="#" underline="hover" onClick={handleChangePasswordClick}>Change password</Link>
           {/* <Typography variant="h6" color="primary" sx={{ mt: 2 }}>Notification <span className={classes.highlightedText}>Settings</span></Typography> */}
           <Button variant="contained" onClick={() => {
               logout();
