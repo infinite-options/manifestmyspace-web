@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TenantOnBoardDesktopForm = () => {
+const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
     const classes = useStyles();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookies["default_form_vals"];
@@ -53,7 +53,7 @@ const TenantOnBoardDesktopForm = () => {
     const [showSpinner, setShowSpinner] = useState(false);
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
-    const [isSave, setIsSave] = useState(false);
+    // const [isSave, setIsSave] = useState(false);
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
     const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getProfileId } = useUser();
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
@@ -74,13 +74,13 @@ const TenantOnBoardDesktopForm = () => {
         const fetchProfileData = async () => {
             setShowSpinner(true);
             try {
-                const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
-                const profileData = profileResponse.data.profile.result[0];
+                // const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+                // const profileData = profileResponse.data.profile.result[0];
                 setFirstName(profileData.tenant_first_name || "");
                 setLastName(profileData.tenant_last_name || "");
                 setEmail(profileData.tenant_email || "");
                 setPhoneNumber(formatPhoneNumber(profileData.tenant_phone_number || ""));
-                setPhoto(profileData.tenant_photo ? { image: profileData.tenant_photo } : null);
+                addPhotoImg(profileData.tenant_photo ? { image: profileData.tenant_photo } : null);
                 setSsn(profileData.tenant_ssn ? AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
                 setMask(profileData.tenant_ssn ? maskNumber(AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
                 setAddress(profileData.tenant_address || "");
@@ -124,10 +124,10 @@ const TenantOnBoardDesktopForm = () => {
 
         fetchProfileData();
 
-    }, [isSave]);
+    }, []);
     // getProfileId, setFirstName, setLastName, setEmail, setPhoneNumber, setPhoto, setSsn, setMask, setAddress, setUnit, setCity, setState, setZip]);
 
-    const createProfile = async (form) => {
+    const saveProfile = async (form) => {
         const profileApi = "/profile"
         const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
         setIsSave(true)
@@ -295,19 +295,20 @@ const TenantOnBoardDesktopForm = () => {
 
         const payload = getPayload();
         const form = encodeForm(payload);
-        const data = await createProfile(form);
+        const data = await saveProfile(form);
+        const paymentSetup = await handlePaymentStep();
         setShowSpinner(false);
-        if (data.tenant_uid) {
-            updateProfileUid({ tenant_uid: data.tenant_uid });
-            let role_id = {};
-            role_id = { tenant_uid: data.tenant_uid };
-            setCookie("user", { ...user, ...role_id });
-            const paymentSetup = await handlePaymentStep(data.tenant_uid);
-            console.log(paymentSetup);
-            setDashboardButtonEnabled(true)
-        }
+        // if (data.tenant_uid) {
+        //     updateProfileUid({ tenant_uid: data.tenant_uid });
+        //     let role_id = {};
+        //     role_id = { tenant_uid: data.tenant_uid };
+        //     setCookie("user", { ...user, ...role_id });
+           
+        //     console.log(paymentSetup);
+        //     setDashboardButtonEnabled(true)
+        // }
 
-        setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
+        // setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
 
         return;
 
@@ -361,8 +362,8 @@ const TenantOnBoardDesktopForm = () => {
         keys.forEach((key) => {
             if (paymentMethods[key].value !== "") {
                 let paymentMethodPayload = {
-                    paymentMethod_profile_id: tenant_uid, // Replace with actual profile id
                     paymentMethod_type: key,
+                    paymentMethod_profile_id: getProfileId(),
                 };
                 if (key === "bank_account") {
                     const bankAccount = paymentMethods[key];
@@ -372,7 +373,7 @@ const TenantOnBoardDesktopForm = () => {
                         payload.push(paymentMethodPayload);
                     }
                 } else {
-                    paymentMethodPayload.paymentMethod_value = paymentMethods[key].value;
+                    paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
                     payload.push(paymentMethodPayload);
                 }
             }

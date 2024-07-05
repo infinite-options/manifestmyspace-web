@@ -80,7 +80,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                 setLastName(profileData.owner_last_name || "");
                 setEmail(profileData.owner_email || "");
                 setPhoneNumber(formatPhoneNumber(profileData.owner_phone_number || ""));
-                setAddPhotoImg(profileData.owner_photo ? { image: profileData.owner_photo } : null);
+                setAddPhotoImg(profileData.owner_photo_url ? { image: profileData.owner_photo_url } : null);
                 setSsn(profileData.owner_ssn ? AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
                 setMask(profileData.owner_ssn ? maskNumber(AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
                 setAddress(profileData.owner_address || "");
@@ -196,7 +196,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
             owner_city: city,
             owner_state: state,
             owner_zip: zip,
-            owner_photo: photo,
+            owner_photo_url: photo,
         };
     };
 

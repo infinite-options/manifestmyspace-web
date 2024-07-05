@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
+import CryptoJS from "crypto-js";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PMEmpOnBoardDesktopForm = () => {
+const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
@@ -88,6 +89,71 @@ const PMEmpOnBoardDesktopForm = () => {
         const response = await axios.get(url + objToQueryString(args));
         setBusinesses(response.data.result);
     };
+
+    useEffect(() => {
+        console.log("calling useeffect")
+        //setIsSave(false)
+        const fetchProfileData = async () => {
+            setShowSpinner(true);
+            try {
+            //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+            // const profileData = profileResponse.data.profile.result[0];
+    
+           // setBusinessName(profileData.business_name || "");
+           
+            setFirstName(profileData.employee_first_name || "");
+            setLastName(profileData.employee_last_name || "");
+            setPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
+            setEmail(profileData.employee_email || "");
+            // setEmpPhoto(employeeData.employee_photo_url ? { image: employeeData.employee_photo_url } : null);
+            setSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+            setMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+            setAddress(profileData.employee_address || "");
+            setUnit(profileData.employee_unit || "");
+            setCity(profileData.employee_city || "");
+            setState(profileData.employee_state || "");
+            setZip(profileData.employee_zip || "");
+            
+    
+            const paymentMethods = JSON.parse(profileData.paymentMethods);
+                const updatedPaymentMethods = {
+                    paypal: { value: "", checked: false },
+                    apple_pay: { value: "", checked: false },
+                    stripe: { value: "", checked: false },
+                    zelle: { value: "", checked: false },
+                    venmo: { value: "", checked: false },
+                    credit_card: { value: "", checked: false },
+                    bank_account: { account_number: "", routing_number: "", checked: false },
+                };
+                paymentMethods.forEach((method) => {
+                    if (method.paymentMethod_type === "bank_account") {
+                        updatedPaymentMethods.bank_account = {
+                            account_number: method.paymentMethod_account_number || "",
+                            routing_number: method.paymentMethod_routing_number || "",
+                            checked: true,
+                        };
+                    } else {
+                        updatedPaymentMethods[method.paymentMethod_type] = {
+                            value: method.paymentMethod_name,
+                            checked: true,
+                        };
+                    }
+                });
+                setPaymentMethods(updatedPaymentMethods);
+    
+                setShowSpinner(false);
+            } catch (error) {
+                console.error("Error fetching profile data:", error);
+                setShowSpinner(false);
+            }
+            
+        };
+    
+        fetchProfileData();
+    
+    
+    }, []);
+    
 
     useEffect(() => {
         fetchBusinesses();
