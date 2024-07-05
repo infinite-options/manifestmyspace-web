@@ -68,8 +68,8 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
             type: 'actions',
             width: 100,
             getActions: (params) => [
-                <GridActionsCellItem icon={<EditIcon />} label="Edit" onClick={() => handleEditClick(params.row)} />,
-                <GridActionsCellItem icon={<DeleteIcon />} label="Delete" onClick={() => handleDeleteClick(params.id)} />,
+                <GridActionsCellItem icon={<EditIcon sx={{color:"#3D5CAC"}}/>} label="Edit" onClick={() => handleEditClick(params.row)} />,
+                <GridActionsCellItem icon={<DeleteIcon sx={{color:"#3D5CAC"}}/>} label="Delete" onClick={() => handleDeleteClick(params.id)} />,
             ],
         },
     ];
@@ -107,7 +107,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
                         '& .MuiDataGrid-columnHeader': {
                             justifyContent: 'center',
                             alignItems: 'center',
-                            // color: "#3D5CAC",
+                            color: "#160449",
                         },
                         '& .MuiDataGrid-columnHeaderTitle': {
                             font: "bold",
@@ -117,7 +117,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
                             fontWeight: "bold",
                         },
                         '& .MuiDataGrid-cell': {
-                            // color: "#3D5CAC",
+                            color: "#160449",
                             fontWeight: "bold",
                         },
 

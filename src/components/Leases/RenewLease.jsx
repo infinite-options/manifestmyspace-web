@@ -33,6 +33,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import propertyImage from "../../images/house.png";
 import TenantDetails from "./TenantDetails";
+import UtilitiesManager from "./Utilities";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -239,19 +240,19 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         {
             field: 'actions',
             headerName: 'Actions',
-            flex: 1,
+            flex: 0.7,
             renderCell: (params) => (
                 <Box>
                     <IconButton
                         onClick={() => handleEditFeeClick(params.row)}
                     >
-                        <EditIcon />
+                        <EditIcon sx={{color:"#3D5CAC"}}/>
                     </IconButton>
-                    <IconButton
+                    {/* <IconButton
                         onClick={() => handleDeleteFeeClick(params.row.leaseFees_uid)}
                     >
-                        <DeleteIcon />
-                    </IconButton>
+                        <DeleteIcon sx={{color:"#3D5CAC"}}/>
+                    </IconButton> */}
                 </Box>
             )
         }
@@ -592,7 +593,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
                             <Typography
                                 sx={{
-                                    color: theme.typography.primary.black,
+                                    color: "#160449",
                                     fontWeight: theme.typography.primary.fontWeight,
                                     fontSize: theme.typography.largeFont,
                                     textAlign: 'center'
@@ -678,7 +679,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Lease Start</Typography>
@@ -686,7 +687,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{currentLease.lease_start}</Typography>
@@ -694,7 +695,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Lease End</Typography>
@@ -702,7 +703,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{formatDate(currentLease.lease_end)}</Typography>
@@ -710,7 +711,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Move In</Typography>
@@ -718,7 +719,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{currentLease.lease_move_in_date}</Typography>
@@ -726,7 +727,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Move Out</Typography>
@@ -734,7 +735,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>TBD</Typography>
@@ -747,7 +748,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Rent</Typography>
@@ -755,7 +756,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>${rent.charge}</Typography>
@@ -764,7 +765,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Frequency</Typography>
@@ -772,7 +773,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{rent.frequency}</Typography>
@@ -781,7 +782,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Available to Pay</Typography>
@@ -789,7 +790,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{rent.available_topay} Days Before</Typography>
@@ -798,7 +799,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Due Date</Typography>
@@ -806,7 +807,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
@@ -924,7 +925,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             {tenantWithId && tenantWithId.length > 0 && (
-                                <TenantDetails tenantWithId={tenantWithId}/>
+                                <TenantDetails tenantWithId={tenantWithId} />
                             )}
                         </Paper>
                     </Grid>
@@ -1452,7 +1453,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                                         <Typography
                                             sx={{
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.primary.fontWeight,
                                                 fontSize: theme.typography.small,
                                                 textAlign: 'center',
@@ -1513,7 +1514,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 '& .MuiDataGrid-columnHeader': {
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
-                                                    // color: "#3D5CAC",
+                                                    color: "#160449",
                                                 },
                                                 '& .MuiDataGrid-columnHeaderTitle': {
                                                     font: "bold",
@@ -1523,7 +1524,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     fontWeight: "bold",
                                                 },
                                                 '& .MuiDataGrid-cell': {
-                                                    // color: "#3D5CAC",
+                                                    color: "#160449",
                                                     fontWeight: "bold",
                                                 },
 
@@ -1721,6 +1722,15 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Documents documents={documents} setDocuments={setDocuments}
                                 uploadedFiles={uploadedFiles} setuploadedFiles={setuploadedFiles} />
+                        </Paper>
+                    </Grid>
+
+                    <Grid item xs={12} md={12}>
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                            <UtilitiesManager newUtils={newUtilities} utils={utilities}
+                                utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange} 
+                                onAddUtilTextChange={onAddUtilTextChange} onAddUtilitiesClick={onAddUtilitiesClick} 
+                                remainingUtils={remainingUtils}/>
                         </Paper>
                     </Grid>
 
