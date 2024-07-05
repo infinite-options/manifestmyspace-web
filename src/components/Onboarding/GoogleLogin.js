@@ -179,7 +179,7 @@ function GoogleLogin(props) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        paddingTop: "5%",
+        // paddingTop: "5%",
       }}
     >
       <div className="w-100">

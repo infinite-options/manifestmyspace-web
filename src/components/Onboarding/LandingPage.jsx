@@ -11,6 +11,7 @@ import { darken } from "@mui/system";
 import { lighten } from "@material-ui/core";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import GoogleLogin from "./GoogleLogin";
 
 export default function LandingPage() {
   console.log("In Landing Page");
@@ -79,7 +80,12 @@ export default function LandingPage() {
                   >
                     <Typography sx={{ color: "#160449", fontSize: 18, fontWeight: 700 }}>Login</Typography>
                   </Button>
-                </Stack>
+                  
+                    <Box>
+                      <GoogleLogin />
+                    </Box>
+                  
+                </Stack>                
               </Stack>
             </Box>
           </Grid>

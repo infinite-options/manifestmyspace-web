@@ -25,17 +25,19 @@ async function getInitialImages(requestData, currentIndex) {
 
 export default function WorkerMaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
   console.log('----inside WorkerMaintenanceRequestNavigator----');
-  console.log('----requestIndex---', requestIndex);
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
-  console.log('----currentIndex---', currentIndex);
   const [activeStep, setActiveStep] = useState(0);
-  console.log('----activeStep---', activeStep);
   const [formattedDate, setFormattedDate] = useState("");
   const [numOpenRequestDays, setNumOpenRequestDays] = useState("");
   const [images, setImages] = useState([maintenanceRequestImage]);
   let [currentTab, setCurrentTab]=useState(currentTabValue);
   // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
+
+  useEffect(() => {
+      setCurrentIndex(requestIndex);
+    
+  }, [requestIndex]);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -52,8 +54,10 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
 
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => {
-      let newIndex = (prevIndex + 1);
+      let newIndex = (Number(prevIndex) + 1);
       if(prevIndex < requestData.length-1){
+        console.log('----requestData[newIndex]---',requestData );
+        console.log('----[newIndex]---',newIndex );
         
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
@@ -69,7 +73,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
 
   const handlePreviousCard = () => {
     setCurrentIndex((prevIndex) => {
-        let newIndex = (prevIndex - 1);
+        let newIndex = (Number(prevIndex) - 1);
         if(prevIndex > 0){
             let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
             updateRequestIndex(newIndex, {changeTab:'noChange'})
@@ -147,7 +151,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 spacing={1}
             >
                 <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.secondary.fontWeight, fontSize: theme.typography.largeFont }}>
-                    {currentIndex + 1} of {requestData.length}
+                    {Number(currentIndex) + 1} of {requestData.length}
                 </Typography>
             </Stack>
             <Button onClick={handleNextCard} disabled={forward_active_status}>

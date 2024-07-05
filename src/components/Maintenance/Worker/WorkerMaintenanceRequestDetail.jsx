@@ -67,7 +67,7 @@ function a11yProps(index) {
 
 export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid}){
     console.log("----inside WorkerMaintenanceRequestDetail----");
-    console.log(propstatus, propmaintenanceItemsForStatus);
+    // console.log(maintenance_request_index, propstatus);
     const location = useLocation();
     let navigate = useNavigate();
     const colorStatus = theme.colorStatusMM
@@ -252,10 +252,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
                             paddingRight: "0px",
                         }}
                     >
-                        <Box sx={{
-								position: 'absolute',
-								left: isMobile ? '30px' : '40%',
-							}}>
+                        <Box position="absolute" left={30}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
                             </Button>
