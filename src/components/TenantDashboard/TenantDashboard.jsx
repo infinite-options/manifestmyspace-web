@@ -787,7 +787,7 @@ function TenantDashboard(props) {
                                 onClick={() => handleTenantMaintenanceNavigate()}
                               >
                                 <AddIcon />
-                                {!isMobile && !isMedium && <span style={{ marginLeft: "8px" }}>New Request</span>}
+                                {/* {!isMobile && !isMedium && <span style={{ marginLeft: "8px" }}>New Request</span>} */}
                               </Box>
                             </Box>
                           </Grid>
@@ -1107,6 +1107,20 @@ function TenantMaintenanceRequestsTable(props) {
     }
   };
 
+  // Function for Priority color
+  const getColorForPriority = (priority) => {
+    switch (priority) {
+      case "Low":
+        return "#FFFF00"; // Yellow
+      case "Medium":
+        return "#FFA500"; // Orange
+      case "High":
+        return "#FF0000"; // Red
+      default:
+        return "#FFFFFF"; // White
+    }
+  };
+
   const columnsListDefault = [
     {
       field: "maintenance_title",
@@ -1154,7 +1168,32 @@ function TenantMaintenanceRequestsTable(props) {
       field: "maintenance_priority",
       headerName: "Priority",
       flex: 1,
-      renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value}</Box>,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: getColorForPriority(params.value),
+              color: "#000000", // Font color set to black
+              width: "80px",
+              height: "30px",
+              borderRadius: "15px",
+              textAlign: "center",
+            }}
+          >
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold" }}>{params.value}</Typography>
+          </Box>
+        </Box>
+      ),
       headerAlign: "center",
     },
     {
