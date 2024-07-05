@@ -61,8 +61,8 @@ const TenantDetails = ({ tenantWithId }) => {
         },
         {
             field: 'actions',
-            headerName: 'Actions',
-            flex: 1,
+            headerName: '',
+            flex: 0.7,
             renderCell: (params) => (
                 <Box>
                     <IconButton
@@ -70,11 +70,11 @@ const TenantDetails = ({ tenantWithId }) => {
                     >
                         <EditIcon sx={{color:"#3D5CAC"}}/>
                     </IconButton>
-                    <IconButton
+                    {/* <IconButton
                         onClick={() => handleDeleteClick(params.row.tenant_uid)}
                     >
                         <DeleteIcon sx={{color:"#3D5CAC"}}/>
-                    </IconButton>
+                    </IconButton> */}
                 </Box>
             )
         }
@@ -125,7 +125,7 @@ const TenantDetails = ({ tenantWithId }) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                         <Typography
                             sx={{
-                                color: theme.typography.primary.black,
+                                color: "#160449",
                                 fontWeight: theme.typography.primary.fontWeight,
                                 fontSize: theme.typography.small,
                                 textAlign: 'center',
@@ -152,7 +152,7 @@ const TenantDetails = ({ tenantWithId }) => {
                             size="small"
                             onClick={handleAddClick}
                         >
-                            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
+                            <AddIcon sx={{ color: "#160449", fontSize: "18px" }} />
                         </Button>
                     </Box>
                 </AccordionSummary>
@@ -167,7 +167,7 @@ const TenantDetails = ({ tenantWithId }) => {
                             '& .MuiDataGrid-columnHeader': {
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                // color: "#3D5CAC",
+                                color: "#160449",
                             },
                             '& .MuiDataGrid-columnHeaderTitle': {
                                 font: "bold",
@@ -177,7 +177,7 @@ const TenantDetails = ({ tenantWithId }) => {
                                 fontWeight: "bold",
                             },
                             '& .MuiDataGrid-cell': {
-                                // color: "#3D5CAC",
+                                color: "#160449",
                                 fontWeight: "bold",
                             },
                         }}
