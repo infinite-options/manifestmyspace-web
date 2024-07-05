@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
+import CryptoJS from "crypto-js";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
@@ -55,7 +56,7 @@ const MaintenanceOnBoardDesktopForm = () => {
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
   const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-  const { user, isBusiness, isManager, selectRole, roleName,setLoggedIn, selectedRole, updateProfileUid, isLoggedIn } = useUser();
+  const { user, isBusiness, isManager, selectRole, roleName,setLoggedIn, selectedRole, updateProfileUid, isLoggedIn,getProfileId } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [paymentMethods, setPaymentMethods] = useState({
@@ -81,9 +82,96 @@ const MaintenanceOnBoardDesktopForm = () => {
   const [empSsn, setEmpSsn] = useState("");
   const [empMask, setEmpMask] = useState("");
 
+  useEffect(() => {
+    console.log("calling useeffect")
+    //setIsSave(false)
+    const fetchProfileData = async () => {
+        setShowSpinner(true);
+        try {
+            const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+        const profileData = profileResponse.data.profile.result[0];
+
+        setBusinessName(profileData.business_name || "");
+        setEmail(profileData.business_email || "");
+        setPhoneNumber(formatPhoneNumber(profileData.business_phone_number || ""));
+        setPhoto(profileData.business_photo_url ? { image: profileData.business_photo_url } : null);
+        setEin(profileData.business_ein_number ? AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+        setMask(profileData.business_ein_number ? maskNumber(AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+        setAddress(profileData.business_address || "");
+        setUnit(profileData.business_unit || "");
+        setCity(profileData.business_city || "");
+        setState(profileData.business_state || "");
+        setZip(profileData.business_zip || "");
+
+        setServices(JSON.parse(profileData.business_services_fees));
+        setLocations(JSON.parse(profileData.business_locations));
+
+        const paymentMethods = JSON.parse(profileData.paymentMethods);
+            const updatedPaymentMethods = {
+                paypal: { value: "", checked: false },
+                apple_pay: { value: "", checked: false },
+                stripe: { value: "", checked: false },
+                zelle: { value: "", checked: false },
+                venmo: { value: "", checked: false },
+                credit_card: { value: "", checked: false },
+                bank_account: { account_number: "", routing_number: "", checked: false },
+            };
+            paymentMethods.forEach((method) => {
+                if (method.paymentMethod_type === "bank_account") {
+                    updatedPaymentMethods.bank_account = {
+                        account_number: method.paymentMethod_account_number || "",
+                        routing_number: method.paymentMethod_routing_number || "",
+                        checked: true,
+                    };
+                } else {
+                    updatedPaymentMethods[method.paymentMethod_type] = {
+                        value: method.paymentMethod_name,
+                        checked: true,
+                    };
+                }
+            });
+            setPaymentMethods(updatedPaymentMethods);
+
+            setShowSpinner(false);
+        } catch (error) {
+            console.error("Error fetching profile data:", error);
+            setShowSpinner(false);
+        }
+        try {
+            const employeeResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`);
+            const employeeData = employeeResponse.data.employee.result[0];
+      
+            setEmpFirstName(employeeData.employee_first_name || "");
+            setEmpLastName(employeeData.employee_last_name || "");
+            setEmpPhoneNumber(formatPhoneNumber(employeeData.employee_phone_number || ""));
+            setEmpEmail(employeeData.employee_email || "");
+            // setEmpPhoto(employeeData.employee_photo_url ? { image: employeeData.employee_photo_url } : null);
+            setEmpSsn(employeeData.employee_ssn ? AES.decrypt(employeeData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+            setEmpMask(employeeData.employee_ssn ? maskNumber(AES.decrypt(employeeData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+            setEmpAddress(employeeData.employee_address || "");
+            setEmpUnit(employeeData.employee_unit || "");
+            setEmpCity(employeeData.employee_city || "");
+            setEmpState(employeeData.employee_state || "");
+            setEmpZip(employeeData.employee_zip || "");
+      
+            setShowSpinner(false);
+          } catch (error) {
+            console.error("Error fetching employee data:", error);
+            setShowSpinner(false);
+          }
+
+        
+    };
+
+    fetchProfileData();
+
+
+}, []);
+//isSave
+
   const createProfile = async (form) => {
-      const profileApi = "/businessProfile"
-      const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+      const profileApi = "/profile"
+      const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
       return data;
   };
 
@@ -148,6 +236,7 @@ const MaintenanceOnBoardDesktopForm = () => {
   const getPayload = () => {
       return {
         business_user_id: user.user_uid,
+        business_uid:getProfileId(),
         business_type: "MAINTENANCE",
         business_name: businessName,
         business_photo_url: photo,
@@ -744,7 +833,7 @@ const MaintenanceOnBoardDesktopForm = () => {
                   </Stack>
                   <Stack spacing={2} direction="row">
                       <Box sx={{ width: '50%' }}>
-                        <AddressAutocompleteInput  onAddressSelect={handleAddressSelect} gray={true} />
+                        <AddressAutocompleteInput  onAddressSelect={handleAddressSelect} gray={true} defaultValue={address} />
                       </Box>
                       <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="Unit" className={classes.root}></TextField>
                       <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
@@ -931,7 +1020,7 @@ const MaintenanceOnBoardDesktopForm = () => {
                   </Stack>
                   <Stack spacing={2} direction="row">
                       <Box sx={{ width: '50%' }}>
-                        <AddressAutocompleteInput  onAddressSelect={handleEmpAddressSelect} gray={true} />
+                        <AddressAutocompleteInput  onAddressSelect={handleEmpAddressSelect} gray={true} defaultValue={empAddress} />
                       </Box>
                       <TextField value={empUnit} onChange={handleEmpUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="Unit" className={classes.root}></TextField>
                       <TextField name="empCity" value={empCity} onChange={handleEmpCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />

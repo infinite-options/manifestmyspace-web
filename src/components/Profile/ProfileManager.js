@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Switch, Link, Button, Paper, Stack } from '@mui/material';
 import { makeStyles } from '@material-ui/core/styles';
 import theme from '../../theme/theme';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import { useUser } from '../../contexts/UserContext';
@@ -50,27 +51,41 @@ const ProfileManager = () => {
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(['user']);
   const { logout, selectedRole, isLoggedIn, getProfileId } = useUser();  
+  const [isSave, setIsSave] = useState(false);
   const [activeForm, setActiveForm] = useState('');
   console.log("selectedRole profile", selectedRole)
+  const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
     setActiveForm(selectedRole);
-  }, [selectedRole]);
-
+    fetchProfileData();
+  }, [isSave,selectedRole]);
+  
+  const fetchProfileData = async () => {
+    try {
+        const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+        const profileData = profileResponse.data.profile.result[0];
+        console.log('profile-*-', profileData);
+        setProfileData(profileData);
+    } catch (error) {
+        console.error("Error fetching profile data:", error);
+    }
+};
   const renderForm = () => {
+    if(profileData){
     switch (activeForm) {
       case 'MANAGER':
-        return <ManagerOnBoardDesktopForm />;
+        return <ManagerOnBoardDesktopForm  profileData={profileData} setIsSave={setIsSave} />;
       case 'PM_EMPLOYEE':
-        return <PMEmpOnBoardDesktopForm />;
+        return <PMEmpOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
       case 'OWNER':
-        return <OwnerOnBoardDeskTopForm />;
+        return <OwnerOnBoardDeskTopForm profileData={profileData} setIsSave={setIsSave}/>;
       case 'TENANT':
-        return <TenantOnBoardDesktopForm />;
+        return <TenantOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave}/>;
       case 'MAINTENANCE':
-        return <MaintenanceOnBoardDesktopForm />;
+        return <MaintenanceOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave}/>;
       case 'MAINT_EMPLOYEE':
-        return <MaintEmpOnBoardDesktopForm />;
+        return <MaintEmpOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave}/>;
       default:
         return (
           <div>
@@ -78,6 +93,7 @@ const ProfileManager = () => {
           </div>
         );
     }
+  }
   };
 
   return (

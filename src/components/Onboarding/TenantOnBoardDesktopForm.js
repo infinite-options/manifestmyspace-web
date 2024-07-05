@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
+import CryptoJS from "crypto-js";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
@@ -52,8 +53,9 @@ const TenantOnBoardDesktopForm = () => {
     const [showSpinner, setShowSpinner] = useState(false);
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
+    const [isSave, setIsSave] = useState(false);
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-    const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn , selectedRole, updateProfileUid, isLoggedIn } = useUser();
+    const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getProfileId } = useUser();
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
     const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
@@ -66,10 +68,69 @@ const TenantOnBoardDesktopForm = () => {
         bank_account: { account_number: "", routing_number: "", checked: false },
     });
 
+    useEffect(() => {
+        console.log("calling useeffect")
+        setIsSave(false)
+        const fetchProfileData = async () => {
+            setShowSpinner(true);
+            try {
+                const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+                const profileData = profileResponse.data.profile.result[0];
+                setFirstName(profileData.tenant_first_name || "");
+                setLastName(profileData.tenant_last_name || "");
+                setEmail(profileData.tenant_email || "");
+                setPhoneNumber(formatPhoneNumber(profileData.tenant_phone_number || ""));
+                setPhoto(profileData.tenant_photo ? { image: profileData.tenant_photo } : null);
+                setSsn(profileData.tenant_ssn ? AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+                setMask(profileData.tenant_ssn ? maskNumber(AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+                setAddress(profileData.tenant_address || "");
+                setUnit(profileData.tenant_unit || "");
+                setCity(profileData.tenant_city || "");
+                setState(profileData.tenant_state || "");
+                setZip(profileData.tenant_zip || "");
+
+                const paymentMethods = JSON.parse(profileData.paymentMethods);
+                const updatedPaymentMethods = {
+                    paypal: { value: "", checked: false },
+                    apple_pay: { value: "", checked: false },
+                    stripe: { value: "", checked: false },
+                    zelle: { value: "", checked: false },
+                    venmo: { value: "", checked: false },
+                    credit_card: { value: "", checked: false },
+                    bank_account: { account_number: "", routing_number: "", checked: false },
+                };
+                paymentMethods.forEach((method) => {
+                    if (method.paymentMethod_type === "bank_account") {
+                        updatedPaymentMethods.bank_account = {
+                            account_number: method.paymentMethod_account_number || "",
+                            routing_number: method.paymentMethod_routing_number || "",
+                            checked: true,
+                        };
+                    } else {
+                        updatedPaymentMethods[method.paymentMethod_type] = {
+                            value: method.paymentMethod_name,
+                            checked: true,
+                        };
+                    }
+                });
+                setPaymentMethods(updatedPaymentMethods);
+
+                setShowSpinner(false);
+            } catch (error) {
+                console.error("Error fetching profile data:", error);
+                setShowSpinner(false);
+            }
+        };
+
+        fetchProfileData();
+
+    }, [isSave]);
+    // getProfileId, setFirstName, setLastName, setEmail, setPhoneNumber, setPhoto, setSsn, setMask, setAddress, setUnit, setCity, setState, setZip]);
 
     const createProfile = async (form) => {
-        const profileApi = "/tenantProfile"
-        const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+        const profileApi = "/profile"
+        const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+        setIsSave(true)
         return data;
     };
 
@@ -123,6 +184,7 @@ const TenantOnBoardDesktopForm = () => {
 
         return {
             tenant_user_id: user.user_uid,
+            tenant_uid: getProfileId(),
             tenant_first_name: firstName,
             tenant_last_name: lastName,
             tenant_phone_number: phoneNumber,
@@ -244,7 +306,7 @@ const TenantOnBoardDesktopForm = () => {
             console.log(paymentSetup);
             setDashboardButtonEnabled(true)
         }
-       
+
         setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
 
         return;
@@ -252,7 +314,7 @@ const TenantOnBoardDesktopForm = () => {
 
     };
 
-    const handleNavigation =(e) => {
+    const handleNavigation = (e) => {
         selectRole('TENANT');
         setLoggedIn(true);
         navigate("/tenantDashboard")
@@ -454,7 +516,7 @@ const TenantOnBoardDesktopForm = () => {
                     </Box>
                 </Box>
                 <Box width="80%" p={3} sx={{ overflowY: 'auto' }}>
-                    <Stack spacing={2} direction="row"  >
+                    <Stack spacing={2} direction="row" >
                         <Typography
                             sx={{
                                 color: theme.typography.common.blue,
@@ -530,7 +592,7 @@ const TenantOnBoardDesktopForm = () => {
                     <Stack spacing={2} direction="row">
                         {/* <TextField name="PersonalAddress" value={"Personal Address"} variant="filled" sx={{ width: '50%' }} placeholder="Personal Address" className={classes.root} /> */}
                         <Box sx={{ width: '50%' }}>
-                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
+                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address} />
                         </Box>
                         <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
 
@@ -540,7 +602,7 @@ const TenantOnBoardDesktopForm = () => {
                         <TextField name="Zip" value={zip} variant="filled" sx={{ width: '10%' }} placeholder="Zip" className={classes.root} />
                     </Stack>
 
-                    <Stack spacing={2} direction="row"  >
+                    <Stack spacing={2} direction="row" >
                         <Typography
                             sx={{
                                 color: theme.typography.common.blue,
@@ -573,7 +635,7 @@ const TenantOnBoardDesktopForm = () => {
                             className={classes.root}
                         ></TextField>
                     </Stack>
-                    <Stack spacing={2} direction="row"  >
+                    <Stack spacing={2} direction="row" >
                         <Typography
                             sx={{
                                 color: theme.typography.common.blue,
@@ -602,8 +664,8 @@ const TenantOnBoardDesktopForm = () => {
                 </Backdrop>
 
                 {/* <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
-              Payment Methods
-          </Typography> */}
+Payment Methods
+</Typography> */}
                 <Paper elevation={3} sx={{ padding: 3, mb: 3 }}>
                     {renderPaymentMethods()}
                 </Paper>
@@ -623,7 +685,7 @@ const TenantOnBoardDesktopForm = () => {
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
-                   
+
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard

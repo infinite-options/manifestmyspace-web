@@ -36,6 +36,21 @@ function Header(props) {
   const handleButtonClick = (role) => {
     selectRole(role);
     const { dashboardUrl } = roleMap[role];
+    if (role === 'MAINTENANCE') {
+      sessionStorage.removeItem('workerselectedRequestIndex');
+      sessionStorage.removeItem('workerselectedStatus');
+      sessionStorage.removeItem('workermaintenanceItemsForStatus');
+      sessionStorage.removeItem('workerallMaintenanceData');
+      sessionStorage.removeItem('workermaintenance_request_uid');
+      sessionStorage.removeItem('workerMaintenanceView');
+
+      window.dispatchEvent(new Event('storage'));
+      // Dispatch the custom event
+      setTimeout(() => {
+          window.dispatchEvent(new Event('removeworkermaintenanceRequestSelected'));
+      }, 0);
+
+  }
     navigate(dashboardUrl);
     handleClose();
   };
