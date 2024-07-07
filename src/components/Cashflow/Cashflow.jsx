@@ -532,6 +532,7 @@ function SelectMonthComponentTest(props) {
 
 // This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
+  console.log("In Statement Table: ", props);
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -594,6 +595,7 @@ function StatementTable(props) {
             <TableRow key={index}>
               <TableCell>{item.purchase_uid}</TableCell>
               <TableCell>{item.pur_property_id}</TableCell>
+              <TableCell>{item.pur_payer}</TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                   {" "}
