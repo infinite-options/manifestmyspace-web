@@ -80,7 +80,7 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                 setLastName(profileData.tenant_last_name || "");
                 setEmail(profileData.tenant_email || "");
                 setPhoneNumber(formatPhoneNumber(profileData.tenant_phone_number || ""));
-                addPhotoImg(profileData.tenant_photo ? { image: profileData.tenant_photo } : null);
+                setAddPhotoImg(profileData.tenant_photo ? { image: profileData.tenant_photo } : null);
                 setSsn(profileData.tenant_ssn ? AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
                 setMask(profileData.tenant_ssn ? maskNumber(AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
                 setAddress(profileData.tenant_address || "");
@@ -88,8 +88,9 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                 setCity(profileData.tenant_city || "");
                 setState(profileData.tenant_state || "");
                 setZip(profileData.tenant_zip || "");
-
+               
                 const paymentMethods = JSON.parse(profileData.paymentMethods);
+                console.log("tenant payment",paymentMethods)
                 const updatedPaymentMethods = {
                     paypal: { value: "", checked: false },
                     apple_pay: { value: "", checked: false },

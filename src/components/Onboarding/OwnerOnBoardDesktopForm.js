@@ -380,7 +380,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
         });
         // payload= JSON.stringify(payload);
         console.log("Payment payload: ", payload);
-        const response = await axios.post(
+        const response = await axios.put(
             "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
             payload,
             { headers: { "Content-Type": "application/json" } }
