@@ -532,7 +532,7 @@ function SelectMonthComponentTest(props) {
 
 // This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
-  console.log("In Statement Table: ", props);
+  // console.log("In Statement Table: ", props);
   const navigate = useNavigate();
 
   const activeView = props.activeView;

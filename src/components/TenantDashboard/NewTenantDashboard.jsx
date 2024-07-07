@@ -1,14 +1,12 @@
 import { Box, Button, Typography, Stack, Grid, MenuItem, Menu, Table, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, ListItemAvatar } from "@mui/material";
 
-import DashboardTab from './NewDashboardTab'
+import DashboardTab from "./NewDashboardTab";
 // import NewTenantDashboardBalance from './NewTenantDashboardBalance'
 
-export default function NewTenantDashboard(){
+export default function NewTenantDashboard() {
   return (
-    <Box sx={{padding: "25px"}}>
-      <Box>
-        Menu
-      </Box>
+    <Box sx={{ padding: "25px" }}>
+      <Box>Menu</Box>
       <Grid container>
         <Grid item xs={12}>
           <p> Welcome</p>
@@ -20,7 +18,7 @@ export default function NewTenantDashboard(){
         <Grid item xs={8}>
           <Grid container>
             <Grid item xs={6}>
-              <p>Payment History</p>
+              <p>Payment History 1</p>
             </Grid>
             <Grid item xs={6}>
               <p>Maintenance</p>
@@ -32,5 +30,5 @@ export default function NewTenantDashboard(){
         </Grid>
       </Grid>
     </Box>
-  )
+  );
 }

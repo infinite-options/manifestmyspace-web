@@ -106,6 +106,7 @@ export default function Payments(props) {
   }
 
   function totalMoneyPayable(moneyPayable) {
+    console.log("In totalMoneyPayable: ", moneyPayable);
     var total = 0;
     for (const item of moneyPayable) {
       if (item.pur_cf_type === "revenue") {
