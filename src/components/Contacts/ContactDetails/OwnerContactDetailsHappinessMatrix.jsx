@@ -784,6 +784,8 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 };
 
 const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
+  const navigate = useNavigate();
+  console.log("ROHIT - PropertiesDataGrid - data -   ", data);
   const paymentStatusColorMap = {
     "Paid On Time": theme.palette.priority.clear,
     "Partially Paid": theme.palette.priority.medium,
@@ -884,7 +886,21 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
       // width: 100,
       flex: 0.3,
       renderCell: (params) => (
-        <Box sx={{ margin: "0px" }}>
+        <Box 
+          sx={{ margin: "0px" }} 
+          onClick={() =>
+            getNumOfMaintenanceReqs(params.row.property_uid) > 0
+              ? navigate("/managerMaintenance", {
+                  state: {
+                    selectedProperty: {
+                      address: params.row.property_address,
+                      checked: true,
+                    },
+                  },
+                })
+              : null
+          }
+        >
           <Badge
             overlap="circular"
             color="error"

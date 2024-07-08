@@ -36,6 +36,7 @@ import useSessionStorage from './useSessionStorage';
 import { useCookies } from 'react-cookie';
 import AddMaintenanceItem from './AddMaintenanceItem';
 import EditMaintenanceItem from './EditMaintenanceItem';
+import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 
 export async function maintenanceManagerDataCollectAndProcess(
 	setMaintenanceData,
@@ -84,6 +85,7 @@ export async function maintenanceManagerDataCollectAndProcess(
 		setShowSpinner(true);
 
 		const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
+		// const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000003`);
 		const maintenanceRequestsData = await maintenanceRequests.json();
 
 		let array1 = maintenanceRequestsData.result['NEW REQUEST'].maintenance_items;
@@ -143,6 +145,9 @@ export default function MaintenanceManager() {
 	const colorStatus = theme.colorStatusPMO;
 	const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
+	const selectedProperty = location.state?.selectedProperty || null;
+	// console.log("ROHIT - MaintenanceManager - selectedProperty - ", selectedProperty);
+
 	const newDataObject = {};
 	newDataObject['NEW REQUEST'] = [];
 	newDataObject['QUOTES REQUESTED'] = [];
@@ -158,6 +163,10 @@ export default function MaintenanceManager() {
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [filterPropertyList, setFilterPropertyList] = useState([]);
 	const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
+
+	// useEffect(() => {
+	// 	console.log("ROHIT - filterPropertyList - ", filterPropertyList);
+	// }, [filterPropertyList]);
 
 	const businessId = user.businesses.MAINTENANCE.business_uid;
 
@@ -190,18 +199,25 @@ export default function MaintenanceManager() {
 			const addedAddresses = [];
 			for (const key in maintenanceData) {
 				for (const item of maintenanceData[key]) {
+					// console.log("ROHIT - maintenanceData item - ", item);
 					if (!addedAddresses.includes(item.property_address)) {
 						addedAddresses.push(item.property_address);
 						if (!propertyList.includes(item.property_address)) {
 							propertyList.push({
-								address: item.property_address,
+								address: item.property_address,								
 								checked: true,
 							});
 						}
 					}
 				}
 			}
-			setFilterPropertyList(propertyList);
+			// console.log("ROHIT - MaintenanceManager - propertyList - ", propertyList);
+			if(selectedProperty !== null){
+				setFilterPropertyList([selectedProperty])
+				// setFilterPropertyList(propertyList);
+			} else {			
+				setFilterPropertyList(propertyList);
+			}
 		}
 	}, [maintenanceData]);
 
