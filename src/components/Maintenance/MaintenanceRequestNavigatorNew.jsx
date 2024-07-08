@@ -14,14 +14,14 @@ import Slider from 'react-slick';
 import QuotesTable from './MaintenanceComponents/QuotesTable';
 import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-import ImageListItemBar from "@mui/material/ImageListItemBar";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { IconButton }from '@mui/material';
+import { IconButton } from '@mui/material';
 
 function getInitialImages(requestData, currentIndex) {
 	try {
@@ -268,30 +268,32 @@ export default function MaintenanceRequestNavigatorNew({
 		// console.log(completionStatus)
 	}
 
-    //const images1 = [<BuildIcon />, <BuildIcon />, <BuildIcon />, <BuildIcon />, <BuildIcon />]; // Example images
-    
-        const [scrollPosition, setScrollPosition] = useState(0);
-        const scrollRef = useRef();
-      
-        const scrollLeft = () => {
-          if (scrollRef.current) {
-            scrollRef.current.scrollLeft -= 200;
-            setScrollPosition(scrollRef.current.scrollLeft);
-          }
-        };
-      
-        const scrollRight = () => {
-          if (scrollRef.current) {
-            scrollRef.current.scrollLeft += 200;
-            setScrollPosition(scrollRef.current.scrollLeft);
-          }
-        };
+	//const images1 = [<BuildIcon />, <BuildIcon />, <BuildIcon />, <BuildIcon />, <BuildIcon />]; // Example images
+
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef();
+
+	const scrollLeft = () => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft -= 200;
+			setScrollPosition(scrollRef.current.scrollLeft);
+		}
+	};
+
+	const scrollRight = () => {
+		console.log('---scrollRef--', scrollRef.current.scrollLeft);
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft += 200;
+			console.log('---inside scrollRef--', scrollRef.current.scrollLeft);
+			setScrollPosition(scrollRef.current.scrollLeft);
+		}
+	};
 
 	useEffect(() => {
 		displayScheduledDate(data);
 	}, [data]);
 	//automatic refresh problem - the data is not displaying after save update
-   
+
 	return (
 		<div style={{ paddingBottom: '10px' }}>
 			<Box
@@ -300,7 +302,7 @@ export default function MaintenanceRequestNavigatorNew({
 					justifyContent: 'center',
 					width: '100%', // Take up full screen width
 					marginTop: theme.spacing(2), // Set the margin to 20px
-					// backgroundColor: '#3D5CAC80',
+					// backgroundColor: color,
 					backgroundColor: theme.palette.primary.main,
 					borderRadius: '10px',
 				}}
@@ -314,15 +316,17 @@ export default function MaintenanceRequestNavigatorNew({
 						}}
 					>
 						{/* {item.status} */}
-						{<u>
-										{data?.property_address}{' '}
-										{data?.property_unit !== '' ? 'Unit ' + data?.property_unit : null},{' '}
-										{data?.property_city} {data?.property_state} {data?.property_zip}
-									</u>}
+						{
+							<u>
+								{data?.property_address}{' '}
+								{data?.property_unit !== '' ? 'Unit ' + data?.property_unit : null},{' '}
+								{data?.property_city} {data?.property_state} {data?.property_zip}
+							</u>
+						}
 					</Typography>
 					<Stack direction="row" justifyContent="center" alignItems="center" spacing={2}>
 						<Button onClick={handlePreviousCard} disabled={backward_active_status}>
-							<ArrowBackIcon sx={{ color: '#160449' }}/>
+							<ArrowBackIcon sx={{ color: '#160449' }} />
 						</Button>
 						<Stack direction="column" justifyContent="center" alignItems="center" spacing={2} width="100px">
 							<Typography
@@ -336,7 +340,7 @@ export default function MaintenanceRequestNavigatorNew({
 							</Typography>
 						</Stack>
 						<Button onClick={handleNextCard} disabled={forward_active_status}>
-							<ArrowForwardIcon sx={{ color: '#160449' }}/>
+							<ArrowForwardIcon sx={{ color: '#160449' }} />
 						</Button>
 					</Stack>
 				</Stack>
@@ -354,34 +358,55 @@ export default function MaintenanceRequestNavigatorNew({
 							padding: '0px',
 						}}
 					>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 2 }}>
-                    <IconButton onClick={scrollLeft} disabled={scrollPosition === 0}>
-                      <ArrowBackIosIcon />
-                    </IconButton>
-                    <Box
-                      ref={scrollRef}
-                      sx={{
-                        display: 'flex',
-                        overflowX: 'auto',
-                        scrollbarWidth: 'none',
-                        msOverflowStyle: 'none',
-                        '&::-webkit-scrollbar': {
-                          display: 'none',
-                        },
-                      }}
-                    >
-                      <ImageList sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={4}>
-                        {images.map((image, index) => (
-                          <ImageListItem key={index} sx={{ width: 'auto', flex: '0 0 auto' }}>
-                            <img src={image} alt={`maintenance-${index}`} style={{ maxHeight: '150px', maxWidth: '150px', objectFit: 'contain' }} />
-                          </ImageListItem>
-                        ))}
-                      </ImageList>
+                        	<CardContent
+							sx={{
+								flexDirection: 'column',
+								alignItems: 'left',
+								justifyContent: 'left',
+								width: '100%',
+								padding: '0px',
+							}}
+						><Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 2, position: 'relative' }}>
+                        <IconButton onClick={scrollLeft} disabled={scrollPosition === 0} >
+                            <ArrowBackIosIcon />
+                        </IconButton>
+                        <Box
+                            ref={scrollRef}
+                            sx={{
+                                display: 'flex',
+                                overflowX: 'auto',
+                                scrollbarWidth: 'none',
+                                msOverflowStyle: 'none',
+                                '&::-webkit-scrollbar': {
+                                    display: 'none',
+                                },
+                            }}
+                        >
+                            <ImageList sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+                                {images.map((image, index) => (
+                                    <ImageListItem
+                                        key={index}
+                                        sx={{
+                                            width: 'auto',
+                                            flex: '0 0 auto',
+                                            border: '1px solid #ccc',
+                                            margin: '0 2px',
+                                        }}
+                                    >
+                                        <img
+                                            src={image}
+                                            alt={`maintenance-${index}`}
+                                            style={{ height: '150px', width: '150px', objectFit: 'cover' }}
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
+                        </Box>
+                        <IconButton onClick={scrollRight}>
+                            <ArrowForwardIosIcon />
+                        </IconButton>
                     </Box>
-                    <IconButton onClick={scrollRight}>
-                      <ArrowForwardIosIcon />
-                    </IconButton>
-                  </Box>
+                    </CardContent>
 						<CardContent
 							sx={{
 								flexDirection: 'column',
