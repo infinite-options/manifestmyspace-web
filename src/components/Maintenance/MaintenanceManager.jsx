@@ -21,7 +21,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useMediaQuery } from '@mui/material';
 import theme from '../../theme/theme';
 import MaintenanceStatusTable from './MaintenanceStatusTable';
-import { MaintenanceRequestDetail } from './MaintenanceRequestDetail';
+import MaintenanceRequestDetailNew from './MaintenanceRequestDetailNew';
 import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 import { useUser } from '../../contexts/UserContext';
@@ -591,7 +591,7 @@ export default function MaintenanceManager() {
 								</>
 							) : (
 								Object.keys(maintenanceData).length > 0 && (
-									<MaintenanceRequestDetail
+									<MaintenanceRequestDetailNew
 										maintenance_request_index={selectedRequestIndex}
 										status={selectedStatus}
 										maintenanceItemsForStatus={maintenanceData[selectedStatus]}
