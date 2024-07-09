@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     Accordion, AccordionSummary, AccordionDetails, Box, Typography, Button, Modal, TextField,
-    MenuItem, FormControl, InputLabel, Select, IconButton
+    MenuItem, FormControl, InputLabel, Select, IconButton,  Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
@@ -13,6 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LeaseIcon from "../Property/leaseIcon.png";
+import { Close } from '@mui/icons-material';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,6 +34,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
     const [isEditing, setIsEditing] = useState(false);
     const [newFiles, setNewFiles] = useState(null);
     const classes = useStyles();
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -48,15 +50,15 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
             name: file.name,
             type: currentRow.type,
             file: file
-          }));
+        }));
         setNewFiles(filesArray);
     };
 
     const handleSubmit = () => {
-        if(isEditing === true){
-          setDocuments(documents.map(doc => (doc.id === currentRow.id ? currentRow : doc)))
+        if (isEditing === true) {
+            setDocuments(documents.map(doc => (doc.id === currentRow.id ? currentRow : doc)))
 
-        } else{
+        } else {
             console.log('arr', newFiles);
             setDocuments((prevFiles) => [...prevFiles, currentRow]);
             setuploadedFiles((prevFiles => [...prevFiles, ...newFiles]));
@@ -71,10 +73,24 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
         handleOpen();
     };
 
-
-    const handleDeleteClick = (id) => {
-        setDocuments(documents.filter(doc => doc.id !== id));
+    const handleDelete = () => {
+        setDocuments(documents.filter(doc => doc.id !== currentRow.id));
+        handleClose();
     };
+
+    const handleDeleteClick = () => {
+        setOpenDeleteConfirmation(true);
+    };
+
+    const handleDeleteClose = () => {
+        setOpenDeleteConfirmation(false);
+    };
+
+    const handleDeleteConfirm = () => {
+        handleDelete();
+        setOpenDeleteConfirmation(false);
+    }
+
 
     const docsColumns = [
         {
@@ -118,19 +134,14 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: '',
             flex: 1,
             renderCell: (params) => (
                 <Box>
                     <IconButton
                         onClick={() => handleEditClick(params.row)}
                     >
-                        <EditIcon sx={{color:"#3D5CAC"}}/>
-                    </IconButton>
-                    <IconButton
-                        onClick={() => handleDeleteClick(params.row.id)}
-                    >
-                        <DeleteIcon sx={{color:"#3D5CAC"}}/>
+                        <EditIcon sx={{ color: "#3D5CAC" }} />
                     </IconButton>
                 </Box>
             )
@@ -155,7 +166,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                 paddingBottom: "10px",
                                 paddingTop: "5px",
                                 flexGrow: 1,
-                                paddingLeft:"50px"
+                                paddingLeft: "50px"
                             }}
                         >
                             Documents
@@ -233,65 +244,127 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                     boxShadow: 24,
                     p: 4,
                 }}>
-                    <Typography id="add-document-modal" variant="h6" component="h2">
-                    {isEditing ? 'Edit Document' : 'Add Document'}
+                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                    <Typography id="add-document-modal" variant="h6" component="h2" textAlign='center' sx={{
+                        color: "#160449",
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.small,
+                        marginLeft:'150px'
+                    }}>
+                        Documents
                     </Typography>
-                    <FormControl fullWidth sx={{ marginTop: "10px" }}>
-                        <InputLabel sx={{ color: theme.palette.grey }}>Type</InputLabel>
-                        <Select
-                            value={currentRow && currentRow?.type || ''}
-                            onChange={(e) => setcurrentRow({ ...currentRow, type: e.target.value })}
-                            size="small"
-                            fullWidth
-                            label="Type"
-                            className={classes.select}
-                            sx={{
-                                marginTop: "10px",
-                            }}
-                            required
-                        >
-                            <MenuItem value="Lease Agreement">Lease Agreement</MenuItem>
-                            <MenuItem value="Other">Other</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <Box sx={{ alignItems: "center", justifyContent: "center", marginTop: "10px" }}>
-                        <label htmlFor="file-upload" style={{ cursor: "pointer", display: "flex", }}>
-                            <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} /> Add Document
-                        </label>
-                        <input
-                            id="file-upload"
-                            type="file"
-                            accept=".doc,.docx,.txt,.pdf"
-                            hidden
-                            onChange={(e) => handleFileUpload(e)}
-                        />
-                    </Box>
-                    {currentRow && currentRow.filename &&
-                        <Box sx={{ marginTop: "25px" }}>
-                            <Typography>Added File: {currentRow.filename}</Typography>
-                        </Box>
-                    }
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop:"20px" }}>
-                        <Button onClick={handleClose} sx={{
-                            marginRight: '5px', background: "#3D5CAC",
-                            color: theme.palette.background.default,
-                            cursor: "pointer",
-                            width: "20%",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                        }}>Cancel</Button>
-                        <Button onClick={handleSubmit} sx={{
-                            background: "#3D5CAC",
-                            color: theme.palette.background.default,
-                            cursor: "pointer",
-                            width: "20%",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                        }}>{isEditing ? "Edit" : "Add"}</Button>
-                    </Box>
+                    <Button onClick={handleClose} sx={{ ml: 'auto' }}>
+                        <Close sx={{
+                            color: theme.typography.primary.black,
+                            fontSize: '20px',
+                        }} />
+                    </Button>
                 </Box>
-            </Modal>
-        </div>
+                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginTop: '10px' }}>
+                    Document Type
+                </Typography>
+
+                <FormControl fullWidth sx={{ marginTop: "10px" }}>
+                    {/* <InputLabel sx={{ color: theme.palette.grey }}>Type</InputLabel> */}
+                    <Select
+                        value={currentRow && currentRow?.type || ''}
+                        onChange={(e) => setcurrentRow({ ...currentRow, type: e.target.value })}
+                        size="small"
+                        fullWidth
+                        className={classes.select}
+                        sx={{
+                            marginTop: "10px",
+                        }}
+                        required
+                    >
+                        <MenuItem value="Lease Agreement">Lease Agreement</MenuItem>
+                        <MenuItem value="Other">Other</MenuItem>
+                    </Select>
+                </FormControl>
+                <Box sx={{ alignItems: "center", justifyContent: "center", marginTop: "20px" }}>
+                    <label htmlFor="file-upload" style={{ cursor: "pointer", display: "flex", }}>
+                        <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} /> Add Document
+                    </label>
+                    <input
+                        id="file-upload"
+                        type="file"
+                        accept=".doc,.docx,.txt,.pdf"
+                        hidden
+                        onChange={(e) => handleFileUpload(e)}
+                    />
+                </Box>
+                {currentRow && currentRow.filename &&
+                    <Box sx={{ marginTop: "25px" }}>
+                        <Typography>Added File: {currentRow.filename}</Typography>
+                    </Box>
+                }
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
+                    <Button onClick={handleSubmit} sx={{
+                        marginRight: '5px', background: "#FFC614",
+                        color: "#160449",
+                        cursor: "pointer",
+                        width: "100px",
+                        height: "31px",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        textTransform: 'none',
+                        '&:hover': {
+                            backgroundColor: '#fabd00',
+                        },
+                    }}>Save</Button>
+                    <Button onClick={handleDeleteClick} sx={{
+                        background: "#F87C7A",
+                        color: "#160449",
+                        cursor: "pointer",
+                        width: "100px",
+                        height: "31px",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        textTransform: 'none',
+                        '&:hover': {
+                            backgroundColor: '#f76462',
+                        },
+                    }}>Delete</Button>
+                    <Dialog
+                        open={openDeleteConfirmation}
+                        onClose={handleDeleteClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                Are you sure you want to delete this Document?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleDeleteClose} color="primary" sx={{
+                                textTransform: "none", background: "#F87C7A",
+                                color: "#160449",
+                                cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont, '&:hover': {
+                                    backgroundColor: '#f76462',
+                                },
+                            }}>
+                                Cancel
+                            </Button>
+                            <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
+                                textTransform: "none", background: "#FFC614",
+                                color: "#160449",
+                                cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                '&:hover': {
+                                    backgroundColor: '#fabd00',
+                                },
+                            }}>
+                                Confirm
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </Box>
+            </Box>
+        </Modal>
+        </div >
     );
 };
 
