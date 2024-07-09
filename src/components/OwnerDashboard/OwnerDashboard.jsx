@@ -55,6 +55,7 @@ export default function OwnerDashboard() {
   const [rentStatus, setRentStatus] = useState([]);
   const [leaseStatus, setLeaseStatus] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
+  const [cashflowStatusData, setCashflowStatusData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(date.getMonth() + 1);
 
@@ -98,6 +99,9 @@ export default function OwnerDashboard() {
 
       // MAINTENANCE Status
       setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
+
+      // MAINTENANCE Status
+      setCashflowStatusData(jsonData.CashflowStatus.result);
 
       // RENT Status
       setRentStatus(jsonData.RentStatus.result);
@@ -145,7 +149,7 @@ export default function OwnerDashboard() {
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CashflowWidget />
+            <CashflowWidget data={cashflowStatusData}/>
           </Grid>
 
           <Grid container item xs={12} md={8} columnSpacing={6}>
