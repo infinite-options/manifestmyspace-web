@@ -117,118 +117,118 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			<Card
-						sx={{
-                            backgroundColor: theme.palette.primary.main,
-                            boxShadow: 'none',
-                            elevation: '0',
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'start',
-                            justifyContent: 'start',
-                            padding: '0px',
-                          }}
-					>
-				  <Stack
-    direction="row"
-    justifyContent="center"
-    alignItems="center"
-    spacing={23} // Adjusted spacing to fit more buttons
-    sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}
-  >
+				sx={{
+					backgroundColor: theme.palette.primary.main,
+					boxShadow: 'none',
+					elevation: '0',
+					width: '100%',
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'left',
+					justifyContent: 'left',
+					padding: '0px',
+				}}
+			>
+				<Stack
+					direction="row"
+					justifyContent="center"
+					alignItems="center"
+					spacing={23} // Adjusted spacing to fit more buttons
+					sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}
+				>
 					<Button
 						variant="contained"
 						sx={{
-                            backgroundColor: '#a7b8e6',
-                            color: '#160449',
-                            textTransform: 'none',
-                            fontWeight: 'bold',
-                            borderRadius: '8px',
-                            width: '160px',  // Set a fixed width
-                            height: '120px', // Set a fixed height
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            textAlign: 'center',
-                            padding: '10px', // Add padding to ensure text wrapping
-                            boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-                            whiteSpace: 'normal', // Allow text to wrap
-                            '&:hover': {
-                              backgroundColor: '#a7b8e6',
-                            },
-                          }}
+							backgroundColor: '#a7b8e6',
+							color: '#160449',
+							textTransform: 'none',
+							fontWeight: 'bold',
+							borderRadius: '8px',
+							width: '160px', // Set a fixed width
+							height: '120px', // Set a fixed height
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							textAlign: 'center',
+							padding: '10px', // Add padding to ensure text wrapping
+							boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+							whiteSpace: 'normal', // Allow text to wrap
+							'&:hover': {
+								backgroundColor: '#a7b8e6',
+							},
+						}}
 					>
 						Request Details
 					</Button>
 					<Button
 						variant="contained"
-                        sx={{
-                            backgroundColor: '#FFC614',
-                            color: '#160449',
-                            textTransform: 'none',
-                            fontWeight: 'bold',
-                            borderRadius: '8px',
-                            width: '160px',  // Set a fixed width
-                            height: '120px', // Set a fixed height
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            textAlign: 'center',
-                            padding: '10px', // Add padding to ensure text wrapping
-                            boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-                            whiteSpace: 'normal', // Allow text to wrap
-                            '&:hover': {
-                              backgroundColor: '#FFC614',
-                            },
-                          }}
+						sx={{
+							backgroundColor: '#FFC614',
+							color: '#160449',
+							textTransform: 'none',
+							fontWeight: 'bold',
+							borderRadius: '8px',
+							width: '160px', // Set a fixed width
+							height: '120px', // Set a fixed height
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							textAlign: 'center',
+							padding: '10px', // Add padding to ensure text wrapping
+							boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+							whiteSpace: 'normal', // Allow text to wrap
+							'&:hover': {
+								backgroundColor: '#FFC614',
+							},
+						}}
 					>
 						Assign Resource
 					</Button>
 					<Button
 						variant="contained"
-                        sx={{
-                            backgroundColor: '#F87C7A',
-                            color: '#160449',
-                            textTransform: 'none',
-                            fontWeight: 'bold',
-                            borderRadius: '8px',
-                            width: '160px',  // Set a fixed width
-                            height: '120px', // Set a fixed height
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            textAlign: 'center',
-                            padding: '10px', // Add padding to ensure text wrapping
-                            boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-                            whiteSpace: 'normal', // Allow text to wrap
-                            '&:hover': {
-                              backgroundColor: '#F87C7A',
-                            },
-                          }}
+						sx={{
+							backgroundColor: '#F87C7A',
+							color: '#160449',
+							textTransform: 'none',
+							fontWeight: 'bold',
+							borderRadius: '8px',
+							width: '160px', // Set a fixed width
+							height: '120px', // Set a fixed height
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							textAlign: 'center',
+							padding: '10px', // Add padding to ensure text wrapping
+							boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+							whiteSpace: 'normal', // Allow text to wrap
+							'&:hover': {
+								backgroundColor: '#F87C7A',
+							},
+						}}
 					>
 						Maintenance Quotes
 					</Button>
 					<Button
 						variant="contained"
-                        sx={{
-                            backgroundColor: '#FF8A00',
-                            color: '#160449',
-                            textTransform: 'none',
-                            fontWeight: 'bold',
-                            borderRadius: '8px',
-                            width: '160px',  // Set a fixed width
-                            height: '120px', // Set a fixed height
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            textAlign: 'center',
-                            padding: '10px', // Add padding to ensure text wrapping
-                            boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-                            whiteSpace: 'normal', // Allow text to wrap
-                            '&:hover': {
-                              backgroundColor: '#FF8A00',
-                            },
-                          }}
+						sx={{
+							backgroundColor: '#FF8A00',
+							color: '#160449',
+							textTransform: 'none',
+							fontWeight: 'bold',
+							borderRadius: '8px',
+							width: '160px', // Set a fixed width
+							height: '120px', // Set a fixed height
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							textAlign: 'center',
+							padding: '10px', // Add padding to ensure text wrapping
+							boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+							whiteSpace: 'normal', // Allow text to wrap
+							'&:hover': {
+								backgroundColor: '#FF8A00',
+							},
+						}}
 					>
 						Close Ticket
 					</Button>

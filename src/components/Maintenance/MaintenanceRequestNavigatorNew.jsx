@@ -1,6 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid } from '@mui/material';
+import {
+	Card,
+	CardContent,
+	MenuItem,
+	Select,
+	FormControl,
+	InputLabel,
+	OutlinedInput,
+	Typography,
+	Button,
+	Box,
+	Stack,
+	Paper,
+	Grid,
+} from '@mui/material';
 import theme from '../../theme/theme';
 import maintenanceRequestImage from './maintenanceRequest.png';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -327,7 +341,29 @@ export default function MaintenanceRequestNavigatorNew({
 	}, [data]);
 	//automatic refresh problem - the data is not displaying after save update
 
-    const tenantName = `${data?.tenant_first_name ? data?.tenant_first_name : ''} ${data?.tenant_last_name ? data?.tenant_last_name : ''}`.trim();
+	const tenantName = `${data?.tenant_first_name ? data?.tenant_first_name : ''} ${
+		data?.tenant_last_name ? data?.tenant_last_name : ''
+	}`.trim();
+
+	const priorityOptions = ['Low', 'Medium', 'High'];
+	const [priority, setPriority] = useState(data?.maintenance_priority || 'Medium');
+
+	const handlePriorityChange = (event) => {
+		setPriority(event.target.value);
+	};
+
+    const getPriorityColor = (priority) => {
+        switch (priority) {
+            case 'Low':
+                return '#FFC614'; // Yellow
+            case 'Medium':
+                return '#FF8A00'; // Orange
+            case 'High':
+                return '#A52A2A'; // Red
+            default:
+                return '#FF8A00'; // Default to Medium if not specified
+        }
+    };
 
 	return (
 		<div style={{ paddingBottom: '10px' }}>
@@ -490,44 +526,91 @@ export default function MaintenanceRequestNavigatorNew({
 
 								<Box
 									sx={{
-										padding: theme.spacing(2),
+										padding: 2,
 										backgroundColor: theme.palette.primary.main,
 										borderRadius: '10px',
-										marginTop: theme.spacing(2),
+										marginTop: 2,
+										color: '#2D2F48',
 									}}
 								>
-                                    <Typography variant="body1">
-												<strong>Issue:</strong> {data?.maintenance_title}
-											</Typography>
-											<Typography variant="body1">
-												<strong>Description:</strong> {data?.maintenance_desc}
-											</Typography>
-											<Typography variant="body1">
-												<strong>Priority:</strong> {data?.maintenance_priority}
-											</Typography>
-									<Grid container spacing={2}>
+									<Typography variant="body1" sx={{ marginBottom: 1 }}>
+										<strong>Issue:</strong> {data?.maintenance_title}
+									</Typography>
+									<Typography variant="body1" sx={{ marginBottom: 1 }}>
+										<strong>Description:</strong> {data?.maintenance_desc}
+									</Typography>
+									<Typography
+										variant="body1"
+										sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}
+									>
+										<strong>Priority:</strong>
+										<FormControl
+											variant="outlined"
+											sx={{
+												marginLeft: 1,
+												minWidth: 80,
+												backgroundColor: '#FF9800',
+												borderRadius: 1,
+											}}
+										>
+											<Select
+												value={priority}
+												onChange={handlePriorityChange}
+												input={
+													<OutlinedInput
+														sx={{
+															padding: '4px 8px',
+															color: 'white',
+															'& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+														}}
+													/>
+												}
+												sx={{
+													height: '32px',
+													backgroundColor: getPriorityColor(priority),
+													color: 'white',
+													borderRadius: '5px',
+													minWidth: '80px',
+													'& .MuiSelect-icon': {
+														color: 'white',
+													},
+													'& .MuiOutlinedInput-notchedOutline': {
+														border: 'none',
+													},
+												}}
+											>
+												{priorityOptions.map((option) => (
+													<MenuItem key={option} value={option}>
+														{option}
+													</MenuItem>
+												))}
+											</Select>
+										</FormControl>
+									</Typography>
+									<Grid container spacing={2} sx={{ marginTop: 1 }}>
 										<Grid item xs={6}>
-                                        <Typography variant="body1">
+											<Typography variant="body1" sx={{ marginBottom: 1 }}>
 												<strong>Reported By:</strong> {data?.maintenance_request_created_by}
 											</Typography>
-											<Typography variant="body1">
+											<Typography variant="body1" sx={{ marginBottom: 1 }}>
 												<strong>Tenant:</strong> {tenantName}
 											</Typography>
-											<Typography variant="body1">
-												<strong>Owner:</strong> {data?.owner_first_name + ' ' + data?.owner_last_name}
+											<Typography variant="body1" sx={{ marginBottom: 1 }}>
+												<strong>Owner:</strong>{' '}
+												{data?.owner_first_name + ' ' + data?.owner_last_name}
 											</Typography>
 										</Grid>
 										<Grid item xs={6}>
-											<Typography variant="body1">
+											<Typography variant="body1" sx={{ marginBottom: 1 }}>
 												<strong>Reported On:</strong>{' '}
 												{dayjs(data?.maintenance_request_created_date).format('MM-DD-YYYY')}
 											</Typography>
-											<Typography variant="body1">
+											<Typography variant="body1" sx={{ marginBottom: 1 }}>
 												<strong>Days Open:</strong>{' '}
 												{dayjs().diff(dayjs(data?.maintenance_request_created_date), 'day')}{' '}
 												days
 											</Typography>
-											<Typography variant="body1">
+											<Typography variant="body1" sx={{ marginBottom: 1 }}>
 												<strong>Maintenance ID:</strong> {data?.maintenance_request_uid}
 											</Typography>
 										</Grid>
