@@ -67,9 +67,11 @@ const ProfileManager = () => {
         if(selectedRole==='PM_EMPLOYEE' || selectedRole==='MAINT_EMPLOYEE')
         {url= `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getRoleId()}`}
         const profileResponse = await axios.get(url);
-
-        const profileData = profileResponse.data.profile.result[0];
+        
+        const profileData = (selectedRole==='PM_EMPLOYEE' || selectedRole==='MAINT_EMPLOYEE')?
+        profileResponse.data.employee.result[0]:  profileResponse.data.profile.result[0];
         console.log('profile-*-', profileData);
+        console.log('selectedRole-*-', selectedRole);
         setProfileData(profileData);
     } catch (error) {
         console.error("Error fetching profile data:", error);

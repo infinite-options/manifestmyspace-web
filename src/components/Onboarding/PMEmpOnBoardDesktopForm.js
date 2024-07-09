@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
+const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
@@ -64,7 +64,7 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-    const { user, isBusiness, isManager, roleName,selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn } = useUser();
+    const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn } = useUser();
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
@@ -77,7 +77,7 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         bank_account: { account_number: "", routing_number: "", checked: false },
     });
     const [businesses, setBusinesses] = useState([]);
-    const [selectedBusiness, setSelectedBusiness] = useState("");
+    const [selectedBusiness, setSelectedBusiness] = useState(profileData.employee_business_id || "");
     const [selectedBizRole, setSelectedBizRole] = useState("");
     const [businessPhoto, setBusinessPhoto] = useState(DefaultProfileImg);
 
@@ -96,26 +96,20 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         const fetchProfileData = async () => {
             setShowSpinner(true);
             try {
-            //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
-            // const profileData = profileResponse.data.profile.result[0];
-    
-           // setBusinessName(profileData.business_name || "");
-           
-            setFirstName(profileData.employee_first_name || "");
-            setLastName(profileData.employee_last_name || "");
-            setPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
-            setEmail(profileData.employee_email || "");
-            // setEmpPhoto(employeeData.employee_photo_url ? { image: employeeData.employee_photo_url } : null);
-            setSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
-            setMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
-            setAddress(profileData.employee_address || "");
-            setUnit(profileData.employee_unit || "");
-            setCity(profileData.employee_city || "");
-            setState(profileData.employee_state || "");
-            setZip(profileData.employee_zip || "");
-            
-    
-            const paymentMethods = JSON.parse(profileData.paymentMethods);
+                setFirstName(profileData.employee_first_name || "");
+                setLastName(profileData.employee_last_name || "");
+                setPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
+                setEmail(profileData.employee_email || "");
+                setSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+                setMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+                setAddress(profileData.employee_address || "");
+                setUnit(profileData.employee_unit || "");
+                setCity(profileData.employee_city || "");
+                setState(profileData.employee_state || "");
+                setZip(profileData.employee_zip || "");
+                setSelectedBusiness(profileData.employee_business_id || "");
+
+                const paymentMethods = JSON.parse(profileData.paymentMethods);
                 const updatedPaymentMethods = {
                     paypal: { value: "", checked: false },
                     apple_pay: { value: "", checked: false },
@@ -140,20 +134,17 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     }
                 });
                 setPaymentMethods(updatedPaymentMethods);
-    
+
                 setShowSpinner(false);
             } catch (error) {
                 console.error("Error fetching profile data:", error);
                 setShowSpinner(false);
             }
-            
+
         };
-    
+
         fetchProfileData();
-    
-    
-    }, []);
-    
+    }, [profileData]);
 
     useEffect(() => {
         fetchBusinesses();
@@ -348,12 +339,12 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         return;
     };
 
-    const handleNavigation =(e) => {
+    const handleNavigation = (e) => {
         selectRole('MANAGER');
         setLoggedIn(true);
         navigate("/managerDashboard")
     }
-    
+
 
     const handleChangeChecked = (e) => {
         const { name, checked } = e.target;
