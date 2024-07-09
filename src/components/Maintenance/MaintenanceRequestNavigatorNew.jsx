@@ -533,17 +533,17 @@ export default function MaintenanceRequestNavigatorNew({
 										color: '#2D2F48',
 									}}
 								>
-									<Typography variant="body1" sx={{ marginBottom: 1 }}>
-										<strong>Issue:</strong> {data?.maintenance_title}
+									<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+										<strong style={{ minWidth: '150px' }}>Issue:</strong> {data?.maintenance_title}
 									</Typography>
-									<Typography variant="body1" sx={{ marginBottom: 1 }}>
-										<strong>Description:</strong> {data?.maintenance_desc}
+									<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+										<strong style={{ minWidth: '150px' }}>Description:</strong> {data?.maintenance_desc}
 									</Typography>
 									<Typography
 										variant="body1"
-										sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}
+										sx={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}
 									>
-										<strong>Priority:</strong>
+										<strong style={{ minWidth: '150px' }}>Priority:</strong>
 										<FormControl
 											variant="outlined"
 											sx={{
@@ -589,29 +589,29 @@ export default function MaintenanceRequestNavigatorNew({
 									</Typography>
 									<Grid container spacing={2} sx={{ marginTop: 1 }}>
 										<Grid item xs={6}>
-											<Typography variant="body1" sx={{ marginBottom: 1 }}>
-												<strong>Reported By:</strong> {data?.maintenance_request_created_by}
+											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+												<strong style={{ minWidth: '150px' }}>Reported By:</strong> {data?.maintenance_request_created_by}
 											</Typography>
-											<Typography variant="body1" sx={{ marginBottom: 1 }}>
-												<strong>Tenant:</strong> {tenantName}
+											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+												<strong style={{ minWidth: '150px' }}>Tenant:</strong> {tenantName}
 											</Typography>
-											<Typography variant="body1" sx={{ marginBottom: 1 }}>
-												<strong>Owner:</strong>{' '}
+											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 1 }}>
+												<strong style={{ minWidth: '150px' }}>Owner:</strong>{' '}
 												{data?.owner_first_name + ' ' + data?.owner_last_name}
 											</Typography>
 										</Grid>
 										<Grid item xs={6}>
-											<Typography variant="body1" sx={{ marginBottom: 1 }}>
-												<strong>Reported On:</strong>{' '}
+											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+												<strong style={{ minWidth: '150px' }}>Reported On:</strong>{' '}
 												{dayjs(data?.maintenance_request_created_date).format('MM-DD-YYYY')}
 											</Typography>
-											<Typography variant="body1" sx={{ marginBottom: 1 }}>
-												<strong>Days Open:</strong>{' '}
+											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+												<strong style={{ minWidth: '150px' }}>Days Open:</strong>{' '}
 												{dayjs().diff(dayjs(data?.maintenance_request_created_date), 'day')}{' '}
 												days
 											</Typography>
-											<Typography variant="body1" sx={{ marginBottom: 1 }}>
-												<strong>Maintenance ID:</strong> {data?.maintenance_request_uid}
+											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 1 }}>
+												<strong style={{ minWidth: '150px' }}>Maintenance ID:</strong> {data?.maintenance_request_uid}
 											</Typography>
 										</Grid>
 									</Grid>

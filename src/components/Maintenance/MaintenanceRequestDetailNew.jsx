@@ -435,7 +435,7 @@ export default function MaintenanceRequestDetailNew({ maintenance_request_index,
               <Box
                 sx={{
                   paddingBottom: "20px",
-                  paddingTop: "20px",
+                  paddingTop: "0px",
                 }}
               >
                 {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ? (
