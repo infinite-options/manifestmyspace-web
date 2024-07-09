@@ -559,7 +559,7 @@ function SelectMonthComponentTest(props) {
 
 // This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
-  // console.log("In Statement Table: ", props);
+  console.log("In Statement Table: ", props);
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -611,8 +611,18 @@ function StatementTable(props) {
                   {item.property_address} {item.property_unit}{" "}
                 </Typography>
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item[key] ? item[key] : 0}</Typography>
+              </TableCell> */}
+              <TableCell>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["total_paid"] ? item["total_paid"] : 0}
+                </Typography>
               </TableCell>
               {/* <TableCell align="right">
                 <DeleteIcon />
@@ -632,7 +642,14 @@ function StatementTable(props) {
               <TableCell>{item.pur_notes}</TableCell>
               <TableCell>{item.pur_description}</TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item[key] ? item[key] : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["total_paid"] ? item["total_paid"] : 0}
+                </Typography>
               </TableCell>
               {/* <TableCell align="right">
                 <EditIcon />
@@ -670,6 +687,9 @@ function StatementTable(props) {
                         <TableCell align="right">
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
                         </TableCell>
+                        <TableCell align="right">
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                   </Table>
@@ -703,6 +723,9 @@ function StatementTable(props) {
                             {" "}
                             {category} {getCategoryCount(category)}{" "}
                           </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
                         </TableCell>
                         <TableCell align="right">
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
