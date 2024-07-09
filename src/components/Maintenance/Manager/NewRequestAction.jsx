@@ -182,7 +182,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
 							},
 						}}
 					>
-						Assign Resource
+						Schedule Repair
 					</Button>
 					<Button
 						variant="contained"
@@ -206,7 +206,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
 							},
 						}}
 					>
-						Maintenance Quotes
+						Request Quotes
 					</Button>
 					<Button
 						variant="contained"
