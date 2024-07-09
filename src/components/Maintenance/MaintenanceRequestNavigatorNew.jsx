@@ -268,54 +268,66 @@ export default function MaintenanceRequestNavigatorNew({
 		// console.log(completionStatus)
 	}
 
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const scrollRef = useRef(null);
-  
-    useEffect(() => {
-        console.log('inside useeffect---');
-      if (scrollRef.current) {
-        scrollRef.current.scrollLeft = scrollPosition;
-        console.log('scrollRef.current.scrollLeft---', scrollRef.current.scrollLeft);
-      }
-    }, [scrollPosition]);
-  
-    const scrollLeft = () => {
-      if (scrollRef.current) {
-        const newScrollPosition = Math.max(scrollRef.current.scrollLeft - 400, 0);
-        console.log('Scroll Left - newScrollPosition:', newScrollPosition);
-        setScrollPosition(newScrollPosition);
-      }
-    };
-  
-    const handleScroll = (direction) => {
-        if (scrollRef.current) {
-          const scrollAmount = 200;
-          const currentScrollPosition = scrollRef.current.scrollLeft;
-    
-          if (direction === 'left') {
-            const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-            scrollRef.current.scrollLeft = newScrollPosition;
-            console.log('Scroll Left - New Scroll Position:', newScrollPosition, 'Current Scroll Position:', scrollRef.current.scrollLeft);
-          } else {
-            const newScrollPosition = currentScrollPosition + scrollAmount;
-            scrollRef.current.scrollLeft = newScrollPosition;
-            console.log('Scroll Right - New Scroll Position:', newScrollPosition, 'Current Scroll Position:', scrollRef.current.scrollLeft);
-          }
-        } else {
-          console.log('scrollRef.current is null');
-        }
-      };
-    const scrollRight = () => {
-      if (scrollRef.current) {
-        const newScrollPosition = scrollRef.current.scrollLeft + 400;
-        console.log('Scroll Right - newScrollPosition:', newScrollPosition);
-        setScrollPosition(newScrollPosition);
-      }
-    };
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		console.log('inside useeffect---');
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+			console.log('scrollRef.current.scrollLeft---', scrollRef.current.scrollLeft);
+		}
+	}, [scrollPosition]);
+
+	const scrollLeft = () => {
+		if (scrollRef.current) {
+			const newScrollPosition = Math.max(scrollRef.current.scrollLeft - 400, 0);
+			console.log('Scroll Left - newScrollPosition:', newScrollPosition);
+			setScrollPosition(newScrollPosition);
+		}
+	};
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			const currentScrollPosition = scrollRef.current.scrollLeft;
+
+			if (direction === 'left') {
+				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				scrollRef.current.scrollLeft = newScrollPosition;
+				console.log(
+					'Scroll Left - New Scroll Position:',
+					newScrollPosition,
+					'Current Scroll Position:',
+					scrollRef.current.scrollLeft
+				);
+			} else {
+				const newScrollPosition = currentScrollPosition + scrollAmount;
+				scrollRef.current.scrollLeft = newScrollPosition;
+				console.log(
+					'Scroll Right - New Scroll Position:',
+					newScrollPosition,
+					'Current Scroll Position:',
+					scrollRef.current.scrollLeft
+				);
+			}
+		} else {
+			console.log('scrollRef.current is null');
+		}
+	};
+	const scrollRight = () => {
+		if (scrollRef.current) {
+			const newScrollPosition = scrollRef.current.scrollLeft + 400;
+			console.log('Scroll Right - newScrollPosition:', newScrollPosition);
+			setScrollPosition(newScrollPosition);
+		}
+	};
 	useEffect(() => {
 		displayScheduledDate(data);
 	}, [data]);
 	//automatic refresh problem - the data is not displaying after save update
+
+    const tenantName = `${data?.tenant_first_name ? data?.tenant_first_name : ''} ${data?.tenant_last_name ? data?.tenant_last_name : ''}`.trim();
 
 	return (
 		<div style={{ paddingBottom: '10px' }}>
@@ -381,7 +393,7 @@ export default function MaintenanceRequestNavigatorNew({
 							padding: '0px',
 						}}
 					>
-                        	<CardContent
+						<CardContent
 							sx={{
 								flexDirection: 'column',
 								alignItems: 'left',
@@ -389,48 +401,59 @@ export default function MaintenanceRequestNavigatorNew({
 								width: '100%',
 								padding: '0px',
 							}}
-						><Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 2, position: 'relative' }}>
-                           
-                        <IconButton onClick={() => handleScroll('left')} disabled={scrollRef.current?.scrollLeft === 0} >
-                            <ArrowBackIosIcon />
-                        </IconButton>
-                        <Box
-                            ref={scrollRef}
-                            sx={{
-                                display: 'flex',
-                                overflowX: 'auto',
-                                scrollbarWidth: 'none',
-                                msOverflowStyle: 'none',
-                                '&::-webkit-scrollbar': {
-                                    display: 'none',
-                                },
-                            }}
-                        >
-                            <ImageList sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-                                {images.map((image, index) => (
-                                    <ImageListItem
-                                        key={index}
-                                        sx={{
-                                            width: 'auto',
-                                            flex: '0 0 auto',
-                                            border: '1px solid #ccc',
-                                            margin: '0 2px',
-                                        }}
-                                    >
-                                        <img
-                                            src={image}
-                                            alt={`maintenance-${index}`}
-                                            style={{ height: '150px', width: '150px', objectFit: 'cover' }}
-                                        />
-                                    </ImageListItem>
-                                ))}
-                            </ImageList>
-                        </Box>
-                        <IconButton onClick={() => handleScroll('right')}>
-                            <ArrowForwardIosIcon />
-                        </IconButton>
-                    </Box>
-                    </CardContent>
+						>
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									padding: 2,
+									position: 'relative',
+								}}
+							>
+								<IconButton
+									onClick={() => handleScroll('left')}
+									disabled={scrollRef.current?.scrollLeft === 0}
+								>
+									<ArrowBackIosIcon />
+								</IconButton>
+								<Box
+									ref={scrollRef}
+									sx={{
+										display: 'flex',
+										overflowX: 'auto',
+										scrollbarWidth: 'none',
+										msOverflowStyle: 'none',
+										'&::-webkit-scrollbar': {
+											display: 'none',
+										},
+									}}
+								>
+									<ImageList sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+										{images.map((image, index) => (
+											<ImageListItem
+												key={index}
+												sx={{
+													width: 'auto',
+													flex: '0 0 auto',
+													border: '1px solid #ccc',
+													margin: '0 2px',
+												}}
+											>
+												<img
+													src={image}
+													alt={`maintenance-${index}`}
+													style={{ height: '150px', width: '150px', objectFit: 'cover' }}
+												/>
+											</ImageListItem>
+										))}
+									</ImageList>
+								</Box>
+								<IconButton onClick={() => handleScroll('right')}>
+									<ArrowForwardIosIcon />
+								</IconButton>
+							</Box>
+						</CardContent>
 						<CardContent
 							sx={{
 								flexDirection: 'column',
@@ -444,7 +467,7 @@ export default function MaintenanceRequestNavigatorNew({
 								<Stack direction="row">
 									<CreateIcon
 										sx={{
-											color: '#FFFFFF',
+											color: '#160449',
 											marginLeft: 'auto',
 											fontSize: '18px',
 											padding: '15px',
@@ -464,25 +487,52 @@ export default function MaintenanceRequestNavigatorNew({
 										}
 									/>
 								</Stack>
-								<Typography sx={maintenanceSecondary}>
-									<u>
-										{data?.property_address}{' '}
-										{data?.property_unit !== '' ? 'Unit ' + data?.property_unit : null},{' '}
-										{data?.property_city} {data?.property_state} {data?.property_zip}
-									</u>
-								</Typography>
-								<Typography sx={maintenanceSecondary}>
-									Estimated Cost:{' '}
-									{data?.maintenance_estimated_cost
-										? '$' + data?.maintenance_estimated_cost
-										: 'Not reported'}
-								</Typography>
-								<Typography sx={maintenanceSecondary}>
-									Reported: {formattedDate} | Open: {numOpenRequestDays} days
-								</Typography>
-								<Typography sx={maintenanceSecondary}>{displayEarliestAvailableDate(data)}</Typography>
-								<Typography sx={maintenanceSecondary}>{displayScheduledDate(data)}</Typography>
-								<Typography sx={maintenanceTertiary}>{data?.maintenance_desc}</Typography>
+
+								<Box
+									sx={{
+										padding: theme.spacing(2),
+										backgroundColor: theme.palette.primary.main,
+										borderRadius: '10px',
+										marginTop: theme.spacing(2),
+									}}
+								>
+                                    <Typography variant="body1">
+												<strong>Issue:</strong> {data?.maintenance_title}
+											</Typography>
+											<Typography variant="body1">
+												<strong>Description:</strong> {data?.maintenance_desc}
+											</Typography>
+											<Typography variant="body1">
+												<strong>Priority:</strong> {data?.maintenance_priority}
+											</Typography>
+									<Grid container spacing={2}>
+										<Grid item xs={6}>
+                                        <Typography variant="body1">
+												<strong>Reported By:</strong> {data?.maintenance_request_created_by}
+											</Typography>
+											<Typography variant="body1">
+												<strong>Tenant:</strong> {tenantName}
+											</Typography>
+											<Typography variant="body1">
+												<strong>Owner:</strong> {data?.owner_first_name + ' ' + data?.owner_last_name}
+											</Typography>
+										</Grid>
+										<Grid item xs={6}>
+											<Typography variant="body1">
+												<strong>Reported On:</strong>{' '}
+												{dayjs(data?.maintenance_request_created_date).format('MM-DD-YYYY')}
+											</Typography>
+											<Typography variant="body1">
+												<strong>Days Open:</strong>{' '}
+												{dayjs().diff(dayjs(data?.maintenance_request_created_date), 'day')}{' '}
+												days
+											</Typography>
+											<Typography variant="body1">
+												<strong>Maintenance ID:</strong> {data?.maintenance_request_uid}
+											</Typography>
+										</Grid>
+									</Grid>
+								</Box>
 								<Grid container sx={{ padding: '0px' }}>
 									<QuotesTable
 										maintenanceItem={data}
