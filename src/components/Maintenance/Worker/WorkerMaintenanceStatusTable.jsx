@@ -30,15 +30,13 @@ export const getChipColor = (priority) => {
   }
 };
 
-export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount }) {
+export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsCount }) {
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId, } = useUser();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   //console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
-  //console.log('------allMaintenanceData----', allMaintenanceData);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
-  // console.log("----MaintenanceStatusTable----", status, color, maintenanceItemsForStatus, allMaintenanceData, maintenanceRequestsCount);
 const [data, setdata] = useState({});
   const tableTextStyle = {
     backgroundColor: color,
@@ -130,9 +128,9 @@ const [data, setdata] = useState({});
     //console.log('======inside useEffect of mainstatus=====');
     const fetchData = async () => {
       try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+        //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
         //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
-        const data = await response.json();
+        //const data = await response.json();
         //console.log('-----data inside workerMaintenanceTable----', data);
        
 
@@ -145,28 +143,28 @@ const [data, setdata] = useState({});
         }
     }
 
-        const filterMaintenanceRequests = (data, address) => {
+        const filterMaintenanceRequests = (allMaintenanceStatusData, address) => {
           const filteredRequests = {};
-          for (const status in data.result) {
+          for (const status in allMaintenanceStatusData.result) {
               
               // Check if maintenance_items exists and is an array
-              if (data.result[status].maintenance_items.length > 0) {
+              if (allMaintenanceStatusData.result[status].maintenance_items.length > 0) {
                   
                   filteredRequests[status] = {
-                    ...data.result[status],
-                    maintenance_items: data.result[status].maintenance_items.filter(item => address.includes(item.property_address))
+                    ...allMaintenanceStatusData.result[status],
+                    maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter(item => address.includes(item.property_address))
                     
                 };
               } else {
                   filteredRequests[status] = {
-                      ...data.result[status],
+                      ...allMaintenanceStatusData.result[status],
                       maintenance_items: []
                   };
               }
           }
           return filteredRequests;
       };
-      const filteredMaintenanceRequests = filterMaintenanceRequests(data, Array.from(addresses));
+      const filteredMaintenanceRequests = filterMaintenanceRequests(allMaintenanceStatusData, Array.from(addresses));
 
         //console.log('-----data inside workerMaintenanceTable----', data);
         //console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
