@@ -324,9 +324,9 @@ function getTotalExpenseByType(data, month, year, expected) {
 
 function getTotalRevenueByMonthYear(data, month, year) {
   console.log("In getTotalRevenueByMonthYear: ", data, month, year);
-  let revenueItems = data.result.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
+  let revenueItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
   console.log("After filter revenueItems: ", revenueItems);
-  let totalRevenue = revenueItems.reduce((acc, item) => {
+  let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
   }, 0.0);
   console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
@@ -334,8 +334,8 @@ function getTotalRevenueByMonthYear(data, month, year) {
 }
 
 function getTotalExpenseByMonthYear(data, month, year) {
-  let expenseItems = data.result.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "expense");
-  let totalExpense = expenseItems.reduce((acc, item) => {
+  let expenseItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "expense");
+  let totalExpense = expenseItems?.reduce((acc, item) => {
     return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
   }, 0.0);
   return totalExpense;
@@ -343,8 +343,8 @@ function getTotalExpenseByMonthYear(data, month, year) {
 
 function getTotalExpectedRevenueByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
-  let revenueItems = data.result.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
-  let totalRevenue = revenueItems.reduce((acc, item) => {
+  let revenueItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
+  let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
   }, 0.0);
   return totalRevenue;
@@ -352,8 +352,8 @@ function getTotalExpectedRevenueByMonthYear(data, month, year) {
 
 function getTotalExpectedExpenseByMonthYear(data, month, year) {
   // console.log(data)
-  let expenseItems = data.result.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "expense");
-  let totalExpense = expenseItems.reduce((acc, item) => {
+  let expenseItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "expense");
+  let totalExpense = expenseItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
   }, 0.0);
   return totalExpense;

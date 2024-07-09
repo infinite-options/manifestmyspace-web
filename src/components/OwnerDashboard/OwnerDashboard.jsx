@@ -101,7 +101,7 @@ export default function OwnerDashboard() {
       setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
 
       // CASHFLOW Status
-      setCashflowStatusData(jsonData.CashflowStatus.result);
+      setCashflowStatusData(jsonData.CashflowStatus);
 
       // RENT Status
       setRentStatus(jsonData.RentStatus.result);
