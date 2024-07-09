@@ -268,27 +268,50 @@ export default function MaintenanceRequestNavigatorNew({
 		// console.log(completionStatus)
 	}
 
-	//const images1 = [<BuildIcon />, <BuildIcon />, <BuildIcon />, <BuildIcon />, <BuildIcon />]; // Example images
-
-	const [scrollPosition, setScrollPosition] = useState(0);
-	const scrollRef = useRef();
-
-	const scrollLeft = () => {
-		if (scrollRef.current) {
-			scrollRef.current.scrollLeft -= 200;
-			setScrollPosition(scrollRef.current.scrollLeft);
-		}
-	};
-
-	const scrollRight = () => {
-		console.log('---scrollRef--', scrollRef.current.scrollLeft);
-		if (scrollRef.current) {
-			scrollRef.current.scrollLeft += 200;
-			console.log('---inside scrollRef--', scrollRef.current.scrollLeft);
-			setScrollPosition(scrollRef.current.scrollLeft);
-		}
-	};
-
+    const [scrollPosition, setScrollPosition] = useState(0);
+    const scrollRef = useRef(null);
+  
+    useEffect(() => {
+        console.log('inside useeffect---');
+      if (scrollRef.current) {
+        scrollRef.current.scrollLeft = scrollPosition;
+        console.log('scrollRef.current.scrollLeft---', scrollRef.current.scrollLeft);
+      }
+    }, [scrollPosition]);
+  
+    const scrollLeft = () => {
+      if (scrollRef.current) {
+        const newScrollPosition = Math.max(scrollRef.current.scrollLeft - 400, 0);
+        console.log('Scroll Left - newScrollPosition:', newScrollPosition);
+        setScrollPosition(newScrollPosition);
+      }
+    };
+  
+    const handleScroll = (direction) => {
+        if (scrollRef.current) {
+          const scrollAmount = 200;
+          const currentScrollPosition = scrollRef.current.scrollLeft;
+    
+          if (direction === 'left') {
+            const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+            scrollRef.current.scrollLeft = newScrollPosition;
+            console.log('Scroll Left - New Scroll Position:', newScrollPosition, 'Current Scroll Position:', scrollRef.current.scrollLeft);
+          } else {
+            const newScrollPosition = currentScrollPosition + scrollAmount;
+            scrollRef.current.scrollLeft = newScrollPosition;
+            console.log('Scroll Right - New Scroll Position:', newScrollPosition, 'Current Scroll Position:', scrollRef.current.scrollLeft);
+          }
+        } else {
+          console.log('scrollRef.current is null');
+        }
+      };
+    const scrollRight = () => {
+      if (scrollRef.current) {
+        const newScrollPosition = scrollRef.current.scrollLeft + 400;
+        console.log('Scroll Right - newScrollPosition:', newScrollPosition);
+        setScrollPosition(newScrollPosition);
+      }
+    };
 	useEffect(() => {
 		displayScheduledDate(data);
 	}, [data]);
@@ -367,7 +390,8 @@ export default function MaintenanceRequestNavigatorNew({
 								padding: '0px',
 							}}
 						><Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 2, position: 'relative' }}>
-                        <IconButton onClick={scrollLeft} disabled={scrollPosition === 0} >
+                           
+                        <IconButton onClick={() => handleScroll('left')} disabled={scrollRef.current?.scrollLeft === 0} >
                             <ArrowBackIosIcon />
                         </IconButton>
                         <Box
@@ -402,7 +426,7 @@ export default function MaintenanceRequestNavigatorNew({
                                 ))}
                             </ImageList>
                         </Box>
-                        <IconButton onClick={scrollRight}>
+                        <IconButton onClick={() => handleScroll('right')}>
                             <ArrowForwardIosIcon />
                         </IconButton>
                     </Box>
