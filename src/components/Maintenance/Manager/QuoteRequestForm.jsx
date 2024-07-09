@@ -306,19 +306,21 @@ export default function QuoteRequestForm() {
 				>
 					<Stack
 						direction="row"
-						justifyContent="center"
+						justifyContent="space-between"
 						alignItems="center"
 						sx={{
 							paddingBottom: '20px',
 							paddingLeft: '0px',
 							paddingRight: '0px',
+							width: '100%',
 						}}
 					>
 						<Box
-							sx={{
-								position: 'absolute',
-								left: isMobile ? '30px' : '43%',
-							}}
+							position="relative"
+							display="flex"
+							justifyContent="flex-start"
+							alignItems="center"
+							flexGrow={1}
 						>
 							<Button onClick={() => handleBackButton()}>
 								<ArrowBackIcon
@@ -326,7 +328,8 @@ export default function QuoteRequestForm() {
 								/>
 							</Button>
 						</Box>
-						<Box direction="row" justifyContent="center" alignItems="center">
+						<Box position="relative"
+							display="flex" justifyContent="center" alignItems="center" flexGrow={1}>
 							<Typography
 								sx={{
 									color: theme.typography.primary.black,
@@ -337,7 +340,13 @@ export default function QuoteRequestForm() {
 								Maintenance
 							</Typography>
 						</Box>
-						<Box position="absolute" right={30}>
+						<Box
+							position="relative"
+							display="flex"
+							justifyContent="flex-end"
+							alignItems="center"
+							flexGrow={1}
+						>
 							<Button onClick={() => navigateToAddMaintenanceItem()}>
 								<AddIcon
 									sx={{ color: theme.typography.primary.black, fontSize: '30px', margin: '5px' }}

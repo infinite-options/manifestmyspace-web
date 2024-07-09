@@ -157,9 +157,12 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
 								backgroundColor: '#a7b8e6',
 							},
 						}}
+						onClick={() => setShowRequestMoreInfo(true)}
 					>
 						Request Details
 					</Button>
+					<RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
+                
 					<Button
 						variant="contained"
 						sx={{
@@ -181,6 +184,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
 								backgroundColor: '#FFC614',
 							},
 						}}
+						onClick={() => setShowModal(true)}
 					>
 						Schedule Repair
 					</Button>
@@ -205,6 +209,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
 								backgroundColor: '#F87C7A',
 							},
 						}}
+						onClick={() => handleNavigateToQuotesRequested()}
 					>
 						Request Quotes
 					</Button>
