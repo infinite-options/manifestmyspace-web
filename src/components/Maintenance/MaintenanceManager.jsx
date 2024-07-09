@@ -145,6 +145,7 @@ export default function MaintenanceManager() {
 	const colorStatus = theme.colorStatusPMO;
 	const [refresh, setRefresh] = useState(false || location.state?.refresh);
 
+	const propertyIdFromPropertyDetail = location.state?.propertyId || null;
 	const selectedProperty = location.state?.selectedProperty || null;
 	// console.log("ROHIT - MaintenanceManager - selectedProperty - ", selectedProperty);
 
@@ -204,7 +205,8 @@ export default function MaintenanceManager() {
 						addedAddresses.push(item.property_address);
 						if (!propertyList.includes(item.property_address)) {
 							propertyList.push({
-								address: item.property_address,								
+								property_uid: item.property_id,
+								address: item.property_address + ' ' + item.property_unit,
 								checked: true,
 							});
 						}
@@ -212,12 +214,15 @@ export default function MaintenanceManager() {
 				}
 			}
 			// console.log("ROHIT - MaintenanceManager - propertyList - ", propertyList);
-			if(selectedProperty !== null){
-				setFilterPropertyList([selectedProperty])
-				// setFilterPropertyList(propertyList);
-			} else {			
-				setFilterPropertyList(propertyList);
+			if (propertyIdFromPropertyDetail) {
+				for (const property of propertyList) {
+					if (property.property_uid !== propertyIdFromPropertyDetail) {
+						property.checked = false;
+					}
+				}
 			}
+
+			setFilterPropertyList(propertyList);
 		}
 	}, [maintenanceData]);
 
@@ -256,7 +261,7 @@ export default function MaintenanceManager() {
 		if (filterPropertyList?.length > 0) {
 			filteredArray = filteredArray.filter((item) => {
 				for (const filterItem of filterPropertyList) {
-					if (filterItem.address === item.property_address && filterItem.checked) {
+					if (filterItem.property_uid === item.property_id && filterItem.checked) {
 						return true;
 					}
 				}
@@ -549,6 +554,7 @@ export default function MaintenanceManager() {
 									let maintenanceArray = maintenanceData[mappingKey] || [];
 
 									let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
+									
 
 									for (const item of filteredArray) {
 										newDataObject[mappingKey].push(item);
