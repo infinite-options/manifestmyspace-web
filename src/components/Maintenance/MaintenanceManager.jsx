@@ -165,9 +165,9 @@ export default function MaintenanceManager() {
 	const [filterPropertyList, setFilterPropertyList] = useState([]);
 	const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
 
-	// useEffect(() => {
-	// 	console.log("ROHIT - filterPropertyList - ", filterPropertyList);
-	// }, [filterPropertyList]);
+	useEffect(() => {
+		console.log("ROHIT - filterPropertyList - ", filterPropertyList);
+	}, [filterPropertyList]);
 
 	const businessId = user.businesses.MAINTENANCE.business_uid;
 
@@ -222,7 +222,12 @@ export default function MaintenanceManager() {
 				}
 			}
 
-			setFilterPropertyList(propertyList);
+			
+			if(selectedProperty === null || selectedProperty === undefined ){
+				setFilterPropertyList(propertyList);
+			}else{
+				setFilterPropertyList([selectedProperty]);
+			}
 		}
 	}, [maintenanceData]);
 

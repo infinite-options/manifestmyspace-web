@@ -894,6 +894,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
                   state: {
                     selectedProperty: {
                       address: params.row.property_address,
+                      property_uid: params.row.property_uid,
                       checked: true,
                     },
                   },
