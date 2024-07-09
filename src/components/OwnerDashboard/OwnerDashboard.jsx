@@ -77,19 +77,19 @@ export default function OwnerDashboard() {
   // const [allAnnouncementsData, setAllAnnouncementsData] = useState([]);
 
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
-  console.log("getProfileId()",getProfileId())
+  console.log("getProfileId()", getProfileId());
   useEffect(() => {
     const dataObject = {};
-    console.log("getProfileI$",getProfileId())
+    console.log("getProfileI$", getProfileId());
     const fetchData = async () => {
-      console.log("getProfileId*",getProfileId())
+      console.log("getProfileId*", getProfileId());
       if (!getProfileId()) navigate("/PrivateprofileName");
       setShowSpinner(true);
-      console.log("getProfileId()",getProfileId())
+      console.log("getProfileId()", getProfileId());
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
-      console.log("jsonData",jsonData)
-      
+      console.log("jsonData", jsonData);
+
       const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
       const announcementsResponseData = await announcementsResponse.json();
 
@@ -100,7 +100,7 @@ export default function OwnerDashboard() {
       // MAINTENANCE Status
       setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
 
-      // MAINTENANCE Status
+      // CASHFLOW Status
       setCashflowStatusData(jsonData.CashflowStatus.result);
 
       // RENT Status
@@ -149,7 +149,7 @@ export default function OwnerDashboard() {
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CashflowWidget data={cashflowStatusData}/>
+            <CashflowWidget data={cashflowStatusData} />
           </Grid>
 
           <Grid container item xs={12} md={8} columnSpacing={6}>
