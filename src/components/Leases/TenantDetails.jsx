@@ -294,8 +294,8 @@ const TenantDetails = ({ tenantWithId }) => {
                             color: "#160449",
                             fontWeight: theme.typography.primary.fontWeight,
                             fontSize: theme.typography.small,
-                            flexGrow: 1, // Make the Typography grow to take available space
-                            textAlign: 'center', // Center the text
+                            flexGrow: 1, 
+                            textAlign: 'center', 
                         }}>
                             Tenant Details
                         </Typography>
@@ -324,15 +324,16 @@ const TenantDetails = ({ tenantWithId }) => {
                                 sx={{ marginTop: '5px' }}
                                 name="tenant_first_name"
                                 label="First Name"
+                                fullWidth
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_first_name}
                                 onChange={handleInputChange}
-                                InputProps={{
-                                    style: {
-                                        height: '30px',
-                                        padding: '0 14px',
-                                    },
-                                }}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
                                 InputLabelProps={{
                                     style: {
                                         fontSize: '10px',
@@ -351,12 +352,12 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_last_name}
                                 onChange={handleInputChange}
-                                InputProps={{
-                                    style: {
-                                        height: '30px',
-                                        padding: '0 14px',
-                                    },
-                                }}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
                                 InputLabelProps={{
                                     style: {
                                         fontSize: '10px',
@@ -380,12 +381,12 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_phone_number}
                                 onChange={handleInputChange}
-                                InputProps={{
-                                    style: {
-                                        height: '30px',
-                                        padding: '0 14px',
-                                    },
-                                }}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
                                 InputLabelProps={{
                                     style: {
                                         fontSize: '10px',
@@ -404,12 +405,12 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_email}
                                 onChange={handleInputChange}
-                                InputProps={{
-                                    style: {
-                                        height: '30px',
-                                        padding: '0 14px',
-                                    },
-                                }}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
                                 InputLabelProps={{
                                     style: {
                                         fontSize: '10px',
@@ -434,12 +435,12 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_drivers_license_number}
                                 onChange={handleInputChange}
-                                InputProps={{
-                                    style: {
-                                        height: '30px',
-                                        padding: '0 14px',
-                                    },
-                                }}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
                                 InputLabelProps={{
                                     style: {
                                         fontSize: '10px',
@@ -458,12 +459,12 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_ssn}
                                 onChange={handleInputChange}
-                                InputProps={{
-                                    style: {
-                                        height: '30px',
-                                        padding: '0 14px',
-                                    },
-                                }}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
                                 InputLabelProps={{
                                     style: {
                                         fontSize: '10px',
@@ -479,7 +480,7 @@ const TenantDetails = ({ tenantWithId }) => {
                             </Typography>
                         </Grid>
                         <Grid item md={2.5} sx={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Typography sx={{ fontSize: "12px", color: "#273B4A", marginTop: "20px" }}>
+                            <Typography sx={{ fontSize: "12px", color: "#273B4A", marginTop: "30px" }}>
                                 Responsibility %
                             </Typography>
                         </Grid>
@@ -492,12 +493,12 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.lt_responsibility}
                                 onChange={handleInputChange}
-                                InputProps={{
-                                    style: {
-                                        height: '30px',
-                                        padding: '0 14px',
-                                    },
-                                }}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
                                 InputLabelProps={{
                                     style: {
                                         fontSize: '10px',
@@ -521,6 +522,7 @@ const TenantDetails = ({ tenantWithId }) => {
                                 backgroundColor: '#fabd00',
                             },
                         }}>Save</Button>
+                        {isEditing === true && 
                         <Button onClick={handleDeleteClick} sx={{
                             background: "#F87C7A",
                             color: "#160449",
@@ -533,7 +535,7 @@ const TenantDetails = ({ tenantWithId }) => {
                             '&:hover': {
                                 backgroundColor: '#f76462',
                             },
-                        }}>Delete</Button>
+                        }}>Delete</Button>}
 
                         <Dialog
                             open={openDeleteConfirmation}
