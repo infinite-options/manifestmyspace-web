@@ -111,12 +111,12 @@ export default function QuotesTable({ maintenanceItem, navigateParams, maintenan
 							'& .MuiDataGrid-cell': {
 								fontSize: '14px', // Change the font size
 								fontWeight: theme.typography.common.fontWeight, // Change the font weight
-								color: theme.typography.secondary.white,
+								color:'#160449',
 							},
 							'& .MuiDataGrid-columnHeaders': {
 								fontSize: '16px', // Change the font size
 								fontWeight: theme.typography.common.fontWeight, // Change the font weight
-								color: theme.typography.secondary.white, // Change the font color of the headers
+								color: '#160449', // Change the font color of the headers
 							},
 							border: 0,
 							'& .MuiDataGrid-main': {

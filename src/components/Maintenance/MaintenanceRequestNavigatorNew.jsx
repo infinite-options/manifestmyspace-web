@@ -62,7 +62,7 @@ export default function MaintenanceRequestNavigatorNew({
 	tabs,
 	navigateParams,
 }) {
-	console.log('----inside maintainance navigator---', requestIndex, updateRequestIndex);
+	//console.log('----inside maintainance navigator---', maintenanceQuotes);
 	const [currentIndex, setCurrentIndex] = useState(requestIndex);
 
 	const [activeStep, setActiveStep] = useState(0);
@@ -213,6 +213,8 @@ export default function MaintenanceRequestNavigatorNew({
 	};
 
 	function displayScheduledDate(data) {
+
+		console.log('displayScheduledDate from this one:', data);
 		if (data.maintenance_request_closed_date) {
 			return data.maintenance_request_closed_date !== 'null'
 				? `Closed: ${data.maintenance_request_closed_date}`
@@ -230,9 +232,7 @@ export default function MaintenanceRequestNavigatorNew({
 			return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`;
 		}
 	}
-
 	const data = requestData[currentIndex];
-	console.log('This is the data passed to Quotes Table: ', data);
 
 	let propertyAddress = ' ';
 	propertyAddress = propertyAddress.concat(
@@ -327,6 +327,9 @@ export default function MaintenanceRequestNavigatorNew({
 				return '#FF9800'; // Default color
 		}
 	};
+	useEffect(() => {
+		displayScheduledDate(data);
+	}, [data]);
 
 	return (
 		<div style={{ paddingBottom: '10px' }}>
@@ -577,6 +580,7 @@ export default function MaintenanceRequestNavigatorNew({
 										</Grid>
 									</Grid>
 								</Box>
+								
 								<Grid container sx={{ padding: '0px' }}>
 									<QuotesTable
 										maintenanceItem={data}

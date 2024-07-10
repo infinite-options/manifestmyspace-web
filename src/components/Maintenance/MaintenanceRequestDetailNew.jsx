@@ -165,7 +165,7 @@ export default function MaintenanceRequestDetailNew({ maintenance_request_index,
     });
   }, [maintenanceRequestIndex, currentStatus]);
 
-  /*
+  
   useEffect(() => {
     var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
  
@@ -192,7 +192,7 @@ export default function MaintenanceRequestDetailNew({ maintenance_request_index,
 
     setFilteredQuotes(uniqueQuotes);
   }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
-*/
+
   useEffect(() => {
     const getMaintenanceItemQuotes = async () => {
       const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
