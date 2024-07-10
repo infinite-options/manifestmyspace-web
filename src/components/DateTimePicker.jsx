@@ -32,6 +32,7 @@ const style = {
 };
 
 function DateTimePickerModal(props) {
+    console.log('---inside DateTimePickerModal---', props);
   const [availabilityDate, setAvailabilityDate] = useState(props.date || "");
   const [availabilityTime, setAvailabilityTime] = useState(props.time || "");
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -77,7 +78,7 @@ function DateTimePickerModal(props) {
     if (selection == "now"){
         return `Complete as of Today (${dayjs().format("MM-DD-YYYY")})`;
     } else if (selection == "schedule"){
-        return `Complete on Scheduled Date (${props.maintenanceItem.maintenance_scheduled_date !== null ? props.maintenanceItem.maintenance_scheduled_date : "N/A"})`;
+        return `Complete on Scheduled Date (${props.maintenanceItem.maintenance_scheduled_date !== null && props.maintenanceItem.maintenance_scheduled_date !== "null" ? props.maintenanceItem.maintenance_scheduled_date : "N/A"})`;
     }
   }
   
@@ -106,7 +107,7 @@ function DateTimePickerModal(props) {
       >
         <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-                {props.completeTicket ? "Select Completed Date and Time" : "Select Date and Time"}
+                Close Ticket
             </Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
             {props.completeTicket ? (
@@ -120,6 +121,8 @@ function DateTimePickerModal(props) {
                                 <FormControlLabel value="now" control={<Radio onChange={changeActiveDateSelector}/>} label={showFormLabel("now")}/>
                                 <FormControlLabel value="schedule" control={<Radio onChange={changeActiveDateSelector} disabled={props.maintenanceItem.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
                                 <FormControlLabel value="select" control={<Radio onChange={changeActiveDateSelector}/>} label={"Select Completed Date"} />
+                                <FormControlLabel value="cancel" control={<Radio/>}label={"Cancel Ticket without Completion"} />
+                            
                             </RadioGroup>
                         </FormControl>
                         </Grid>
@@ -195,14 +198,35 @@ function DateTimePickerModal(props) {
                 </Grid>
             </Grid>
             )}
-                <Grid item xs={12} sx={{padding: "8px"}}>
-                    <Button variant="contained" color="primary" onClick={() => submit()} sx={{backgroundColor: !activeButton ? "#B0B0B0" : "#3D5CAC", pointerEvents: !activeButton ? "none" : "auto"}}>
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                {props.completeTicket ? "Complete" : "Schedule"}
-                        </Typography>
-                    </Button>
-                </Grid>
-            </LocalizationProvider>
+                 <Grid container justifyContent="center" alignItems="center" sx={{ padding: "8px" }}>
+            <Grid item>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => submit()}
+                    sx={{
+                        backgroundColor: !activeButton ? "#B0B0B0" : "#FFC614", // Updated color to #FFC614
+                        pointerEvents: !activeButton ? "none" : "auto",
+                        width: "285px", // Set the width to match the image
+                        height: "40px", // Set the height to match the image
+                        borderRadius: "8px", // Rounded corners for the button
+                        '&:hover': {
+                            backgroundColor: "#FFC614", // Ensure hover color is the same
+                        },
+                    }}
+                >
+                    <Typography
+                        sx={{
+                            color: "#160449", // Ensure the text color is #160449 as in your images
+                            fontWeight: theme.typography.primary.fontWeight,
+                            fontSize: theme.typography.mediumFont,
+                        }}
+                    >
+                        Save
+                    </Typography>
+                </Button>
+            </Grid>
+        </Grid></LocalizationProvider>
         </Box>
       </Modal>
     </div>

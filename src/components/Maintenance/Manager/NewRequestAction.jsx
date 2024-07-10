@@ -1,5 +1,5 @@
-import { 
-    ThemeProvider, 
+import {
+    ThemeProvider,
     Typography,
     Box,
     Tabs,
@@ -11,26 +11,26 @@ import {
     Stack,
     Button,
     Grid,
-} from "@mui/material";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import theme from '../../../theme/theme';
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import ChatIcon from '@mui/icons-material/Chat';
-import CancelButton from "../MaintenanceComponents/CancelButton";
-import CompleteButton from "../MaintenanceComponents/CompleteButton";
-import RequestMoreInfo from "../Worker/RequestMoreInfo";
-import AlertMessage from "../AlertMessage";
-import DateTimePickerModal from "../../DateTimePicker";
-import { useUser } from "../../../contexts/UserContext";
-import Backdrop from "@mui/material/Backdrop"; 
-import CircularProgress from "@mui/material/CircularProgress";
-import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
-import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import APIConfig from "../../../utils/APIConfig";
+import CancelButton from '../MaintenanceComponents/CancelButton';
+import CompleteButton from '../MaintenanceComponents/CompleteButton';
+import RequestMoreInfo from '../Worker/RequestMoreInfo';
+import AlertMessage from '../AlertMessage';
+import DateTimePickerModal from '../../DateTimePicker';
+import { useUser } from '../../../contexts/UserContext';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import TenantProfileLink from '../../Maintenance/MaintenanceComponents/TenantProfileLink';
+import OwnerProfileLink from '../../Maintenance/MaintenanceComponents/OwnerProfileLink';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import APIConfig from '../../../utils/APIConfig';
 
 export default function NewRequestAction({ maintenanceItem, navigateParams, quotes }) {
     const navigate = useNavigate();
@@ -39,17 +39,17 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState('');
     const [showSpinner, setShowSpinner] = useState(false);
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     function handleNavigateToQuotesRequested() {
         if (isMobile) {
-            navigate("/quoteRequest", {
+            navigate('/quoteRequest', {
                 state: {
                     maintenanceItem,
-                    navigateParams
-                }
+                    navigateParams,
+                },
             });
         } else {
             if (maintenanceItem && navigateParams) {
@@ -70,10 +70,10 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
                         window.dispatchEvent(new Event('maintenanceRequestSelected'));
                     }, 0);
                 } catch (error) {
-                    console.error("Error setting sessionStorage: ", error);
+                    console.error('Error setting sessionStorage: ', error);
                 }
             } else {
-                console.error("maintenanceItem or navigateParams is undefined");
+                console.error('maintenanceItem or navigateParams is undefined');
             }
         }
     }
@@ -82,122 +82,150 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
             const formData = new FormData();
-            formData.append("maintenance_request_uid",  maintenanceItemUID);
-            formData.append("maintenance_scheduled_date", date); 
-            formData.append("maintenance_scheduled_time", time);
-            formData.append("maintenance_request_status", "SCHEDULED");
-            if (!maintenanceItem.maint_business_uid){
-                formData.append("maintenance_assigned_business", getProfileId());
+            formData.append('maintenance_request_uid', maintenanceItemUID);
+            formData.append('maintenance_scheduled_date', date);
+            formData.append('maintenance_scheduled_time', time);
+            formData.append('maintenance_request_status', 'SCHEDULED');
+            if (!maintenanceItem.maint_business_uid) {
+                formData.append('maintenance_assigned_business', getProfileId());
             }
             try {
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: 'PUT',
                     body: formData,
                 });
-            } catch (error){
-                console.log("error", error)
+            } catch (error) {
+                console.log('error', error);
             }
             setShowSpinner(false);
-        }
+        };
         await changeMaintenanceRequestStatus();
-        navigate(maintenanceRoutingBasedOnSelectedRole())
+        navigate(maintenanceRoutingBasedOnSelectedRole());
     }
 
     return (
-        <Box 
+        <Box
             sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
             }}
         >
-            <Backdrop
-                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={showSpinner}
-            >
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Grid container direction="row" columnSpacing={4} rowSpacing={6} >
-                <TenantProfileLink maintenanceItem={maintenanceItem}/>
-                <OwnerProfileLink maintenanceItem={maintenanceItem}/>
-                <Grid item xs={12} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: "#D6D5DA",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            width: "100%",
-                        }} 
-                        onClick={() => setShowRequestMoreInfo(true)}
-                    >
-                        <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
-                            Request More Info
-                        </Typography>
-                    </Button>
-                    <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
-                </Grid>
-           
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: "#9EAED6",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => setShowModal(true)}
-                    >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Schedule Repair
-                        </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: "#C06A6A",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleNavigateToQuotesRequested()}
-                    >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
+            <Card
+                sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    boxShadow: 'none',
+                    elevation: '0',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'left',
+                    justifyContent: 'left',
+                    padding: '0px',
+                }}
+            >
+                <Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}>
+                    <Grid item>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#a7b8e6',
+                                color: '#160449',
+                                textTransform: 'none',
+                                fontWeight: 'bold',
+                                borderRadius: '8px',
+                                width: '160px',
+                                height: '120px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                textAlign: 'center',
+                                padding: '10px',
+                                boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+                                whiteSpace: 'normal',
+                                '&:hover': {
+                                    backgroundColor: '#a7b8e6',
+                                },
+                            }}
+                            onClick={() => setShowRequestMoreInfo(true)}
+                        >
+                            Ask For Details
+                        </Button>
+                        <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem} />
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#FFC614',
+                                color: '#160449',
+                                textTransform: 'none',
+                                fontWeight: 'bold',
+                                borderRadius: '8px',
+                                width: '160px',
+                                height: '120px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                textAlign: 'center',
+                                padding: '10px',
+                                boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+                                whiteSpace: 'normal',
+                                '&:hover': {
+                                    backgroundColor: '#FFC614',
+                                },
+                            }}
+                            onClick={() => setShowModal(true)}
+                        >
+                            Schedule
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#F87C7A',
+                                color: '#160449',
+                                textTransform: 'none',
+                                fontWeight: 'bold',
+                                borderRadius: '8px',
+                                width: '160px',
+                                height: '120px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                textAlign: 'center',
+                                padding: '10px',
+                                boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+                                whiteSpace: 'normal',
+                                '&:hover': {
+                                    backgroundColor: '#F87C7A',
+                                },
+                            }}
+                            onClick={() => handleNavigateToQuotesRequested()}
+                        >
                             Request Quotes
-                        </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
+                    </Grid>
                 </Grid>
-                <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
-                <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
-            </Grid>
+            </Card>
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
             <DateTimePickerModal
                 setOpenModal={setShowModal}
                 open={showModal}
                 maintenanceItem={maintenanceItem}
-                date={""}
-                time={""}
+                date={''}
+                time={''}
                 handleSubmit={handleSubmit}
             />
         </Box>
-    )
+    );
 }
