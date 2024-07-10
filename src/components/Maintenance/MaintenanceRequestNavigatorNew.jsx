@@ -12,19 +12,13 @@ import {
 	Button,
 	Box,
 	Stack,
-	Paper,
 	Grid,
 } from '@mui/material';
 import theme from '../../theme/theme';
 import maintenanceRequestImage from './maintenanceRequest.png';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import MobileStepper from '@mui/material/MobileStepper';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import BuildIcon from '@mui/icons-material/Build';
 import CreateIcon from '@mui/icons-material/Create';
-import Slider from 'react-slick';
 import QuotesTable from './MaintenanceComponents/QuotesTable';
 import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
@@ -32,10 +26,10 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import ImageListItemBar from '@mui/material/ImageListItemBar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { IconButton } from '@mui/material';
+import APIConfig from '../../utils/APIConfig';
 
 function getInitialImages(requestData, currentIndex) {
 	try {
@@ -81,6 +75,11 @@ export default function MaintenanceRequestNavigatorNew({
 	const [year, setYear] = useState(new Date().getFullYear());
 
 	const navigate = useNavigate();
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+	const [priorities, setPriorities] = useState(
+		requestData.map((request) => request.maintenance_priority || 'Medium')
+	);
 
 	const maintenancePrimary = {
 		color: '#FFFFFF',
@@ -102,7 +101,6 @@ export default function MaintenanceRequestNavigatorNew({
 		fontSize: '18px',
 		paddingBottom: '0px',
 	};
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	function navigateToEditMaintenanceItem(
 		testIssue,
@@ -153,6 +151,7 @@ export default function MaintenanceRequestNavigatorNew({
 			}, 0);
 		}
 	}
+
 	useEffect(() => {
 		setCurrentIndex(requestIndex);
 	}, [requestIndex]);
@@ -180,8 +179,6 @@ export default function MaintenanceRequestNavigatorNew({
 		setCurrentIndex((prevIndex) => {
 			let newIndex = prevIndex + 1;
 			if (prevIndex < requestData.length - 1) {
-				let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
-
 				updateRequestIndex(newIndex, { changeTab: 'noChange' });
 				return newIndex;
 			} else {
@@ -195,7 +192,6 @@ export default function MaintenanceRequestNavigatorNew({
 		setCurrentIndex((prevIndex) => {
 			let newIndex = prevIndex - 1;
 			if (prevIndex > 0) {
-				let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 				updateRequestIndex(newIndex, { changeTab: 'noChange' });
 				return newIndex;
 			} else {
@@ -217,8 +213,6 @@ export default function MaintenanceRequestNavigatorNew({
 	};
 
 	function displayScheduledDate(data) {
-		console.log('displayScheduledDate from this one:', data);
-		// console.log("display quote info", JSON.parse(data.quote_info))
 		if (data.maintenance_request_closed_date) {
 			return data.maintenance_request_closed_date !== 'null'
 				? `Closed: ${data.maintenance_request_closed_date}`
@@ -233,20 +227,10 @@ export default function MaintenanceRequestNavigatorNew({
 			return 'Not Scheduled';
 		} else {
 			const formattedTime = dayjs(data.maintenance_scheduled_time, 'HH:mm').format('h:mm A');
-			// setFormattedTime(formattedTime)
-			// setFormattedDate(dayjs(data.maintenance_scheduled_date, "MM-DD-YYYY"));
 			return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`;
 		}
 	}
 
-	function displayEarliestAvailableDate(data) {
-		console.log('maintenance quotes in maintenanceRequestNavigator', maintenanceQuotes);
-		if (data) {
-			console.log(data);
-		}
-	}
-	console.log('This is the requestData passed to Quotes Table: ', requestData);
-	console.log('This is the currentIndex to Quotes Table: ', currentIndex);
 	const data = requestData[currentIndex];
 	console.log('This is the data passed to Quotes Table: ', data);
 
@@ -263,43 +247,28 @@ export default function MaintenanceRequestNavigatorNew({
 		' ',
 		data?.property_zip
 	);
-	// console.log("propertyAddress",typeof(propertyAddress))
 
 	let estimatedCost = ' ';
 	estimatedCost = estimatedCost.concat(
 		' ',
 		data?.maintenance_estimated_cost ? data?.maintenance_estimated_cost : 'Not reported'
 	);
-	// console.log("estimatedCost>>",typeof(estimatedCost))
 
 	let completionStatus = 'no';
 	if (data?.maintenance_request_status === 'Completed' || data?.maintenance_request_status === 'Closed') {
-		// console.log("inside ifffff", data?.maintenance_request_status)
 		completionStatus = 'yes';
 	} else {
-		// console.log(data?.maintenance_request_status)
 		completionStatus = 'no';
-		// console.log(completionStatus)
 	}
 
 	const [scrollPosition, setScrollPosition] = useState(0);
 	const scrollRef = useRef(null);
 
 	useEffect(() => {
-		console.log('inside useeffect---');
 		if (scrollRef.current) {
 			scrollRef.current.scrollLeft = scrollPosition;
-			console.log('scrollRef.current.scrollLeft---', scrollRef.current.scrollLeft);
 		}
 	}, [scrollPosition]);
-
-	const scrollLeft = () => {
-		if (scrollRef.current) {
-			const newScrollPosition = Math.max(scrollRef.current.scrollLeft - 400, 0);
-			console.log('Scroll Left - newScrollPosition:', newScrollPosition);
-			setScrollPosition(newScrollPosition);
-		}
-	};
 
 	const handleScroll = (direction) => {
 		if (scrollRef.current) {
@@ -309,71 +278,63 @@ export default function MaintenanceRequestNavigatorNew({
 			if (direction === 'left') {
 				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
 				scrollRef.current.scrollLeft = newScrollPosition;
-				console.log(
-					'Scroll Left - New Scroll Position:',
-					newScrollPosition,
-					'Current Scroll Position:',
-					scrollRef.current.scrollLeft
-				);
 			} else {
 				const newScrollPosition = currentScrollPosition + scrollAmount;
 				scrollRef.current.scrollLeft = newScrollPosition;
-				console.log(
-					'Scroll Right - New Scroll Position:',
-					newScrollPosition,
-					'Current Scroll Position:',
-					scrollRef.current.scrollLeft
-				);
 			}
-		} else {
-			console.log('scrollRef.current is null');
 		}
 	};
-	const scrollRight = () => {
-		if (scrollRef.current) {
-			const newScrollPosition = scrollRef.current.scrollLeft + 400;
-			console.log('Scroll Right - newScrollPosition:', newScrollPosition);
-			setScrollPosition(newScrollPosition);
-		}
-	};
-	useEffect(() => {
-		displayScheduledDate(data);
-	}, [data]);
-	//automatic refresh problem - the data is not displaying after save update
 
 	const tenantName = `${data?.tenant_first_name ? data?.tenant_first_name : ''} ${
 		data?.tenant_last_name ? data?.tenant_last_name : ''
 	}`.trim();
 
 	const priorityOptions = ['Low', 'Medium', 'High'];
-	const [priority, setPriority] = useState(data?.maintenance_priority || 'Medium');
 
-	const handlePriorityChange = (event) => {
-		setPriority(event.target.value);
+	const handlePriorityChange = async (event) => {
+		const newPriority = event.target.value;
+		const updatedPriorities = [...priorities];
+		updatedPriorities[currentIndex] = newPriority;
+		setPriorities(updatedPriorities);
+
+		try {
+			const editFormData = new FormData();
+
+			editFormData.append('maintenance_request_uid', data?.maintenance_request_uid);
+			editFormData.append('maintenance_priority', newPriority);
+
+			const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+				method: 'PUT',
+				body: editFormData,
+			});
+			const priorityData = await response.json();
+			console.log('data response handlePriorityChange', priorityData);
+		} catch (err) {
+			console.error('Error: ', err.message);
+		}
 	};
 
-    const getPriorityColor = (priority) => {
-        switch (priority) {
-            case 'Low':
-                return '#FFC614'; // Yellow
-            case 'Medium':
-                return '#FF8A00'; // Orange
-            case 'High':
-                return '#A52A2A'; // Red
-            default:
-                return '#FF8A00'; // Default to Medium if not specified
-        }
-    };
+	const getPriorityColor = (priority) => {
+		switch (priority) {
+			case 'Low':
+				return '#FFC614'; // Yellow
+			case 'Medium':
+				return '#FF8A00'; // Orange
+			case 'High':
+				return '#A52A2A'; // Red
+			default:
+				return '#FF9800'; // Default color
+		}
+	};
 
 	return (
 		<div style={{ paddingBottom: '10px' }}>
 			<Box
 				sx={{
-					flexDirection: 'column', // Added this to stack children vertically
+					flexDirection: 'column',
 					justifyContent: 'center',
-					width: '100%', // Take up full screen width
-					marginTop: theme.spacing(2), // Set the margin to 20px
-					// backgroundColor: color,
+					width: '100%',
+					marginTop: theme.spacing(2),
 					backgroundColor: theme.palette.primary.main,
 					borderRadius: '10px',
 				}}
@@ -386,7 +347,6 @@ export default function MaintenanceRequestNavigatorNew({
 							fontSize: theme.typography.largeFont,
 						}}
 					>
-						{/* {item.status} */}
 						{
 							<u>
 								{data?.property_address}{' '}
@@ -515,7 +475,7 @@ export default function MaintenanceRequestNavigatorNew({
 												data?.maintenance_request_type,
 												estimatedCost,
 												data.maintenance_title,
-												data.maintenance_priority,
+												priorities[currentIndex], // Use local state here
 												completionStatus,
 												data.maintenance_request_uid,
 												data.maintenance_property_id
@@ -554,7 +514,7 @@ export default function MaintenanceRequestNavigatorNew({
 											}}
 										>
 											<Select
-												value={priority}
+												value={priorities[currentIndex]} // Use local state here
 												onChange={handlePriorityChange}
 												input={
 													<OutlinedInput
@@ -567,7 +527,7 @@ export default function MaintenanceRequestNavigatorNew({
 												}
 												sx={{
 													height: '32px',
-													backgroundColor: getPriorityColor(priority),
+													backgroundColor: getPriorityColor(priorities[currentIndex]),
 													color: 'white',
 													borderRadius: '5px',
 													minWidth: '80px',
