@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ManagerOnBoardDesktopForm = () => {
+const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
@@ -104,8 +104,8 @@ const ManagerOnBoardDesktopForm = () => {
     const fetchProfileData = async () => {
         setShowSpinner(true);
         try {
-            const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
-        const profileData = profileResponse.data.profile.result[0];
+        //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+        // const profileData = profileResponse.data.profile.result[0];
 
         setBusinessName(profileData.business_name || "");
         setEmail(profileData.business_email || "");
@@ -154,21 +154,21 @@ const ManagerOnBoardDesktopForm = () => {
             setShowSpinner(false);
         }
         try {
-            const employeeResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`);
-            const employeeData = employeeResponse.data.employee.result[0];
+            // const employeeResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`);
+            // const employeeData = employeeResponse.data.employee.result[0];
       
-            setEmpFirstName(employeeData.employee_first_name || "");
-            setEmpLastName(employeeData.employee_last_name || "");
-            setEmpPhoneNumber(formatPhoneNumber(employeeData.employee_phone_number || ""));
-            setEmpEmail(employeeData.employee_email || "");
+            setEmpFirstName(profileData.employee_first_name || "");
+            setEmpLastName(profileData.employee_last_name || "");
+            setEmpPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
+            setEmpEmail(profileData.employee_email || "");
             // setEmpPhoto(employeeData.employee_photo_url ? { image: employeeData.employee_photo_url } : null);
-            setEmpSsn(employeeData.employee_ssn ? AES.decrypt(employeeData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
-            setEmpMask(employeeData.employee_ssn ? maskNumber(AES.decrypt(employeeData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
-            setEmpAddress(employeeData.employee_address || "");
-            setEmpUnit(employeeData.employee_unit || "");
-            setEmpCity(employeeData.employee_city || "");
-            setEmpState(employeeData.employee_state || "");
-            setEmpZip(employeeData.employee_zip || "");
+            setEmpSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+            setEmpMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+            setEmpAddress(profileData.employee_address || "");
+            setEmpUnit(profileData.employee_unit || "");
+            setEmpCity(profileData.employee_city || "");
+            setEmpState(profileData.employee_state || "");
+            setEmpZip(profileData.employee_zip || "");
       
             setShowSpinner(false);
           } catch (error) {
@@ -185,7 +185,7 @@ const ManagerOnBoardDesktopForm = () => {
 }, []);
 //isSave
 
-  const createProfile = async (form) => {
+  const saveProfile = async (form) => {
       const profileApi = "/profile"
       const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
       return data;
@@ -379,7 +379,7 @@ const ManagerOnBoardDesktopForm = () => {
       console.log("location",locations);
       const payload = getPayload();
       const form = encodeForm(payload);
-      const data = await createProfile(form);
+      const data = await saveProfile(form);
 
       
 

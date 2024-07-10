@@ -80,7 +80,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                 setLastName(profileData.owner_last_name || "");
                 setEmail(profileData.owner_email || "");
                 setPhoneNumber(formatPhoneNumber(profileData.owner_phone_number || ""));
-                setPhoto(profileData.owner_photo ? { image: profileData.owner_photo } : null);
+                setAddPhotoImg(profileData.owner_photo_url ? { image: profileData.owner_photo_url } : null);
                 setSsn(profileData.owner_ssn ? AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
                 setMask(profileData.owner_ssn ? maskNumber(AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
                 setAddress(profileData.owner_address || "");
@@ -129,7 +129,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
     // getProfileId, setFirstName, setLastName, setEmail, setPhoneNumber, setPhoto, setSsn, setMask, setAddress, setUnit, setCity, setState, setZip]);
 
 
-    const createProfile = async (form) => {
+    const saveProfile = async (form) => {
         const profileApi = "/profile";
         const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
         setIsSave(true)
@@ -196,7 +196,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
             owner_city: city,
             owner_state: state,
             owner_zip: zip,
-            owner_photo: photo,
+            owner_photo_url: photo,
         };
     };
 
@@ -295,21 +295,21 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
 
         const payload = getPayload();
         const form = encodeForm(payload);
-        const data = await createProfile(form);
+        const data = await saveProfile(form);
         const paymentSetup = await handlePaymentStep();
         console.log(paymentSetup);
         setShowSpinner(false);
-        if (data.owner_uid) {
-            updateProfileUid({ owner_id: data.owner_uid });
-            let role_id = {};
-            role_id = { owner_id: data.owner_uid };
-            setCookie("user", { ...user, ...role_id });
-            const paymentSetup = await handlePaymentStep(data.owner_uid);
-            console.log(paymentSetup);
-            setDashboardButtonEnabled(true);
-            setNextStepDisabled(true);
-            setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
-        }
+        // if (data.owner_uid) {
+        //     updateProfileUid({ owner_id: data.owner_uid });
+        //     let role_id = {};
+        //     role_id = { owner_id: data.owner_uid };
+        //     setCookie("user", { ...user, ...role_id });
+        //     const paymentSetup = await handlePaymentStep(data.owner_uid);
+        //     console.log(paymentSetup);
+        //     setDashboardButtonEnabled(true);
+        //     setNextStepDisabled(true);
+        //     setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
+        // }
     };
 
     const handleNavigation = (e) => {
@@ -374,7 +374,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                     }
                 } else {
                     paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-                    payload.push(JSON.stringify(paymentMethodPayload));
+                    payload.push(paymentMethodPayload);
                 }
             }
         });
@@ -675,14 +675,14 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
         </div> 
     );

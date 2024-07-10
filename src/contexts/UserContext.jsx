@@ -118,6 +118,17 @@ if (selectedRole=== 'TENANT') return user.tenant_id;
 if (selectedRole=== 'OWNER') return user.owner_id;
 
 };
+
+const getRoleId = () => {
+  // console.log('Raminsss', user)
+  if (selectedRole==='PM_EMPLOYEE') return user.businesses.MANAGEMENT.business_employee_id;
+  if (selectedRole==='MAINT_EMPLOYEE') return user.businesses.MAINTENANCE.business_employee_id;
+  if (isManagement()) return user.businesses.MANAGEMENT.business_owner_id;
+  if (isMaintenance()) return user.businesses.MAINTENANCE.business_owner_id;
+  if (selectedRole=== 'TENANT') return user.tenant_id;
+  if (selectedRole=== 'OWNER') return user.owner_id;
+  
+  };
 const logout = () => {
 console.log("In logout as ", user);
 cookiesObj.remove("user");
@@ -221,6 +232,7 @@ isLoggedIn,
 setLoggedIn,
 updateProfileUid,
 getProfileId,
+getRoleId,
 logout,
 maintenanceRoutingBasedOnSelectedRole,
 paymentRoutingBasedOnSelectedRole,

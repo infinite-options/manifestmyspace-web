@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField, Typography, Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,6 +9,68 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { Close } from '@mui/icons-material';
+import { makeStyles } from '@material-ui/core/styles';
+
+
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        position: 'absolute',
+        width: 500,
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+    },
+    // textField: {
+    //     '& .MuiInputBase-root': {
+    //         backgroundColor: '#D6D5DA',
+    //     },
+    //     '& .MuiInputLabel-root': {
+    //         textAlign: 'center',
+    //         top: '50%',
+    //         left: '50%',
+    //         transform: 'translate(-50%, -50%)',
+    //         width: '100%',
+    //         pointerEvents: 'none',
+    //     },
+    //     '& .MuiInputLabel-shrink': {
+    //         top: 0,
+    //         left: 50,
+    //         transformOrigin: 'top center',
+    //         textAlign: 'left',
+    //         color: '#9F9F9F',
+    //     },
+    //     '& .MuiInputLabel-shrink.Mui-focused': {
+    //         color: '#9F9F9F',
+    //     },
+    //     '& .MuiInput-underline:before': {
+    //         borderBottom: 'none',
+    //     },
+    // },
+    alert: {
+        marginTop: theme.spacing(2),
+    },
+    select: {
+        '& .MuiInputBase-root': {
+            backgroundColor: '#D6D5DA',
+            height: '30px',
+            padding: '0 14px',
+            fontSize: '14px',
+        },
+        '& .MuiInputLabel-root': {
+            fontSize: '10px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transform: 'translate(14px, 10px) scale(1)',
+        },
+        '& .MuiSvgIcon-root': {
+            fontSize: '20px',
+        },
+    },
+}));
 
 const PetsOccupant = ({ leasePets, setLeasePets }) => {
     console.log('Inside Pets occupants', leasePets);
@@ -17,6 +79,8 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
     const [currentRow, setCurrentRow] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const color = theme.palette.form.main;
+    const classes = useStyles();
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
     useEffect(() => {
         if (leasePets && leasePets.length > 0) {
@@ -50,10 +114,25 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
         handleOpen();
     };
 
-    const handleDeleteClick = (id) => {
+    const handleDelete = (id) => {
         setPets(pets.filter(pet => pet.id !== id));
         setLeasePets(pets.filter(pet => pet.id !== id));
+        handleClose();
     };
+
+    const handleDeleteClick = () => {
+        setOpenDeleteConfirmation(true);
+    };
+
+    const handleDeleteClose = () => {
+        setOpenDeleteConfirmation(false);
+    };
+
+    const handleDeleteConfirm = () => {
+        handleDelete();
+        setOpenDeleteConfirmation(false);
+    }
+
 
     const columns = [
         { field: 'type', headerName: 'Type', flex: 1, editable: true },
@@ -68,14 +147,14 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
             type: 'actions',
             width: 100,
             getActions: (params) => [
-                <GridActionsCellItem icon={<EditIcon />} label="Edit" onClick={() => handleEditClick(params.row)} />,
-                <GridActionsCellItem icon={<DeleteIcon />} label="Delete" onClick={() => handleDeleteClick(params.id)} />,
+                <GridActionsCellItem icon={<EditIcon sx={{ color: "#3D5CAC" }} />} label="Edit" onClick={() => handleEditClick(params.row)} />,
+                // <GridActionsCellItem icon={<DeleteIcon sx={{color:"#3D5CAC"}}/>} label="Delete" onClick={() => handleDeleteClick(params.id)} />,
             ],
         },
     ];
 
     return (
-        <Box sx={{width: '100%' }}>
+        <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Pets ({pets.length})</Typography>
                 <Button
@@ -123,91 +202,211 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                     }}
                 />}
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>{isEditing ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
+                <DialogTitle
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: "#160449",
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.small,
+                    }}
+                >
+                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Pet Details</span>
+                    <Button onClick={handleClose} sx={{ ml: 'auto' }}>
+                        <Close sx={{
+                            color: theme.typography.primary.black,
+                            fontSize: '20px',
+                        }} />
+                    </Button>
+                </DialogTitle>
                 <DialogContent>
-                    <TextField
-                        margin="dense"
-                        label="First Name"
-                        fullWidth
-                        variant="outlined"
-                        value={currentRow?.name || ''}
-                        onChange={(e) => setCurrentRow({ ...currentRow, name: e.target.value })}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Last Name"
-                        fullWidth
-                        variant="outlined"
-                        value={currentRow?.last_name || ''}
-                        onChange={(e) => setCurrentRow({ ...currentRow, last_name: e.target.value })}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Type"
-                        fullWidth
-                        variant="outlined"
-                        value={currentRow?.type || ''}
-                        onChange={(e) => setCurrentRow({ ...currentRow, type: e.target.value })}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Breed"
-                        fullWidth
-                        variant="outlined"
-                        value={currentRow?.breed || ''}
-                        onChange={(e) => setCurrentRow({ ...currentRow, breed: e.target.value })}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Weight"
-                        fullWidth
-                        variant="outlined"
-                        value={currentRow?.weight || ''}
-                        onChange={(e) => setCurrentRow({ ...currentRow, weight: e.target.value })}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Owner"
-                        fullWidth
-                        variant="outlined"
-                        value={currentRow?.owner || ''}
-                        onChange={(e) => setCurrentRow({ ...currentRow, owner: e.target.value })}
-                    />
+                    <Grid container columnSpacing={6}>
+                        <Grid item md={6}>
+                            <TextField
+                                className={classes.textField}
+                                margin="dense"
+                                label="First Name"
+                                fullWidth
+                                variant="outlined"
+                                value={currentRow?.name || ''}
+                                onChange={(e) => setCurrentRow({ ...currentRow, name: e.target.value })}
+                                InputLabelProps={{
+                                    style: {
+                                        // fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                                sx={{ backgroundColor: '#D6D5DA', }}
+                            />
+                        </Grid>
+
+                        <Grid item md={6}>
+                            <TextField
+                                className={classes.textField}
+                                margin="dense"
+                                label="Last Name"
+                                fullWidth
+                                variant="outlined"
+                                value={currentRow?.last_name || ''}
+                                onChange={(e) => setCurrentRow({ ...currentRow, last_name: e.target.value })}
+                                InputLabelProps={{
+                                    style: {
+                                        // fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                                sx={{ backgroundColor: '#D6D5DA', }}
+                            />
+                        </Grid>
+                        <Grid item md={6}>
+                            <TextField
+                                className={classes.textField}
+                                margin="dense"
+                                label="Type"
+                                fullWidth
+                                variant="outlined"
+                                value={currentRow?.type || ''}
+                                onChange={(e) => setCurrentRow({ ...currentRow, type: e.target.value })}
+                                InputLabelProps={{
+                                    style: {
+                                        // fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                                sx={{ backgroundColor: '#D6D5DA', }}
+                            />
+                        </Grid>
+                        <Grid item md={6}>
+                            <TextField
+                                className={classes.textField}
+                                margin="dense"
+                                label="Breed"
+                                fullWidth
+                                variant="outlined"
+                                value={currentRow?.breed || ''}
+                                onChange={(e) => setCurrentRow({ ...currentRow, breed: e.target.value })}
+                                InputLabelProps={{
+                                    style: {
+                                        // fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                                sx={{ backgroundColor: '#D6D5DA', }}
+                            />
+                        </Grid>
+                        <Grid item md={6}>
+                            <TextField
+                                className={classes.textField}
+                                margin="dense"
+                                label="Weight"
+                                fullWidth
+                                variant="outlined"
+                                value={currentRow?.weight || ''}
+                                onChange={(e) => setCurrentRow({ ...currentRow, weight: e.target.value })}
+                                InputLabelProps={{
+                                    style: {
+                                        // fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                                sx={{ backgroundColor: '#D6D5DA', }}
+                            />
+                        </Grid>
+                        <Grid item md={6}>
+                            <TextField
+                                className={classes.textField}
+                                margin="dense"
+                                label="Owner"
+                                fullWidth
+                                variant="outlined"
+                                value={currentRow?.owner || ''}
+                                onChange={(e) => setCurrentRow({ ...currentRow, owner: e.target.value })}
+                                InputLabelProps={{
+                                    style: {
+                                        // fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                                sx={{ backgroundColor: '#D6D5DA', }}
+                            />
+                        </Grid>
+                    </Grid>
                 </DialogContent>
-                <DialogActions>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mt: 2 }}>
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                background: "#3D5CAC",
-                                color: theme.palette.background.default,
-                                cursor: "pointer",
-                                textTransform: "none",
-                                width: "30%",
-                                fontWeight: theme.typography.secondary.fontWeight,
+                {/* <DialogActions> */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
+                    <Button
+                        sx={{
+                            marginRight: '5px', background: "#FFC614",
+                            color: "#160449",
+                            cursor: "pointer",
+                            width: "100px",
+                            height: "31px",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            textTransform: 'none',
+                            '&:hover': {
+                                backgroundColor: '#fabd00',
+                            },
+                        }}
+                        onClick={handleSave} color="primary">
+                        Save
+                    </Button>
+                    <Button
+                        sx={{
+                            background: "#F87C7A",
+                            color: "#160449",
+                            cursor: "pointer",
+                            width: "100px",
+                            height: "31px",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            textTransform: 'none',
+                            '&:hover': {
+                                backgroundColor: '#f76462',
+                            },
+                        }}
+                        onClick={handleDeleteClick} color="secondary">
+                        Delete
+                    </Button>
+                    <Dialog
+                        open={openDeleteConfirmation}
+                        onClose={handleDeleteClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                Are you sure you want to delete this Pet Details?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleDeleteClose} color="primary" sx={{
+                                textTransform: "none", background: "#F87C7A",
+                                color: "#160449",
+                                cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont, '&:hover': {
+                                    backgroundColor: '#f76462',
+                                },
+                            }}>
+                                Cancel
+                            </Button>
+                            <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
+                                textTransform: "none", background: "#FFC614",
+                                color: "#160449",
+                                cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
                                 fontSize: theme.typography.smallFont,
-                            }}
-                            size="small"
-                            onClick={handleClose} color="secondary">
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                background: "#3D5CAC",
-                                color: theme.palette.background.default,
-                                cursor: "pointer",
-                                textTransform: "none",
-                                width: "30%",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}
-                            size="small"
-                            onClick={handleSave} color="primary">
-                            Save
-                        </Button>
-                    </Box>
-                </DialogActions>
+                                '&:hover': {
+                                    backgroundColor: '#fabd00',
+                                },
+                            }}>
+                                Confirm
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </Box>
+                {/* </DialogActions> */}
             </Dialog>
         </Box>
     );

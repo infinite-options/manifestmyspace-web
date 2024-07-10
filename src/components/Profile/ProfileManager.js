@@ -50,7 +50,7 @@ const ProfileManager = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(['user']);
-  const { logout, selectedRole, isLoggedIn, getProfileId } = useUser();  
+  const { logout, selectedRole, isLoggedIn, getProfileId, getRoleId } = useUser();  
   const [isSave, setIsSave] = useState(false);
   const [activeForm, setActiveForm] = useState('');
   console.log("selectedRole profile", selectedRole)
@@ -63,7 +63,11 @@ const ProfileManager = () => {
   
   const fetchProfileData = async () => {
     try {
-        const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+        let url=`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getRoleId()}`;
+        if(selectedRole==='PM_EMPLOYEE' || selectedRole==='MAINT_EMPLOYEE')
+        {url= `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getRoleId()}`}
+        const profileResponse = await axios.get(url);
+
         const profileData = profileResponse.data.profile.result[0];
         console.log('profile-*-', profileData);
         setProfileData(profileData);

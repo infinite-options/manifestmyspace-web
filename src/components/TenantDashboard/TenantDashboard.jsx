@@ -717,7 +717,7 @@ function TenantDashboard(props) {
                                   fontWeight: "bold",
                                 }}
                               >
-                                Payment History
+                                Payment History 2
                               </Typography>
                             </Box>
                           </Grid>
@@ -986,19 +986,19 @@ function TenantPaymentHistoryTable(props) {
     //   flex: 2,
     //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     // },
-    // {
-    //   field: "pur_description",
-    //   headerName: "Description",
-    //   flex: 2,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
     {
-      field: "pur_property_id",
-      headerName: "Property (200)",
-      flex: 1,
-      align: "right",
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value.slice(-4)}</Box>,
+      field: "pur_description",
+      headerName: "Description",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
+    // {
+    //   field: "pur_property_id",
+    //   headerName: "Property (200)",
+    //   flex: 1,
+    //   align: "right",
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value.slice(-4)}</Box>,
+    // },
   ];
 
   const columnList = () => {
@@ -1035,7 +1035,7 @@ function TenantPaymentHistoryTable(props) {
 }
 
 function TenantMaintenanceRequestsTable(props) {
-  console.log("In Maintenance Request Table from Stack")
+  console.log("In Maintenance Request Table from Stack");
   const data = props.data;
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;

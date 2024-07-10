@@ -21,7 +21,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
   // TODO: We need to make the /maintenanceRequests endpoint return the data in the format we need for the Status component
   useEffect(() => {
     const dataObject = {};
-    console.log("maintenanceData", maintenanceData)
+    console.log("maintenanceData", maintenanceData);
     for (const item of maintenanceData) {
       // console.log(item)
       if (!dataObject[item.maintenance_status]) {
@@ -147,7 +147,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
             margin: "0",
           }}
         >
-          {colorStatus.map((item, index) => (
+          {colorStatus?.map((item, index) => (
             <ListItem
               key={index}
               sx={{

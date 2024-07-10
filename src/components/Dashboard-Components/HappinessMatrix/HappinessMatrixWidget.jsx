@@ -98,12 +98,13 @@ export default function HappinessMatrixWidget(props) {
 
   const handlePointClick = (payload) => {
     let { index } = payload;
+    // console.log("handlePointClick - payload - ", payload);
     if (clickedIndex === index) {
-      setHiddenPoints((prevHiddenPoints) => [...prevHiddenPoints, index]);
+      // setHiddenPoints((prevHiddenPoints) => [...prevHiddenPoints, index]);
     } else {
       setClickedIndex(index);
       let owner = data.find((o) => o.index === index);
-      dataSetter(owner);
+      // dataSetter(owner);
     }
     setTooltipVisible(true);
   };
@@ -253,7 +254,7 @@ export default function HappinessMatrixWidget(props) {
                   shape={(props) => (
                     <CustomImage
                       {...props}
-                      //   onClick={() => handlePointClick(props.payload)}
+                      onClick={() => handlePointClick(props.payload)}
                       data={data}
                       page={page}
                       contactDetails={contactDetails}
@@ -291,6 +292,7 @@ export default function HappinessMatrixWidget(props) {
 }
 
 const CustomImage = (props) => {
+  console.log("In CustomImage");
   const navigate = useNavigate();
   const {
     cx,
@@ -310,16 +312,26 @@ const CustomImage = (props) => {
     cashflowDetailsByPropertyByMonth,
   } = props;
 
+  const [isClickedState, setIsClickedState] = useState(isClicked);
+  // useEffect(() => {
+  //   console.log("isClickedState - ", isClickedState);
+  // }, [isClickedState]);
+
   // console.log("CustomImage - props - ", props);
   if (!isVisible) {
     return null;
   }
 
   const diameter = 30;
-  const outlineWidth = isClicked ? 4 : 2;
+  const outlineWidth = isClicked ? 4 : 2;  
 
   const handleClick = (payload) => {
-    console.log("CustomImage - handleClick - payload - ", payload);
+    setIsClickedState(true);
+    // console.log("CustomImage - handeClick");
+    if (onClick) {
+      onClick(payload); // Call the passed onClick function
+    }
+    // console.log("CustomImage - handleClick - payload - ", payload);
     if (page === "OwnerContactDetails") {
       const idx = contactDetails.findIndex((contact) => contact.owner_uid === payload?.owner_uid);
       setIndex(idx);
@@ -344,7 +356,7 @@ const CustomImage = (props) => {
     <g onClick={() => handleClick(payload)}>
       <foreignObject x={cx - diameter / 2} y={cy - diameter / 2} width={diameter} height={diameter}>
         {![null, undefined, ""].includes(payload?.photo) ? (
-          <img src={payload.photo} alt="scatter-image" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} />
+          <img src={payload.photo} alt="scatter-image" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", filter: isClickedState ? "brightness(0.7)" : "none", }} />
         ) : (
           <AccountCircleIcon
             sx={{
@@ -354,6 +366,7 @@ const CustomImage = (props) => {
               borderRadius: "50%",
               borderWidth: outlineWidth,
               borderStyle: "solid",
+              filter: isClickedState ? "brightness(0.7)" : "none",
             }}
           />
         )}

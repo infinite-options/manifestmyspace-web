@@ -1,21 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Modal, TextField, IconButton, Typography, Accordion, AccordionSummary, AccordionDetails, Grid } from '@mui/material';
+import {
+    Box, Button, Modal, TextField, IconButton, Typography, Accordion, AccordionSummary, AccordionDetails,
+    Grid, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
+} from '@mui/material';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import theme from "../../theme/theme";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Close } from '@mui/icons-material';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
         position: 'absolute',
-        width: 400,
+        width: 841,
+        height: 500,
         backgroundColor: theme.palette.background.paper,
         border: '2px solid #000',
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 4, 3),
+    },
+    textField: {
+        '& .MuiInputBase-root': {
+            backgroundColor: '#D6D5DA',
+        },
+        '& .MuiInputLabel-root': {
+            textAlign: 'center',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '100%',
+            pointerEvents: 'none',
+        },
+        '& .MuiInputLabel-shrink': {
+            top: 0,
+            left: 50,
+            transformOrigin: 'top center',
+            textAlign: 'left',
+            color: '#9F9F9F',
+        },
+        '& .MuiInputLabel-shrink.Mui-focused': {
+            color: '#9F9F9F',
+        },
+        '& .MuiInput-underline:before': {
+            borderBottom: 'none',
+        },
+    },
+    alert: {
+        marginTop: theme.spacing(2),
     },
 }));
 
@@ -26,7 +59,16 @@ const TenantDetails = ({ tenantWithId }) => {
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
+    const [totalResponsility, setTotalResponsibility] = useState(0);
+    const [resp, setResp] = useState(0);
+    const [error, setError] = useState(null);
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
     const color = theme.palette.form.main;
+
+    useEffect(() => {
+        const total = calculateTotalResponsibility();
+        setTotalResponsibility(total);
+    }, [])
 
     const tenantColumns = [
         {
@@ -61,19 +103,14 @@ const TenantDetails = ({ tenantWithId }) => {
         },
         {
             field: 'actions',
-            headerName: 'Actions',
-            flex: 1,
+            headerName: '',
+            flex: 0.7,
             renderCell: (params) => (
                 <Box>
                     <IconButton
                         onClick={() => handleEditClick(params.row)}
                     >
-                        <EditIcon sx={{color:"#3D5CAC"}}/>
-                    </IconButton>
-                    <IconButton
-                        onClick={() => handleDeleteClick(params.row.tenant_uid)}
-                    >
-                        <DeleteIcon sx={{color:"#3D5CAC"}}/>
+                        <EditIcon sx={{ color: "#3D5CAC" }} />
                     </IconButton>
                 </Box>
             )
@@ -83,36 +120,98 @@ const TenantDetails = ({ tenantWithId }) => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleAddClick = () => {
-        setCurrentRow({ tenant_first_name: "", tenant_last_name: "", tenant_phone_number: "", tenant_email: "", lt_responsibility: "" });
+    const handleAddClick = (e) => {
+        e.stopPropagation();
+        const total = calculateTotalResponsibility();
+        console.log('add', total)
+        if (total <= 100) {
+            setError(null);
+        }
+        setCurrentRow({
+            tenant_first_name: "", tenant_last_name: "", tenant_phone_number: "", tenant_email: "", tenant_ssn: "",
+            tenant_license: "", lt_responsibility: ""
+        });
         setIsEditing(false);
         handleOpen();
     };
 
     const handleEditClick = (row) => {
+        const total = calculateTotalResponsibility();
+        console.log('edit', total)
+        if (total <= 100) {
+            setError(null);
+        }
+        setResp(Number(row.lt_responsibility));
         setCurrentRow(row);
         setIsEditing(true);
         handleOpen();
     };
 
-    const handleDeleteClick = (tenant_uid) => {
-        console.log('param', tenant_uid);
-        setRows(rows.filter(row => row.tenant_uid !== tenant_uid));
+    const handleDeleteClick = () => {
+        setOpenDeleteConfirmation(true);
     };
 
-    const handleSave = () => {
-        if (isEditing) {
-            setRows(rows.map(row => (row.tenant_uid === currentRow.tenant_uid ? currentRow : row)));
-        } else {
-            setRows([...rows, { ...currentRow, tenant_uid: rows.length + 1 }]);
+    const handleDeleteClose = () => {
+        setOpenDeleteConfirmation(false);
+    };
+
+    const handleDeleteConfirm = () => {
+        handleDelete();
+        setOpenDeleteConfirmation(false);
+    }
+
+    const handleDelete = () => {
+        let currTotalResp = 0;
+        currTotalResp = totalResponsility - Number(currentRow.lt_responsibility);
+        setTotalResponsibility(currTotalResp);
+        if (currTotalResp <= 100) {
+            setError(null);
         }
+        setRows(rows.filter(row => row.tenant_uid !== currentRow.tenant_uid));
         handleClose();
+    }
+
+    const handleSave = () => {
+        let currTotalResp = calculateTotalResponsibility();
+        if (isEditing) {
+            console.log('in edit', resp, totalResponsility);
+            currTotalResp = currTotalResp - resp;
+        }
+        console.log('before', currTotalResp);
+        currTotalResp = currTotalResp + Number(currentRow.lt_responsibility);
+        console.log('after', currTotalResp);
+        if (currTotalResp > 100) {
+            setError("The total responsibility shared by all tenants should not exceed 100%.")
+        } else {
+            setError(null);
+            if (isEditing) {
+                currTotalResp = totalResponsility + Number(currentRow.lt_responsibility);
+                setRows(rows.map(row => (row.tenant_uid === currentRow.tenant_uid ? currentRow : row)));
+            } else {
+                setRows([...rows, { ...currentRow, tenant_uid: rows.length }]);
+            }
+            setTotalResponsibility(currTotalResp);
+            handleClose();
+        }
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setCurrentRow({ ...currentRow, [name]: value });
     };
+
+    const calculateTotalResponsibility = () => {
+        let total = 0;
+        for (let i = 0; i < rows.length; i++) {
+            total += rows[i].lt_responsibility !== null ? Number(rows[i].lt_responsibility) : 0;
+        }
+        console.log('total', total)
+        return total
+    }
+
+    const handleCloseButton = () => {
+        handleClose();
+    }
 
     return (
         <div>
@@ -125,7 +224,7 @@ const TenantDetails = ({ tenantWithId }) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                         <Typography
                             sx={{
-                                color: theme.typography.primary.black,
+                                color: "#160449",
                                 fontWeight: theme.typography.primary.fontWeight,
                                 fontSize: theme.typography.small,
                                 textAlign: 'center',
@@ -138,7 +237,6 @@ const TenantDetails = ({ tenantWithId }) => {
                             Tenant Details
                         </Typography>
                         <Button
-                            variant="outlined"
                             sx={{
                                 "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                                 cursor: "pointer",
@@ -152,7 +250,7 @@ const TenantDetails = ({ tenantWithId }) => {
                             size="small"
                             onClick={handleAddClick}
                         >
-                            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
+                            <AddIcon sx={{ color: "#160449", fontSize: "18px" }} />
                         </Button>
                     </Box>
                 </AccordionSummary>
@@ -167,7 +265,7 @@ const TenantDetails = ({ tenantWithId }) => {
                             '& .MuiDataGrid-columnHeader': {
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                // color: "#3D5CAC",
+                                color: "#160449",
                             },
                             '& .MuiDataGrid-columnHeaderTitle': {
                                 font: "bold",
@@ -177,7 +275,7 @@ const TenantDetails = ({ tenantWithId }) => {
                                 fontWeight: "bold",
                             },
                             '& .MuiDataGrid-cell': {
-                                // color: "#3D5CAC",
+                                color: "#160449",
                                 fontWeight: "bold",
                             },
                         }}
@@ -191,95 +289,290 @@ const TenantDetails = ({ tenantWithId }) => {
                 aria-describedby="simple-modal-description"
             >
                 <div style={getModalStyle()} className={classes.paper}>
-                    <Typography variant="h6" id="simple-modal-title" textAlign="center">
-                        {isEditing ? 'Edit Tenant' : 'Add Tenant'}
-                    </Typography>
-                    <Grid container spacing={2}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        <Typography variant="h6" sx={{
+                            color: "#160449",
+                            fontWeight: theme.typography.primary.fontWeight,
+                            fontSize: theme.typography.small,
+                            flexGrow: 1, 
+                            textAlign: 'center', 
+                        }}>
+                            Tenant Details
+                        </Typography>
+                        <Button onClick={handleCloseButton} sx={{ ml: 'auto' }}>
+                            <Close sx={{
+                                color: theme.typography.primary.black,
+                                fontSize: '20px',
+                                margin: '5px',
+                            }} />
+                        </Button>
+                    </Box>
+                    {error !== null && (
+                        <Alert severity="error" className={classes.alert}>
+                            {error}
+                        </Alert>
+                    )}
+                    <Grid container columnSpacing={6}>
                         <Grid item md={12}>
-                            <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>
+                            <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Tenant Name
                             </Typography>
                         </Grid>
                         <Grid item md={6}>
                             <TextField
+                                className={classes.textField}
+                                sx={{ marginTop: '5px' }}
                                 name="tenant_first_name"
                                 label="First Name"
                                 fullWidth
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_first_name}
                                 onChange={handleInputChange}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
                             />
                         </Grid>
                         <Grid item md={6}>
                             <TextField
+                                className={classes.textField}
+                                sx={{ marginTop: '5px' }}
                                 name="tenant_last_name"
                                 label="Last Name"
                                 fullWidth
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_last_name}
                                 onChange={handleInputChange}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
                             />
                         </Grid>
-                        <Grid item md={12}>
+                        <Grid item md={12} sx={{ marginTop: '10px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>
                                 Contact Info
                             </Typography>
                         </Grid>
                         <Grid item md={6}>
                             <TextField
+                                className={classes.textField}
+                                sx={{ marginTop: '5px' }}
                                 name="tenant_phone_number"
                                 label="Phone Number"
                                 fullWidth
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_phone_number}
                                 onChange={handleInputChange}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
                             />
                         </Grid>
                         <Grid item md={6}>
                             <TextField
+                                className={classes.textField}
+                                sx={{ marginTop: '5px' }}
                                 name="tenant_email"
                                 label="Email"
                                 fullWidth
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_email}
                                 onChange={handleInputChange}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
                             />
                         </Grid>
-                        <Grid item md={12}>
+                        <Grid item md={12} sx={{ marginTop: '10px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>
-                                Additionale Details (Changes Require Signature Loop)
+                                Details
+                            </Typography>
+                        </Grid>
+
+                        <Grid item md={6}>
+                            <TextField
+                                className={classes.textField}
+                                sx={{ marginTop: '5px' }}
+                                name="tenant_drivers_license_number"
+                                label="Drivers License"
+                                fullWidth
+                                margin="normal"
+                                value={currentRow && currentRow.tenant_drivers_license_number}
+                                onChange={handleInputChange}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                            />
+                        </Grid>
+                        <Grid item md={6}>
+                            <TextField
+                                className={classes.textField}
+                                sx={{ marginTop: '5px' }}
+                                name="tenant_ssn"
+                                label="Social Security Number"
+                                fullWidth
+                                margin="normal"
+                                value={currentRow && currentRow.tenant_ssn}
+                                onChange={handleInputChange}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item md={12} sx={{ marginTop: '15px' }}>
+                            <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>
+                                Additional Details (Changes Require Signature Loop)
+                            </Typography>
+                        </Grid>
+                        <Grid item md={2.5} sx={{ alignItems: 'center', justifyContent: 'center' }}>
+                            <Typography sx={{ fontSize: "12px", color: "#273B4A", marginTop: "30px" }}>
+                                Responsibility %
                             </Typography>
                         </Grid>
                         <Grid item md={6}>
                             <TextField
+                                className={classes.textField}
                                 name="lt_responsibility"
                                 label="Responsibility"
                                 fullWidth
                                 margin="normal"
                                 value={currentRow && currentRow.lt_responsibility}
                                 onChange={handleInputChange}
+                                // InputProps={{
+                                //     style: {
+                                //         height: '30px',
+                                //         padding: '0 14px',
+                                //     },
+                                // }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: '10px',
+                                        textAlign: 'center',
+                                    },
+                                }}
                             />
                         </Grid>
                     </Grid>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: "20px" }}>
-                        <Button onClick={handleClose} sx={{
-                            marginRight: '5px', background: "#3D5CAC",
-                            color: theme.palette.background.default,
-                            cursor: "pointer",
-                            width: "100px",
-                            height: "40px",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                        }}>Cancel</Button>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: "20px" }}>
                         <Button onClick={handleSave} sx={{
-                            background: "#ffa500",
-                            color: theme.palette.background.default,
+                            marginRight: '5px', background: "#FFC614",
+                            color: "#160449",
                             cursor: "pointer",
                             width: "100px",
-                            height: "40px",
+                            height: "31px",
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                        }}>{isEditing ? "Save" : "Add"}</Button>
+                            textTransform: 'none',
+                            '&:hover': {
+                                backgroundColor: '#fabd00',
+                            },
+                        }}>Save</Button>
+                        {isEditing === true && 
+                        <Button onClick={handleDeleteClick} sx={{
+                            background: "#F87C7A",
+                            color: "#160449",
+                            cursor: "pointer",
+                            width: "100px",
+                            height: "31px",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            textTransform: 'none',
+                            '&:hover': {
+                                backgroundColor: '#f76462',
+                            },
+                        }}>Delete</Button>}
+
+                        <Dialog
+                            open={openDeleteConfirmation}
+                            onClose={handleDeleteClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                    Are you sure you want to delete this tenant?
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleDeleteClose} color="primary" sx={{
+                                    textTransform: "none", background: "#F87C7A",
+                                    color: "#160449",
+                                    cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont, '&:hover': {
+                                        backgroundColor: '#f76462',
+                                    },
+                                }}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
+                                    textTransform: "none", background: "#FFC614",
+                                    color: "#160449",
+                                    cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                    '&:hover': {
+                                        backgroundColor: '#fabd00',
+                                    },
+                                }}>
+                                    Confirm
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </Box>
                 </div>
             </Modal>

@@ -29,22 +29,22 @@ const TenantContacts = () => {
 
   const [ currentIndex, setCurrentIndex ] = useState(0);
 
-  useEffect(() => {
-    console.log("ROHIT - contactsData - ", contactsData);
-  }, [contactsData]);
+  // useEffect(() => {
+  //   console.log("contactsData - ", contactsData);
+  // }, [contactsData]);
 
+  // useEffect(() => {
+  //   console.log("currentIndex", currentIndex)
+  // }, [currentIndex]);
   useEffect(() => {
-    console.log("ROHIT - currentIndex", currentIndex)
-  }, [currentIndex]);
-  useEffect(() => {
-    console.log("ROHIT  - contactsTab", contactsTab)
+    console.log("contactsTab", contactsTab)
     setCurrentIndex(0); 
   }, [contactsTab]);
   
 
   const fetchData = async () => {
-    // const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
-    const url = `${APIConfig.baseURL.dev}/contacts/350-000002`;
+    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
+    // const url = `${APIConfig.baseURL.dev}/contacts/350-000002`;
     console.log("In PMContracts.jsx");
     setShowSpinner(true);
 

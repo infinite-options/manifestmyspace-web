@@ -42,6 +42,7 @@ export default function MaintenanceDashboard2() {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
+	const [maintenanceStatusRequests, setMaintenanceStatusRequests] = useState({});
 	const [graphData, setGraphData] = useState([]);
 	const [cashflowData, setcashflowData] = useState([]);
 	const [revenueData, setrevenueData] = useState([]);
@@ -66,6 +67,11 @@ export default function MaintenanceDashboard2() {
 			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
 			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
+
+
+			const statusresponse = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+			//const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
+			const statusdata = await statusresponse.json();
 
 			const currentActivities = data.CurrentActivities?.result ?? [];
 			const CurrentQuotes = data.CurrentQuotes?.result ?? [];
@@ -118,6 +124,7 @@ export default function MaintenanceDashboard2() {
 			});
 
 			await setMaintenanceRequests(maintainance_info);
+			await setMaintenanceStatusRequests(statusdata);
 
 			const today = new Date().toISOString().split('T')[0];
 
@@ -240,6 +247,7 @@ export default function MaintenanceDashboard2() {
 							maintenanceRequests={maintenanceRequests}
 							todayData={todayData}
 							nextScheduleData={nextScheduleData}
+							allMaintenanceStatusData={maintenanceStatusRequests}
 						/>
 					</Grid>
 
@@ -314,7 +322,8 @@ export default function MaintenanceDashboard2() {
 	);
 }
 
-const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData }) => {
+const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, 
+	allMaintenanceStatusData }) => {
 	const [showSpinner, setShowSpinner] = useState(false);
 	const convertTimeTo12HourFormat = (time) => {
 		const [hours, minutes] = time.split(':');
@@ -484,7 +493,7 @@ const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, 
 </Grid>
 
 						<Grid item xs={12}>
-							<WorkOrdersAccordion maintenanceRequests={filteredMaintenanceRequests} />
+							<WorkOrdersAccordion maintenanceRequests={filteredMaintenanceRequests} allMaintenanceStatusData={allMaintenanceStatusData} />
 						</Grid>
 						<Grid item xs={12} sx={{ padding: '20px 0px 20px 0px' }}>
 							<Paper
@@ -645,7 +654,7 @@ const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, 
 	);
 };
 
-const WorkOrdersAccordion = ({ maintenanceRequests }) => {
+const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData }) => {
 	const colorStatus = theme.colorStatusMM;
 	const [query, setQuery] = useState('');
 
@@ -674,6 +683,7 @@ const WorkOrdersAccordion = ({ maintenanceRequests }) => {
 							color={item.color}
 							maintenanceItemsForStatus={maintenanceArray}
 							allMaintenanceData={maintenanceRequests}
+							allMaintenanceStatusData={allMaintenanceStatusData}
 							maintenanceRequestsCount={maintenanceArray}
 						/>
 					);

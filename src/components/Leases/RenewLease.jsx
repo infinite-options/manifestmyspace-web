@@ -33,6 +33,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import propertyImage from "../../images/house.png";
 import TenantDetails from "./TenantDetails";
+import UtilitiesManager from "./Utilities";
+import { Close } from '@mui/icons-material';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -239,19 +241,19 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         {
             field: 'actions',
             headerName: 'Actions',
-            flex: 1,
+            flex: 0.7,
             renderCell: (params) => (
                 <Box>
                     <IconButton
                         onClick={() => handleEditFeeClick(params.row)}
                     >
-                        <EditIcon />
+                        <EditIcon sx={{ color: "#3D5CAC" }} />
                     </IconButton>
-                    <IconButton
+                    {/* <IconButton
                         onClick={() => handleDeleteFeeClick(params.row.leaseFees_uid)}
                     >
-                        <DeleteIcon />
-                    </IconButton>
+                        <DeleteIcon sx={{color:"#3D5CAC"}}/>
+                    </IconButton> */}
                 </Box>
             )
         }
@@ -568,6 +570,104 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         }
     };
 
+    const dayOptionsForWeekly = [
+        { value: "monday", label: "Monday" },
+        { value: "tuesday", label: "Tuesday" },
+        { value: "wednesday", label: "Wednesday" },
+        { value: "thursday", label: "Thursday" },
+        { value: "friday", label: "Friday" },
+        { value: "saturday", label: "Saturday" },
+        { value: "sunday", label: "Sunday" },
+    ];
+
+    const dayOptionsForBiWeekly = [
+        { value: "monday", label: "Monday" },
+        { value: "tuesday", label: "Tuesday" },
+        { value: "wednesday", label: "Wednesday" },
+        { value: "thursday", label: "Thursday" },
+        { value: "friday", label: "Friday" },
+        { value: "saturday", label: "Saturday" },
+        { value: "sunday", label: "Sunday" },
+        { value: "monday-week-2", label: "Monday - week 2" },
+        { value: "tuesday-week-2", label: "Tuesday - week 2" },
+        { value: "wednesday-week-2", label: "Wednesday - week 2" },
+        { value: "thursday-week-2", label: "Thursday - week 2" },
+        { value: "friday-week-2", label: "Friday - week 2" },
+        { value: "saturday-week-2", label: "Saturday - week 2" },
+        { value: "sunday-week-2", label: "Sunday - week 2" },
+    ];
+
+    const lateByOptionsForWeekly = [
+        { value: 1, label: "1st day after due date" },
+        { value: 2, label: "2nd day after due date" },
+        { value: 3, label: "3rd day after due date" },
+        { value: 4, label: "4th day after due date" },
+        { value: 5, label: "5th day after due date" },
+        { value: 6, label: "6th day after due date" },
+        { value: 7, label: "7th day after due date" },
+    ];
+
+    const lateByOptionsForBiWeekly = [
+        { value: 1, label: "1st day after due date" },
+        { value: 2, label: "2nd day after due date" },
+        { value: 3, label: "3rd day after due date" },
+        { value: 4, label: "4th day after due date" },
+        { value: 5, label: "5th day after due date" },
+        { value: 6, label: "6th day after due date" },
+        { value: 7, label: "7th day after due date" },
+        { value: 8, label: "8th day after due date" },
+        { value: 9, label: "9th day after due date" },
+        { value: 10, label: "10th day after due date" },
+        { value: 11, label: "11th day after due date" },
+        { value: 12, label: "12th day after due date" },
+        { value: 13, label: "13th day after due date" },
+        { value: 14, label: "14th day after due date" },
+    ];
+
+    const availableToPayOptionsForWeekly = [
+        { value: 1, label: "1 day before due date" },
+        { value: 2, label: "2 days before due date" },
+        { value: 3, label: "3 days before due date" },
+        { value: 4, label: "4 days before due date" },
+        { value: 5, label: "5 days before due date" },
+        { value: 6, label: "6 days before due date" },
+        { value: 7, label: "7 days before due date" },
+    ];
+
+    const availableToPayOptionsForBiWeekly = [
+        { value: 1, label: "1 day before due date" },
+        { value: 2, label: "2 days before due date" },
+        { value: 3, label: "3 days before due date" },
+        { value: 4, label: "4 days before due date" },
+        { value: 5, label: "5 days before due date" },
+        { value: 6, label: "6 days before due date" },
+        { value: 7, label: "7 days before due date" },
+        { value: 8, label: "8 days before due date" },
+        { value: 9, label: "9 days before due date" },
+        { value: 10, label: "10 days before due date" },
+        { value: 11, label: "11 days before due date" },
+        { value: 12, label: "12 days before due date" },
+        { value: 13, label: "13 days before due date" },
+        { value: 14, label: "14 days before due date" },
+    ];
+
+    const daytoValueMap = new Map([
+        ["monday", 0],
+        ["tuesday", 1],
+        ["wednesday", 2],
+        ["thursday", 3],
+        ["friday", 4],
+        ["saturday", 5],
+        ["sunday", 6],
+        ["monday-week-2", 7],
+        ["tuesday-week-2", 8],
+        ["wednesday-week-2", 9],
+        ["thursday-week-2", 10],
+        ["friday-week-2", 11],
+        ["saturday-week-2", 12],
+        ["sunday-week-2", 13],
+    ]);
+
     return (
         <Box
             style={{
@@ -592,7 +692,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
                             <Typography
                                 sx={{
-                                    color: theme.typography.primary.black,
+                                    color: "#160449",
                                     fontWeight: theme.typography.primary.fontWeight,
                                     fontSize: theme.typography.largeFont,
                                     textAlign: 'center'
@@ -678,7 +778,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Lease Start</Typography>
@@ -686,7 +786,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{currentLease.lease_start}</Typography>
@@ -694,7 +794,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Lease End</Typography>
@@ -702,7 +802,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{formatDate(currentLease.lease_end)}</Typography>
@@ -710,7 +810,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Move In</Typography>
@@ -718,7 +818,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{currentLease.lease_move_in_date}</Typography>
@@ -726,7 +826,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Move Out</Typography>
@@ -734,7 +834,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>TBD</Typography>
@@ -747,7 +847,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Rent</Typography>
@@ -755,7 +855,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>${rent.charge}</Typography>
@@ -764,7 +864,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Frequency</Typography>
@@ -772,7 +872,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{rent.frequency}</Typography>
@@ -781,7 +881,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Available to Pay</Typography>
@@ -789,7 +889,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{rent.available_topay} Days Before</Typography>
@@ -798,7 +898,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>Due Date</Typography>
@@ -806,7 +906,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         <Grid item md={6} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 textTransform: 'none',
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.light.fontWeight,
                                                 fontSize: theme.typography.smallFont,
                                             }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
@@ -817,114 +917,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         </Paper>
                     </Grid>
                     {/* End */}
-                    {/* {isPageUpdateOrRenew === false &&
-                        <>
-                            <Grid item xs={12} md={6}>
-                                <Paper sx={{ margin: "10px 5px 10px 10px", backgroundColor: color, paddingBottom: "10px" }}>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.primary.black,
-                                            fontWeight: theme.typography.primary.fontWeight,
-                                            fontSize: theme.typography.small,
-                                            textAlign: 'center'
-                                        }}
-                                        paddingBottom="10px"
-                                        paddingTop="5px"
-                                    >
-                                        Lease Details
-                                    </Typography>
-                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
-                                        <Grid md={1} />
-                                        <Grid item md={6}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Start Date</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_start}</Typography>
-                                        </Grid>
-
-                                        <Grid item md={5}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>End Date</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{formatDate(currentLease.lease_end)}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
-                                        <Grid md={1} />
-                                        <Grid item md={6}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Move-In Date</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.lease_move_in_date}</Typography>
-                                        </Grid>
-
-                                        <Grid item md={5}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Move-Out Date</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{currentLease.move_out_date ? currentLease.move_out_date : "-"}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
-                                        <Grid item md={1} />
-                                        <Grid item md={11}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Utilities Paid By Tenant</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{tenantUtils}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
-                            </Grid>
-
-                            <Grid item xs={12} md={6}>
-                                <Paper sx={{ margin: "10px 10px 10px 5px", backgroundColor: color, paddingBottom: "10px" }}>
-                                    <Typography
-                                        sx={{
-                                            color: theme.typography.primary.black,
-                                            fontWeight: theme.typography.primary.fontWeight,
-                                            fontSize: theme.typography.small,
-                                            textAlign: 'center'
-                                        }}
-                                        paddingBottom="10px"
-                                        paddingTop="5px"
-                                    >
-                                        Rent Details
-                                    </Typography>
-                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
-                                        <Grid md={1} />
-                                        <Grid item md={6}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Rent</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>${rent.charge}</Typography>
-                                        </Grid>
-
-                                        <Grid item md={5}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Frequency</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.frequency}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
-                                        <Grid md={1} />
-                                        <Grid item md={6}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Due Date</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
-                                        </Grid>
-
-                                        <Grid item md={5}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Available To Pay</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.available_topay} Days Before</Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid container sx={{ alignItems: "center", justifyContent: "center", marginBottom: "5px" }}>
-                                        <Grid md={1} />
-                                        <Grid item md={6}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Late Fee After</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>{rent.late_by} Days</Typography>
-                                        </Grid>
-
-                                        <Grid item md={5}>
-                                            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Late Fee Per Day</Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "black" }}>${rent.perDay_late_fee}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
-                            </Grid>
-                        </>} */}
 
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             {tenantWithId && tenantWithId.length > 0 && (
-                                <TenantDetails tenantWithId={tenantWithId}/>
+                                <TenantDetails tenantWithId={tenantWithId} />
                             )}
                         </Paper>
                     </Grid>
@@ -1452,7 +1449,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                                         <Typography
                                             sx={{
-                                                color: theme.typography.primary.black,
+                                                color: "#160449",
                                                 fontWeight: theme.typography.primary.fontWeight,
                                                 fontSize: theme.typography.small,
                                                 textAlign: 'center',
@@ -1464,7 +1461,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                         >
                                             Fee Details
                                         </Typography>
-                                        <Button variant="outlined"
+                                        <Button
                                             sx={{
                                                 // background: "#3D5CAC",
                                                 // color: theme.palette.background.default,
@@ -1513,7 +1510,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 '& .MuiDataGrid-columnHeader': {
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
-                                                    // color: "#3D5CAC",
+                                                    color: "#160449",
                                                 },
                                                 '& .MuiDataGrid-columnHeaderTitle': {
                                                     font: "bold",
@@ -1523,7 +1520,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     fontWeight: "bold",
                                                 },
                                                 '& .MuiDataGrid-cell': {
-                                                    // color: "#3D5CAC",
+                                                    color: "#160449",
                                                     fontWeight: "bold",
                                                 },
 
@@ -1534,19 +1531,343 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                 {snackbarMessage}
                                             </Alert>
                                         </Snackbar>
-                                        <Dialog open={open} onClose={handleFeeModalClose}>
-                                            <DialogTitle>{isEditing ? 'Edit Fee' : 'Add Fee'}</DialogTitle>
+                                        <Dialog open={open} onClose={handleFeeModalClose} maxWidth="md">
+                                            <DialogTitle
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: "#160449",
+                                                    fontWeight: theme.typography.primary.fontWeight,
+                                                    fontSize: theme.typography.small,
+                                                }}
+                                            >
+                                                <span style={{ flexGrow: 1, textAlign: 'center' }}>Fee Details</span>
+                                                <Button onClick={handleFeeModalClose} sx={{ ml: 'auto' }}>
+                                                    <Close sx={{
+                                                        color: theme.typography.primary.black,
+                                                        fontSize: '20px',
+                                                    }} />
+                                                </Button>
+                                            </DialogTitle>
                                             <DialogContent>
-                                                <TextField
-                                                    margin="dense"
-                                                    label="Fee Name"
-                                                    fullWidth
-                                                    required
-                                                    variant="outlined"
-                                                    value={currentFeeRow?.fee_name || ''}
-                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, fee_name: e.target.value })}
-                                                />
-                                                <TextField
+                                                <Grid container columnSpacing={8}>
+                                                    <Grid item md={2} sx={{ display: 'flex', alignItems: 'center', }}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                            Fee Name
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item md={10}>
+                                                        <TextField
+                                                            margin="dense"
+                                                            label="Fee Name"
+                                                            fullWidth
+                                                            required
+                                                            variant="outlined"
+                                                            value={currentFeeRow?.fee_name || ''}
+                                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, fee_name: e.target.value })}
+                                                        />
+                                                    </Grid>
+
+                                                    {/* fee type */}
+                                                    <Grid item md={2} sx={{ display: 'flex', alignItems: 'center', }}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                            Fee Type
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item md={10}>
+                                                        <TextField
+                                                            margin="dense"
+                                                            label="Fee Type"
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            value={currentFeeRow?.fee_type || ''}
+                                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, fee_type: e.target.value })}
+                                                        />
+                                                    </Grid>
+
+
+                                                    {/* Charge */}
+                                                    <Grid item md={2} sx={{ display: 'flex', alignItems: 'center', }}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                            Fee Amount
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item md={4}>
+                                                        <TextField
+                                                            margin="dense"
+                                                            label="Amount"
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            value={currentFeeRow?.charge || ''}
+                                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, charge: e.target.value })}
+                                                        />
+                                                    </Grid>
+
+                                                    {/* Frequency */}
+                                                    <Grid item md={6} sx={{ display: 'flex', alignItems: 'center', }}>
+                                                        <Grid container>
+                                                            <Grid item md={3} sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                                    Frequency
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item md={8}>
+                                                                <FormControl sx={{ width: '335px', height: '70px' }}>
+                                                                    <InputLabel sx={{ color: theme.palette.grey, textAlign: 'center', paddingTop: '5px' }}>Frequency</InputLabel>
+                                                                    <Select
+                                                                        value={currentFeeRow?.frequency || ''}
+                                                                        onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, frequency: e.target.value })}
+                                                                        size="small"
+                                                                        fullWidth
+                                                                        label="Frequency"
+                                                                        className={classes.select}
+                                                                        sx={{
+                                                                            marginTop: "10px",
+                                                                            height: '50px'
+                                                                        }}
+                                                                        required
+                                                                    >
+                                                                        <MenuItem value="One-time">One-time</MenuItem>
+                                                                        <MenuItem value="Weekly">Weekly</MenuItem>
+                                                                        <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
+                                                                        <MenuItem value="Monthly">Monthly</MenuItem>
+                                                                        <MenuItem value="Annually">Annually</MenuItem>
+                                                                    </Select>
+                                                                </FormControl>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Grid>
+
+                                                    {/* Due Date */}
+                                                    <Grid item md={6}>
+                                                        <Grid container>
+                                                            <Grid item md={4} sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                                    Due Date
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item md={6}>
+                                                                {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "") && (
+                                                                    <TextField
+                                                                        margin="dense"
+                                                                        name="due_by"
+                                                                        value={currentFeeRow.due_by !== null && currentFeeRow.due_by !== "" ? currentFeeRow.due_by : ""}
+                                                                        fullWidth
+                                                                        variant="outlined"
+                                                                        onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, due_by: e.target.value })}
+                                                                        InputProps={{
+                                                                            endAdornment: <InputAdornment position="start">{getDateAdornmentString(currentFeeRow.due_by)}</InputAdornment>,
+                                                                        }}
+                                                                        sx={{ marginLeft: '5px', width: '295px' }}
+                                                                    />
+                                                                )}
+
+                                                                {currentFeeRow && (currentFeeRow.frequency === "One-time" || currentFeeRow.frequency === "Annually") && (
+                                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                                        <DatePicker
+                                                                            label="Due By"
+                                                                            value={currentFeeRow?.due_by_date ? dayjs(currentFeeRow.due_by_date) : null}
+                                                                            onChange={(e) => {
+                                                                                // console.log('dueby row', e)
+                                                                                const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                                                                setcurrentFeeRow({ ...currentFeeRow, due_by_date: formattedDate })
+                                                                            }
+                                                                            }
+                                                                            renderInput={(params) => (
+                                                                                <TextField
+                                                                                    required
+                                                                                    {...params}
+                                                                                    size="small"
+                                                                                    sx={{
+                                                                                        '& .MuiInputBase-root': {
+                                                                                            fontSize: '14px',
+                                                                                        },
+                                                                                        '& .MuiSvgIcon-root': {
+                                                                                            fontSize: '20px',
+                                                                                        },
+                                                                                    }}
+                                                                                />
+                                                                            )}
+                                                                            sx={{ marginTop: "10px", marginLeft: '5px', width: '295px' }}
+                                                                        />
+                                                                    </LocalizationProvider>)}
+
+                                                                {currentFeeRow && (currentFeeRow.frequency === "Weekly" || currentFeeRow.frequency === "Bi-Weekly") && (
+                                                                    <Box
+                                                                        sx={{
+                                                                            paddingTop: "10px",
+                                                                        }}
+                                                                    >
+                                                                        <Select
+                                                                            name="available_topay"
+                                                                            value={currentFeeRow.available_topay !== null ? currentFeeRow.available_topay : ""}
+                                                                            size="small"
+                                                                            fullWidth
+                                                                            // onChange={(e) => handleAvailableToPayChange(e, row.id, "weekly")}
+                                                                            placeholder="Select Available to Pay By Day"
+                                                                            className={classes.select}
+                                                                            sx={{ width: '295px', marginLeft: '5px', height: '40px' }}
+                                                                        >
+                                                                            {currentFeeRow.frequency &&
+                                                                                currentFeeRow.frequency === "Weekly" &&
+                                                                                availableToPayOptionsForWeekly.map((option) => (
+                                                                                    <MenuItem key={option.value} value={option.value}>
+                                                                                        {option.label}
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            {currentFeeRow.frequency &&
+                                                                                currentFeeRow.frequency === "Bi-Weekly" &&
+                                                                                availableToPayOptionsForBiWeekly.map((option) => (
+                                                                                    <MenuItem key={option.value} value={option.value}>
+                                                                                        {option.label}
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                        </Select>
+                                                                    </Box>
+                                                                )}
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Grid>
+
+                                                    {/* Bills post X days in advance */}
+                                                    <Grid item md={3} sx={{ display: 'flex', alignItems: 'center', }}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                            Bills Post X Days in Advance
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item md={3}>
+                                                        {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "One-time" ||
+                                                            currentFeeRow.frequency === "Annually"|| currentFeeRow.frequency=== "") && (
+                                                                <TextField
+                                                                    margin="dense"
+                                                                    label="# Days Before"
+                                                                    fullWidth
+                                                                    variant="outlined"
+                                                                    value={currentFeeRow?.available_topay || ''}
+                                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, available_topay: e.target.value })}
+                                                                />)}
+
+                                                        {currentFeeRow && (currentFeeRow.frequency === "Weekly" || currentFeeRow.frequency === "Bi-Weekly") && (
+                                                            <Box
+                                                                sx={{
+                                                                    paddingTop: "10px",
+                                                                }}
+                                                            >
+                                                                <Select
+                                                                    name="available_topay"
+                                                                    value={currentFeeRow.available_topay !== null ? currentFeeRow.available_topay : ""}
+                                                                    size="small"
+                                                                    fullWidth
+                                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, available_topay: e.target.value })}
+                                                                    placeholder="Select Available to Pay By Day"
+                                                                >
+                                                                    {currentFeeRow.frequency &&
+                                                                        currentFeeRow.frequency === "Weekly" &&
+                                                                        availableToPayOptionsForWeekly.map((option) => (
+                                                                            <MenuItem key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </MenuItem>
+                                                                        ))}
+                                                                    {currentFeeRow.frequency &&
+                                                                        currentFeeRow.frequency === "Bi-Weekly" &&
+                                                                        availableToPayOptionsForBiWeekly.map((option) => (
+                                                                            <MenuItem key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </MenuItem>
+                                                                        ))}
+                                                                </Select>
+                                                            </Box>
+                                                        )}
+                                                    </Grid>
+
+
+                                                    {/* Late after x days */}
+                                                    <Grid item md={2} sx={{ display: 'flex', alignItems: 'center', }}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                            Late After X Days
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item md={4}>
+                                                        {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "One-time" || currentFeeRow.frequency === "Annually" || currentFeeRow.frequency=== "") && (
+                                                            <TextField
+                                                                margin="dense"
+                                                                label="# Days By"
+                                                                fullWidth
+                                                                variant="outlined"
+                                                                value={currentFeeRow?.late_by || ''}
+                                                                onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, late_by: e.target.value })}
+                                                            />
+                                                        )}
+
+                                                        {currentFeeRow && (currentFeeRow.frequency === "Weekly" || currentFeeRow.frequency === "Bi-Weekly") && (
+                                                            <Box
+                                                                sx={{
+                                                                    paddingTop: "10px",
+                                                                }}
+                                                            >
+                                                                <Select
+                                                                    name="late_by"
+                                                                    value={currentFeeRow.late_by !== null ? currentFeeRow.late_by : ""}
+                                                                    size="small"
+                                                                    fullWidth
+                                                                    onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, late_by: e.target.value })}
+                                                                    placeholder="Select Late By Day"
+                                                                >
+                                                                    {currentFeeRow.frequency &&
+                                                                        currentFeeRow.frequency === "Weekly" &&
+                                                                        lateByOptionsForWeekly.map((option) => (
+                                                                            <MenuItem key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </MenuItem>
+                                                                        ))}
+                                                                    {currentFeeRow.frequency &&
+                                                                        currentFeeRow.frequency === "Bi-Weekly" &&
+                                                                        lateByOptionsForBiWeekly.map((option) => (
+                                                                            <MenuItem key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </MenuItem>
+                                                                        ))}
+                                                                </Select>
+                                                            </Box>
+                                                        )}
+                                                    </Grid>
+
+                                                    <Grid item md={2} sx={{ display: 'flex', alignItems: 'center', }}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                            One Time Late Fee
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item md={4}>
+                                                        <TextField
+                                                            margin="dense"
+                                                            label="Amount"
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            value={currentFeeRow?.late_fee || ''}
+                                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, late_fee: e.target.value })}
+                                                        />
+                                                    </Grid>
+
+                                                    <Grid md={6} />
+
+                                                    <Grid item md={2} sx={{ display: 'flex', alignItems: 'center', }}>
+                                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
+                                                            Per Day Late Fee
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item md={4}>
+                                                        <TextField
+                                                            margin="dense"
+                                                            label="Amount"
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            value={currentFeeRow?.perDay_late_fee || ''}
+                                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, perDay_late_fee: e.target.value })}
+                                                        />
+                                                    </Grid>
+                                                </Grid>
+                                                {/* <TextField
                                                     margin="dense"
                                                     label="Charge"
                                                     fullWidth
@@ -1554,75 +1875,26 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     variant="outlined"
                                                     value={currentFeeRow?.charge || ''}
                                                     onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, charge: e.target.value })}
-                                                />
-                                                <FormControl fullWidth sx={{ marginTop: "10px" }}>
-                                                    <InputLabel sx={{ color: theme.palette.grey }}>Frequency *</InputLabel>
-                                                    <Select
-                                                        value={currentFeeRow?.frequency || ''}
-                                                        onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, frequency: e.target.value })}
-                                                        size="small"
-                                                        fullWidth
-                                                        label="Frequency"
-                                                        className={classes.select}
-                                                        sx={{
-                                                            marginTop: "10px",
-                                                        }}
-                                                        required
-                                                    >
-                                                        <MenuItem value="One-time">One-time</MenuItem>
-                                                        <MenuItem value="Weekly">Weekly</MenuItem>
-                                                        <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
-                                                        <MenuItem value="Monthly">Monthly</MenuItem>
-                                                        <MenuItem value="Annually">Annually</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DatePicker
-                                                        label="Due By *"
-                                                        value={currentFeeRow?.due_by_date ? dayjs(currentFeeRow.due_by_date) : null}
-                                                        onChange={(e) => {
-                                                            // console.log('dueby row', e)
-                                                            const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                            setcurrentFeeRow({ ...currentFeeRow, due_by_date: formattedDate })
-                                                        }
-                                                        }
-                                                        renderInput={(params) => (
-                                                            <TextField
-                                                                required
-                                                                {...params}
-                                                                size="small"
-                                                                sx={{
-                                                                    '& .MuiInputBase-root': {
-                                                                        fontSize: '14px',
-                                                                    },
-                                                                    '& .MuiSvgIcon-root': {
-                                                                        fontSize: '20px',
-                                                                    },
-                                                                }}
-                                                            />
-                                                        )}
-                                                        sx={{ marginTop: "10px" }}
-                                                    />
-                                                </LocalizationProvider>
+                                                /> */}
 
-                                                <TextField
+                                                {/* <TextField
                                                     margin="dense"
                                                     label="Available To Pay (Days Before)"
                                                     fullWidth
                                                     variant="outlined"
                                                     value={currentFeeRow?.available_topay || ''}
                                                     onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, available_topay: e.target.value })}
-                                                />
+                                                /> */}
 
-                                                <TextField
+                                                {/* <TextField
                                                     margin="dense"
                                                     label="Late By (Days After)"
                                                     fullWidth
                                                     variant="outlined"
                                                     value={currentFeeRow?.late_by || ''}
                                                     onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, late_by: e.target.value })}
-                                                />
-                                                <TextField
+                                                /> */}
+                                                {/* <TextField
                                                     margin="dense"
                                                     label="Late Fee"
                                                     fullWidth
@@ -1637,33 +1909,40 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     variant="outlined"
                                                     value={currentFeeRow?.perDay_late_fee || ''}
                                                     onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, perDay_late_fee: e.target.value })}
-                                                />
+                                                /> */}
                                             </DialogContent>
                                             <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
                                                 <Button variant="outlined"
                                                     sx={{
-                                                        background: "#3D5CAC",
-                                                        color: theme.palette.background.default,
+                                                        background: "#F87C7A",
+                                                        color: "#160449",
                                                         cursor: "pointer",
-                                                        textTransform: "none",
-                                                        width: "30%",
+                                                        width: "100px",
+                                                        height: "31px",
                                                         fontWeight: theme.typography.secondary.fontWeight,
                                                         fontSize: theme.typography.smallFont,
+                                                        textTransform: 'none',
+                                                        '&:hover': {
+                                                            backgroundColor: '#f76462',
+                                                        },
                                                     }}
-                                                    size="small" onClick={handleFeeModalClose}>
+                                                    onClick={handleFeeModalClose}>
                                                     Cancel
                                                 </Button>
                                                 <Button variant="outlined"
                                                     sx={{
-                                                        background: "#3D5CAC",
-                                                        color: theme.palette.background.default,
+                                                        marginRight: '5px', background: "#FFC614",
+                                                        color: "#160449",
                                                         cursor: "pointer",
-                                                        textTransform: "none",
-                                                        width: "30%",
+                                                        width: "100px",
+                                                        height: "31px",
                                                         fontWeight: theme.typography.secondary.fontWeight,
                                                         fontSize: theme.typography.smallFont,
+                                                        textTransform: 'none',
+                                                        '&:hover': {
+                                                            backgroundColor: '#fabd00',
+                                                        },
                                                     }}
-                                                    size="small"
                                                     onClick={handleAddNewFee}>
                                                     Save
                                                 </Button>
@@ -1685,7 +1964,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 >
                                     <Typography
                                         sx={{
-                                            color: theme.typography.primary.black,
+                                            color: "#160449",
                                             fontWeight: theme.typography.primary.fontWeight,
                                             fontSize: theme.typography.small,
                                             textAlign: 'center',
@@ -1721,6 +2000,15 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Documents documents={documents} setDocuments={setDocuments}
                                 uploadedFiles={uploadedFiles} setuploadedFiles={setuploadedFiles} />
+                        </Paper>
+                    </Grid>
+
+                    <Grid item xs={12} md={12}>
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                            <UtilitiesManager newUtils={newUtilities} utils={utilities}
+                                utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
+                                onAddUtilTextChange={onAddUtilTextChange} onAddUtilitiesClick={onAddUtilitiesClick}
+                                remainingUtils={remainingUtils} />
                         </Paper>
                     </Grid>
 
