@@ -226,7 +226,13 @@ export default function MaintenanceManager() {
 			if(selectedProperty === null || selectedProperty === undefined ){
 				setFilterPropertyList(propertyList);
 			}else{
-				setFilterPropertyList([selectedProperty]);
+				console.log('in else---propertyList---', propertyList);
+				for (const property of propertyList) {
+					if (property.property_uid !== selectedProperty.property_uid) {
+						property.checked = false;
+					}
+				}
+				setFilterPropertyList(propertyList);
 			}
 		}
 	}, [maintenanceData]);

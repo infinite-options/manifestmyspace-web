@@ -13,6 +13,7 @@ import theme from '../../theme/theme';
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function SelectPropertyFilter({showPropertyFilter, setShowPropertyFilter, filterList, setFilterList}) {
+    console.log('---inside filterList---', filterList);
     const [deselectAll, setDeselectAll] = useState(false);
 
     const handleDeselectAllChange = () => {
