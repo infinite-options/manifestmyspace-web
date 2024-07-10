@@ -9,6 +9,7 @@ const DashboardChart = (props) => {
   // I want props.revenueCashflowByMonth to be sorted in order of month and year
 
   const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
+  console.log("ROHIT - DashboardChart - data - ", data);
   const activeButton = props.activeButton;
   // console.log("Input data to graph: ", data);
   // console.log("Active button: ", activeButton);
@@ -59,11 +60,11 @@ const DashboardChart = (props) => {
           <Legend />
           <Bar
             yAxisId="left"
-            dataKey={activeButton === "ExpectedCashflow" ? "expectedCashflow" : "cashflow"}
+            dataKey={activeButton === "ExpectedCashflow" ? "expected_cashflow" : "cashflow"}
             fill={theme.typography.common.blue}
             barCategoryGap={10}
             barSize={15}
-            name="Cashflow"
+            name="Actual Cashflow"
           >
             {data.map((entry, index) => (
               <Cell
@@ -76,7 +77,28 @@ const DashboardChart = (props) => {
               />
             ))}
           </Bar>
-          <Line
+          
+          <Bar
+            yAxisId="left"
+            dataKey={"expected_cashflow"}
+            fill={theme.palette.primary.mustardYellow}
+            barCategoryGap={10}
+            barSize={15}
+            name="Expected Cashflow"
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={index}
+                fill={
+                  (entry.expected_cashflow < 0)
+                    ? theme.palette.custom.red
+                    : theme.palette.primary.mustardYellow
+                }
+              />
+            ))}
+          </Bar>
+
+          {/* <Line
             yAxisId="left"
             type="monotone"
             dataKey={activeButton === "ExpectedCashflow" ? "expectedRevenue" : "expected_cashflow"}
@@ -84,6 +106,26 @@ const DashboardChart = (props) => {
             strokeWidth={5}
             name="Expected Cash Flow"
             dot={{ stroke: theme.palette.primary.mustardYellow }}
+          /> */}
+
+          <Line
+            yAxisId="left"
+            type="monotone"
+            dataKey={"expected_revenue"}
+            stroke={theme.palette.custom.red}
+            strokeWidth={5}
+            name="Expected Revenue"
+            dot={{ stroke: theme.palette.custom.red }}
+          />
+
+          <Line
+            yAxisId="left"
+            type="monotone"
+            dataKey={"revenue"}
+            stroke={"#000000"}
+            strokeWidth={5}
+            name="Actual Revenue"
+            dot={{ stroke: "#000000" }}
           />
         </ComposedChart>
       </ResponsiveContainer>

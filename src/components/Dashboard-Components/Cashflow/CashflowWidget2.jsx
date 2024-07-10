@@ -8,50 +8,39 @@ import { months } from "moment";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-// import {
-//   fetchCashflow,
-//   // getTotalRevenueByMonthYear,
-//   // getTotalExpenseByMonthYear,
-//   getPast12MonthsCashflow,
-//   // getPast12MonthsExpectedCashflow,
-//   // getTotalExpectedRevenueByMonthYear,
-//   // getTotalExpectedExpenseByMonthYear,
-// } from "../../Cashflow/CashflowFetchData";
-
 import {
-  // getTotalRevenueByType,
-  // getTotalExpenseByType,  
-  getTotalExpenseByMonthYear,
+  fetchCashflow,
   getTotalRevenueByMonthYear,
+  getTotalExpenseByMonthYear,
+  getPast12MonthsCashflow,
+  getPast12MonthsExpectedCashflow,
   getTotalExpectedRevenueByMonthYear,
   getTotalExpectedExpenseByMonthYear,
-  getPast12MonthsExpectedCashflow,
-  // getPast12MonthsCashflow,
-  // getNext12MonthsCashflow,
-  // getRevenueList,
-  // getExpenseList,
+} from "../../Cashflow/CashflowFetchData";
+import {
+  fetchCashflow2,
+  getTotalRevenueByMonthYear2,
+  getTotalExpenseByMonthYear2,
+  getPast12MonthsCashflow2,
+  getPast12MonthsExpectedCashflow2,
+  getTotalExpectedRevenueByMonthYear2,
+  getTotalExpectedExpenseByMonthYear2,
 } from "../../Cashflow/CashflowFetchData2";
-
-
-
 import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
 import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 
 // "../../images/AddRevenueIcon.png"
 
-function CashflowWidget({ data }) {
+function CashflowWidget() {
   console.log("In Cashflow Widget ");
-  console.log("Cashflow Widget - data - ", data);
   const navigate = useNavigate();
 
   let date = new Date();
   let currentMonth = date.toLocaleString("default", { month: "long" });
-  // let currentMonthNumber = date.getMonth() + 1;
   let currentYear = date.getFullYear().toString();
-  console.log("Cashflow Widget Current Month: ", currentMonth);
-  // console.log("Cashflow Widget Current Month Number: ", currentMonthNumber);  
-  console.log("Cashflow Widget Current Year: ", currentYear);
+  // console.log("Cashflow Widget Current Month: ", currentMonth);
+  // console.log("Cashflow Widget Current Year: ", currentYear);
 
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
@@ -66,40 +55,10 @@ function CashflowWidget({ data }) {
   const profileId = getProfileId();
   const [cashflowData, setCashflowData] = useState(null);
 
-  const expenseCurrentMonth = data?.result?.find( (item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense")  
-  const revenueCurrentMonth = data?.result?.find( (item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue")
-
-  console.log("ROHIT - expenseCurrentMonth - ", expenseCurrentMonth);
-  console.log("ROHIT - revenueCurrentMonth - ", revenueCurrentMonth);
-
-  // useEffect(() => {
-  //   fetchCashflow(profileId)
-  //     .then((data) => {
-  //       // console.log("Back in Widget: ", data);
-  //       setCashflowData(data);
-  //       let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
-  //       let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
-
-  //       let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear);
-  //       let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear);
-
-  //       // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
-  //       let last12months = getPast12MonthsExpectedCashflow(data, currentMonth, currentYear);
-
-  //       setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
-  //       setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
-  //       setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
-  //       setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
-  //       setLast12Months(last12months);
-  //       // setTotalRevenueByMonth(50);  // This works.  Problem:  currentMonthYearRevenue is returning 0
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching cashflow data:", error);
-  //     });
-  // }, []);
-
-
-  useEffect(() => {    
+  useEffect(() => {
+    fetchCashflow2(profileId, month, year)
+      .then((data) => {
+        console.log("Back in Widget: ", data);
         setCashflowData(data);
         let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
         let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
@@ -108,7 +67,7 @@ function CashflowWidget({ data }) {
         let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear);
 
         // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
-        let last12months = getPast12MonthsExpectedCashflow(data, currentMonth, currentYear);        
+        let last12months = getPast12MonthsExpectedCashflow(data, currentMonth, currentYear);
 
         setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
         setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
@@ -116,8 +75,11 @@ function CashflowWidget({ data }) {
         setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
         setLast12Months(last12months);
         // setTotalRevenueByMonth(50);  // This works.  Problem:  currentMonthYearRevenue is returning 0
-      
-  }, [data]);
+      })
+      .catch((error) => {
+        console.error("Error fetching cashflow data:", error);
+      });
+  }, []);
 
   // Confirm data has been received.  Comment out before publishing
   // console.log("TotalRevenueByMonth: ", totalRevenueByMonth);
@@ -335,87 +297,46 @@ function CashflowWidget({ data }) {
                 </Button>
               </Grid>
             </Grid>
-            <Grid container direction="row" item xs={12} columnSpacing={3}>
-              <Grid item xs={5}>                                    
-              </Grid>
-              <Grid item xs={3}  sx={{backgroundColor: '#FFE3AD', borderRadius: '5px', padding: '5px', display:'flex', justifyContent: 'center', }}>
-                Expected
-              </Grid>
-              <Grid item xs={1}>
-
-              </Grid>
-              <Grid container item xs={3} justifyContent="center" sx={{backgroundColor: '#8696BE', borderRadius: '5px', padding: '5px', display:'flex', justifyContent: 'center',}}>
-                Actual
-              </Grid>
-
+            <Grid item xs={12} sx={{ marginBottom: "20px" }}>
+              <Box
+                component="span"
+                m={1}
+                padding={2}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                style={{
+                  backgroundColor: theme.palette.custom.blue,
+                  borderRadius: "5px",
+                  // marginBottom: "20px",
+                }}
+              >
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Cashflow</Typography>
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
+                  {/* ${totalRevenueByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"} */}$
+                  {totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined
+                    ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
+                    : "0.00"}
+                </Typography>
+              </Box>
             </Grid>
-            <Grid container direction="row" item xs={12} columnSpacing={3}>
-              <Grid item xs={5}>
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  {`Cashflow`}
-                </Typography>
-              </Grid>
-              <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center', }}>
-                {/* {revenueCurrentMonth.pur_amount_due? revenueCurrentMonth.pur_amount_due : 0} */}
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${(expenseCurrentMonth?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0}
-                </Typography>
-              </Grid>
-              <Grid item xs={1}>
 
-              </Grid>
-              <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
+            <Grid item xs={12} sx={{ height: "20px", margin: "5px", display: "flex", justifyContent: "space-between", alignItems: "stretch", marginBottom: "20px" }}>
+              {/* <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center"> */}
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{month} Revenue</Typography>
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                ${(expenseCurrentMonth?.total_paid != null && revenueCurrentMonth?.total_paid != null ) ? (parseFloat(revenueCurrentMonth.total_paid) - parseFloat(expenseCurrentMonth.total_paid)).toFixed(2) : 0}
+                ${totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00"}
               </Typography>
-              </Grid>
-
+              {/* </Box> */}
             </Grid>
-            <Grid container direction="row" item xs={12} columnSpacing={3}>
-              <Grid item xs={5}>
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  {`Revenue`}
-                </Typography>              </Grid>
-              <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center', }}>
-                {/* {revenueCurrentMonth.pur_amount_due? revenueCurrentMonth.pur_amount_due : 0} */}
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${revenueCurrentMonth?.pur_amount_due != null ? revenueCurrentMonth.pur_amount_due : 0}
-                </Typography>
-              </Grid>
-              <Grid item xs={1}>
-
-              </Grid>
-              <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${revenueCurrentMonth?.total_paid  != null ? revenueCurrentMonth.total_paid : 0}
-                </Typography>
-              </Grid>
-
-            </Grid>
-            <Grid container direction="row" item xs={12} columnSpacing={3}>
-              <Grid item xs={5}>
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  {`Expense`}
-                </Typography>
-              </Grid>
-              <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center', }}>
-                {/* {revenueCurrentMonth.pur_amount_due? revenueCurrentMonth.pur_amount_due : 0} */}
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${expenseCurrentMonth?.pur_amount_due  != null ? expenseCurrentMonth.pur_amount_due : 0}
-                </Typography>
-              </Grid>
-              <Grid item xs={1}>
-
-              </Grid>
-              <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${expenseCurrentMonth?.total_paid  != null ? expenseCurrentMonth.total_paid : 0}
-                </Typography>
-              </Grid>
-
+            <Grid item xs={12} sx={{ height: "20px", margin: "5px", display: "flex", justifyContent: "space-between", alignItems: "stretch", marginBottom: "20px" }}>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{month} Expenses</Typography>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
+                ${totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00"}
+              </Typography>
             </Grid>
           </Grid>
-          {/* <Grid item xs={12} sx={{ marginBottom: "20px" }}>
+          <Grid item xs={12} sx={{ marginBottom: "20px" }}>
             <Box
               component="span"
               m={1}
@@ -434,7 +355,7 @@ function CashflowWidget({ data }) {
                 ${expectedRevenueByMonth ? (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2) : "0.00"}
               </Typography>
             </Box>
-          </Grid> */}
+          </Grid>
           <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
             {/* <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: "24px" }}> */}
             <Typography variant="h5" sx={{ fontWeight: "bold", color: "#160449" }}>
