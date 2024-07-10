@@ -329,55 +329,6 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
                             </Typography>
                         </Grid>
                         <Grid item md={6}>
-                            <TextField
-                                className={classes.textField}
-                                margin="dense"
-                                label="Drivers License"
-                                fullWidth
-                                variant="outlined"
-                                value={currentRow?.tenant_drivers_license_number || ''}
-                                onChange={(e) => setCurrentRow({ ...currentRow, tenant_drivers_license_number: e.target.value })}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
-                                sx={{ backgroundColor: '#D6D5DA', }}
-                            />
-                        </Grid>
-                        <Grid item md={6}>
-                            <TextField
-                                className={classes.textField}
-                                margin="dense"
-                                label="Social Security Number"
-                                fullWidth
-                                variant="outlined"
-                                value={currentRow?.tenant_ssn || ''}
-                                onChange={(e) => setCurrentRow({ ...currentRow, tenant_ssn: e.target.value })}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
-                                sx={{ backgroundColor: '#D6D5DA', }}
-                            />
-                        </Grid>
-
-                        <Grid item md={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     label="Date Of Birth"

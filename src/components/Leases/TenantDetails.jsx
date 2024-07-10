@@ -14,7 +14,8 @@ import { Close } from '@mui/icons-material';
 const useStyles = makeStyles((theme) => ({
     paper: {
         position: 'absolute',
-        width: 500,
+        width: 841,
+        height: 500,
         backgroundColor: theme.palette.background.paper,
         border: '2px solid #000',
         boxShadow: theme.shadows[5],
@@ -236,7 +237,6 @@ const TenantDetails = ({ tenantWithId }) => {
                             Tenant Details
                         </Typography>
                         <Button
-                            variant="outlined"
                             sx={{
                                 "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                                 cursor: "pointer",

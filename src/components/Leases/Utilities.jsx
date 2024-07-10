@@ -125,7 +125,6 @@ const UtilitiesManager = ({ newUtils, utils, utilitiesMap, handleNewUtilityChang
                             Utilities
                         </Typography>
                         <Button
-                            variant="outlined"
                             sx={{
                                 "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                                 cursor: "pointer",
