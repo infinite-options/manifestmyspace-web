@@ -121,6 +121,8 @@ function DateTimePickerModal(props) {
                                 <FormControlLabel value="now" control={<Radio onChange={changeActiveDateSelector}/>} label={showFormLabel("now")}/>
                                 <FormControlLabel value="schedule" control={<Radio onChange={changeActiveDateSelector} disabled={props.maintenanceItem.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
                                 <FormControlLabel value="select" control={<Radio onChange={changeActiveDateSelector}/>} label={"Select Completed Date"} />
+                                <FormControlLabel value="cancel" control={<Radio/>}label={"Cancel Ticket without Completion"} />
+                            
                             </RadioGroup>
                         </FormControl>
                         </Grid>
