@@ -47,27 +47,27 @@ const headers = {
 const roleMap = {
   OWNER: {
     dashboardUrl: "/ownerDashboard",
-    profileApi: "/ownerProfile",
+    profileApi: "/profile",
   },
   MANAGER: {
     dashboardUrl: "/managerDashboard",
-    profileApi: "/businessProfile",
+    profileApi: "/profile",
   },
   TENANT: {
     dashboardUrl: "/tenantDashboard",
-    profileApi: "/tenantProfile",
+    profileApi: "/profile",
   },
   MAINTENANCE: {
     dashboardUrl: "/maintenanceDashboard2",
-    profileApi: "/businessProfile",
+    profileApi: "/profile",
   },
   PM_EMPLOYEE: {
     dashboardUrl: "/managerDashboard",
-    profileApi: "/employee",
+    profileApi: "/profile",
   },
   MAINT_EMPLOYEE: {
     dashboardUrl: "/maintenanceDashboard2",
-    profileApi: "/employee",
+    profileApi: "/profile",
   },
 };
 
