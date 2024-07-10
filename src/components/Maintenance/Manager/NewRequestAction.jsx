@@ -159,7 +159,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
 						}}
 						onClick={() => setShowRequestMoreInfo(true)}
 					>
-						Request Details
+						Ask For Details
 					</Button>
 					<RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
                 
@@ -186,7 +186,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
 						}}
 						onClick={() => setShowModal(true)}
 					>
-						Schedule Repair
+						Schedule
 					</Button>
 					<Button
 						variant="contained"

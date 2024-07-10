@@ -309,6 +309,7 @@ export default function MaintenanceRequestNavigatorNew({
 			});
 			const priorityData = await response.json();
 			console.log('data response handlePriorityChange', priorityData);
+			window.location.reload();
 		} catch (err) {
 			console.error('Error: ', err.message);
 		}
