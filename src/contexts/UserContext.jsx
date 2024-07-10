@@ -133,6 +133,8 @@ const logout = () => {
 console.log("In logout as ", user);
 cookiesObj.remove("user");
 cookiesObj.remove("token");
+cookiesObj.remove("selectedRole");
+cookiesObj.remove("default_form_vals");
 window.location.href = "/";
 };
 
