@@ -184,7 +184,6 @@ import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
-
 function Main() {
   console.log("In Main Page");
   const { roleName, selectedRole } = useUser();
