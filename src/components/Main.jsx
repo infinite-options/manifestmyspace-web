@@ -184,7 +184,6 @@ import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
-import MaintenanceRequestDetailNew from "./Maintenance/MaintenanceRequestDetailNew";
 
 function Main() {
   console.log("In Main Page");
@@ -377,8 +376,6 @@ function Main() {
 
             <Route path="referUser" element={<ReferUser />} />
             <Route path="employeeAccess" element={<EmployeeAccess />} />
-
-            <Route path="newMaintenanceUI" element={<MaintenanceRequestDetailNew/>}></Route>
           </Route>
         </Routes>
         <Footer />
