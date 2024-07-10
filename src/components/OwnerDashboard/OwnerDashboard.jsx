@@ -82,10 +82,13 @@ export default function OwnerDashboard() {
     const dataObject = {};
     console.log("getProfileI$", getProfileId());
     const fetchData = async () => {
+      if (!getProfileId()) {
+        return;
+      }
       console.log("getProfileId*", getProfileId());
       if (!getProfileId()) navigate("/PrivateprofileName");
       setShowSpinner(true);
-      console.log("getProfileId()", getProfileId());
+      console.log("getProfileId()", getProfileId());     
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
       console.log("jsonData", jsonData);
