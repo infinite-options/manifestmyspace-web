@@ -559,7 +559,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
             <hr />
             <Box display="flex">
                 <Box width="20%" p={2}>
-                    <h1>Profile pic</h1>
+                    {/* <h1>Profile pic</h1> */}
                     <Stack direction="row" justifyContent="center">
                         {photo && photo.image ? (
                             <img
@@ -589,14 +589,12 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
                             component="label"
                             variant="contained"
                             sx={{
-                                backgroundImage: `url(${addPhotoImg})`,
+                                backgroundColor:  "#3D5CAC",
                                 width: "193px",
                                 height: "35px",
-                                "&:hover, &:focus": {
-                                    backgroundColor: "transparent",
-                                },
+                                
                             }}
-                        >
+                        >   Add profile pic
                             <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
                         </Button>
                     </Box>
@@ -752,18 +750,18 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2 , backgroundColor:  "#3D5CAC" }}
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
         </div>
     );

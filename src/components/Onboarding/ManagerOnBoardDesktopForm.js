@@ -274,7 +274,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
         business_uid:getProfileId(),
         business_type: "MANAGEMENT",
         business_name: businessName,
-        business_photo_url: photo,
+        business_photo: photo,
         business_phone_number: phoneNumber,
         business_email: email,
         business_ein_number: AES.encrypt(ein, process.env.REACT_APP_ENKEY).toString(),
@@ -284,7 +284,22 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
         business_unit: unit,
         business_city: city,
         business_state: state,
-        business_zip: zip
+        business_zip: zip,
+        employee_user_id: user.user_uid,
+      employee_uid:getRoleId(),
+      employee_business_id: getProfileId(),
+      employee_first_name: empFirstName,
+      employee_last_name: empLastName,
+      employee_phone_number: empPhoneNumber,
+      employee_email: empEmail,
+      employee_role: "OWNER",
+      
+      employee_address: empAddress,
+      employee_unit: empUnit,
+      employee_city: empCity,
+      employee_state: empState,
+      employee_zip: empZip,
+      employee_ssn: AES.encrypt(empSsn, process.env.REACT_APP_ENKEY).toString()
       };           
   };
 
@@ -382,7 +397,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       const payload = getPayload();
       const form = encodeForm(payload);
       const data = await saveProfile(form);
-      const createEmp= await SaveEmpStep();
+      //const createEmp= await SaveEmpStep();
       
 
       setShowSpinner(false);
@@ -824,12 +839,10 @@ const renderFees = () => {
                           component="label"
                           variant="contained"
                           sx={{
-                              backgroundImage: `url(${addPhotoImg})`,
+                            backgroundColor:  "#3D5CAC" ,
                               width: "193px",
                               height: "35px",
-                              "&:hover, &:focus": {
-                                  backgroundColor: "transparent",
-                              },
+                             
                           }}
                       >
                           Add Business Pic
@@ -1003,12 +1016,10 @@ const renderFees = () => {
                           component="label"
                           variant="contained"
                           sx={{
-                              backgroundImage: `url(${addPhotoImg})`,
+                            backgroundColor:  "#3D5CAC" ,
                               width: "193px",
                               height: "35px",
-                              "&:hover, &:focus": {
-                                  backgroundColor: "transparent",
-                              },
+                             
                           }}
                       >   Add Profile Pic
                           <input type="file" hidden accept="image/*" />
@@ -1151,18 +1162,18 @@ const renderFees = () => {
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2, backgroundColor:  "#3D5CAC"  }}
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
       </div>
   );

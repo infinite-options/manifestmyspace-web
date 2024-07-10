@@ -51,7 +51,7 @@ const roleMap = {
   },
   MANAGER: {
     dashboardUrl: "/managerDashboard",
-    profileApi: "/businessProfile",
+    profileApi: "/profile",
   },
   TENANT: {
     dashboardUrl: "/tenantDashboard",
@@ -59,7 +59,7 @@ const roleMap = {
   },
   MAINTENANCE: {
     dashboardUrl: "/maintenanceDashboard2",
-    profileApi: "/businessProfile",
+    profileApi: "/profile",
   },
   PM_EMPLOYEE: {
     dashboardUrl: "/managerDashboard",
@@ -71,7 +71,7 @@ const roleMap = {
   },
 };
 
-const photoFields = new Set(["owner_photo", "tenant_photo", "business_photo"]);
+const photoFields = new Set(["owner_photo", "owner_photo_url","business_photo_url", "tenant_photo", "tenant_photo_url","business_photo"]);
 
 export {
   MaskCharacter,

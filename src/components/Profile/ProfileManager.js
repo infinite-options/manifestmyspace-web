@@ -64,12 +64,12 @@ const ProfileManager = () => {
   const fetchProfileData = async () => {
     try {
         let url=`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getRoleId()}`;
-        if(selectedRole==='PM_EMPLOYEE' || selectedRole==='MAINT_EMPLOYEE')
-        {url= `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getRoleId()}`}
+        // if(selectedRole==='PM_EMPLOYEE' || selectedRole==='MAINT_EMPLOYEE')
+        // {url= `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getRoleId()}`}
         const profileResponse = await axios.get(url);
         
-        const profileData = (selectedRole==='PM_EMPLOYEE' || selectedRole==='MAINT_EMPLOYEE')?
-        profileResponse.data.employee.result[0]:  profileResponse.data.profile.result[0];
+        const profileData = 
+        profileResponse.data.profile.result[0];
         console.log('profile-*-', profileData);
         console.log('selectedRole-*-', selectedRole);
         setProfileData(profileData);
@@ -143,6 +143,7 @@ const ProfileManager = () => {
           <Button variant="contained" onClick={() => {
               logout();
             }}
+            sx={{ mt: 2, backgroundColor:  "#3D5CAC" }}
             className={classes.signOutButton}>Sign Out</Button>
         </Stack>
       </Box>

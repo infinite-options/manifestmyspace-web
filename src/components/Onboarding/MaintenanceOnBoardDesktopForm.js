@@ -56,7 +56,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
   const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-  const { user, isBusiness, isManager, selectRole, roleName,setLoggedIn, selectedRole, updateProfileUid, isLoggedIn,getProfileId } = useUser();
+  const { user, isBusiness, isManager, selectRole, roleName,setLoggedIn, selectedRole, updateProfileUid, isLoggedIn,getProfileId,getRoleId } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [paymentMethods, setPaymentMethods] = useState({
@@ -250,6 +250,20 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
         business_city: city,
         business_state: state,
         business_zip: zip,
+        employee_user_id: getRoleId(),
+       employee_business_id: getProfileId(),
+       employee_first_name: firstName,
+       employee_last_name: lastName,
+       employee_phone_number: phoneNumber,
+       employee_email: email,
+       employee_role: "OWNER",
+    //    employee_photo_url: photo,
+       employee_address: address,
+       employee_unit: unit,
+       employee_city: city,
+       employee_state: state,
+       employee_zip: zip,
+       employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
       };           
   };
 
@@ -753,18 +767,17 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                           justifyContent: "center",
                       }}
                   >
-                      <Button
+                       <Button
                           component="label"
                           variant="contained"
                           sx={{
-                              backgroundImage: `url(${addPhotoImg})`,
+                            backgroundColor:  "#3D5CAC" ,
                               width: "193px",
                               height: "35px",
-                              "&:hover, &:focus": {
-                                  backgroundColor: "transparent",
-                              },
+                             
                           }}
                       >
+                          Add Business Pic
                           <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
                       </Button>
                   </Box>
@@ -934,12 +947,10 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                           component="label"
                           variant="contained"
                           sx={{
-                              backgroundImage: `url(${addPhotoImg})`,
+                            backgroundColor:  "#3D5CAC" ,
                               width: "193px",
                               height: "35px",
-                              "&:hover, &:focus": {
-                                  backgroundColor: "transparent",
-                              },
+                             
                           }}
                       >
                           <input type="file" hidden accept="image/*" />
@@ -1082,11 +1093,11 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2 , backgroundColor:  "#3D5CAC" }}
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
@@ -1094,7 +1105,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
       </div>
   );
