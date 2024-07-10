@@ -323,15 +323,42 @@ export default function Cashflow() {
             justifyContent="space-between"
             alignItems="center"
             // onClick={() => setActiveButton('ExpectedCashflow')}
+            // style={{
+            //   backgroundColor: theme.palette.custom.blue,
+            //   borderRadius: "5px",
+            // }}
+          >
+            <Box sx={{
+              width: '70px',
+            }}>
+
+            </Box>
+            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+              Expected
+            </Typography>
+            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+              Actual
+            </Typography>
+
+          </Box>
+
+          <Box
+            component="span"
+            m={2}
+            padding={3}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            // onClick={() => setActiveButton('ExpectedCashflow')}
             style={{
               backgroundColor: theme.palette.custom.blue,
               borderRadius: "5px",
             }}
           >
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+            <Typography sx={{ width: '200px', color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
               Cashflow
             </Typography>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+            <Typography sx={{ width: '200px', color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
               $
               {expectedRevenueByMonth !== null && expectedRevenueByMonth !== undefined && expectedExpenseByMonth !== null && expectedExpenseByMonth !== undefined
                 ? (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2)
@@ -352,21 +379,25 @@ export default function Cashflow() {
           >
             {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    {month} Revenue
+                  </Typography>
+                </AccordionSummary>
+              </Box>
+              <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  {month} Revenue
-                </Typography>
-              </AccordionSummary>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                ${" "}
-                {"ExpectedCashflow" === "Cashflow"
-                  ? totalRevenueByMonth
+                  ${" "}
+                  {"ExpectedCashflow" === "Cashflow"
+                    ? totalRevenueByMonth
                     ? totalRevenueByMonth.toFixed(2)
                     : "0.00"
-                  : expectedRevenueByMonth
-                  ? expectedRevenueByMonth.toFixed(2)
-                  : "0.00"}
-              </Typography>
+                    : expectedRevenueByMonth
+                    ? expectedRevenueByMonth.toFixed(2)
+                    : "0.00"}
+                </Typography>
+              </Box>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                 ${" "}
                 {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
@@ -393,11 +424,13 @@ export default function Cashflow() {
             }}
           >            
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  {month} Expense
-                </Typography>
-              </AccordionSummary>
+              <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    {month} Expense
+                  </Typography>
+                </AccordionSummary>
+              </Box>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                 ${" "}
                 {"ExpectedCashflow" === "Cashflow"

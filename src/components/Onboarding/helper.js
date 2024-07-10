@@ -63,11 +63,11 @@ const roleMap = {
   },
   PM_EMPLOYEE: {
     dashboardUrl: "/managerDashboard",
-    profileApi: "/employee",
+    profileApi: "/profile",
   },
   MAINT_EMPLOYEE: {
     dashboardUrl: "/maintenanceDashboard2",
-    profileApi: "/employee",
+    profileApi: "/profile",
   },
 };
 
