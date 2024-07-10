@@ -137,6 +137,12 @@ function getPast12MonthsExpectedCashflow(data, month, year) {
       year: currentYear,
       expected_cashflow: expectedMonthRevenue - expectedMonthExpense,
       cashflow: currentMonthRevenue - currentMonthExpense,
+      
+      expected_revenue: expectedMonthRevenue,
+      revenue:currentMonthRevenue,
+      expected_expense: expectedMonthExpense,
+      expense: currentMonthExpense,
+
       monthYear: currentMonth.slice(0, 3) + " " + currentYear.slice(2, 4),
       // "expected_revenue": expectedMonthRevenue,
       // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
