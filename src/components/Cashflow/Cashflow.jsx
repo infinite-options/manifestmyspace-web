@@ -42,19 +42,34 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
+
 import {
   getTotalRevenueByType,
   getTotalExpenseByType,
   fetchCashflow,
-  getTotalExpenseByMonthYear,
-  getTotalRevenueByMonthYear,
-  getTotalExpectedRevenueByMonthYear,
-  getTotalExpectedExpenseByMonthYear,
+  // getTotalExpenseByMonthYear,
+  // getTotalRevenueByMonthYear,
+  // getTotalExpectedRevenueByMonthYear,
+  // getTotalExpectedExpenseByMonthYear,
   getPast12MonthsCashflow,
   getNext12MonthsCashflow,
   getRevenueList,
   getExpenseList,
 } from "../Cashflow/CashflowFetchData";
+
+import {
+  // getTotalRevenueByType,
+  // getTotalExpenseByType,
+  fetchCashflow2,
+  getTotalExpenseByMonthYear,
+  getTotalRevenueByMonthYear,
+  getTotalExpectedRevenueByMonthYear,
+  getTotalExpectedExpenseByMonthYear,
+  // getPast12MonthsCashflow,
+  // getNext12MonthsCashflow,
+  // getRevenueList,
+  // getExpenseList,
+} from "../Cashflow/CashflowFetchData2";
 
 export default function Cashflow() {
   const location = useLocation();
@@ -75,6 +90,7 @@ export default function Cashflow() {
   const [openSelectProperty, setOpenSelectProperty] = useState(false);
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
+  const [cashflowData2, setCashflowData2] = useState(null); // Cashflow data from API
 
   const [expectedRevenueByMonth, setExpectedRevenueByMonth] = useState(0);
   const [expectedExpenseByMonth, setExpectedExpenseByMonth] = useState(0);
@@ -108,11 +124,22 @@ export default function Cashflow() {
   }, []);
 
   useEffect(() => {
-    if (cashflowData !== null && cashflowData !== undefined) {
-      let currentMonthYearTotalRevenue = getTotalRevenueByMonthYear(cashflowData, month, year);
-      let currentMonthYearTotalExpense = getTotalExpenseByMonthYear(cashflowData, month, year);
-      let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(cashflowData, month, year);
-      let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(cashflowData, month, year);
+    fetchCashflow2(profileId)
+      .then((data) => {
+        setCashflowData2(data);
+        // let currentMonthYearRevenueExpected = get
+      })
+      .catch((error) => {
+        console.error("Error fetching cashflow data:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (cashflowData !== null && (cashflowData !== undefined && cashflowData2) !== null && cashflowData2 !== undefined) {
+      let currentMonthYearTotalRevenue = getTotalRevenueByMonthYear(cashflowData2, month, year);
+      let currentMonthYearTotalExpense = getTotalExpenseByMonthYear(cashflowData2, month, year);
+      let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(cashflowData2, month, year);
+      let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(cashflowData2, month, year);
       setTotalRevenueByMonth(currentMonthYearTotalRevenue); // currently using sum(total_paid)
       setTotalExpenseByMonth(currentMonthYearTotalExpense); // currently using sum(total_paid)
       setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
@@ -142,7 +169,7 @@ export default function Cashflow() {
       setLast12Months(last12months);
       setNext12Months(next12Months);
     }
-  }, [month, year, cashflowData]);
+  }, [month, year, cashflowData, cashflowData2]);
 
   // useEffect(() => {
   //     console.log("revenueByType", revenueByType)
@@ -204,7 +231,7 @@ export default function Cashflow() {
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "12px" }}>Property</Typography>
             </Button>
           </Box>
-          <Box
+          {/* <Box
             component="span"
             m={3}
             padding={3}
@@ -224,14 +251,14 @@ export default function Cashflow() {
                 ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
                 : "0.00"}
             </Typography>
-          </Box>
-          <Accordion
+          </Box> */}
+          {/* <Accordion
             sx={{
               backgroundColor: "Cashflow" === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
               boxShadow: "none",
             }}
           >
-            {/* This is Revenue Bar underneath the Blue Cashflow box */}
+            
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
@@ -244,7 +271,7 @@ export default function Cashflow() {
               </Typography>
             </Box>
             <AccordionDetails>
-              {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
+              
               <StatementTable
                 categoryTotalMapping={revenueByType}
                 allItems={revenueList}
@@ -255,14 +282,14 @@ export default function Cashflow() {
                 year={year}
               />
             </AccordionDetails>
-          </Accordion>
-          <Accordion
+          </Accordion> */}
+          {/* <Accordion
             sx={{
               backgroundColor: "Cashflow" === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
               boxShadow: "none",
             }}
           >
-            {/* This is Expense Bar underneath the Blue Cashflow box */}
+            
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
@@ -286,7 +313,7 @@ export default function Cashflow() {
                 year={year}
               />
             </AccordionDetails>
-          </Accordion>
+          </Accordion> */}
 
           <Box
             component="span"
@@ -297,17 +324,23 @@ export default function Cashflow() {
             alignItems="center"
             // onClick={() => setActiveButton('ExpectedCashflow')}
             style={{
-              backgroundColor: "ExpectedCashflow" === "Cashflow" ? theme.palette.custom.grey : theme.palette.custom.yellowHighlight,
+              backgroundColor: theme.palette.custom.blue,
               borderRadius: "5px",
             }}
           >
             <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              Expected Cashflow
+              Cashflow
             </Typography>
             <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
               $
               {expectedRevenueByMonth !== null && expectedRevenueByMonth !== undefined && expectedExpenseByMonth !== null && expectedExpenseByMonth !== undefined
                 ? (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2)
+                : "0.00"}
+            </Typography>
+            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+              $
+              {totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined
+                ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
                 : "0.00"}
             </Typography>
           </Box>
@@ -321,7 +354,7 @@ export default function Cashflow() {
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  {"ExpectedCashflow" === "Cashflow" ? "" : "Expected"} {month} Revenue
+                  {month} Revenue
                 </Typography>
               </AccordionSummary>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
@@ -333,6 +366,10 @@ export default function Cashflow() {
                   : expectedRevenueByMonth
                   ? expectedRevenueByMonth.toFixed(2)
                   : "0.00"}
+              </Typography>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                ${" "}
+                {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
               </Typography>
             </Box>
 
@@ -354,12 +391,11 @@ export default function Cashflow() {
               backgroundColor: theme.palette.primary.main,
               boxShadow: "none",
             }}
-          >
-            {/* This is Expense Bar underneath the Yellow Expected Cashflow box */}
+          >            
             <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  {"ExpectedCashflow" === "Cashflow" ? "" : "Expected"} {month} Expense
+                  {month} Expense
                 </Typography>
               </AccordionSummary>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
@@ -371,6 +407,10 @@ export default function Cashflow() {
                   : expectedExpenseByMonth
                   ? expectedExpenseByMonth.toFixed(2)
                   : "0.00"}
+              </Typography>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                ${" "}
+                {"Cashflow" === "Cashflow" ? (totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00") : expectedExpenseByMonth ? expectedExpenseByMonth.toFixed(2) : "0.00"}
               </Typography>
             </Box>
 
@@ -532,6 +572,7 @@ function SelectMonthComponentTest(props) {
 
 // This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
+  console.log("In Statement Table: ", props);
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -583,8 +624,18 @@ function StatementTable(props) {
                   {item.property_address} {item.property_unit}{" "}
                 </Typography>
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item[key] ? item[key] : 0}</Typography>
+              </TableCell> */}
+              <TableCell>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["total_paid"] ? item["total_paid"] : 0}
+                </Typography>
               </TableCell>
               {/* <TableCell align="right">
                 <DeleteIcon />
@@ -594,6 +645,7 @@ function StatementTable(props) {
             <TableRow key={index}>
               <TableCell>{item.purchase_uid}</TableCell>
               <TableCell>{item.pur_property_id}</TableCell>
+              <TableCell>{item.pur_payer}</TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                   {" "}
@@ -603,7 +655,14 @@ function StatementTable(props) {
               <TableCell>{item.pur_notes}</TableCell>
               <TableCell>{item.pur_description}</TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item[key] ? item[key] : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["total_paid"] ? item["total_paid"] : 0}
+                </Typography>
               </TableCell>
               {/* <TableCell align="right">
                 <EditIcon />
@@ -641,6 +700,9 @@ function StatementTable(props) {
                         <TableCell align="right">
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
                         </TableCell>
+                        <TableCell align="right">
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                   </Table>
@@ -674,6 +736,9 @@ function StatementTable(props) {
                             {" "}
                             {category} {getCategoryCount(category)}{" "}
                           </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
                         </TableCell>
                         <TableCell align="right">
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
