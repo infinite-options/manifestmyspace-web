@@ -213,7 +213,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
                         </Button>
                     </Grid>
                     <Grid item>
-                        <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage} />
+                        <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
                     </Grid>
                 </Grid>
             </Card>

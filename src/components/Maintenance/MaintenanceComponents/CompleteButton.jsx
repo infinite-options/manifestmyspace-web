@@ -12,16 +12,19 @@ import { useNavigate } from "react-router-dom";
 import APIConfig from "../../../utils/APIConfig";
 import DateTimePickerModal from "../../DateTimePicker";
 import { useState } from "react";
+import CancelTicket from "../../utils/CancelTicket";
+import CancelQuote from "../../utils/CancelQuote";
 
 export default function CompleteButton(props){
     const { maintenanceRoutingBasedOnSelectedRole, getProfileId, roleName, selectedRole} = useUser();
     let navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
-
+    const [cancelTicket, setcancelTicket] = useState(false);
     let maintenanceItem = props.maintenanceItem;
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
+    let quotes = props.quotes;
 
     // console.log(JSON.parse(maintenanceItem.quote_info))
     // console.log("CancelButton maintenanceItem", maintenanceItem)
@@ -94,6 +97,26 @@ export default function CompleteButton(props){
             }
         } else {
             console.log("not supported role is trying to complete a ticket")
+        }
+    }
+
+    function handleCancel(id, quotes){
+        if (quotes && quotes.length > 0){
+            for (let i = 0; i < quotes.length; i++){
+                CancelQuote(quotes[i].maintenance_quote_uid);
+            }
+        }
+        let response = CancelTicket(id);
+        console.log("handleCancel", response)
+        if (response){
+            console.log("Ticket Cancelled")
+            setShowMessage(true);
+            setMessage("Ticket Cancelled!! Maintenance Status changed to CANCELLED");
+            navigate(maintenanceRoutingBasedOnSelectedRole())
+        } else{
+            console.log("Ticket Not Cancelled")
+            setShowMessage(true);
+            setMessage("Error: Ticket Not Cancelled")
         }
     }
 
