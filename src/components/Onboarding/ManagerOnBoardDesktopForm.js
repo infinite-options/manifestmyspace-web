@@ -357,7 +357,9 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       const form = new FormData();
       for (let key in payload) {
         if (photoFields.has(key)) {
-          if (payload[key]) form.append(key, payload[key].file);
+            if (payload[key] && payload[key].file instanceof File) {
+                form.append(key, payload[key].file);
+            }
         } else {
           form.append(key, payload[key]);
         }
