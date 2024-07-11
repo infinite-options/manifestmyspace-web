@@ -200,110 +200,107 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 				justifyContent: 'center',
 				width: '100%',
 			}}
-		>
-			<Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-				<TenantProfileLink maintenanceItem={maintenanceItem} />
-				<OwnerProfileLink maintenanceItem={maintenanceItem} />
-				<Grid
-					item
-					xs={12}
+		> <Card
+		sx={{
+			backgroundColor: theme.palette.primary.main,
+			boxShadow: 'none',
+			elevation: '0',
+			width: '100%',
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'left',
+			justifyContent: 'left',
+			padding: '0px',
+		}}
+	>
+		<Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}>
+			<Grid item>
+				<Button
+					variant="contained"
 					sx={{
+						backgroundColor: '#a7b8e6',
+						color: '#160449',
+						textTransform: 'none',
+						fontWeight: 'bold',
+						borderRadius: '8px',
+						width: '160px',
+						height: '120px',
+						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
+						textAlign: 'center',
+						padding: '10px',
+						boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+						whiteSpace: 'normal',
+						'&:hover': {
+							backgroundColor: '#a7b8e6',
+						},
 					}}
+					onClick={() => handleNavigateToQuotesAccept()}
 				>
-					<Button
-						variant="contained"
-						sx={{
-							backgroundColor: '#C06A6A',
-							textTransform: 'none',
-							paddingRight: '0px',
-							borderRadius: '10px',
-							display: 'flex',
-							width: '100%',
-						}}
-						onClick={() => handleNavigateToQuotesRequested()}
-					>
-						<Typography
-							sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '14px' }}
-						>
-							Request Additional Quotes
-						</Typography>
-						<KeyboardArrowRight sx={{ color: '#FFFFFF' }} />
-					</Button>
-				</Grid>
-				<Grid
-					item
-					xs={12}
-					sx={{
-						alignItems: 'center',
-						justifyContent: 'center',
-					}}
-				>
-					<Button
-						variant="contained"
-						sx={{
-							backgroundColor: '#CB8E8E',
-							textTransform: 'none',
-							paddingRight: '0px',
-							borderRadius: '10px',
-							display: 'flex',
-							width: '100%',
-						}}
-						onClick={() => handleNavigateToQuotesAccept()}
-					>
-						<Typography
-							sx={{ color: '#FFFFFF', fontWeight: theme.typography.primary.fontWeight, fontSize: '14px' }}
-						>
-							View Quotes and Accept
-						</Typography>
-						<KeyboardArrowRight sx={{ color: '#FFFFFF' }} />
-					</Button>
-				</Grid>
-				<Grid
-					item
-					xs={12}
-					sx={{
-						alignItems: 'center',
-						justifyContent: 'center',
-					}}
-				>
-					<Button
-						variant="contained"
-						sx={{
-							backgroundColor: '#97A7CF',
-							textTransform: 'none',
-							borderRadius: '10px',
-							display: 'flex',
-							width: '100%',
-						}}
-						onClick={() => setShowModal(true)}
-					>
-						<CalendarMonthIcon sx={{ color: '#FFFFFF', paddingRight: '5px' }} />
-						<Typography
-							sx={{
-								color: '#FFFFFF',
-								fontWeight: theme.typography.primary.fontWeight,
-								fontSize: theme.typography.smallFont,
-							}}
-						>
-							Schedule Maintenance
-						</Typography>
-						<KeyboardArrowRight sx={{ color: '#FFFFFF' }} />
-					</Button>
-				</Grid>
-				<CancelButton
-					maintenanceItem={maintenanceItem}
-					quotes={quotes}
-					setShowMessage={setShowMessage}
-					setMessage={setMessage}
-				/>
-				<CompleteButton
-					maintenanceItem={maintenanceItem}
-					setShowMessage={setShowMessage}
-					setMessage={setMessage}
-				/>
+					View Quotes
+				</Button>
 			</Grid>
+			<Grid item>
+				<Button
+					variant="contained"
+					sx={{
+						backgroundColor: '#FFC614',
+						color: '#160449',
+						textTransform: 'none',
+						fontWeight: 'bold',
+						borderRadius: '8px',
+						width: '160px',
+						height: '120px',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						textAlign: 'center',
+						padding: '10px',
+						boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+						whiteSpace: 'normal',
+						'&:hover': {
+							backgroundColor: '#FFC614',
+						},
+					}}
+					onClick={() => setShowModal(true)}
+				>
+					Schedule
+				</Button>
+			</Grid>
+			<Grid item>
+				<Button
+					variant="contained"
+					sx={{
+						backgroundColor: '#F87C7A',
+						color: '#160449',
+						textTransform: 'none',
+						fontWeight: 'bold',
+						borderRadius: '8px',
+						width: '160px',
+						height: '120px',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						textAlign: 'center',
+						padding: '10px',
+						boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+						whiteSpace: 'normal',
+						'&:hover': {
+							backgroundColor: '#F87C7A',
+						},
+					}}
+					onClick={() => handleNavigateToQuotesRequested()}
+				>
+					Request Quotes
+				</Button>
+			</Grid>
+			<Grid item>
+				<CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
+			</Grid>
+		</Grid>
+	</Card>
+	
 			<DateTimePickerModal
 				setOpenModal={setShowModal}
 				open={showModal}
