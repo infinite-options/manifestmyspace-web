@@ -115,58 +115,78 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
                 width: "100%",
             }}
         >
-            <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                <TenantProfileLink maintenanceItem={maintenanceItem}/>
-                <OwnerProfileLink maintenanceItem={maintenanceItem}/>
-                {quotes.length > 0 ? (
-                     <Grid item xs={12} sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                        <Button
-                            variant="contained"
-                            
-                            sx={{
-                                backgroundColor: "#CB8E8E",
-                                textTransform: "none",
-                                paddingRight: "0px",
-                                borderRadius: "10px",
-                                display: 'flex',
-                                width: "100%",
-                            }}
-                            onClick={() => handleNavigateToQuotesAccept()}
-                        >
-                            <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                                View Quotes
-                            </Typography>
-                            <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                        </Button>
-                    </Grid>
-                ) : null}
-                <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
+              <Card
+                sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    boxShadow: 'none',
+                    elevation: '0',
+                    width: '50%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0px',
+                }}
+            >
+            <Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}>
+			{quotes.length > 0 ? (
+			<Grid item>
+				<Button
+					variant="contained"
+					sx={{
+						backgroundColor: '#a7b8e6',
+						color: '#160449',
+						textTransform: 'none',
+						fontWeight: 'bold',
+						borderRadius: '8px',
+						width: '160px',
+						height: '120px',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						textAlign: 'center',
+						padding: '10px',
+						boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+						whiteSpace: 'normal',
+						'&:hover': {
+							backgroundColor: '#a7b8e6',
+						},
+					}}
+					onClick={() => handleNavigateToQuotesAccept()}
+				>
+					View Quotes
+				</Button>
+			</Grid>
+			) : null}
+            <Grid item>
+				<Button
+					variant="contained"
+					sx={{
+						backgroundColor: '#FFC614',
+						color: '#160449',
+						textTransform: 'none',
+						fontWeight: 'bold',
+						borderRadius: '8px',
+						width: '160px',
+						height: '120px',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						textAlign: 'center',
+						padding: '10px',
+						boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+						whiteSpace: 'normal',
+						'&:hover': {
+							backgroundColor: '#FFC614',
+						},
+					}}
+					onClick={() => handleNavigate()}
+				>
                         
-                        sx={{
-                            backgroundColor: "#3D5CAC",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                        onClick={() => handleNavigate()}
-                    >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            {finishedQuote && maintenanceItem.maintenance_status !== "CANCELLED" ? "Pay Maintenance - " + finishedQuote?.maint_business_name  : "Charge Owner - " + maintenanceItem?.owner_first_name + " " + maintenanceItem?.owner_last_name}
-                        </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
-                </Grid>
-            </Grid>
-        </Box>
+					  {finishedQuote && maintenanceItem.maintenance_status !== "CANCELLED" ? "Pay Maintenance" : "Charge Owner"}
+				</Button>
+			</Grid>
+			
+            </Grid> </Card></Box>
     )
 }
