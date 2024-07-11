@@ -30,7 +30,7 @@ import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 import DateTimePickerModal from "../../DateTimePicker";
 import { useMediaQuery } from '@mui/material';
-
+import AlertMessage from '../AlertMessage';
 import APIConfig from "../../../utils/APIConfig";
 
 
@@ -140,59 +140,53 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                <TenantProfileLink maintenanceItem={maintenanceItem}/>
-                <OwnerProfileLink maintenanceItem={maintenanceItem}/>
-                <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <Button
-                        variant="contained"
-                        
-                        sx={{
-                            backgroundColor: "#DEA19C",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
-                        }}
-                    >
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>
-                            Contact Maintenance - {business_name}
-                        </Typography>
-                        <KeyboardArrowRight sx={{color: "#FFFFFF"}}/>
-                    </Button>
+            <Card
+                sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    boxShadow: 'none',
+                    elevation: '0',
+                    width: '50%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0px',
+                }}
+            >
+                <Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(0) }}>
+                    <Grid item>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#FFC614',
+                                color: '#160449',
+                                textTransform: 'none',
+                                fontWeight: 'bold',
+                                borderRadius: '8px',
+                                width: '160px',
+                                height: '120px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                textAlign: 'center',
+                                padding: '10px',
+                                boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+                                whiteSpace: 'normal',
+                                '&:hover': {
+                                    backgroundColor: '#FFC614',
+                                },
+                            }}
+                            onClick={() => setShowModal(true)}
+                        >
+                            Schedule
+                        </Button>
+                    </Grid> <Grid item>
+                        <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
+                    </Grid>
                 </Grid>
-               
-                <Grid item xs={12} sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-
-                }}>
-                    <Button
-                        variant="contained"
-                        
-                        sx={{
-                            backgroundColor: "#97A7CF",
-                            textTransform: "none",
-                            borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%"
-                        }}
-                        onClick={() => setShowModal(true)}
-                    >
-                        <CalendarMonthIcon sx={{color: "#FFFFFF"}}/>
-                        <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                            Schedule Maintenance
-                        </Typography>
-                    </Button>
-                </Grid>
-                <CancelButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage}/>
-                <CompleteButton maintenanceItem={maintenanceItem} date={date} time={time} setShowMessage={setShowMessage} setMessage={setMessage}/>
-            </Grid>
-            {console.log("date", date, "time", time)}
+            </Card>
+            <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
+            
             <DateTimePickerModal 
                 setOpenModal={setShowModal}
                 open={showModal}
