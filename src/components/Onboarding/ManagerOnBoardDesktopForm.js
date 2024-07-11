@@ -76,6 +76,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
   console.log("user from Useuser ", user);
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
+  const[ employee_photo_url, setEmployeePhoto]=useState('')
   const [paymentMethods, setPaymentMethods] = useState({
       paypal: { value: "", checked: false },
       apple_pay: { value: "", checked: false },
@@ -163,7 +164,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
             setEmpLastName(profileData.employee_last_name || "");
             setEmpPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
             setEmpEmail(profileData.employee_email || "");
-            // setEmpPhoto(employeeData.employee_photo_url ? { image: employeeData.employee_photo_url } : null);
+            setEmployeePhoto(profileData.employee_photo_url ? { image: profileData.employee_photo_url } : null);
             setEmpSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
             setEmpMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
             setEmpAddress(profileData.employee_address || "");
@@ -248,6 +249,26 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       setEmail(event.target.value);
   };
 
+  const handleEmpPhotoChange = (e) => {
+    const file = {
+        index: 0,
+        file: e.target.files[0],
+        image: null,
+    };
+    let isLarge = file.file.size > 5000000;
+    let file_size = (file.file.size / 1000000).toFixed(1);
+    if (isLarge) {
+        alert(`Your file size is too large (${file_size} MB)`);
+        return;
+    }
+    const reader = new FileReader();
+      reader.onload = (e) => {
+          file.image = e.target.result;
+          setEmployeePhoto(file);
+      };
+      reader.readAsDataURL(file.file);
+};
+
   const handleSsnChange = (event) => {
       let value = event.target.value;
       if (!value) {
@@ -274,7 +295,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
         business_uid:getProfileId(),
         business_type: "MANAGEMENT",
         business_name: businessName,
-        business_photo: photo,
+        business_photo_url: photo,
         business_phone_number: phoneNumber,
         business_email: email,
         business_ein_number: AES.encrypt(ein, process.env.REACT_APP_ENKEY).toString(),
@@ -293,7 +314,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       employee_phone_number: empPhoneNumber,
       employee_email: empEmail,
       employee_role: "OWNER",
-      
+      employee_photo_url: employee_photo_url,
       employee_address: empAddress,
       employee_unit: empUnit,
       employee_city: empCity,
@@ -1004,7 +1025,21 @@ const renderFees = () => {
               <Box width="20%" p={2}>
                   {/* <Typography>Personal pic</Typography> */}
                   <Stack direction="row" justifyContent="center">
-                      <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                      {employee_photo_url && employee_photo_url.image ? (
+                          <img
+                              key={Date.now()}
+                              src={employee_photo_url.image}
+                              style={{
+                                  width: "121px",
+                                  height: "121px",
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                              }}
+                              alt="profile"
+                          />
+                      ) : (
+                          <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                      )}
                   </Stack>
                   <Box sx={{ paddingTop: "8%" }} />
                   <Box
@@ -1024,7 +1059,7 @@ const renderFees = () => {
                              
                           }}
                       >   Add Profile Pic
-                          <input type="file" hidden accept="image/*" />
+                          <input type="file" hidden accept="image/*" onChange={handleEmpPhotoChange}/>
                       </Button>
                   </Box>
               </Box>

@@ -64,7 +64,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-    const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn } = useUser();
+    const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getRoleId } = useUser();
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
@@ -108,7 +108,8 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
                 setState(profileData.employee_state || "");
                 setZip(profileData.employee_zip || "");
                 setSelectedBusiness(profileData.employee_business_id || "");
-
+                setPhoto(profileData.employee_photo_url ? { image: profileData.employee_photo_url } : null);
+                
                 const paymentMethods = JSON.parse(profileData.paymentMethods);
                 const updatedPaymentMethods = {
                     paypal: { value: "", checked: false },
@@ -159,7 +160,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
 
     const createProfile = async (form) => {
         // const profileApi = "/employeeProfile";
-        const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee`, form, headers);
+        const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile`, form, headers);
         return data;
     };
 
@@ -212,6 +213,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         const business = businesses.find((b) => b.business_uid === selectedBusiness);
         return {
             employee_user_id: user.user_uid,
+            employee_uid: getRoleId(),
             employee_business_id: business?.business_uid,
             employee_first_name: firstName,
             employee_last_name: lastName,
@@ -339,11 +341,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         return;
     };
 
-    const handleNavigation = (e) => {
-        selectRole('MANAGER');
-        setLoggedIn(true);
-        navigate("/managerDashboard")
-    }
+   
 
 
     const handleChangeChecked = (e) => {
@@ -673,7 +671,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
                     </Stack>
                     <Stack spacing={2} direction="row">
                         <Box sx={{ width: '50%' }}>
-                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
+                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address}/>
                         </Box>
                         <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
                         <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />

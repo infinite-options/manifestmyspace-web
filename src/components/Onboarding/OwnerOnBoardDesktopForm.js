@@ -81,6 +81,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                 setEmail(profileData.owner_email || "");
                 setPhoneNumber(formatPhoneNumber(profileData.owner_phone_number || ""));
                 setPhoto(profileData.owner_photo_url ? { image: profileData.owner_photo_url } : null);
+                console.log("profileData.owner_photo_url", profileData.owner_photo_url)
                 setSsn(profileData.owner_ssn ? AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
                 setMask(profileData.owner_ssn ? maskNumber(AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
                 setAddress(profileData.owner_address || "");
@@ -391,6 +392,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                     // Replace with actual profile id
                     paymentMethod_type: key,
                     paymentMethod_profile_id: getProfileId(),
+                    paymentMethod_uid:user.user_uid,
 
                 };
                 if (key === "bank_account") {

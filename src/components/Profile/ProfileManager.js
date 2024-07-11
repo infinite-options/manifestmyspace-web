@@ -134,11 +134,10 @@ const ProfileManager = () => {
             <Typography>Dark mode</Typography>
             <Switch />
           </Box>
-          <Link href="#" underline="hover">Privacy policy</Link>
-          <Link href="#" underline="hover">Terms and conditions</Link>
-          <Link href="#" underline="hover">Add Role</Link>
-          <Link href="#" underline="hover">Edit Profile</Link>
-          <Link href="#" underline="hover" onClick={handleChangePasswordClick}>Change password</Link>
+          <Link href="#" underline="hover"  sx={{ color: "#3D5CAC" }}>Privacy policy</Link>
+          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>Terms and conditions</Link>
+          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>Add Role</Link>
+          <Link href="#" underline="hover" onClick={handleChangePasswordClick} sx={{ color: "#3D5CAC" }}>Change password</Link>
           {/* <Typography variant="h6" color="primary" sx={{ mt: 2 }}>Notification <span className={classes.highlightedText}>Settings</span></Typography> */}
           <Button variant="contained" onClick={() => {
               logout();

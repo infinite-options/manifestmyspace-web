@@ -160,9 +160,9 @@ export default function TenantApplication(){
     useEffect(() => {
         const getTenantProfileInformation = async () => {
 
-            const response = await fetch(`${APIConfig.baseURL.dev}/tenantProfile/${getProfileId()}`)
+            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`)
             const data = await response.json()
-            const tenantProfileData = data.Profile.result[0]
+            const tenantProfileData = data.profile.result[0]
             setTenantProfile(tenantProfileData)
             console.log("tenantProfileData", tenantProfileData)
         }
