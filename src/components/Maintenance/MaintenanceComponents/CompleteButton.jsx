@@ -12,16 +12,19 @@ import { useNavigate } from "react-router-dom";
 import APIConfig from "../../../utils/APIConfig";
 import DateTimePickerModal from "../../DateTimePicker";
 import { useState } from "react";
+import CancelTicket from "../../utils/CancelTicket";
+import CancelQuote from "../../utils/CancelQuote";
 
 export default function CompleteButton(props){
     const { maintenanceRoutingBasedOnSelectedRole, getProfileId, roleName, selectedRole} = useUser();
     let navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
-
+    const [cancelTicket, setcancelTicket] = useState(false);
     let maintenanceItem = props.maintenanceItem;
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
+    let quotes = props.quotes;
 
     // console.log(JSON.parse(maintenanceItem.quote_info))
     // console.log("CancelButton maintenanceItem", maintenanceItem)
@@ -97,29 +100,58 @@ export default function CompleteButton(props){
         }
     }
 
+    function handleCancel(id, quotes){
+        if (quotes && quotes.length > 0){
+            for (let i = 0; i < quotes.length; i++){
+                CancelQuote(quotes[i].maintenance_quote_uid);
+            }
+        }
+        let response = CancelTicket(id);
+        console.log("handleCancel", response)
+        if (response){
+            console.log("Ticket Cancelled")
+            setShowMessage(true);
+            setMessage("Ticket Cancelled!! Maintenance Status changed to CANCELLED");
+            navigate(maintenanceRoutingBasedOnSelectedRole())
+        } else{
+            console.log("Ticket Not Cancelled")
+            setShowMessage(true);
+            setMessage("Error: Ticket Not Cancelled")
+        }
+    }
+
     return (
         <>
         <Grid item xs={6} sx={{
-            alignItems: "center",
-            justifyContent: "center",
+            alignItems: "flex-end",
+            justifyContent: "flex-end",
         }}>
+           
             <Button
-                variant="contained"
-                
-                sx={{
-                    backgroundColor: "#FFFFFF",
-                    textTransform: "none",
-                    borderRadius: "10px",
-                    display: 'flex',
-                    width: "100%"
-                }}
-                onClick={() => setShowModal(true)}//handleComplete(maintenanceItem.maintenance_request_uid, maintenanceItem.quote_info)}
-            >
-                <CheckIcon sx={{color: "#3D5CAC"}}/>
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.smallFont}}>
-                    {selectedRole === "MAINTENANCE" || selectedRole === "MAINT_EMPLOYEE" ? "Mark Finished" : "Complete Ticket"}
-                </Typography>
-            </Button>
+						variant="contained"
+						sx={{
+							backgroundColor: '#FF8A00',
+							color: '#160449',
+							textTransform: 'none',
+							fontWeight: 'bold',
+							borderRadius: '8px',
+							width: '160px', // Set a fixed width
+							height: '120px', // Set a fixed height
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							textAlign: 'center',
+							padding: '10px', // Add padding to ensure text wrapping
+							boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+							whiteSpace: 'normal', // Allow text to wrap
+							'&:hover': {
+								backgroundColor: '#FF8A00',
+							},
+						}}
+                        onClick={() => setShowModal(true)}
+					>
+						Close Ticket
+					</Button>
         </Grid>
         <DateTimePickerModal
             setOpenModal={setShowModal}

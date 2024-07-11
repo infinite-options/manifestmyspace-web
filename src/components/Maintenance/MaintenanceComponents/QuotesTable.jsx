@@ -28,7 +28,7 @@ export default function QuotesTable({ maintenanceItem, navigateParams, maintenan
 	let request_status = maintenanceItem.maintenance_request_status;
 	let status = maintenanceItem.maintenance_status;
 
-	let tableText = { color: '#FFFFFF', fontWeight: 500, fontSize: '18px' };
+	let tableText = { color: '#160449', fontWeight: 500, fontSize: '18px' };
 	let tableHeader = { color: '#FFFFFF', fontWeight: 700, fontSize: '18px' };
 	let tableCell = { padding: '0px', margin: '0px' };
 
@@ -95,7 +95,7 @@ export default function QuotesTable({ maintenanceItem, navigateParams, maintenan
 	if (request_status !== 'NEW') {
 		return (
 			<Grid item xs={12}>
-				<Typography sx={{ color: '#FFFFFF', fontWeight: 900, fontSize: '24px' }}>Quotes Table</Typography>
+				<Typography sx={{ color: '#160449', fontWeight: 900, fontSize: '24px' }}>Quotes Table</Typography>
 				<Typography sx={tableText}> {maintenanceQuotesForItem.length} Quotes</Typography>
 				{maintenanceQuotesForItem.length > 0 ? (
 					<DataGrid
@@ -111,12 +111,12 @@ export default function QuotesTable({ maintenanceItem, navigateParams, maintenan
 							'& .MuiDataGrid-cell': {
 								fontSize: '14px', // Change the font size
 								fontWeight: theme.typography.common.fontWeight, // Change the font weight
-								color: theme.typography.secondary.white,
+								color:'#160449',
 							},
 							'& .MuiDataGrid-columnHeaders': {
 								fontSize: '16px', // Change the font size
 								fontWeight: theme.typography.common.fontWeight, // Change the font weight
-								color: theme.typography.secondary.white, // Change the font color of the headers
+								color: '#160449', // Change the font color of the headers
 							},
 							border: 0,
 							'& .MuiDataGrid-main': {
