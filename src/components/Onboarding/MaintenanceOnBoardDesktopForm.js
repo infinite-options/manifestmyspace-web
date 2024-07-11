@@ -50,13 +50,13 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
   const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
   const [ein_mask, setEinMask] = useState("");
- 
+  const[ employee_photo_url, setEmployeePhoto]=useState('')
   const cookiesData = cookies["default_form_vals"];
   const [showSpinner, setShowSpinner] = useState(false);
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
   const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-  const { user, isBusiness, isManager, selectRole, roleName,setLoggedIn, selectedRole, updateProfileUid, isLoggedIn,getProfileId } = useUser();
+  const { user, isBusiness, isManager, selectRole, roleName,setLoggedIn, selectedRole, updateProfileUid, isLoggedIn,getProfileId,getRoleId } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [paymentMethods, setPaymentMethods] = useState({
@@ -95,7 +95,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
         setEmail(profileData.business_email || "");
         setPhoneNumber(formatPhoneNumber(profileData.business_phone_number || ""));
         setPhoto(profileData.business_photo_url ? { image: profileData.business_photo_url } : null);
-        setEin(profileData.business_ein_number ? AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+        setSsn(profileData.business_ein_number ? AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
         setMask(profileData.business_ein_number ? maskNumber(AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
         setAddress(profileData.business_address || "");
         setUnit(profileData.business_unit || "");
@@ -145,7 +145,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
             setEmpLastName(profileData.employee_last_name || "");
             setEmpPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
             setEmpEmail(profileData.employee_email || "");
-            // setEmpPhoto(employeeData.employee_photo_url ? { image: employeeData.employee_photo_url } : null);
+            setEmployeePhoto(profileData.employee_photo_url ? { image: profileData.employee_photo_url } : null);
             setEmpSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
             setEmpMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
             setEmpAddress(profileData.employee_address || "");
@@ -250,9 +250,42 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
         business_city: city,
         business_state: state,
         business_zip: zip,
+        employee_user_id: getRoleId(),
+       employee_business_id: getProfileId(),
+       employee_first_name: firstName,
+       employee_last_name: lastName,
+       employee_phone_number: phoneNumber,
+       employee_email: email,
+       employee_role: "OWNER",
+       employee_photo_url: employee_photo_url,
+       employee_address: address,
+       employee_unit: unit,
+       employee_city: city,
+       employee_state: state,
+       employee_zip: zip,
+       employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
       };           
   };
 
+  const handleEmpPhotoChange = (e) => {
+    const file = {
+        index: 0,
+        file: e.target.files[0],
+        image: null,
+    };
+    let isLarge = file.file.size > 5000000;
+    let file_size = (file.file.size / 1000000).toFixed(1);
+    if (isLarge) {
+        alert(`Your file size is too large (${file_size} MB)`);
+        return;
+    }
+    const reader = new FileReader();
+      reader.onload = (e) => {
+          file.image = e.target.result;
+          setEmployeePhoto(file);
+      };
+      reader.readAsDataURL(file.file);
+};
   const handlePhoneNumberChange = (event) => {
       setPhoneNumber(formatPhoneNumber(event.target.value));
   };
@@ -307,7 +340,9 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
       const form = new FormData();
       for (let key in payload) {
         if (photoFields.has(key)) {
-          if (payload[key]) form.append(key, payload[key].file);
+            if (payload[key] && payload[key].file instanceof File) {
+                form.append(key, payload[key].file);
+            }
         } else {
           form.append(key, payload[key]);
         }
@@ -727,7 +762,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
           </Typography>
           <Box display="flex">
               <Box width="20%" p={2}>
-                  <h1> Profile pic</h1>
+                 
                   <Stack direction="row" justifyContent="center">
                       {photo && photo.image ? (
                           <img
@@ -753,18 +788,17 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                           justifyContent: "center",
                       }}
                   >
-                      <Button
+                       <Button
                           component="label"
                           variant="contained"
                           sx={{
-                              backgroundImage: `url(${addPhotoImg})`,
+                            backgroundColor:  "#3D5CAC" ,
                               width: "193px",
                               height: "35px",
-                              "&:hover, &:focus": {
-                                  backgroundColor: "transparent",
-                              },
+                             
                           }}
                       >
+                          Add Business Pic
                           <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
                       </Button>
                   </Box>
@@ -918,9 +952,23 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
           </Typography>
           <Box display="flex" p={3}>
               <Box width="20%" p={2}>
-                  <Typography>Personal pic</Typography>
+                
                   <Stack direction="row" justifyContent="center">
-                      <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                      {employee_photo_url && employee_photo_url.image ? (
+                          <img
+                              key={Date.now()}
+                              src={employee_photo_url.image}
+                              style={{
+                                  width: "121px",
+                                  height: "121px",
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                              }}
+                              alt="profile"
+                          />
+                      ) : (
+                          <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                      )}
                   </Stack>
                   <Box sx={{ paddingTop: "8%" }} />
                   <Box
@@ -934,15 +982,14 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                           component="label"
                           variant="contained"
                           sx={{
-                              backgroundImage: `url(${addPhotoImg})`,
+                            backgroundColor:  "#3D5CAC" ,
                               width: "193px",
                               height: "35px",
-                              "&:hover, &:focus": {
-                                  backgroundColor: "transparent",
-                              },
+                             
                           }}
-                      >
-                          <input type="file" hidden accept="image/*" />
+                      >      Add Profile Pic
+                             <input type="file" hidden accept="image/*" onChange={handleEmpPhotoChange}/>
+                
                       </Button>
                   </Box>
               </Box>
@@ -1082,11 +1129,11 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2 , backgroundColor:  "#3D5CAC" }}
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
@@ -1094,7 +1141,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
       </div>
   );

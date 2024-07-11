@@ -9,6 +9,8 @@ import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
 import { formatPhoneNumber, headers, maskNumber, photoFields } from "./helper";
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
     Box,
@@ -69,11 +71,12 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
   const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-  const { user, isBusiness, isManager, roleName,selectRole, selectedRole,setLoggedIn, updateProfileUid, isLoggedIn, getProfileId } = useUser();
+  const { user, isBusiness, isManager, roleName,selectRole, selectedRole,setLoggedIn, updateProfileUid, isLoggedIn, getProfileId , getRoleId} = useUser();
   
   console.log("user from Useuser ", user);
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
+  const[ employee_photo_url, setEmployeePhoto]=useState('')
   const [paymentMethods, setPaymentMethods] = useState({
       paypal: { value: "", checked: false },
       apple_pay: { value: "", checked: false },
@@ -161,7 +164,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
             setEmpLastName(profileData.employee_last_name || "");
             setEmpPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
             setEmpEmail(profileData.employee_email || "");
-            // setEmpPhoto(employeeData.employee_photo_url ? { image: employeeData.employee_photo_url } : null);
+            setEmployeePhoto(profileData.employee_photo_url ? { image: profileData.employee_photo_url } : null);
             setEmpSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
             setEmpMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
             setEmpAddress(profileData.employee_address || "");
@@ -246,6 +249,26 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       setEmail(event.target.value);
   };
 
+  const handleEmpPhotoChange = (e) => {
+    const file = {
+        index: 0,
+        file: e.target.files[0],
+        image: null,
+    };
+    let isLarge = file.file.size > 5000000;
+    let file_size = (file.file.size / 1000000).toFixed(1);
+    if (isLarge) {
+        alert(`Your file size is too large (${file_size} MB)`);
+        return;
+    }
+    const reader = new FileReader();
+      reader.onload = (e) => {
+          file.image = e.target.result;
+          setEmployeePhoto(file);
+      };
+      reader.readAsDataURL(file.file);
+};
+
   const handleSsnChange = (event) => {
       let value = event.target.value;
       if (!value) {
@@ -282,7 +305,22 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
         business_unit: unit,
         business_city: city,
         business_state: state,
-        business_zip: zip
+        business_zip: zip,
+        employee_user_id: user.user_uid,
+      employee_uid:getRoleId(),
+      employee_business_id: getProfileId(),
+      employee_first_name: empFirstName,
+      employee_last_name: empLastName,
+      employee_phone_number: empPhoneNumber,
+      employee_email: empEmail,
+      employee_role: "OWNER",
+      employee_photo_url: employee_photo_url,
+      employee_address: empAddress,
+      employee_unit: empUnit,
+      employee_city: empCity,
+      employee_state: empState,
+      employee_zip: empZip,
+      employee_ssn: AES.encrypt(empSsn, process.env.REACT_APP_ENKEY).toString()
       };           
   };
 
@@ -340,7 +378,9 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       const form = new FormData();
       for (let key in payload) {
         if (photoFields.has(key)) {
-          if (payload[key]) form.append(key, payload[key].file);
+            if (payload[key] && payload[key].file instanceof File) {
+                form.append(key, payload[key].file);
+            }
         } else {
           form.append(key, payload[key]);
         }
@@ -380,58 +420,61 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       const payload = getPayload();
       const form = encodeForm(payload);
       const data = await saveProfile(form);
-
+      //const createEmp= await SaveEmpStep();
       
 
       setShowSpinner(false);
-      let role_id = {};
-      if (data.business_uid) {
+    //   let role_id = {};
+    //   if (data.business_uid) {
         
-         updateProfileUid({ business_uid: data.business_uid });
-          let businesses = user.businesses;
-         businesses["MANAGEMENT"].business_uid = data.business_uid;
-          role_id = { businesses };
-          setCookie("user", { ...user, ...role_id });
-          const paymentSetup = await handlePaymentStep(data.business_uid);
-          console.log(paymentSetup);
-          const createEmp= await CreateEmpStep(data.business_uid);
-          console.log(createEmp);
-          setDashboardButtonEnabled(true);
+    //      updateProfileUid({ business_uid: data.business_uid });
+    //       let businesses = user.businesses;
+    //      businesses["MANAGEMENT"].business_uid = data.business_uid;
+    //       role_id = { businesses };
+    //       setCookie("user", { ...user, ...role_id });
+    //       const paymentSetup = await handlePaymentStep(data.business_uid);
+    //       console.log(paymentSetup);
+    //       const createEmp= await SaveEmpStep(data.business_uid);
+    //       console.log(createEmp);
+    //       setDashboardButtonEnabled(true);
          
-      }
-      setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
+    //   }
+    //   setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
       // navigate("/onboardingRouter");
       return;
   };
 
 
-  const CreateEmpStep = async (businessId) => {
+  const SaveEmpStep = async () => {
    // setShowSpinner(true);
     const payload = {
       employee_user_id: user.user_uid,
-      employee_business_id: businessId,
-      employee_first_name: firstName,
-      employee_last_name: lastName,
-      employee_phone_number: phoneNumber,
-      employee_email: email,
+      employee_uid:getRoleId(),
+      employee_business_id: getProfileId(),
+      employee_first_name: empFirstName,
+      employee_last_name: empLastName,
+      employee_phone_number: empPhoneNumber,
+      employee_email: empEmail,
       employee_role: "OWNER",
       employee_photo_url: photo,
-      employee_address: address,
-      employee_unit: unit,
-      employee_city: city,
-      employee_state: state,
-      employee_zip: zip,
-      employee_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
+      employee_address: empAddress,
+      employee_unit: empUnit,
+      employee_city: empCity,
+      employee_state: empState,
+      employee_zip: empZip,
+      employee_ssn: AES.encrypt(empSsn, process.env.REACT_APP_ENKEY).toString(),
     };
 
     const formPayload= encodeForm(payload);
+    const data = await saveProfile(formPayload);
+      
     // for (const key of Object.keys(payload)) {
     //   if (key === "employee_photo" && payload[key]) formPayload.append(key, payload[key].file);
     //   else formPayload.append(key, payload[key]);
     // }
-    const { data } = await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee", formPayload, headers);
-    setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
-    updateProfileUid({ business_owner_id: data.employee_uid });
+    //const { data } = await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee", formPayload, headers);
+   // setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
+//updateProfileUid({ business_owner_id: data.employee_uid });
     //setShowSpinner(false);
     
   };
@@ -584,9 +627,16 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       ));
   };
 
-  const renderFees = () => {
+//   "business_services_fees": "[{\"id\": 1, \"of\": \"Rent\", \"charge\": \"15%\", \"fee_name\": \"Service Charge\", \"frequency\": \"Annually\"}]",
+//                 "business_locations": "[{\"id\": 1, \"city\": \"Boston\", \"miles\": \"50\", \"state\": \"MA\", \"address\": \"\", \"location\": \"MA\"}]",
+ 
+
+// "business_services_fees": "[{\"id\": 1, \"of\": \"Rent\", \"charge\": \"15%\", \"fee_name\": \"Service Charge\", \"frequency\": \"Annually\"}]",
+
+
+const renderFees = () => {
     return fees.map((row, index) => (
-      <div key={row.id}>
+      <div key={row.id} style={{ position: 'relative' }}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
@@ -609,7 +659,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
               />
             </Stack>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -636,7 +686,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
               </Select>
             </Stack>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -657,7 +707,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
               />
             </Stack>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -678,28 +728,16 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
               />
             </Stack>
           </Grid>
-          <Grid item xs={2}>
-            <Stack spacing={-2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"Amount"}
-              </Typography>
-              <TextField
-                name="amount"
-                value={row.amount}
-                variant="filled"
-                fullWidth
-                placeholder="Amount"
-                className={classes.root}
-                onChange={(e) => handleFeeChange(e, row.id)}
-              />
-            </Stack>
-          </Grid>
         </Grid>
+        {index !== 0 && (
+          <IconButton
+            aria-label="delete"
+            sx={{ position: 'absolute', top: 0, right: 0 }}
+            onClick={() => removeFeeRow(row.id)}
+          >
+            <CloseIcon />
+          </IconButton>
+        )}
         {row.id === fees.length ? (
           <Stack
             direction="row"
@@ -725,7 +763,11 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       </div>
     ));
   };
-
+  
+  const removeFeeRow = (id) => {
+    setFees(fees.filter((fee) => fee.id !== id));
+  };
+  
   const handleEmpFirstNameChange = (event) => {
     setEmpFirstName(event.target.value);
   };
@@ -820,12 +862,10 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
                           component="label"
                           variant="contained"
                           sx={{
-                              backgroundImage: `url(${addPhotoImg})`,
+                            backgroundColor:  "#3D5CAC" ,
                               width: "193px",
                               height: "35px",
-                              "&:hover, &:focus": {
-                                  backgroundColor: "transparent",
-                              },
+                             
                           }}
                       >
                           Add Business Pic
@@ -985,7 +1025,21 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
               <Box width="20%" p={2}>
                   {/* <Typography>Personal pic</Typography> */}
                   <Stack direction="row" justifyContent="center">
-                      <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                      {employee_photo_url && employee_photo_url.image ? (
+                          <img
+                              key={Date.now()}
+                              src={employee_photo_url.image}
+                              style={{
+                                  width: "121px",
+                                  height: "121px",
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                              }}
+                              alt="profile"
+                          />
+                      ) : (
+                          <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                      )}
                   </Stack>
                   <Box sx={{ paddingTop: "8%" }} />
                   <Box
@@ -999,15 +1053,13 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
                           component="label"
                           variant="contained"
                           sx={{
-                              backgroundImage: `url(${addPhotoImg})`,
+                            backgroundColor:  "#3D5CAC" ,
                               width: "193px",
                               height: "35px",
-                              "&:hover, &:focus": {
-                                  backgroundColor: "transparent",
-                              },
+                             
                           }}
                       >   Add Profile Pic
-                          <input type="file" hidden accept="image/*" />
+                          <input type="file" hidden accept="image/*" onChange={handleEmpPhotoChange}/>
                       </Button>
                   </Box>
               </Box>
@@ -1147,18 +1199,18 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2, backgroundColor:  "#3D5CAC"  }}
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
       </div>
   );
