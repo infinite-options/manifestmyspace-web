@@ -30,6 +30,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import handleScheduleStatusChange from './QuotesAccepted';
 import APIConfig from '../../../utils/APIConfig';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import AlertMessage from "../AlertMessage";
 
 export default function QuotesRequestAction({ maintenanceItem, navigateParams, quotes }) {
 	const navigate = useNavigate();
@@ -300,7 +301,7 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 			</Grid>
 		</Grid>
 	</Card>
-	
+	<AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
 			<DateTimePickerModal
 				setOpenModal={setShowModal}
 				open={showModal}

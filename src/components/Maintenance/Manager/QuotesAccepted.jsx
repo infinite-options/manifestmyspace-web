@@ -30,7 +30,7 @@ import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 import DateTimePickerModal from "../../DateTimePicker";
 import { useMediaQuery } from '@mui/material';
-
+import AlertMessage from '../AlertMessage';
 import APIConfig from "../../../utils/APIConfig";
 
 
@@ -185,6 +185,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                     </Grid>
                 </Grid>
             </Card>
+            <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
             
             <DateTimePickerModal 
                 setOpenModal={setShowModal}

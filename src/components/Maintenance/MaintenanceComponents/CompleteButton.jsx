@@ -153,6 +153,7 @@ export default function CompleteButton(props){
 						Close Ticket
 					</Button>
         </Grid>
+        
         <DateTimePickerModal
             setOpenModal={setShowModal}
             open={showModal}
@@ -160,6 +161,7 @@ export default function CompleteButton(props){
             date={""}
             time={""}
             completeTicket={handleComplete}
+            cancelTicket={handleCancel}
         />
         </>
     )
