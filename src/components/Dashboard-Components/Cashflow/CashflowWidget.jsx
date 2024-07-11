@@ -229,6 +229,7 @@ function CashflowWidget({ data }) {
               state: {
                 month,
                 year,
+                cashflowWidgetData: data,
               },
             })
           }

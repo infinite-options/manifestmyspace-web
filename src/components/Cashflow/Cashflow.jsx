@@ -20,6 +20,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Container,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -43,9 +44,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
 
+import CashflowWidget from "../Dashboard-Components/Cashflow/CashflowWidget";
+
 import {
-  getTotalRevenueByType,
-  getTotalExpenseByType,
+  // getTotalRevenueByType,
+  // getTotalExpenseByType,
   fetchCashflow,
   // getTotalExpenseByMonthYear,
   // getTotalRevenueByMonthYear,
@@ -53,13 +56,13 @@ import {
   // getTotalExpectedExpenseByMonthYear,
   getPast12MonthsCashflow,
   getNext12MonthsCashflow,
-  getRevenueList,
-  getExpenseList,
+  // getRevenueList,
+  // getExpenseList,
 } from "../Cashflow/CashflowFetchData";
 
 import {
-  // getTotalRevenueByType,
-  // getTotalExpenseByType,
+  getTotalRevenueByType,
+  getTotalExpenseByType,
   fetchCashflow2,
   getTotalExpenseByMonthYear,
   getTotalRevenueByMonthYear,
@@ -67,8 +70,8 @@ import {
   getTotalExpectedExpenseByMonthYear,
   // getPast12MonthsCashflow,
   // getNext12MonthsCashflow,
-  // getRevenueList,
-  // getExpenseList,
+  getRevenueList,
+  getExpenseList,
 } from "../Cashflow/CashflowFetchData2";
 
 export default function Cashflow() {
@@ -78,6 +81,8 @@ export default function Cashflow() {
 
   const profileId = getProfileId();
   const selectedRole = user.selectedRole; // Get the selected role from user object
+  const [ showSpinner, setShowSpinner ] = useState(false);  
+
 
   const [activeButton, setActiveButton] = useState("Cashflow");
 
@@ -85,6 +90,7 @@ export default function Cashflow() {
 
   const [month, setMonth] = useState(location.state.month || "January");
   const [year, setYear] = useState(location.state.year || "2024");
+  const cashflowWidgetData = location.state.cashflowWidgetData
 
   const [showSelectMonth, setShowSelectMonth] = useState(false);
   const [openSelectProperty, setOpenSelectProperty] = useState(false);
@@ -144,20 +150,20 @@ export default function Cashflow() {
       setTotalExpenseByMonth(currentMonthYearTotalExpense); // currently using sum(total_paid)
       setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
       setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
-      setRevenueList(getRevenueList(cashflowData));
-      setExpenseList(getExpenseList(cashflowData));
+      setRevenueList(getRevenueList(cashflowData2));
+      setExpenseList(getExpenseList(cashflowData2));
       // console.log("--debug-- expenseList", revenueList)
       // console.log("--debug-- expenseList", expenseList)
 
-      let revenueMapping = getTotalRevenueByType(cashflowData, month, year, false);
-      let expenseMapping = getTotalExpenseByType(cashflowData, month, year, false);
+      let revenueMapping = getTotalRevenueByType(cashflowData2, month, year, false);
+      let expenseMapping = getTotalExpenseByType(cashflowData2, month, year, false);
       // console.log("revenueMapping", revenueMapping)
       // console.log("expenseMapping", expenseMapping)
       setRevenueByType(revenueMapping);
       setExpenseByType(expenseMapping);
 
-      let expectedRevenueByType = getTotalRevenueByType(cashflowData, month, year, true);
-      let expectedExpenseByType = getTotalExpenseByType(cashflowData, month, year, true);
+      let expectedRevenueByType = getTotalRevenueByType(cashflowData2, month, year, true);
+      let expectedExpenseByType = getTotalExpenseByType(cashflowData2, month, year, true);
       // console.log("expectedRevenueByType", expectedRevenueByType)
       // console.log("expectedExpenseByType", expectedExpenseByType)
       setExpectedRevenueByType(expectedRevenueByType);
@@ -176,380 +182,399 @@ export default function Cashflow() {
   //     console.log("expenseByType", expenseByType)
   // }, [revenueByType, expenseByType])
 
+
   return (
     <ThemeProvider theme={theme}>
-      <Box
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%", // Take up full screen width
-        }}
-      >
-        <Paper
-          style={{
-            marginTop: "30px",
-            padding: theme.spacing(2),
-            backgroundColor: activeButton === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
-            width: "85%", // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
-          }}
-        >
-          <Stack direction="row" justifyContent="center">
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              {month} {year} Cashflow
-            </Typography>
-          </Stack>
-          <Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
-            <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
-              <CalendarTodayIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} />
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Select Month / Year</Typography>
-            </Button>
-            <SelectMonthComponentTest
-              selectedMonth={month}
-              selectedYear={year}
-              setMonth={setMonth}
-              setYear={setYear}
-              showSelectMonth={showSelectMonth}
-              setShowSelectMonth={setShowSelectMonth}
-            />
-            {selectedRole === "MANAGER" && (
-              <Button sx={{ textTransform: "capitalize" }} onClick={() => {}}>
-                <img src={AllOwnerIcon} alt="All Owners" style={{ width: "10px", height: "10px" }} />
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
-              </Button>
-            )}
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
-            <Button sx={{ textTransform: "capitalize" }} onClick={() => setOpenSelectProperty(true)}>
-              <HomeWorkIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px" }} />
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "12px" }}>Property</Typography>
-            </Button>
-          </Box>
-          {/* <Box
-            component="span"
-            m={3}
-            padding={3}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            // onClick={()=> setActiveButton('Cashflow')}
-            style={{
-              backgroundColor: "Cashflow" === "Cashflow" ? theme.palette.custom.blue : theme.palette.custom.grey,
-              borderRadius: "5px",
-            }}
-          >
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Cashflow</Typography>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              $
-              {totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined
-                ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
-                : "0.00"}
-            </Typography>
-          </Box> */}
-          {/* <Accordion
-            sx={{
-              backgroundColor: "Cashflow" === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
-              boxShadow: "none",
-            }}
-          >
-            
-            <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  {"Cashflow" === "Cashflow" ? "" : "Expected"} {month} Revenue
-                </Typography>
-              </AccordionSummary>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                ${" "}
-                {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
-              </Typography>
-            </Box>
-            <AccordionDetails>
-              
-              <StatementTable
-                categoryTotalMapping={revenueByType}
-                allItems={revenueList}
-                activeView={"Cashflow"}
-                tableType="Revenue"
-                categoryExpectedTotalMapping={expectedRevenueByType}
-                month={month}
-                year={year}
-              />
-            </AccordionDetails>
-          </Accordion> */}
-          {/* <Accordion
-            sx={{
-              backgroundColor: "Cashflow" === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
-              boxShadow: "none",
-            }}
-          >
-            
-            <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  {"Cashflow" === "Cashflow" ? "" : "Expected"} {month} Expense
-                </Typography>
-              </AccordionSummary>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                ${" "}
-                {"Cashflow" === "Cashflow" ? (totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00") : expectedExpenseByMonth ? expectedExpenseByMonth.toFixed(2) : "0.00"}
-              </Typography>
-            </Box>
+      <Container maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
+        <Grid container spacing={6} sx={{height: '90%'}}>          
+          <Grid item xs={12} md={4}>
+            <CashflowWidget data={cashflowWidgetData} />
+          </Grid>
 
-            <AccordionDetails>
-              <StatementTable
-                categoryTotalMapping={expenseByType}
-                allItems={expenseList}
-                activeView={"Cashflow"}
-                tableType="Expense"
-                categoryExpectedTotalMapping={expectedExpenseByType}
-                month={month}
-                year={year}
-              />
-            </AccordionDetails>
-          </Accordion> */}
-
-          <Box
-            component="span"
-            m={3}
-            padding={3}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            // onClick={() => setActiveButton('ExpectedCashflow')}
-            // style={{
-            //   backgroundColor: theme.palette.custom.blue,
-            //   borderRadius: "5px",
-            // }}
-          >
-            <Box sx={{
-              width: '70px',
-            }}>
-
-            </Box>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              Expected
-            </Typography>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              Actual
-            </Typography>
-
-          </Box>
-
-          <Box
-            component="span"
-            m={2}
-            padding={3}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            // onClick={() => setActiveButton('ExpectedCashflow')}
-            style={{
-              backgroundColor: theme.palette.custom.blue,
-              borderRadius: "5px",
-            }}
-          >
-            <Typography sx={{ width: '200px', color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              Cashflow
-            </Typography>
-            <Typography sx={{ width: '200px', color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              $
-              {expectedRevenueByMonth !== null && expectedRevenueByMonth !== undefined && expectedExpenseByMonth !== null && expectedExpenseByMonth !== undefined
-                ? (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2)
-                : "0.00"}
-            </Typography>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              $
-              {totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined
-                ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
-                : "0.00"}
-            </Typography>
-          </Box>
-          <Accordion
-            sx={{
-              backgroundColor: theme.palette.primary.main,
-              boxShadow: "none",
-            }}
-          >
-            {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
-            <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-              <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                    {month} Revenue
+          <Grid container item xs={12} md={8} columnSpacing={6}>
+            <Box
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                width: "100%", // Take up full screen width
+              }}
+            >
+              <Paper
+                style={{
+                  // marginTop: "30px",
+                  padding: theme.spacing(2),
+                  backgroundColor: activeButton === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
+                  width: "95%", // Occupy full width with 25px margins on each side
+                  // [theme.breakpoints.down("sm")]: {
+                  //   width: "80%",
+                  // },
+                  // [theme.breakpoints.up("sm")]: {
+                  //   width: "50%",
+                  // },
+                }}
+              >
+                <Stack direction="row" justifyContent="center">
+                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    {month} {year} Cashflow
                   </Typography>
-                </AccordionSummary>
-              </Box>
-              <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  ${" "}
-                  {"ExpectedCashflow" === "Cashflow"
-                    ? totalRevenueByMonth
-                    ? totalRevenueByMonth.toFixed(2)
-                    : "0.00"
-                    : expectedRevenueByMonth
-                    ? expectedRevenueByMonth.toFixed(2)
-                    : "0.00"}
-                </Typography>
-              </Box>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                ${" "}
-                {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
-              </Typography>
-            </Box>
+                </Stack>
+                <Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
+                  <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
+                    <CalendarTodayIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} />
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Select Month / Year</Typography>
+                  </Button>
+                  <SelectMonthComponentTest
+                    selectedMonth={month}
+                    selectedYear={year}
+                    setMonth={setMonth}
+                    setYear={setYear}
+                    showSelectMonth={showSelectMonth}
+                    setShowSelectMonth={setShowSelectMonth}
+                  />
+                  {selectedRole === "MANAGER" && (
+                    <Button sx={{ textTransform: "capitalize" }} onClick={() => {}}>
+                      <img src={AllOwnerIcon} alt="All Owners" style={{ width: "10px", height: "10px" }} />
+                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
+                    </Button>
+                  )}
 
-            <AccordionDetails>
-              {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
-              <StatementTable
-                categoryTotalMapping={revenueByType}
-                allItems={revenueList}
-                activeView={"ExpectedCashflow"}
-                tableType="Revenue"
-                categoryExpectedTotalMapping={expectedRevenueByType}
-                month={month}
-                year={year}
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            sx={{
-              backgroundColor: theme.palette.primary.main,
-              boxShadow: "none",
-            }}
-          >            
-            <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-              <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                    {month} Expense
+                  <Button sx={{ textTransform: "capitalize" }} onClick={() => setOpenSelectProperty(true)}>
+                    <HomeWorkIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px" }} />
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "12px" }}>Property</Typography>
+                  </Button>
+                </Box>
+                {/* <Box
+                  component="span"
+                  m={3}
+                  padding={3}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  // onClick={()=> setActiveButton('Cashflow')}
+                  style={{
+                    backgroundColor: "Cashflow" === "Cashflow" ? theme.palette.custom.blue : theme.palette.custom.grey,
+                    borderRadius: "5px",
+                  }}
+                >
+                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Cashflow</Typography>
+                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    $
+                    {totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined
+                      ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
+                      : "0.00"}
                   </Typography>
-                </AccordionSummary>
-              </Box>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                ${" "}
-                {"ExpectedCashflow" === "Cashflow"
-                  ? totalExpenseByMonth
-                    ? totalExpenseByMonth.toFixed(2)
-                    : "0.00"
-                  : expectedExpenseByMonth
-                  ? expectedExpenseByMonth.toFixed(2)
-                  : "0.00"}
-              </Typography>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                ${" "}
-                {"Cashflow" === "Cashflow" ? (totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00") : expectedExpenseByMonth ? expectedExpenseByMonth.toFixed(2) : "0.00"}
-              </Typography>
-            </Box>
+                </Box> */}
+                {/* <Accordion
+                  sx={{
+                    backgroundColor: "Cashflow" === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
+                    boxShadow: "none",
+                  }}
+                >
+                  
+                  <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                        {"Cashflow" === "Cashflow" ? "" : "Expected"} {month} Revenue
+                      </Typography>
+                    </AccordionSummary>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                      ${" "}
+                      {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Box>
+                  <AccordionDetails>
+                    
+                    <StatementTable
+                      categoryTotalMapping={revenueByType}
+                      allItems={revenueList}
+                      activeView={"Cashflow"}
+                      tableType="Revenue"
+                      categoryExpectedTotalMapping={expectedRevenueByType}
+                      month={month}
+                      year={year}
+                    />
+                  </AccordionDetails>
+                </Accordion> */}
+                {/* <Accordion
+                  sx={{
+                    backgroundColor: "Cashflow" === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
+                    boxShadow: "none",
+                  }}
+                >
+                  
+                  <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                        {"Cashflow" === "Cashflow" ? "" : "Expected"} {month} Expense
+                      </Typography>
+                    </AccordionSummary>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                      ${" "}
+                      {"Cashflow" === "Cashflow" ? (totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00") : expectedExpenseByMonth ? expectedExpenseByMonth.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Box>
 
-            <AccordionDetails>
-              <StatementTable
-                categoryTotalMapping={expenseByType}
-                allItems={expenseList}
-                activeView={"ExpectedCashflow"}
-                tableType="Expense"
-                categoryExpectedTotalMapping={expectedExpenseByType}
-                month={month}
-                year={year}
-              />
-            </AccordionDetails>
-          </Accordion>
+                  <AccordionDetails>
+                    <StatementTable
+                      categoryTotalMapping={expenseByType}
+                      allItems={expenseList}
+                      activeView={"Cashflow"}
+                      tableType="Expense"
+                      categoryExpectedTotalMapping={expectedExpenseByType}
+                      month={month}
+                      year={year}
+                    />
+                  </AccordionDetails>
+                </Accordion> */}
 
-          {/* This is where the GRAPH Component starts */}
-          <Stack direction="row" justifyContent="center">
-            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
-              {showChart} Cashflow and Revenue
-            </Typography>
-          </Stack>
+                <Box
+                  component="span"
+                  m={3}
+                  padding={3}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  // onClick={() => setActiveButton('ExpectedCashflow')}
+                  // style={{
+                  //   backgroundColor: theme.palette.custom.blue,
+                  //   borderRadius: "5px",
+                  // }}
+                >
+                  <Box sx={{
+                    width: '140px',
+                  }}>
 
-          <Stack direction="row" justifyContent="center" height={300}>
-            {showChart === "Current" ? (
-              <MixedChart revenueCashflowByMonth={last12Months} activeButton={activeButton}></MixedChart>
-            ) : (
-              <MixedChart revenueCashflowByMonth={next12Months} activeButton={activeButton}></MixedChart>
-            )}
-          </Stack>
+                  </Box>
+                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    Expected
+                  </Typography>
+                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    Actual
+                  </Typography>
 
-          <Stack direction="row" justifyContent="center" textTransform={"none"}>
-            <Button onClick={() => setShowChart(showChart === "Current" ? "Expected" : "Current")} variant="outlined">
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
-                {showChart === "Current" ? "Show Expected Cashflow" : "Show Current Cashflow"}
-              </Typography>
-            </Button>
-          </Stack>
-        </Paper>
+                </Box>
 
-        <Paper
-          style={{
-            margin: "2px",
-            padding: theme.spacing(2),
-            boxShadow: "none",
-            width: "85%", // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
-          }}
-        >
-          <Box component="span" m={2} marginTop={15} marginBottom={30} display="flex" justifyContent="space-between" alignItems="center">
-            <Button
-              sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.smallFont,
-                backgroundColor: theme.palette.primary.main,
-                borderRadius: 3,
-                textTransform: "none",
-              }}
-              onClick={() => {
-                navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
-              }}
-            >
-              {" "}
-              <img src={AddRevenueIcon}></img> Revenue
-            </Button>
-            <Button
-              sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.smallFont,
-                backgroundColor: theme.palette.primary.main,
-                borderRadius: 3,
-                textTransform: "none",
-              }}
-              onClick={() => {
-                navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
-              }}
-            >
-              {" "}
-              <img src={AddRevenueIcon}></img> Expense
-            </Button>
-            {/* <Button
-              sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.smallFont,
-                backgroundColor: theme.palette.primary.main,
-                borderRadius: 3,
-                textTransform: "none",
-              }}
-              onClick={() => {
-                navigate("/addUtility", { state: { edit: false, itemToEdit: null } });
-              }}
-            >
-              {" "}
-              <img src={AddRevenueIcon}></img> Utility
-            </Button> */}
-          </Box>
-        </Paper>
-      </Box>
+                <Box
+                  component="span"
+                  m={2}
+                  padding={3}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  // onClick={() => setActiveButton('ExpectedCashflow')}
+                  style={{
+                    backgroundColor: theme.palette.custom.blue,
+                    borderRadius: "5px",
+                  }}
+                >
+                  <Typography sx={{ width: '270px', color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    Cashflow
+                  </Typography>
+                  <Typography sx={{ width: '200px', color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    $
+                    {expectedRevenueByMonth !== null && expectedRevenueByMonth !== undefined && expectedExpenseByMonth !== null && expectedExpenseByMonth !== undefined
+                      ? (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2)
+                      : "0.00"}
+                  </Typography>
+                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    $
+                    {totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined
+                      ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
+                      : "0.00"}
+                  </Typography>
+                </Box>
+                <Accordion
+                  sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    boxShadow: "none",
+                  }}
+                >
+                  {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
+                  <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                          {month} Revenue
+                        </Typography>
+                      </AccordionSummary>
+                    </Box>
+                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                        ${" "}
+                        {"ExpectedCashflow" === "Cashflow"
+                          ? totalRevenueByMonth
+                          ? totalRevenueByMonth.toFixed(2)
+                          : "0.00"
+                          : expectedRevenueByMonth
+                          ? expectedRevenueByMonth.toFixed(2)
+                          : "0.00"}
+                      </Typography>
+                    </Box>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                      ${" "}
+                      {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Box>
+
+                  <AccordionDetails>
+                    {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
+                    <StatementTable
+                      categoryTotalMapping={revenueByType}
+                      allItems={revenueList}
+                      activeView={"ExpectedCashflow"}
+                      tableType="Revenue"
+                      categoryExpectedTotalMapping={expectedRevenueByType}
+                      month={month}
+                      year={year}
+                    />
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion
+                  sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    boxShadow: "none",
+                  }}
+                >            
+                  <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                          {month} Expense
+                        </Typography>
+                      </AccordionSummary>
+                    </Box>
+                    <Box display="flex" justifyContent="center" alignItems="center" sx={{ width: '200px',}}>
+                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                        ${" "}
+                        {"ExpectedCashflow" === "Cashflow"
+                          ? totalExpenseByMonth
+                            ? totalExpenseByMonth.toFixed(2)
+                            : "0.00"
+                          : expectedExpenseByMonth
+                          ? expectedExpenseByMonth.toFixed(2)
+                          : "0.00"}
+                      </Typography>
+                    </Box>
+                    <Box display="flex" justifyContent="flex-end" alignItems="center" sx={{ width: '200px',}}>
+                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                        ${" "}
+                        {"Cashflow" === "Cashflow" ? (totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00") : expectedExpenseByMonth ? expectedExpenseByMonth.toFixed(2) : "0.00"}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <AccordionDetails>
+                    <StatementTable
+                      categoryTotalMapping={expenseByType}
+                      allItems={expenseList}
+                      activeView={"ExpectedCashflow"}
+                      tableType="Expense"
+                      categoryExpectedTotalMapping={expectedExpenseByType}
+                      month={month}
+                      year={year}
+                    />
+                  </AccordionDetails>
+                </Accordion>
+
+                {/* This is where the GRAPH Component starts */}
+                <Stack direction="row" justifyContent="center">
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
+                    {showChart} Cashflow and Revenue
+                  </Typography>
+                </Stack>
+
+                <Stack direction="row" justifyContent="center" height={300}>
+                  {showChart === "Current" ? (
+                    <MixedChart revenueCashflowByMonth={last12Months} activeButton={activeButton}></MixedChart>
+                  ) : (
+                    <MixedChart revenueCashflowByMonth={next12Months} activeButton={activeButton}></MixedChart>
+                  )}
+                </Stack>
+
+                <Stack direction="row" justifyContent="center" textTransform={"none"}>
+                  <Button onClick={() => setShowChart(showChart === "Current" ? "Expected" : "Current")} variant="outlined">
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
+                      {showChart === "Current" ? "Show Expected Cashflow" : "Show Current Cashflow"}
+                    </Typography>
+                  </Button>
+                </Stack>
+              </Paper>
+
+              <Paper
+                style={{
+                  margin: "2px",
+                  padding: theme.spacing(2),
+                  boxShadow: "none",
+                  width: "85%", // Occupy full width with 25px margins on each side
+                  [theme.breakpoints.down("sm")]: {
+                    width: "80%",
+                  },
+                  [theme.breakpoints.up("sm")]: {
+                    width: "50%",
+                  },
+                }}
+              >
+                <Box component="span" m={2} marginTop={15} marginBottom={30} display="flex" justifyContent="space-between" alignItems="center">
+                  <Button
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      backgroundColor: theme.palette.primary.main,
+                      borderRadius: 3,
+                      textTransform: "none",
+                    }}
+                    onClick={() => {
+                      navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                    }}
+                  >
+                    {" "}
+                    <img src={AddRevenueIcon}></img> Revenue
+                  </Button>
+                  <Button
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      backgroundColor: theme.palette.primary.main,
+                      borderRadius: 3,
+                      textTransform: "none",
+                    }}
+                    onClick={() => {
+                      navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
+                    }}
+                  >
+                    {" "}
+                    <img src={AddRevenueIcon}></img> Expense
+                  </Button>
+                  {/* <Button
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      backgroundColor: theme.palette.primary.main,
+                      borderRadius: 3,
+                      textTransform: "none",
+                    }}
+                    onClick={() => {
+                      navigate("/addUtility", { state: { edit: false, itemToEdit: null } });
+                    }}
+                  >
+                    {" "}
+                    <img src={AddRevenueIcon}></img> Utility
+                  </Button> */}
+                </Box>
+              </Paper>
+            </Box>                                
+          </Grid>
+        </Grid>
+      </Container>      
     </ThemeProvider>
   );
 }
@@ -632,6 +657,7 @@ function StatementTable(props) {
   // console.log("statement table year/month", year, month)
 
   function getCategoryCount(category) {
+    console.log("ROHIT - getCategoryCount - allItems - ", allItems);
     let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     return "(" + items.length + ")";
   }
@@ -760,12 +786,12 @@ function StatementTable(props) {
                 }}
                 key={category}
               >
-                <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+                <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                        <TableCell sx={{width: '150px',}}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, }}>
                             {" "}
                             {category} {getCategoryCount(category)}{" "}
                           </Typography>
@@ -774,7 +800,7 @@ function StatementTable(props) {
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
                         </TableCell>
                         <TableCell align="right">
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${categoryTotalMapping[category] ? categoryTotalMapping[category] : 0}</Typography>
                         </TableCell>
                       </TableRow>
                     </TableHead>
