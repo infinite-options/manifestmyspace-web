@@ -54,7 +54,10 @@ import AES from "crypto-js/aes";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const OwnerContactDetailsHappinessMatrix = (props) => {
+  // const { happinessData, data } = props;
   console.log("In Owner Contact Details - Happiness Matrix", props);
+  // console.log("In Owner Contact Details - data -", data, typeof data);
+  // console.log("In Owner Contact Details - happinessData -", happinessData, typeof happinessData);
   const { selectedRole, getProfileId } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,7 +65,13 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const navigatingFrom = location.state.navigatingFrom;
+
   const happinessMatrixData = location.state.happinessMatrixData;
+  console.log("HappinessMatrixData OK - ", happinessMatrixData);
+
+  const happinessData = location.state.happinessData;
+  console.log("happinessData OK - ", happinessData);
+
   // const contactDetails = location.state.dataDetails;
   const [contactDetails, setContactDetails] = useState(null);
   const [contactsTab, setContactsTab] = useState("");
@@ -73,6 +82,11 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   // const passedData = location.state.viewData;
   const ownerUID = location.state.ownerUID;
 
+  const data1 = location.state.data;
+  const happinessData1 = location.state.happinessData;
+  console.log("In Owner Contact Details - data1 -", data1, typeof data1);
+  console.log("In Owner Contact Details - happinessData1 -", happinessData1, typeof happinessData1);
+
   const cashflowData = location.state.cashflowData;
   const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
   const cashflowDetails = location.state.cashflowDetails;
@@ -82,7 +96,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   const [filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty] = useState(cashflowDetailsByProperty);
   const [filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth] = useState(cashflowDetailsByPropertyByMonth);
 
-  // console.log("cashflowData - ", cashflowData);
+  console.log("cashflowData OK - ", cashflowData);
 
   // useEffect(() => {
   //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
@@ -886,8 +900,8 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
       // width: 100,
       flex: 0.3,
       renderCell: (params) => (
-        <Box 
-          sx={{ margin: "0px" }} 
+        <Box
+          sx={{ margin: "0px" }}
           onClick={() =>
             getNumOfMaintenanceReqs(params.row.property_uid) > 0
               ? navigate("/managerMaintenance", {

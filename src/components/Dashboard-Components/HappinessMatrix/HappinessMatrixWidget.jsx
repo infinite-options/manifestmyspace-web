@@ -11,9 +11,26 @@ export default function HappinessMatrixWidget(props) {
   const chartWidth = 400;
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { page, setIndex, data, dataSetter, cashflowData, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
-  // console.log("HappinessMatrixWidget - data -", data);
+  // const { page, setIndex, contactDetails, happinessData } = props;
+  const { page, setIndex, happinessData, data, dataSetter, cashflowData, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
+  console.log("HappinessMatrixWidget - data -", data, typeof data);
+  console.log("HappinessMatrixWidget - happinessData -", happinessData, typeof happinessData);
   // console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
+  // console.log("HappinessMatrixWidget - happinessData -", happinessData);
+  // console.log("HappinessMatrixWidget - happinessData -", happinessData?.delta_cashflow);
+  // console.log("HappinessMatrixWidget - happinessData -", happinessData?.delta_cashflow.result);
+
+  // data =
+  // contactDetails =
+  // let cashflowData = happinessData?.delta_cashflow.result;
+  // let cashflowDetails = happinessData?.delta_cashflow_details?.result;
+  // let cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
+  // let cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
+
+  // console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
+  // console.log("HappinessMatrixWidget - cashflowDetails -", cashflowDetails);
+  // console.log("HappinessMatrixWidget - cashflowDetailsByProperty -", cashflowDetailsByProperty);
+  // console.log("HappinessMatrixWidget - cashflowDetailsByPropertyByMonth -", cashflowDetailsByPropertyByMonth);
 
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
 
@@ -51,8 +68,13 @@ export default function HappinessMatrixWidget(props) {
   }, []);
 
   function getPoints(data) {
+    console.log("In getPoints: ", data);
+    console.log("Type of data: ", typeof data);
+    console.log("Is data an array: ", Array.isArray(data));
+
     const points = [];
     data?.forEach((owner) => {
+      console.log("In get points: ", owner.vacancy_perc, owner.delta_cashflow_perc);
       let x = Number(owner.vacancy_perc);
       let y = Number(owner.delta_cashflow_perc);
 
@@ -256,6 +278,7 @@ export default function HappinessMatrixWidget(props) {
                       {...props}
                       onClick={() => handlePointClick(props.payload)}
                       data={data}
+                      happinessData={happinessData}
                       page={page}
                       contactDetails={contactDetails}
                       setIndex={setIndex}
@@ -292,7 +315,7 @@ export default function HappinessMatrixWidget(props) {
 }
 
 const CustomImage = (props) => {
-  console.log("In CustomImage");
+  // console.log("In CustomImage");
   const navigate = useNavigate();
   const {
     cx,
@@ -310,6 +333,7 @@ const CustomImage = (props) => {
     cashflowDetails,
     cashflowDetailsByProperty,
     cashflowDetailsByPropertyByMonth,
+    happinessData,
   } = props;
 
   const [isClickedState, setIsClickedState] = useState(isClicked);
@@ -323,9 +347,10 @@ const CustomImage = (props) => {
   }
 
   const diameter = 30;
-  const outlineWidth = isClicked ? 4 : 2;  
+  const outlineWidth = isClicked ? 4 : 2;
 
   const handleClick = (payload) => {
+    // console.log("input to  handleClick: ", payload);
     setIsClickedState(true);
     // console.log("CustomImage - handeClick");
     if (onClick) {
@@ -337,6 +362,7 @@ const CustomImage = (props) => {
       setIndex(idx);
       return;
     }
+
     navigate(`/ownerContactDetailsHappinessMatrix`, {
       state: {
         ownerUID: payload.owner_uid,
@@ -347,6 +373,7 @@ const CustomImage = (props) => {
         cashflowDetailsByProperty,
         cashflowDetailsByPropertyByMonth: cashflowDetailsByPropertyByMonth,
         happinessMatrixData: data,
+        happinessData: happinessData,
       },
     });
   };
@@ -356,7 +383,11 @@ const CustomImage = (props) => {
     <g onClick={() => handleClick(payload)}>
       <foreignObject x={cx - diameter / 2} y={cy - diameter / 2} width={diameter} height={diameter}>
         {![null, undefined, ""].includes(payload?.photo) ? (
-          <img src={payload.photo} alt="scatter-image" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", filter: isClickedState ? "brightness(0.7)" : "none", }} />
+          <img
+            src={payload.photo}
+            alt="scatter-image"
+            style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", filter: isClickedState ? "brightness(0.7)" : "none" }}
+          />
         ) : (
           <AccountCircleIcon
             sx={{

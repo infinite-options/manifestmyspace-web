@@ -68,6 +68,7 @@ function ManagerDashboard() {
   const [cashflowDetailsByProperty, setCashflowDetailsByProperty] = useState([]);
   const [cashflowDetailsByPropertyByMonth, setCashflowDetailsByPropertyByMonth] = useState([]);
   const [cashflowData, setCashflowData] = useState([]);
+  const [happinessData, setHappinessData] = useState([]);
 
   // useEffect(() => {
   //   console.log("ManagerDashboard - cashflowDetails - ", cashflowDetails);
@@ -76,7 +77,6 @@ function ManagerDashboard() {
   // useEffect(() => {
   //   console.log("ManagerDashboard - cashflowData - ", cashflowData);
   // }, [cashflowData]);
-
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
@@ -268,6 +268,7 @@ function ManagerDashboard() {
       // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();
+        console.log("Manager Dashboard jsonData: ", jsonData);
         // const propertiesResponseJSON = await propertiesResponse.json();
 
         // MAINTENANCE Status
@@ -281,6 +282,7 @@ function ManagerDashboard() {
 
         // HAPPINESS MATRIX
         setting_matrix_data(jsonData);
+        setHappinessData(jsonData.HappinessMatrix);
 
         // REVENUE DATA
         setRevenueData(jsonData.Profitability);
@@ -296,7 +298,6 @@ function ManagerDashboard() {
 
         //CASHFLOW DETAILS
         setCashflowDetailsByPropertyByMonth(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property_by_month?.result);
-
 
         // NEW PM REQUESTS
         // set_property_endpoint_resp(propertiesResponseJSON);
@@ -356,7 +357,14 @@ function ManagerDashboard() {
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget data={matrixData} cashflowData={cashflowData} cashflowDetails={cashflowDetails} cashflowDetailsByProperty={cashflowDetailsByProperty} cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth} />
+                <HappinessMatrixWidget
+                  happinessData={happinessData}
+                  data={matrixData}
+                  cashflowData={cashflowData}
+                  cashflowDetails={cashflowDetails}
+                  cashflowDetailsByProperty={cashflowDetailsByProperty}
+                  cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
+                />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget maintenanceData={maintenanceStatusData} />
