@@ -54,9 +54,7 @@ export default function PaidMaintenance({maintenanceItem}){
                 width: "100%",
             }}
         >
-            <Grid container direction="row" columnSpacing={6} rowSpacing={6}>
-                <TenantProfileLink maintenanceItem={maintenanceItem}/>
-                <OwnerProfileLink maintenanceItem={maintenanceItem}/>
+            <Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}>
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -65,12 +63,23 @@ export default function PaidMaintenance({maintenanceItem}){
                         variant="contained"
                         
                         sx={{
-                            backgroundColor: "#3D5CAC",
-                            textTransform: "none",
-                            paddingRight: "0px",
-                            borderRadius: "10px",
+                            backgroundColor: '#a7b8e6',
+                            color: '#160449',
+                            textTransform: 'none',
+                            fontWeight: 'bold',
+                            borderRadius: '8px',
+                            width: '160px',
+                            height: '120px',
                             display: 'flex',
-                            width: "100%",
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                            padding: '10px',
+                            boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+                            whiteSpace: 'normal',
+                            '&:hover': {
+                                backgroundColor: '#a7b8e6',
+                            },
                         }}
                     >
                         <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "14px"}}>

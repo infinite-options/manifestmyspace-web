@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
+const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
@@ -64,7 +64,7 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-    const { user, isBusiness, isManager, roleName,selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn } = useUser();
+    const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getRoleId } = useUser();
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
@@ -77,7 +77,7 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         bank_account: { account_number: "", routing_number: "", checked: false },
     });
     const [businesses, setBusinesses] = useState([]);
-    const [selectedBusiness, setSelectedBusiness] = useState("");
+    const [selectedBusiness, setSelectedBusiness] = useState(profileData.employee_business_id || "");
     const [selectedBizRole, setSelectedBizRole] = useState("");
     const [businessPhoto, setBusinessPhoto] = useState(DefaultProfileImg);
 
@@ -96,26 +96,21 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         const fetchProfileData = async () => {
             setShowSpinner(true);
             try {
-            //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
-            // const profileData = profileResponse.data.profile.result[0];
-    
-           // setBusinessName(profileData.business_name || "");
-           
-            setFirstName(profileData.employee_first_name || "");
-            setLastName(profileData.employee_last_name || "");
-            setPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
-            setEmail(profileData.employee_email || "");
-            // setEmpPhoto(employeeData.employee_photo_url ? { image: employeeData.employee_photo_url } : null);
-            setSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
-            setMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
-            setAddress(profileData.employee_address || "");
-            setUnit(profileData.employee_unit || "");
-            setCity(profileData.employee_city || "");
-            setState(profileData.employee_state || "");
-            setZip(profileData.employee_zip || "");
-            
-    
-            const paymentMethods = JSON.parse(profileData.paymentMethods);
+                setFirstName(profileData.employee_first_name || "");
+                setLastName(profileData.employee_last_name || "");
+                setPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
+                setEmail(profileData.employee_email || "");
+                setSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+                setMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+                setAddress(profileData.employee_address || "");
+                setUnit(profileData.employee_unit || "");
+                setCity(profileData.employee_city || "");
+                setState(profileData.employee_state || "");
+                setZip(profileData.employee_zip || "");
+                setSelectedBusiness(profileData.employee_business_id || "");
+                setPhoto(profileData.employee_photo_url ? { image: profileData.employee_photo_url } : null);
+                
+                const paymentMethods = JSON.parse(profileData.paymentMethods);
                 const updatedPaymentMethods = {
                     paypal: { value: "", checked: false },
                     apple_pay: { value: "", checked: false },
@@ -140,20 +135,17 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     }
                 });
                 setPaymentMethods(updatedPaymentMethods);
-    
+
                 setShowSpinner(false);
             } catch (error) {
                 console.error("Error fetching profile data:", error);
                 setShowSpinner(false);
             }
-            
+
         };
-    
+
         fetchProfileData();
-    
-    
-    }, []);
-    
+    }, [profileData]);
 
     useEffect(() => {
         fetchBusinesses();
@@ -168,7 +160,7 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
 
     const createProfile = async (form) => {
         // const profileApi = "/employeeProfile";
-        const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee`, form, headers);
+        const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile`, form, headers);
         return data;
     };
 
@@ -221,6 +213,7 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         const business = businesses.find((b) => b.business_uid === selectedBusiness);
         return {
             employee_user_id: user.user_uid,
+            employee_uid: getRoleId(),
             employee_business_id: business?.business_uid,
             employee_first_name: firstName,
             employee_last_name: lastName,
@@ -348,12 +341,8 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         return;
     };
 
-    const handleNavigation =(e) => {
-        selectRole('MANAGER');
-        setLoggedIn(true);
-        navigate("/managerDashboard")
-    }
-    
+   
+
 
     const handleChangeChecked = (e) => {
         const { name, checked } = e.target;
@@ -568,7 +557,7 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
             <hr />
             <Box display="flex">
                 <Box width="20%" p={2}>
-                    <h1>Profile pic</h1>
+                    {/* <h1>Profile pic</h1> */}
                     <Stack direction="row" justifyContent="center">
                         {photo && photo.image ? (
                             <img
@@ -598,14 +587,12 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                             component="label"
                             variant="contained"
                             sx={{
-                                backgroundImage: `url(${addPhotoImg})`,
+                                backgroundColor:  "#3D5CAC",
                                 width: "193px",
                                 height: "35px",
-                                "&:hover, &:focus": {
-                                    backgroundColor: "transparent",
-                                },
+                                
                             }}
-                        >
+                        >   Add profile pic
                             <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
                         </Button>
                     </Box>
@@ -684,7 +671,7 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     </Stack>
                     <Stack spacing={2} direction="row">
                         <Box sx={{ width: '50%' }}>
-                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} />
+                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address}/>
                         </Box>
                         <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
                         <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
@@ -761,18 +748,18 @@ const PMEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2 , backgroundColor:  "#3D5CAC" }}
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
         </div>
     );

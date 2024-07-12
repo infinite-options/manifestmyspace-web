@@ -80,7 +80,7 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                 setLastName(profileData.tenant_last_name || "");
                 setEmail(profileData.tenant_email || "");
                 setPhoneNumber(formatPhoneNumber(profileData.tenant_phone_number || ""));
-                addPhotoImg(profileData.tenant_photo ? { image: profileData.tenant_photo } : null);
+                setPhoto(profileData.tenant_photo_url ? { image: profileData.tenant_photo_url } : null);
                 setSsn(profileData.tenant_ssn ? AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
                 setMask(profileData.tenant_ssn ? maskNumber(AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
                 setAddress(profileData.tenant_address || "");
@@ -88,8 +88,9 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                 setCity(profileData.tenant_city || "");
                 setState(profileData.tenant_state || "");
                 setZip(profileData.tenant_zip || "");
-
+               
                 const paymentMethods = JSON.parse(profileData.paymentMethods);
+                console.log("tenant payment",paymentMethods)
                 const updatedPaymentMethods = {
                     paypal: { value: "", checked: false },
                     apple_pay: { value: "", checked: false },
@@ -195,7 +196,7 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
             tenant_city: city,
             tenant_state: state,
             tenant_zip: zip,
-            tenant_photo: photo,
+            tenant_photo_url: photo,
         };
     };
 
@@ -253,7 +254,9 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
         const form = new FormData();
         for (let key in payload) {
             if (photoFields.has(key)) {
-                if (payload[key]) form.append(key, payload[key].file);
+                if (payload[key] && payload[key].file instanceof File) {
+                    form.append(key, payload[key].file);
+                }
             } else {
                 form.append(key, payload[key]);
             }
@@ -474,7 +477,7 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     width="20%"
                     p={2}
                 >
-                    <h1> Profile pic</h1>
+
                     <Stack direction="row" justifyContent="center">
                         {photo && photo.image ? (
                             <img
@@ -504,14 +507,12 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                             component="label"
                             variant="contained"
                             sx={{
-                                backgroundImage: `url(${addPhotoImg})`,
+                                backgroundColor:  "#3D5CAC",
                                 width: "193px",
                                 height: "35px",
-                                "&:hover, &:focus": {
-                                    backgroundColor: "transparent",
-                                },
+                                
                             }}
-                        >
+                        > Add Profile Pic
                             <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
                         </Button>
                     </Box>
@@ -678,11 +679,11 @@ Payment Methods
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2 , backgroundColor:  "#3D5CAC",}}
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
@@ -690,7 +691,7 @@ Payment Methods
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
         </div>
     );

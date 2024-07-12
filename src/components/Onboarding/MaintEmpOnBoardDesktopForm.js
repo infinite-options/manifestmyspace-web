@@ -597,12 +597,10 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                             component="label"
                             variant="contained"
                             sx={{
-                                backgroundImage: `url(${addPhotoImg})`,
+                                backgroundColor:  "#3D5CAC" ,
                                 width: "193px",
                                 height: "35px",
-                                "&:hover, &:focus": {
-                                    backgroundColor: "transparent",
-                                },
+                                
                             }}
                         >
                             <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
@@ -760,11 +758,11 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2 , backgroundColor:  "#3D5CAC" }}
                 >
                     Save
                 </Button>
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
@@ -772,7 +770,7 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard
-                </Button>
+                </Button> */}
             </Box>
         </div>
     );

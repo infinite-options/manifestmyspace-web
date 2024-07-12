@@ -80,7 +80,8 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                 setLastName(profileData.owner_last_name || "");
                 setEmail(profileData.owner_email || "");
                 setPhoneNumber(formatPhoneNumber(profileData.owner_phone_number || ""));
-                setAddPhotoImg(profileData.owner_photo_url ? { image: profileData.owner_photo_url } : null);
+                setPhoto(profileData.owner_photo_url ? { image: profileData.owner_photo_url } : null);
+                console.log("profileData.owner_photo_url", profileData.owner_photo_url)
                 setSsn(profileData.owner_ssn ? AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
                 setMask(profileData.owner_ssn ? maskNumber(AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
                 setAddress(profileData.owner_address || "");
@@ -135,21 +136,54 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
         setIsSave(true)
         return data;
     };
+    
+    // const readImage = (file) => {
+    //     const reader = new FileReader();
+    //     reader.onload = (e) => {
+    //         file.image = e.target.result;
+    //         setPhoto(file);
+    //     };
+    //     reader.readAsDataURL(file.file);
+    // };
 
-    const handlePhotoChange = (e) => {
+    // const handlePhotoChange = (e) => {
+    //     const file = {
+    //         index: 0,
+    //         file: e.target.files[0],
+    //         image: null,
+    //     };
+    //     let isLarge = file.file.size > 5000000;
+    //     let file_size = (file.file.size / 1000000).toFixed(1);
+    //     if (isLarge) {
+    //         alert(`Your file size is too large (${file_size} MB)`);
+    //         return;
+    //     }
+    //     readImage(file);
+    // };
+
+    const readImage = (file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+        file.image = e.target.result;
+        setPhoto(file);
+        };
+        reader.readAsDataURL(file.file);
+        };
+        
+        const handlePhotoChange = (e) => {
         const file = {
-            index: 0,
-            file: e.target.files[0],
-            image: null,
+        index: 0,
+        file: e.target.files[0],
+        image: null,
         };
         let isLarge = file.file.size > 5000000;
         let file_size = (file.file.size / 1000000).toFixed(1);
         if (isLarge) {
-            alert(`Your file size is too large (${file_size} MB)`);
-            return;
+        alert(`Your file size is too large (${file_size} MB)`);
+        return;
         }
         readImage(file);
-    };
+        };
 
     const handleFirstNameChange = (event) => {
         setFirstName(event.target.value);
@@ -223,14 +257,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
         setZip(address.zip ? address.zip : "");
     };
 
-    const readImage = (file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            file.image = e.target.result;
-            setPhoto(file);
-        };
-        reader.readAsDataURL(file.file);
-    };
+    
 
     const handleChangeValue = (e) => {
         const { name, value } = e.target;
@@ -254,7 +281,9 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
         const form = new FormData();
         for (let key in payload) {
             if (photoFields.has(key)) {
-                if (payload[key]) form.append(key, payload[key].file);
+                if (payload[key] && payload[key].file instanceof File) {
+                    form.append(key, payload[key].file);
+                }
             } else {
                 form.append(key, payload[key]);
             }
@@ -363,6 +392,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                     // Replace with actual profile id
                     paymentMethod_type: key,
                     paymentMethod_profile_id: getProfileId(),
+                    paymentMethod_uid:user.user_uid,
 
                 };
                 if (key === "bank_account") {
@@ -380,7 +410,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
         });
         // payload= JSON.stringify(payload);
         console.log("Payment payload: ", payload);
-        const response = await axios.post(
+        const response = await axios.put(
             "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
             payload,
             { headers: { "Content-Type": "application/json" } }
@@ -503,12 +533,11 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                             component="label"
                             variant="contained"
                             sx={{
-                                backgroundImage: `url(${addPhotoImg})`,
+                                
+                                backgroundColor:  "#3D5CAC",
                                 width: "193px",
                                 height: "35px",
-                                "&:hover, &:focus": {
-                                    backgroundColor: "transparent",
-                                },
+                                
                             }}
                         >    Add Profile Pic
                             <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
@@ -668,14 +697,15 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
             <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" p={5}>
                 <Button
                     variant="contained"
-                    color="primary"
+            
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2, backgroundColor:  "#3D5CAC" }}
+                    
                 >
                     Save
                 </Button>
-                {/* <Button
+                {/* <Button #3D5CAC;
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}

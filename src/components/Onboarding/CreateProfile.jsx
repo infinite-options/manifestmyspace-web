@@ -144,6 +144,7 @@ const CreateProfile = () => {
         }
         if (data.business_uid) {
           updateProfileUid({ business_uid: data.business_uid });
+          updateProfileUid({ business_owner_id: data.employee_uid });
         }
       };
 
