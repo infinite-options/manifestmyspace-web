@@ -54,8 +54,8 @@ import {
   // getTotalRevenueByMonthYear,
   // getTotalExpectedRevenueByMonthYear,
   // getTotalExpectedExpenseByMonthYear,
-  getPast12MonthsCashflow,
-  getNext12MonthsCashflow,
+  // getPast12MonthsCashflow,
+  // getNext12MonthsCashflow,
   // getRevenueList,
   // getExpenseList,
 } from "../Cashflow/CashflowFetchData";
@@ -68,8 +68,8 @@ import {
   getTotalRevenueByMonthYear,
   getTotalExpectedRevenueByMonthYear,
   getTotalExpectedExpenseByMonthYear,
-  // getPast12MonthsCashflow,
-  // getNext12MonthsCashflow,
+  getPast12MonthsCashflow,
+  getNext12MonthsCashflow,
   getRevenueList,
   getExpenseList,
 } from "../Cashflow/CashflowFetchData2";
@@ -118,16 +118,16 @@ export default function Cashflow() {
 
   const displays = ["Cashflow", "ExpectedCashflow"];
 
-  useEffect(() => {
-    fetchCashflow(profileId)
-      .then((data) => {
-        setCashflowData(data);
-        // let currentMonthYearRevenueExpected = get
-      })
-      .catch((error) => {
-        console.error("Error fetching cashflow data:", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetchCashflow(profileId)
+  //     .then((data) => {
+  //       setCashflowData(data);
+  //       // let currentMonthYearRevenueExpected = get
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching cashflow data:", error);
+  //     });
+  // }, []);
 
   useEffect(() => {
     fetchCashflow2(profileId)
@@ -141,7 +141,7 @@ export default function Cashflow() {
   }, []);
 
   useEffect(() => {
-    if (cashflowData !== null && (cashflowData !== undefined && cashflowData2) !== null && cashflowData2 !== undefined) {
+    if (cashflowData2 !== null  && cashflowData2 !== undefined) {
       let currentMonthYearTotalRevenue = getTotalRevenueByMonthYear(cashflowData2, month, year);
       let currentMonthYearTotalExpense = getTotalExpenseByMonthYear(cashflowData2, month, year);
       let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(cashflowData2, month, year);
@@ -169,13 +169,13 @@ export default function Cashflow() {
       setExpectedRevenueByType(expectedRevenueByType);
       setExpectedExpenseByType(expectedExpenseByType);
 
-      let last12months = getPast12MonthsCashflow(cashflowData, month, year);
-      let next12Months = getNext12MonthsCashflow(cashflowData, month, year);
+      let last12months = getPast12MonthsCashflow(cashflowData2, month, year);
+      let next12Months = getNext12MonthsCashflow(cashflowData2, month, year);
 
       setLast12Months(last12months);
       setNext12Months(next12Months);
     }
-  }, [month, year, cashflowData, cashflowData2]);
+  }, [month, year, cashflowData2]);
 
   // useEffect(() => {
   //     console.log("revenueByType", revenueByType)
@@ -464,7 +464,7 @@ export default function Cashflow() {
                     <Box display="flex" justifyContent="flex-end" alignItems="center" sx={{ width: '200px',}}>
                       <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                         ${" "}
-                        {"Cashflow" === "Cashflow" ? (totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00") : expectedExpenseByMonth ? expectedExpenseByMonth.toFixed(2) : "0.00"}
+                        {"Cashflow" === "Cashflow" ? (totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00") : expectedExpenseByMonth ? expectedExpenseByMonth.toFixed(2) : "0.00"}                        
                       </Typography>
                     </Box>
                   </Box>
@@ -663,8 +663,10 @@ function StatementTable(props) {
   }
 
   function getCategoryItems(category, type) {
-    let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
-    // console.log("getCategoryItems", items)
+    let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+    let items = filteredIitems?.map(item => ({ ...item, property:JSON.parse(item.property)}));
+    
+    console.log("ROHIT - getCategoryItems", items)
     var key = "total_paid";
     if (activeView === "Cashflow") {
       key = "total_paid";
@@ -701,32 +703,149 @@ function StatementTable(props) {
               </TableCell> */}
             </TableRow>
           ) : (
-            <TableRow key={index}>
-              <TableCell>{item.purchase_uid}</TableCell>
-              <TableCell>{item.pur_property_id}</TableCell>
-              <TableCell>{item.pur_payer}</TableCell>
-              <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  {" "}
-                  {item.property_address} {item.property_unit}{" "}
-                </Typography>
-              </TableCell>
-              <TableCell>{item.pur_notes}</TableCell>
-              <TableCell>{item.pur_description}</TableCell>
-              <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["total_paid"] ? item["total_paid"] : 0}
-                </Typography>
-              </TableCell>
-              {/* <TableCell align="right">
-                <EditIcon />
-              </TableCell> */}
-            </TableRow>
+          //   <>
+          //   <Accordion
+          //       sx={{
+          //         backgroundColor: theme.palette.custom.pink,
+          //         boxShadow: "none",
+          //       }}
+          //       key={category}
+          //     >
+          //       <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+          //         <TableRow key={index}>
+          //           <TableCell>{item.purchase_uid}</TableCell>
+          //           <TableCell>{item.pur_property_id}</TableCell>
+          //           <TableCell>{item.pur_payer}</TableCell>
+          //           <TableCell>
+          //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+          //               {" "}
+          //               {item.property_address} {item.property_unit}{" "}
+          //             </Typography>
+          //           </TableCell>
+          //           <TableCell>{item.pur_notes}</TableCell>
+          //           <TableCell>{item.pur_description}</TableCell>
+          //           <TableCell>
+          //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+          //               ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
+          //             </Typography>
+          //           </TableCell>
+          //           <TableCell>
+          //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+          //               ${item["total_paid"] ? item["total_paid"] : 0}
+          //             </Typography>
+          //           </TableCell>
+          //           {/* <TableCell align="right">
+          //             <EditIcon />
+          //           </TableCell> */}
+          //         </TableRow>
+          //       </AccordionSummary>   
+          //       <AccordionDetails>
+          //           {                      
+          //             item?.property?.map( property => {
+          //               return (
+          //                 <TableRow>    
+          //                   <TableCell>
+          //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+          //                       {property.property_uid}
+          //                     </Typography>
+          //                   </TableCell>
+          //                   <TableCell>
+          //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+          //                       {property.property_address}
+          //                     </Typography>
+          //                   </TableCell>
+          //                   <TableCell>
+          //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+          //                       {property.property_unit}
+          //                     </Typography>
+          //                   </TableCell>
+          //                   <TableCell>
+          //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+          //                       ${property.individual_purchase[0]?.pur_amount_due? property.individual_purchase[0]?.pur_amount_due : 0}
+          //                     </Typography>
+          //                   </TableCell>
+          //                   <TableCell>
+          //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+          //                       ${property.individual_purchase[0]?.total_paid? property.individual_purchase[0]?.total_paid : 0}
+          //                     </Typography>
+          //                   </TableCell>
+                          
+          //                 </TableRow>
+          //               );
+          //             })
+          //           }
+          //       </AccordionDetails>                           
+          //     </Accordion>
+                                
+          // </>
+          <>
+            
+                    
+                      <TableRow>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: '25px', }}>
+                            Property UID
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                            Property Address
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                            Property Unit
+                          </Typography>
+                        </TableCell>
+                        <TableCell  align="right">
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                            Expected
+                          </Typography>
+                        </TableCell>
+                        <TableCell  align="right">
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginRight: '25px', }}>
+                            Actual
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    
+                
+                    {                      
+                      item?.property?.map( property => {
+                        return (
+                          <TableRow sx={{ }}>    
+                            <TableCell>
+                              <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: '25px', }}>
+                                {property.property_uid}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography sx={{ fontSize: theme.typography.smallFont, }}>
+                                {property.property_address}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography sx={{ fontSize: theme.typography.smallFont, }}>
+                                {property.property_unit}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                              <Typography sx={{ fontSize: theme.typography.smallFont, }}>
+                                ${property.individual_purchase[0]?.pur_amount_due? property.individual_purchase[0]?.pur_amount_due : 0}
+                              </Typography>
+                            </TableCell>
+                            <TableCell  align="right">
+                              <Typography sx={{ fontSize: theme.typography.smallFont,marginRight: '25px', }}>
+                                ${property.individual_purchase[0]?.total_paid? property.individual_purchase[0]?.total_paid : 0}
+                              </Typography>
+                            </TableCell>
+                          
+                          </TableRow>
+                        );
+                      })
+                    }                
+                                
+          </>
           );
         })}
       </>
@@ -797,13 +916,14 @@ function StatementTable(props) {
                           </Typography>
                         </TableCell>
                         <TableCell align="right">
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: '250px', }}>${value ? value : 0}</Typography>
                         </TableCell>
                         <TableCell align="right">
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${categoryTotalMapping[category] ? categoryTotalMapping[category] : 0}</Typography>
                         </TableCell>
                       </TableRow>
-                    </TableHead>
+                      
+                    </TableHead>                    
                   </Table>
                 </AccordionSummary>
                 <AccordionDetails>
