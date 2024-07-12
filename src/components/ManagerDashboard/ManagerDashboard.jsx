@@ -56,6 +56,7 @@ function ManagerDashboard() {
   const navigate = useNavigate();
   let date = new Date();
   // const [loading, setLoading] = useState(true);
+
   const [rentStatus, setRentStatus] = useState([]);
   const [leaseStatus, setLeaseStatus] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
@@ -360,10 +361,10 @@ function ManagerDashboard() {
                 <HappinessMatrixWidget
                   happinessData={happinessData}
                   data={matrixData}
-                  cashflowData={cashflowData}
-                  cashflowDetails={cashflowDetails}
-                  cashflowDetailsByProperty={cashflowDetailsByProperty}
-                  cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
+                  // cashflowData={cashflowData}
+                  // cashflowDetails={cashflowDetails}
+                  // cashflowDetailsByProperty={cashflowDetailsByProperty}
+                  // cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
                 />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>

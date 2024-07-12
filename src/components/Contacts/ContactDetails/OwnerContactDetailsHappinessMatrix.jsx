@@ -110,9 +110,9 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   //   console.log("filteredCashflowDetailsByPropertyByMonth", filteredCashflowDetailsByPropertyByMonth)
   // }, [filteredCashflowDetailsByPropertyByMonth]);
 
-  // useEffect(() => {
-  //   console.log("cashflowData - ", cashflowData);
-  // }, [cashflowData]);
+  useEffect(() => {
+    console.log("cashflowData - from owner ", cashflowData);
+  }, [cashflowData]);
 
   // useEffect(() => {
   //   console.log("filteredCashflowData - ", filteredCashflowData);
@@ -211,7 +211,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
                       width: "100%",
                     }}
                   >
-                    <HappinessMatrixWidget page={"OwnerContactDetails"} data={happinessMatrixData} setIndex={setIndex} contactDetails={contactDetails} />
+                    <HappinessMatrixWidget page={"OwnerContactDetails"} data={happinessMatrixData} happinessData={happinessData} setIndex={setIndex} contactDetails={contactDetails} />
                   </Paper>
                 </Grid>
                 <Grid item xs={12}>

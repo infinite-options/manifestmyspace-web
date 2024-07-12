@@ -13,25 +13,28 @@ export default function HappinessMatrixWidget(props) {
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
   // const { page, setIndex, contactDetails, happinessData } = props;
   // const { page, setIndex, happinessData, data, dataSetter, cashflowData, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
-  const { page, setIndex, happinessData, data, dataSetter, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
+  const { page, setIndex, happinessData, data, dataSetter, contactDetails } = props;
+
+  useEffect(() => {
+    console.log("HappinessMatrixWidget - happinessData:", happinessData);
+  }, [happinessData]);
+
   console.log("HappinessMatrixWidget - data -", data, typeof data);
-  console.log("HappinessMatrixWidget - happinessData -", happinessData, typeof happinessData);
-  // console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
-  // console.log("HappinessMatrixWidget - happinessData1 -", happinessData);
+  // console.log("HappinessMatrixWidget - happinessData -", happinessData, typeof happinessData);
   // console.log("HappinessMatrixWidget - happinessData2 -", happinessData?.delta_cashflow);
-  console.log("HappinessMatrixWidget - happinessData3 -", happinessData?.delta_cashflow.result);
+  // console.log("HappinessMatrixWidget - happinessData3 -", happinessData?.delta_cashflow.result);
 
   // data =
   // contactDetails =
   let cashflowData = happinessData?.delta_cashflow.result;
-  // let cashflowDetails = happinessData?.delta_cashflow_details?.result;
-  // let cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
-  // let cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
+  let cashflowDetails = happinessData?.delta_cashflow_details?.result;
+  let cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
+  let cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
 
-  // console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
-  // console.log("HappinessMatrixWidget - cashflowDetails -", cashflowDetails);
-  // console.log("HappinessMatrixWidget - cashflowDetailsByProperty -", cashflowDetailsByProperty);
-  // console.log("HappinessMatrixWidget - cashflowDetailsByPropertyByMonth -", cashflowDetailsByPropertyByMonth);
+  console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
+  console.log("HappinessMatrixWidget - cashflowDetails -", cashflowDetails);
+  console.log("HappinessMatrixWidget - cashflowDetailsByProperty -", cashflowDetailsByProperty);
+  console.log("HappinessMatrixWidget - cashflowDetailsByPropertyByMonth -", cashflowDetailsByPropertyByMonth);
 
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
 
