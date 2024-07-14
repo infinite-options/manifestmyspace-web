@@ -43,45 +43,37 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
+const OwnerOnBoardDeskTopForm = ({ profileData, setIsSave }) => {
     const classes = useStyles();
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookies["default_form_vals"];
     const [showSpinner, setShowSpinner] = useState(false);
     const [addPhotoImg, setAddPhotoImg] = useState();
-    // const [isSave, setIsSave] = useState(false);
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
     const { user, updateProfileUid, selectRole, setLoggedIn, getProfileId } = useUser();
-    const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
-        paypal: { value: "", checked: false },
-        apple_pay: { value: "", checked: false },
-        stripe: { value: "", checked: false },
-        zelle: { value: "", checked: false },
-        venmo: { value: "", checked: false },
-        credit_card: { value: "", checked: false },
-        bank_account: { account_number: "", routing_number: "", checked: false },
+        paypal: { value: "", checked: false, uid: "" },
+        apple_pay: { value: "", checked: false, uid: "" },
+        stripe: { value: "", checked: false, uid: "" },
+        zelle: { value: "", checked: false, uid: "" },
+        venmo: { value: "", checked: false, uid: "" },
+        credit_card: { value: "", checked: false, uid: "" },
+        bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
     });
 
     useEffect(() => {
-        
-        setIsSave(false)
+        setIsSave(false);
         const fetchProfileData = async () => {
             setShowSpinner(true);
             try {
-
-                //const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
-                //const profileData = profileData.data.profile.result[0];
-              
                 setFirstName(profileData.owner_first_name || "");
                 setLastName(profileData.owner_last_name || "");
                 setEmail(profileData.owner_email || "");
                 setPhoneNumber(formatPhoneNumber(profileData.owner_phone_number || ""));
                 setPhoto(profileData.owner_photo_url ? { image: profileData.owner_photo_url } : null);
-                console.log("profileData.owner_photo_url", profileData.owner_photo_url)
                 setSsn(profileData.owner_ssn ? AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
                 setMask(profileData.owner_ssn ? maskNumber(AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
                 setAddress(profileData.owner_address || "");
@@ -91,15 +83,14 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                 setZip(profileData.owner_zip || "");
 
                 const paymentMethods = JSON.parse(profileData.paymentMethods);
-                console.log(" paymentMethods is &&", paymentMethods);
                 const updatedPaymentMethods = {
-                    paypal: { value: "", checked: false },
-                    apple_pay: { value: "", checked: false },
-                    stripe: { value: "", checked: false },
-                    zelle: { value: "", checked: false },
-                    venmo: { value: "", checked: false },
-                    credit_card: { value: "", checked: false },
-                    bank_account: { account_number: "", routing_number: "", checked: false },
+                    paypal: { value: "", checked: false, uid: "" },
+                    apple_pay: { value: "", checked: false, uid: "" },
+                    stripe: { value: "", checked: false, uid: "" },
+                    zelle: { value: "", checked: false, uid: "" },
+                    venmo: { value: "", checked: false, uid: "" },
+                    credit_card: { value: "", checked: false, uid: "" },
+                    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
                 };
                 paymentMethods.forEach((method) => {
                     if (method.paymentMethod_type === "bank_account") {
@@ -107,16 +98,17 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                             account_number: method.paymentMethod_account_number || "",
                             routing_number: method.paymentMethod_routing_number || "",
                             checked: true,
+                            uid: method.paymentMethod_uid,
                         };
                     } else {
                         updatedPaymentMethods[method.paymentMethod_type] = {
                             value: method.paymentMethod_name,
                             checked: true,
+                            uid: method.paymentMethod_uid,
                         };
                     }
                 });
                 setPaymentMethods(updatedPaymentMethods);
-            
 
                 setShowSpinner(false);
             } catch (error) {
@@ -126,64 +118,38 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
         };
 
         fetchProfileData();
-    }, []);
-    // getProfileId, setFirstName, setLastName, setEmail, setPhoneNumber, setPhoto, setSsn, setMask, setAddress, setUnit, setCity, setState, setZip]);
-
+    }, [profileData, setIsSave, setFirstName, setLastName, setEmail, setPhoneNumber, setPhoto, setSsn, setMask, setAddress, setUnit, setCity, setState, setZip, getProfileId]);
 
     const saveProfile = async (form) => {
         const profileApi = "/profile";
         const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
-        setIsSave(true)
+        setIsSave(true);
         return data;
     };
-    
-    // const readImage = (file) => {
-    //     const reader = new FileReader();
-    //     reader.onload = (e) => {
-    //         file.image = e.target.result;
-    //         setPhoto(file);
-    //     };
-    //     reader.readAsDataURL(file.file);
-    // };
-
-    // const handlePhotoChange = (e) => {
-    //     const file = {
-    //         index: 0,
-    //         file: e.target.files[0],
-    //         image: null,
-    //     };
-    //     let isLarge = file.file.size > 5000000;
-    //     let file_size = (file.file.size / 1000000).toFixed(1);
-    //     if (isLarge) {
-    //         alert(`Your file size is too large (${file_size} MB)`);
-    //         return;
-    //     }
-    //     readImage(file);
-    // };
 
     const readImage = (file) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-        file.image = e.target.result;
-        setPhoto(file);
+            file.image = e.target.result;
+            setPhoto(file);
         };
         reader.readAsDataURL(file.file);
-        };
-        
-        const handlePhotoChange = (e) => {
+    };
+
+    const handlePhotoChange = (e) => {
         const file = {
-        index: 0,
-        file: e.target.files[0],
-        image: null,
+            index: 0,
+            file: e.target.files[0],
+            image: null,
         };
         let isLarge = file.file.size > 5000000;
         let file_size = (file.file.size / 1000000).toFixed(1);
         if (isLarge) {
-        alert(`Your file size is too large (${file_size} MB)`);
-        return;
+            alert(`Your file size is too large (${file_size} MB)`);
+            return;
         }
         readImage(file);
-        };
+    };
 
     const handleFirstNameChange = (event) => {
         setFirstName(event.target.value);
@@ -257,8 +223,6 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
         setZip(address.zip ? address.zip : "");
     };
 
-    
-
     const handleChangeValue = (e) => {
         const { name, value } = e.target;
         if (name === "bank_account_account" || name === "bank_account_routing") {
@@ -328,17 +292,6 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
         const paymentSetup = await handlePaymentStep();
         console.log(paymentSetup);
         setShowSpinner(false);
-        // if (data.owner_uid) {
-        //     updateProfileUid({ owner_id: data.owner_uid });
-        //     let role_id = {};
-        //     role_id = { owner_id: data.owner_uid };
-        //     setCookie("user", { ...user, ...role_id });
-        //     const paymentSetup = await handlePaymentStep(data.owner_uid);
-        //     console.log(paymentSetup);
-        //     setDashboardButtonEnabled(true);
-        //     setNextStepDisabled(true);
-        //     setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
-        // }
     };
 
     const handleNavigation = (e) => {
@@ -384,38 +337,53 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
     const handlePaymentStep = async () => {
         setShowSpinner(true);
         const keys = Object.keys(paymentMethods);
-        const payload = [];
+        const putPayload = [];
+        const postPayload = [];
         keys.forEach((key) => {
-            if (paymentMethods[key].value !== "") {
+            if (paymentMethods[key].value !== "" || (key === "bank_account" && paymentMethods[key].checked)) {
                 let paymentMethodPayload = {
-                    
-                    // Replace with actual profile id
                     paymentMethod_type: key,
                     paymentMethod_profile_id: getProfileId(),
-                    paymentMethod_uid:user.user_uid,
-
+                    
                 };
                 if (key === "bank_account") {
                     const bankAccount = paymentMethods[key];
                     if (bankAccount.routing_number && bankAccount.account_number) {
                         paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
                         paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-                        payload.push(paymentMethodPayload);
+                        if (bankAccount.uid) {
+                            putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
+                        } else {
+                            postPayload.push(paymentMethodPayload);
+                        }
                     }
                 } else {
                     paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-                    payload.push(paymentMethodPayload);
+                    if (paymentMethods[key].uid) {
+                        putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
+                    } else {
+                        postPayload.push(paymentMethodPayload);
+                    }
                 }
             }
         });
-        // payload= JSON.stringify(payload);
-        console.log("Payment payload: ", payload);
-        const response = await axios.put(
-            "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
-            payload,
-            { headers: { "Content-Type": "application/json" } }
-        );
-        console.log("POST response: ", response);
+
+        if (putPayload.length > 0) {
+            await axios.put(
+                "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+                putPayload,
+                { headers: { "Content-Type": "application/json" } }
+            );
+        }
+
+        if (postPayload.length > 0) {
+            await axios.post(
+                "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+                postPayload,
+                { headers: { "Content-Type": "application/json" } }
+            );
+        }
+
         setShowSpinner(false);
         setCookie("default_form_vals", { ...cookiesData, paymentMethods });
     };
@@ -494,16 +462,12 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
     };
 
     return (
-       
         <div>
             <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
                 Owner Profile Info
             </Typography>
             <Box display="flex">
-                <Box
-                    width="20%"
-                    p={2}
-                >
+                <Box width="20%" p={2}>
                     <Stack direction="row" justifyContent="center">
                         {photo && photo.image ? (
                             <img
@@ -522,98 +486,59 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                         )}
                     </Stack>
                     <Box sx={{ paddingTop: "8%" }} />
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
+                    <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
                         <Button
                             component="label"
                             variant="contained"
-                            sx={{
-                                
-                                backgroundColor:  "#3D5CAC",
-                                width: "193px",
-                                height: "35px",
-                                
-                            }}
-                        >    Add Profile Pic
+                            sx={{ backgroundColor: "#3D5CAC", width: "193px", height: "35px" }}
+                        >
+                            Add Profile Pic
                             <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
                         </Button>
                     </Box>
                 </Box>
                 <Box width="80%" p={3} sx={{ overflowY: 'auto' }}>
-                    <Stack spacing={2} direction="row"  >
+                    <Stack spacing={2} direction="row">
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '100%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '100%' }}
                         >
                             {"First Name"}
                         </Typography>
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '100%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '100%' }}
                         >
                             {"Last Name"}
                         </Typography>
                     </Stack>
-                    <Stack spacing={2} direction="row" >
+                    <Stack spacing={2} direction="row">
                         <TextField name="firstName" value={firstName} onChange={handleFirstNameChange} variant="filled" fullWidth placeholder="First name" className={classes.root} />
                         <TextField name="lastName" value={lastName} variant="filled" onChange={handleLastNameChange} fullWidth placeholder="Last name" className={classes.root} />
                     </Stack>
 
-                    <Stack spacing={2} direction="row" >
+                    <Stack spacing={2} direction="row">
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '50%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '50%' }}
                         >
                             {"Personal Address"}
                         </Typography>
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '10%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '10%' }}
                         >
                             {"Unit"}
                         </Typography>
 
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '20%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '20%' }}
                         >
                             {"City"}
                         </Typography>
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '10%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '10%' }}
                         >
                             {"State"}
                         </Typography>
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '10%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '10%' }}
                         >
                             {"Zip"}
                         </Typography>
@@ -621,7 +546,7 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
 
                     <Stack spacing={2} direction="row">
                         <Box sx={{ width: '50%' }}>
-                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address}/>
+                            <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address} />
                         </Box>
                         <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
                         <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
@@ -629,27 +554,19 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                         <TextField name="Zip" value={zip} variant="filled" sx={{ width: '10%' }} placeholder="Zip" className={classes.root} />
                     </Stack>
 
-                    <Stack spacing={2} direction="row"  >
+                    <Stack spacing={2} direction="row">
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '100%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '100%' }}
                         >
                             {"Personal Email"}
                         </Typography>
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '100%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '100%' }}
                         >
                             {"Personal Phone"}
                         </Typography>
                     </Stack>
-                    <Stack spacing={2} direction="row" >
+                    <Stack spacing={2} direction="row">
                         <TextField name="PersonalEmail" value={email} variant="filled" fullWidth onChange={handleEmailChange} placeholder="email@site.com" className={classes.root} />
                         <TextField
                             value={phoneNumber}
@@ -662,18 +579,14 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
                             className={classes.root}
                         ></TextField>
                     </Stack>
-                    <Stack spacing={2} direction="row"  >
+                    <Stack spacing={2} direction="row">
                         <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                                width: '100%'
-                            }}
+                            sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, width: '100%' }}
                         >
                             {"SSN"}
                         </Typography>
                     </Stack>
-                    <Stack spacing={2} direction="row" >
+                    <Stack spacing={2} direction="row">
                         <TextField value={mask} onChange={handleSsnChange} variant="filled" sx={{ width: '50%' }} placeholder="Enter SSN" className={classes.root}></TextField>
                     </Stack>
                 </Box>
@@ -697,24 +610,14 @@ const OwnerOnBoardDeskTopForm = ({profileData, setIsSave}) => {
             <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" p={5}>
                 <Button
                     variant="contained"
-            
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2, backgroundColor:  "#3D5CAC" }}
-                    
+                    sx={{ mb: 2, backgroundColor: "#3D5CAC" }}
                 >
                     Save
                 </Button>
-                {/* <Button #3D5CAC;
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleNavigation}
-                    disabled={!dashboardButtonEnabled}
-                >
-                    Go to Dashboard
-                </Button> */}
             </Box>
-        </div> 
+        </div>
     );
 };
 
