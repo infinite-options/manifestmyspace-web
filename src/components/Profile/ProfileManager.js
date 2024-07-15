@@ -117,6 +117,7 @@ const ProfileManager = () => {
         if (response.status === 200) {
           setCookie('user', { ...cookies.user, role: updatedRole }, { path: '/' });
           alert('Role updated successfully');
+          navigate('/addNewRole', { state: { user_uid: cookies.user.user_uid, newRole } });
         } else {
           alert('An error occurred while updating the role.');
         }

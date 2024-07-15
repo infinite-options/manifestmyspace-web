@@ -11,7 +11,7 @@ import {
     OutlinedInput,
 } from '@mui/material';
 import theme from '../../theme/theme';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { useCookies } from "react-cookie";
 
@@ -25,8 +25,10 @@ import maintenanceDashboardImage from './images/dashboard-images/maintenance-das
 import ownerDashboardImage from './images/dashboard-images/owner-dashboard.png'; 
 import tenantDashboardImage from './images/dashboard-images/tenant-dashboard.png'; 
 
-const AddNewRole = ({ userUID, newRole }) => {
+const AddNewRole = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const { user_uid, newRole } = location.state; // Access passed state here
     const { setAuthData, updateProfileUid, selectRole, setLoggedIn } = useUser();
     const [cookie, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookie["default_form_vals"];
@@ -38,6 +40,8 @@ const AddNewRole = ({ userUID, newRole }) => {
     const [businessName, setBusinessName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');  
     const [businessPhoneNumber, setBusinessPhoneNumber] = useState('');  
+
+    console.log("cookiesData is set to ****", cookiesData)
 
     const validate_form = () => {
         if ((newRole === "TENANT" || newRole === "OWNER" ) && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
@@ -134,31 +138,36 @@ const AddNewRole = ({ userUID, newRole }) => {
     };
 
     const createUserProfile = async () => {
-        const payload = getPayload(newRole, userUID);
+        const payload = getPayload(newRole, user_uid);
         const form = encodeForm(payload);
         const data = await createProfile(form, newRole);
         handleUpdateProfileUid(data);
+        console.log("Cookies before setting default_form_vals:", document.cookie);
         setCookie("default_form_vals", { ...cookiesData, phoneNumber, email });
-        selectRole(newRole);
+        console.log("Cookies after setting default_form_vals:", document.cookie);
 
-        let role_id = {};
-        if (newRole === "OWNER") role_id = { owner_id: data.owner_uid };
-        if (newRole === "TENANT") role_id = { tenant_id: data.tenant_uid };
-        if (newRole === "MANAGER") {
-            let businesses = cookiesData.businesses;        
-            businesses["MANAGEMENT"].business_uid = data.business_uid;
-            role_id = { businesses };
-        }
-        if (newRole === "MAINTENANCE") {
-            let businesses = cookiesData.businesses;
-            businesses["MAINTENANCE"].business_uid = data.business_uid;
-            role_id = { businesses };
-        }
+        
 
-        setCookie("user", { ...cookiesData, ...role_id });
+       // selectRole(newRole);
 
-        const { dashboardUrl } = roleMap[newRole];
-        navigate(dashboardUrl);
+        // let role_id = {};
+        // if (newRole === "OWNER") role_id = { owner_id: data.owner_uid };
+        // if (newRole === "TENANT") role_id = { tenant_id: data.tenant_uid };
+        // if (newRole === "MANAGER") {
+        //     let businesses = cookiesData.businesses;        
+        //     businesses["MANAGEMENT"].business_uid = data.business_uid;
+        //     role_id = { businesses };
+        // }
+        // if (newRole === "MAINTENANCE") {
+        //     let businesses = cookiesData.businesses;
+        //     businesses["MAINTENANCE"].business_uid = data.business_uid;
+        //     role_id = { businesses };
+        // }
+
+        // setCookie("user", { ...cookiesData, ...role_id });
+
+        // const { dashboardUrl } = roleMap[newRole];
+        // navigate(dashboardUrl);
     }
 
     const handleSignup = () => {
