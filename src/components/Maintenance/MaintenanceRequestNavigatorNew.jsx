@@ -20,6 +20,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CreateIcon from '@mui/icons-material/Create';
 import QuotesTable from './MaintenanceComponents/QuotesTable';
+import QuoteDetails from './MaintenanceComponents/QuoteDetails';
 import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import 'slick-carousel/slick/slick.css';
@@ -587,6 +588,14 @@ export default function MaintenanceRequestNavigatorNew({
 										navigateParams={navigateParams}
 										maintenanceQuotesForItem={maintenanceQuotes}
 									/>
+									<Grid container sx={{ padding: '0px' }}>
+									<QuoteDetails
+									
+									maintenanceItem={data}
+									navigateParams={navigateParams}
+									maintenanceQuotesForItem={maintenanceQuotes} />
+									</Grid>
+									
 								</Grid>
 							</Box>
 						</CardContent>
