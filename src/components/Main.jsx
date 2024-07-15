@@ -9,6 +9,7 @@ import MaintenanceOnBoardDesktopForm from "./Onboarding/MaintenanceOnBoardDeskto
 import PMEmpOnBoardDesktopForm from "./Onboarding/PMEmpOnBoardDesktopForm";
 import MaintEmpOnBoardDesktopForm from "./Onboarding/MaintEmpOnBoardDesktopForm";
 import ProfileManager from "./Profile/ProfileManager"
+import AddNewRole from "./Onboarding/AddNewRole";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -224,6 +225,7 @@ function Main() {
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
           <Route path="tt" element={<ProfileManager />} /> 
+          <Route path="addNewRole" element={<AddNewRole />} /> 
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
