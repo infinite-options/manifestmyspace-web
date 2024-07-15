@@ -203,7 +203,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
 
                     }}
                 />}
-            <Dialog open={open} onClose={handleClose} >
+            <Dialog open={open} onClose={handleClose}  maxWidth="md">
                 <DialogTitle
                     sx={{
                         display: 'flex',
