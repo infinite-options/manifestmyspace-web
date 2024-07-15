@@ -6,12 +6,10 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import { DataGrid } from '@mui/x-data-grid';
-import dayjs from 'dayjs';
 import theme from "../../theme/theme";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { makeStyles } from "@material-ui/core/styles";
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Close } from '@mui/icons-material';
 
@@ -29,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
 const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles }) => {
     const [open, setOpen] = useState(false);
     const [currentRow, setcurrentRow] = useState(null);
-    // const [docs, setDocs] = useState([]);
     const color = theme.palette.form.main;
     const [isEditing, setIsEditing] = useState(false);
     const [newFiles, setNewFiles] = useState(null);
@@ -46,15 +43,21 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
     const handleFileUpload = (e) => {
         console.log('uploaded file', e.target.files);
         console.log('documents', documents);
-        const curr = { ...currentRow, filename: e.target.files[0].name, id: documents.length };
-        console.log(curr);
-        setcurrentRow(curr);
+        if(isEditing === true){
+            const curr = { ...currentRow, filename: e.target.files[0].name};
+            setcurrentRow(curr);
+        } else {
+            const curr = { ...currentRow, filename: e.target.files[0].name, id: documents.length };
+            console.log(curr);
+            setcurrentRow(curr);
+        }
         // setDocs((prevFiles) => [...prevFiles, ...e.target.files]);
         const filesArray = Array.from(e.target.files).map(file => ({
             name: file.name,
             type: currentRow.type,
             file: file
         }));
+        console.log('filesArray', filesArray);
         setNewFiles(filesArray);
         // Create a URL for the file preview
         const file = e.target.files[0];
@@ -62,19 +65,23 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
     };
 
     const handleSubmit = () => {
+        let newArr = [...newFiles]
+        newArr[0].type = currentRow.type;
+        setNewFiles(newArr);
+        setuploadedFiles((prevFiles => [...prevFiles, ...newArr]));
         if (isEditing === true) {
+            console.log('current row is', currentRow);
             setDocuments(documents.map(doc => (doc.id === currentRow.id ? currentRow : doc)))
-
         } else {
             console.log('arr', newFiles);
             setDocuments((prevFiles) => [...prevFiles, currentRow]);
-            setuploadedFiles((prevFiles => [...prevFiles, ...newFiles]));
             setNewFiles(null);
         }
         handleClose();
     };
 
     const handleEditClick = (row) => {
+        console.log('on edit', row);
         setFilePreview(row.link);
         setcurrentRow(row);
         setIsEditing(true);
