@@ -589,11 +589,13 @@ export default function MaintenanceRequestNavigatorNew({
 										maintenanceQuotesForItem={maintenanceQuotes}
 									/>
 									<Grid container sx={{ padding: '0px' }}>
-									<QuoteDetails
-									
-									maintenanceItem={data}
-									navigateParams={navigateParams}
-									maintenanceQuotesForItem={maintenanceQuotes} />
+									{data.maintenance_request_status !== 'NEW' ? (
+  <QuoteDetails
+    maintenanceItem={data}
+    navigateParams={navigateParams}
+    maintenanceQuotesForItem={maintenanceQuotes}
+  />
+) : null}
 									</Grid>
 									
 								</Grid>
