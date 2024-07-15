@@ -34,7 +34,10 @@ export default function AlertMessage({showMessage, setShowMessage, message}){
                             top: 1,
                             color: (theme) => theme.palette.grey[500]
                         }} 
-                            onClick={() => setShowMessage(false)}
+                        onClick={() => {
+                            setShowMessage(false);
+                            window.location.reload();
+                        }}
                         >
                         <CloseIcon sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.smallFont, margin:'5px'}}/>
                     </Button>

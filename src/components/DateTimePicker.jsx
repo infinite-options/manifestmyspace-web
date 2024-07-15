@@ -36,7 +36,7 @@ function DateTimePickerModal(props) {
   const [availabilityDate, setAvailabilityDate] = useState(props.date || "");
   const [availabilityTime, setAvailabilityTime] = useState(props.time || "");
   const [showDatePicker, setShowDatePicker] = useState(false);
-
+  const [cancelTicketFlag, setcancelTicketFlag] = useState(false);
   useEffect(() => {
     // if (availabilityDate && availabilityTime){
     //     if (props.maintenanceItem.maintenance_scheduled_date && props.maintenanceItem.maintenance_scheduled_time){
@@ -78,14 +78,23 @@ function DateTimePickerModal(props) {
     if (selection == "now"){
         return `Complete as of Today (${dayjs().format("MM-DD-YYYY")})`;
     } else if (selection == "schedule"){
-        return `Complete on Scheduled Date (${props.maintenanceItem.maintenance_scheduled_date !== null && props.maintenanceItem.maintenance_scheduled_date !== "null" ? props.maintenanceItem.maintenance_scheduled_date : "N/A"})`;
+        return `Complete on Scheduled Date (${props.maintenanceItem.maintenance_scheduled_date !== null && props.maintenanceItem.maintenance_scheduled_date !== "null" ? props.maintenanceItem.maintenance_scheduled_date : "Not Yet Scheduled"})`;
     }
+  }
+
+  function handleCancelFlag(){
+    setcancelTicketFlag(true);
   }
   
 
-  function submit(){
+  async function submit(){
     console.log("in submit for datetimepicker")
-    if (props.completeTicket) {
+    if(cancelTicketFlag) {
+        console.log("Cancel ticket---", props.cancelTicket);
+        await props.cancelTicket(props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info);
+        await handleClose();
+    }
+    else if (props.completeTicket) {
         console.log("complete ticket", props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info, availabilityDate, availabilityTime)
         props.completeTicket(props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info, availabilityDate, availabilityTime).then(
             handleClose
@@ -117,11 +126,11 @@ function DateTimePickerModal(props) {
                             <RadioGroup
                                 defaultValue="now"
                                 name="completed-date-radio-buttons"
-                            >
+                            ><FormControlLabel value="cancel" control={<Radio onChange={handleCancelFlag}/>}label={"Cancel Ticket without Completion"} />
                                 <FormControlLabel value="now" control={<Radio onChange={changeActiveDateSelector}/>} label={showFormLabel("now")}/>
                                 <FormControlLabel value="schedule" control={<Radio onChange={changeActiveDateSelector} disabled={props.maintenanceItem.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
                                 <FormControlLabel value="select" control={<Radio onChange={changeActiveDateSelector}/>} label={"Select Completed Date"} />
-                                <FormControlLabel value="cancel" control={<Radio/>}label={"Cancel Ticket without Completion"} />
+                                
                             
                             </RadioGroup>
                         </FormControl>
