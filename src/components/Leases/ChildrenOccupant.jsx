@@ -209,7 +209,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
 
                     }}
                 />}
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose}  maxWidth="md">
                 <DialogTitle
                     sx={{
                         display: 'flex',
