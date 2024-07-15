@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TenantDetails = ({ tenantWithId }) => {
+const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
     console.log('tenantwithid', tenantWithId);
     const classes = useStyles();
     const [rows, setRows] = useState(tenantWithId);
@@ -168,6 +168,7 @@ const TenantDetails = ({ tenantWithId }) => {
             setError(null);
         }
         setRows(rows.filter(row => row.tenant_uid !== currentRow.tenant_uid));
+        setTenantWithId(rows.filter(row => row.tenant_uid !== currentRow.tenant_uid));
         handleClose();
     }
 
@@ -187,8 +188,10 @@ const TenantDetails = ({ tenantWithId }) => {
             if (isEditing) {
                 currTotalResp = totalResponsility + Number(currentRow.lt_responsibility);
                 setRows(rows.map(row => (row.tenant_uid === currentRow.tenant_uid ? currentRow : row)));
+                setTenantWithId(rows.map(row => (row.tenant_uid === currentRow.tenant_uid ? currentRow : row)))
             } else {
                 setRows([...rows, { ...currentRow, tenant_uid: rows.length }]);
+                setTenantWithId([...rows, { ...currentRow, tenant_uid: rows.length }])
             }
             setTotalResponsibility(currTotalResp);
             handleClose();
@@ -328,18 +331,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_first_name}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={6}>
@@ -352,18 +343,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_last_name}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={12} sx={{ marginTop: '10px' }}>
@@ -381,18 +360,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_phone_number}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={6}>
@@ -405,18 +372,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_email}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={12} sx={{ marginTop: '10px' }}>
@@ -435,18 +390,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_drivers_license_number}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={6}>
@@ -459,18 +402,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_ssn}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
 
@@ -480,7 +411,7 @@ const TenantDetails = ({ tenantWithId }) => {
                             </Typography>
                         </Grid>
                         <Grid item md={2.5} sx={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Typography sx={{ fontSize: "12px", color: "#273B4A", marginTop: "30px" }}>
+                            <Typography sx={{ fontSize: "14px", color: "#273B4A", marginTop: "30px" }}>
                                 Responsibility %
                             </Typography>
                         </Grid>
@@ -493,18 +424,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.lt_responsibility}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                     </Grid>
