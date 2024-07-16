@@ -5,36 +5,16 @@ import Carousel from 'react-material-ui-carousel';
 
 const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem }) => {
   console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
-  const items = [
-    {
-      id: "600-000012",
-      title: "PM Maintenance",
-      quoteSubmitted: "06-12-2024 12:45pm",
-      earliestAvailability: "06-14-2024 02:30pm",
-      diagnosticFeesIncluded: "Yes",
-      fixedBid: "$2400.00",
-      quoteTotal: "$2400.00"
-    },
-    {
-      id: "600-000011",
-      title: "Lasya",
-      quoteSubmitted: "06-12-2024 12:45pm",
-      earliestAvailability: "06-14-2024 02:30pm",
-      diagnosticFeesIncluded: "Yes",
-      fixedBid: "$7400.00",
-      quoteTotal: "$8400.00"
-    },
-    // Add more items as needed
-  ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[currentIndex];
 
   const handlePrev = () => {
-    setCurrentIndex(prevIndex => (prevIndex === 0 ? items.length - 1 : prevIndex - 1));
+    setCurrentIndex(prevIndex => (prevIndex === 0 ? maintenanceQuotesForItem.length - 1 : prevIndex - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex(prevIndex => (prevIndex === items.length - 1 ? 0 : prevIndex + 1));
+    setCurrentIndex(prevIndex => (prevIndex === maintenanceQuotesForItem.length - 1 ? 0 : prevIndex + 1));
   };
 
   return (
@@ -82,12 +62,12 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
               onChange={(now, previous) => setCurrentIndex(now)}
               sx={{ width: '100%' }}
             >
-              {items.map((item, index) => (
+              {maintenanceQuotesForItem.map((item, index) => (
                 <Box key={index} sx={{ padding: 2 }}>
                   <Grid container spacing={1}>
                     <Grid item xs={12}>
                       <Typography variant="body1" sx={{ color: '#2c2a75', fontWeight: 'bold' }}>
-                        {item.title} ({item.id})
+                        {item.maint_business_name} ({item.quote_business_id})
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -97,7 +77,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                     </Grid>
                     <Grid item xs={6}>
                       <Typography variant="body2" sx={{ color: '#2c2a75' }}>
-                        {item.quoteSubmitted}
+                        {item.quote_created_date}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -107,7 +87,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                     </Grid>
                     <Grid item xs={6}>
                       <Typography variant="body2" sx={{ color: '#2c2a75' }}>
-                        {item.earliestAvailability}
+                        {item.quote_earliest_available_date}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -117,7 +97,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                     </Grid>
                     <Grid item xs={6}>
                       <Typography variant="body2" sx={{ color: '#2c2a75' }}>
-                        {item.diagnosticFeesIncluded}
+                        Yes
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -135,7 +115,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                     </Grid>
                     <Grid item xs={6}>
                       <Typography variant="body2" sx={{ color: '#2c2a75' }}>
-                        {item.fixedBid}
+                        {item.quote_total_estimate}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -145,7 +125,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                     </Grid>
                     <Grid item xs={6}>
                       <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
-                        <strong>{item.quoteTotal}</strong>
+                        <strong>{item.quote_total_estimate}</strong>
                       </Typography>
                     </Grid>
                   </Grid>
@@ -161,50 +141,57 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
           </IconButton>
         </Box>
       </CardContent>
-      <Box display="flex" justifyContent="space-between" p={2}>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: '#9EAED6',
-            '&:hover': {
-              backgroundColor: '#9EAED6',
-            },
-            color: '#160449',
-            fontWeight: 'bold',
-            textTransform: 'none',
-          }}
-        >
-          Accepted
-        </Button>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: '#FFC614',
-            '&:hover': {
-              backgroundColor: '#FFC614',
-            },
-            color: '#160449',
-            fontWeight: 'bold',
-            textTransform: 'none',
-          }}
-        >
-          Not Accepted
-        </Button>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: '#F87C7A',
-            '&:hover': {
-              backgroundColor: '#F87C7A',
-            },
-            color: '#160449',
-            fontWeight: 'bold',
-            textTransform: 'none',
-          }}
-        >
-          Rejected
-        </Button>
-      </Box>
+      {currentItem && (
+        <Box display="flex" justifyContent="space-between" p={2}>
+          {currentItem.quote_status === 'REQUESTED' ? (
+            <>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: '#9EAED6',
+                  '&:hover': {
+                    backgroundColor: '#9EAED6',
+                  },
+                  color: '#160449',
+                  fontWeight: 'bold',
+                  textTransform: 'none',
+                }}
+              >
+                Accept
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: '#FFC614',
+                  '&:hover': {
+                    backgroundColor: '#FFC614',
+                  },
+                  color: '#160449',
+                  fontWeight: 'bold',
+                  textTransform: 'none',
+                }}
+              >
+                Decline
+              </Button>
+            </>
+          ) : currentItem.quote_status === 'ACCEPTED' ? (
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#F87C7A',
+                '&:hover': {
+                  backgroundColor: '#F87C7A',
+                },
+                color: '#160449',
+                fontWeight: 'bold',
+                textTransform: 'none',
+              }}
+            >
+              Reject
+            </Button>
+          ) : null}
+        </Box>
+      )}
     </Card>
   );
 };
