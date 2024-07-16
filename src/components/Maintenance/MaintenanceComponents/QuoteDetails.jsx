@@ -4,229 +4,10 @@ import { ArrowBack, ArrowForward, Description as DescriptionIcon } from '@mui/ic
 import Carousel from 'react-material-ui-carousel';
 import { useEffect } from 'react';
 import theme from '../../../theme/theme';
-import dayjs from "dayjs";
-function LaborTableReadOnly({ labor, setLabor }) {
-	const calculateTotal = (hours, cost) => {
-		return parseInt(hours) * parseInt(cost);
-	};
-
-	useEffect(() => {
-		console.log('labor', labor);
-	}, [labor]);
-
-	return (
-		<>
-			<Grid container sx={{ paddingTop: '10px' }}>
-				<Grid item xs={3}>
-					<Typography
-						sx={{
-							color: '#3D5CAC',
-							fontWeight: theme.typography.propertyPage.fontWeight,
-							fontSize: '14px',
-						}}
-					>
-						Title
-					</Typography>
-				</Grid>
-				<Grid item xs={3}>
-					<Typography
-						sx={{
-							color: '#3D5CAC',
-							fontWeight: theme.typography.propertyPage.fontWeight,
-							fontSize: '16px',
-						}}
-					>
-						# of Hours
-					</Typography>
-				</Grid>
-				<Grid item xs={3}>
-					<Typography
-						sx={{
-							color: '#3D5CAC',
-							fontWeight: theme.typography.propertyPage.fontWeight,
-							fontSize: '16px',
-						}}
-					>
-						Charge / Hour
-					</Typography>
-				</Grid>
-				<Grid item xs={3}>
-					<Typography
-						sx={{
-							color: '#3D5CAC',
-							fontWeight: theme.typography.propertyPage.fontWeight,
-							fontSize: '16px',
-						}}
-					>
-						Total
-					</Typography>
-				</Grid>
-				{labor &&
-					labor.map((laborItem, index) => (
-						<Grid container key={index}>
-							<Grid item xs={3}>
-								<Typography
-									sx={{
-										color: '#000000',
-										fontWeight: theme.typography.propertyPage.fontWeight,
-										fontSize: '14px',
-									}}
-								>
-									{laborItem.description ? laborItem.description : 'Labor'}
-								</Typography>
-							</Grid>
-							<Grid item xs={3}>
-								<Typography
-									sx={{
-										color: '#000000',
-										fontWeight: theme.typography.propertyPage.fontWeight,
-										fontSize: '14px',
-									}}
-								>
-									{laborItem?.event_type === 'Fixed Bid'
-										? 'Fixed Bid'
-										: laborItem.hours
-										? laborItem.hours
-										: 1}
-								</Typography>
-							</Grid>
-							<Grid item xs={3}>
-								<Typography
-									sx={{
-										color: '#000000',
-										fontWeight: theme.typography.propertyPage.fontWeight,
-										fontSize: '14px',
-									}}
-								>
-									${laborItem.charge || laborItem.rate}
-								</Typography>
-							</Grid>
-							<Grid item xs={3}>
-								<Typography
-									sx={{
-										color: '#000000',
-										fontWeight: theme.typography.propertyPage.fontWeight,
-										fontSize: '14px',
-									}}
-								>
-									${calculateTotal(laborItem.hours || 1, laborItem.charge || laborItem.rate)}
-								</Typography>
-							</Grid>
-						</Grid>
-					))}
-			</Grid>
-		</>
-	);
-}
-
-function PartsTableReadOnly({ parts, setParts }) {
-	const calculateTotal = (qty, cost) => {
-		return parseInt(qty) * parseInt(cost);
-	};
-	return (
-		<>
-			<Grid container sx={{ paddingTop: '10px' }}>
-				<Grid item xs={3}>
-					<Typography
-						sx={{
-							color: '#3D5CAC',
-							fontWeight: theme.typography.propertyPage.fontWeight,
-							fontSize: '16px',
-						}}
-					>
-						Parts
-					</Typography>
-				</Grid>
-				<Grid item xs={3}>
-					<Typography
-						sx={{
-							color: '#3D5CAC',
-							fontWeight: theme.typography.propertyPage.fontWeight,
-							fontSize: '16px',
-						}}
-					>
-						Qty
-					</Typography>
-				</Grid>
-				<Grid item xs={3}>
-					<Typography
-						sx={{
-							color: '#3D5CAC',
-							fontWeight: theme.typography.propertyPage.fontWeight,
-							fontSize: '16px',
-						}}
-					>
-						Cost
-					</Typography>
-				</Grid>
-				<Grid item xs={3}>
-					<Typography
-						sx={{
-							color: '#3D5CAC',
-							fontWeight: theme.typography.propertyPage.fontWeight,
-							fontSize: '16px',
-						}}
-					>
-						Total
-					</Typography>
-				</Grid>
-				{parts &&
-					parts.map((part, index) => (
-						<Grid container key={index}>
-							<Grid item xs={3}>
-								<Typography
-									sx={{
-										color: '#000000',
-										fontWeight: theme.typography.propertyPage.fontWeight,
-										fontSize: '14px',
-									}}
-								>
-									{part.part}
-								</Typography>
-							</Grid>
-							<Grid item xs={3}>
-								<Typography
-									sx={{
-										color: '#000000',
-										fontWeight: theme.typography.propertyPage.fontWeight,
-										fontSize: '14px',
-									}}
-								>
-									{part.quantity}
-								</Typography>
-							</Grid>
-							<Grid item xs={3}>
-								<Typography
-									sx={{
-										color: '#000000',
-										fontWeight: theme.typography.propertyPage.fontWeight,
-										fontSize: '14px',
-									}}
-								>
-									${part.cost}
-								</Typography>
-							</Grid>
-							<Grid item xs={3}>
-								<Typography
-									sx={{
-										color: '#000000',
-										fontWeight: theme.typography.propertyPage.fontWeight,
-										fontSize: '14px',
-									}}
-								>
-									${calculateTotal(part.quantity, part.cost)}
-								</Typography>
-							</Grid>
-						</Grid>
-					))}
-			</Grid>
-		</>
-	);
-}
+import dayjs from 'dayjs';
 const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem }) => {
 	console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
-	const [parts, setParts] = useState([]);
-	const [labor, setLabor] = useState([]);
+
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[currentIndex];
 
@@ -329,7 +110,8 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
 										<Grid item xs={6}>
 											<DescriptionIcon sx={{ color: '#2c2a75' }} />
 										</Grid>
-										{JSON.parse(item?.quote_services_expenses)?.event_type === 'Fixed Bid' ? (
+										{item?.quote_services_expenses &&
+										JSON.parse(item?.quote_services_expenses)?.event_type === 'Fixed Bid' ? (
 											<Grid container sx={{ paddingTop: '10px' }}>
 												<Grid item xs={6}>
 													<Typography variant="body2" sx={{ color: '#2c2a75' }}>
@@ -338,13 +120,46 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
 												</Grid>
 												<Grid item xs={6}>
 													<Typography variant="body2" sx={{ color: '#2c2a75' }}>
-														${labor[0]?.rate || 0}
+														$
+														{JSON.parse(item?.quote_services_expenses)?.labor[0]?.rate || 0}
 													</Typography>
 												</Grid>
 											</Grid>
-										) : labor.length > 0 ? (
-											<LaborTableReadOnly labor={labor} setLabor={setLabor} />
 										) : null}
+										{item?.quote_services_expenses && JSON.parse(item.quote_services_expenses)?.parts.length > 0 ? (
+  <Grid container sx={{ paddingTop: '10px' }}>
+    {JSON.parse(item.quote_services_expenses).parts.map((part, index) => (
+      <React.Fragment key={index}>
+        <Grid item xs={3}>
+          <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+            Parts: {part.part}
+          </Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+            Quantity: {part.quantity}
+          </Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+            Cost: ${part.cost}
+          </Typography>
+        </Grid>
+      </React.Fragment>
+    ))}
+    <Grid item xs={6}>
+      <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+        Parts Total:
+      </Typography>
+    </Grid>
+    <Grid item xs={6}>
+      <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+        ${JSON.parse(item.quote_services_expenses).parts.reduce((total, part) => total + (part.cost * part.quantity), 0)}
+      </Typography>
+    </Grid>
+  </Grid>
+) : null}
+
 										<Grid item xs={6}>
 											<Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
 												Quote Total:
@@ -352,24 +167,27 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
 										</Grid>
 										<Grid item xs={6}>
 											<Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
-												<strong>{item.quote_total_estimate}</strong>
+												<strong>${item.quote_total_estimate}</strong>
 											</Typography>
 										</Grid>
-                                        {maintenanceItem?.maintenance_request_status === "SCHEDULED" ? (
-  <>
-    <Grid item xs={6}>
-    <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
-        Scheduled Date: {maintenanceItem?.maintenance_scheduled_date}
-      </Typography>
-    </Grid>
-    <Grid item xs={6}>
-    <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
-        Scheduled Time: {dayjs(maintenanceItem?.maintenance_scheduled_time, "HH:mm").format("h:mm A")}
-      </Typography>
-    </Grid>
-  </>
-) : null}
-
+										{maintenanceItem?.maintenance_request_status === 'SCHEDULED' ? (
+											<>
+												<Grid item xs={6}>
+													<Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
+														Scheduled Date: {maintenanceItem?.maintenance_scheduled_date}
+													</Typography>
+												</Grid>
+												<Grid item xs={6}>
+													<Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
+														Scheduled Time:{' '}
+														{dayjs(
+															maintenanceItem?.maintenance_scheduled_time,
+															'HH:mm'
+														).format('h:mm A')}
+													</Typography>
+												</Grid>
+											</>
+										) : null}
 									</Grid>
 								</Box>
 							))}
