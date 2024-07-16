@@ -41,6 +41,8 @@ import APIConfig from '../../utils/APIConfig';
 import { v4 as uuidv4 } from 'uuid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import HappinessMatrixWidget from '../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget.jsx';
+
 
 const getAppColor = (app) =>
 	app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
@@ -79,6 +81,16 @@ export default function PropertyNavigator({
   const [error, setError] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [applianceCategories, setApplianceCategories] = useState([]);
+
+  const [happinessData, setHappinessData] = useState([]);
+  const [dataforhappiness, setdataforhappiness] = useState([]);
+  console.log('Property Navigator to ownerhappiness -', happinessData);
+
+  // Testing July 15th - PART 1
+  const [showHappinessMatrixWidget, setShowHappinessMatrixWidget] = useState(false);
+  const [happinessMatrixData, setHappinessMatrixData] = useState([]);
+//   const [happinessData, setHappinessData] = useState([]);
+
 
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
@@ -296,6 +308,27 @@ export default function PropertyNavigator({
 		}
 	}, [currentIndex, propertyId]);
 
+	let dashboard_id = getProfileId();
+	useEffect(() => {
+		const fetchDashboardData = async () => {
+		  setShowSpinner(true);
+		  try {
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`);
+			if (!response.ok) {
+			  throw new Error('Failed to fetch dashboard data');
+			}
+			const jsonData = await response.json();
+			setHappinessData(jsonData.HappinessMatrix);
+			setdataforhappiness(jsonData)
+			console.log("JSON DATA - DATA", jsonData)
+		  } catch (error) {
+			console.error(error);
+		  }
+		  setShowSpinner(false);
+		};
+		fetchDashboardData();
+	  }, [dashboard_id]);
+
 	function getColorStatusBasedOnSelectedRole() {
 		// const role = roleName();
 		// console.log("role", role)
@@ -315,6 +348,19 @@ export default function PropertyNavigator({
 		}
 	}
 
+	// Testing July 15th - part 2
+	const handleOwnerClick = (ownerData) => {
+		navigate(`/ownerContactDetailsHappinessMatrix`, {
+			state: {
+			  ownerUID: ownerData,
+			  navigatingFrom: "PropertyNavigator",
+			  index: index,
+			  happinessMatrixData: dataforhappiness,
+			  happinessData: happinessData,
+			},
+		  });
+	  };
+	  
 	function handleOnClickNavigateToMaintenance(row) {
 		const role = roleName();
 		console.log(role);
@@ -1594,7 +1640,17 @@ export default function PropertyNavigator({
 															display: 'flex',
 															justifyContent: 'space-between',
 															alignItems: 'center',
+															cursor: 'pointer', 
 														}}
+														onClick={() => navigate('/ownerContactDetailsHappinessMatrix', { 
+															state: {
+															  ownerUID: property.owner_uid,
+															  navigatingFrom: 'PropertyNavigator',
+															  index: index,
+															  happinessData: happinessData,
+															  happinessMatrixData: dataforhappiness
+															}
+														  })}
 													>
 														<Typography
 															sx={{
@@ -1614,7 +1670,28 @@ export default function PropertyNavigator({
 															}}
 															onClick={() => handleManagerChange(currentIndex)}
 														/>
-													</Box>
+														</Box>
+														</Grid>
+												<Grid item xs={6} md={6}>
+												<Box
+													sx={{
+													display: 'flex',
+													justifyContent: 'space-between',
+													alignItems: 'center',
+													}}
+												>
+													<Typography
+													sx={{
+														textTransform: 'none',
+														color: theme.typography.primary.black,
+														fontWeight: theme.typography.light.fontWeight,
+														fontSize: theme.typography.smallFont,
+														cursor: 'pointer',
+													}}
+													onClick={() => handleOwnerClick(property.owner_uid)}
+													>
+													</Typography>
+												</Box>
 												</Grid>
 											</>
 										)}

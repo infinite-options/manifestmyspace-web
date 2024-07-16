@@ -28,6 +28,8 @@ import { Paper } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
 
+import PropertyNavigator from "../Property/PropertyNavigator";
+
 const useStyles = makeStyles({
   button: {
     width: "100%",
@@ -70,6 +72,7 @@ function ManagerDashboard() {
   const [cashflowDetailsByPropertyByMonth, setCashflowDetailsByPropertyByMonth] = useState([]);
   const [cashflowData, setCashflowData] = useState([]);
   const [happinessData, setHappinessData] = useState([]);
+  const [dataforhappiness, setdataforhappiness] = useState([]);
 
   // useEffect(() => {
   //   console.log("ManagerDashboard - cashflowDetails - ", cashflowDetails);
@@ -101,7 +104,7 @@ function ManagerDashboard() {
   const setting_matrix_data = (happiness_response) => {
     // console.log("In Setting Happiness Matrix", happiness_response);
     // Transforming the data
-    // console.log("setting_matrix_data - happiness_response - ", happiness_response);
+    console.log("setting_matrix_data - happiness_response - ", happiness_response);
     const transformedData = happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
       // console.log("In Happiness Matrix before vacancy");
       // console.log("setting_matrix_data - vacancyItem - ", vacancyItem);
@@ -372,6 +375,9 @@ function ManagerDashboard() {
               </Grid>
             </Grid>
           </Grid>
+          {/* <Grid item xs={12} md={6}>
+            <PropertyNavigator happinessData={happinessData} />
+          </Grid> */}
         </Grid>
       </Container>
     </ThemeProvider>

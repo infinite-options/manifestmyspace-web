@@ -66,14 +66,14 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
 
   const navigatingFrom = location.state.navigatingFrom;
 
-  const happinessMatrixData = location.state.happinessMatrixData;
-  console.log("HappinessMatrixData OK - ", happinessMatrixData);
+  // const happinessMatrixData = location.state?.happinessMatrixData;
+  // console.log("HappinessMatrixData OK - ", happinessMatrixData);
 
-  const happinessData = location.state.happinessData;
+  const happinessData = location.state?.happinessData;
   console.log("happinessData OK - ", happinessData);
 
   // const contactDetails = location.state.dataDetails;
-  const [contactDetails, setContactDetails] = useState(null);
+  const [contactDetails, setContactDetails] = useState();
   const [contactsTab, setContactsTab] = useState("");
 
   // const selectedData = location.state.selectedData;
@@ -81,22 +81,32 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   const [index, setIndex] = useState(location.state.index);
   // const passedData = location.state.viewData;
   const ownerUID = location.state.ownerUID;
+  console.log("owner ID HERE ---- ", ownerUID, index)
 
-  const data1 = location.state.data;
-  const happinessData1 = location.state.happinessData;
-  console.log("In Owner Contact Details - data1 -", data1, typeof data1);
-  console.log("In Owner Contact Details - happinessData1 -", happinessData1, typeof happinessData1);
-
-  const cashflowData = location.state.cashflowData;
+  const cashflowData = location.state?.cashflowData;
   const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
-  const cashflowDetails = location.state.cashflowDetails;
-  const cashflowDetailsByProperty = location.state.cashflowDetailsByProperty;
-  const cashflowDetailsByPropertyByMonth = location.state.cashflowDetailsByPropertyByMonth;
+  const cashflowDetails = happinessData?.delta_cashflow_details?.result || [];
+  const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result || [];
+  const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result || [];
   const [filteredCashflowDetails, setFilteredCashflowDetails] = useState(cashflowDetails);
   const [filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty] = useState(cashflowDetailsByProperty);
   const [filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth] = useState(cashflowDetailsByPropertyByMonth);
 
-  console.log("cashflowData OK - ", cashflowData);
+  const [happinessMatrixData, setHappinessMatrixData] = useState([]);
+  let [matrixData, setMatrixData] = useState([]);
+
+  useEffect(() => {
+    console.log("location state", location.state);
+    if (location.state?.happinessMatrixData) {
+      try {
+        setHappinessMatrixData(setting_matrix_data(location.state.happinessMatrixData));
+      } catch (error) {
+        console.error("Error in setting_matrix_data:", error);
+      }
+    }
+  }, []);
+
+  // console.log("cashflowData OK - ", );
 
   // useEffect(() => {
   //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
@@ -131,7 +141,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
         const ownerContacts = data["owners"];
         console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
         setContactDetails(ownerContacts);
-        console.log("Set Contact Details 1");
+        console.log("Set Contact Details 1", ownerContacts);
         // console.log("Data to find index: ", ownerUID);
         const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
         console.log("Owner Index: ", index);
@@ -151,7 +161,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   useEffect(() => {
     // console.log("navigatingFrom - ", navigatingFrom);
 
-    if (navigatingFrom === "HappinessMatrixWidget") {
+    if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom == "PropertyNavigator") {
       getDataFromAPI();
       setContactsTab("Owner");
     } else if (navigatingFrom === "PMContacts") {
@@ -181,6 +191,82 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   // console.log(selectedData);
   // console.log("INDEX", index);
   // console.log("SELECTED ROLE - ", selectedRole);
+
+  const setting_matrix_data = (happiness_response) => {
+    console.log("setting_matrix_data - happiness_response - ", happiness_response);
+    console.log("NAVIGATING FROM", navigatingFrom);
+    if (navigatingFrom == "HappinessMatrixWidget") {
+      happiness_response = happiness_response.HappinessMatrix.vacancy.result;
+    }
+    return happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
+      const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
+      let fullName = "";
+      let ownerUID = "";
+      let percent_delta_cashflow = 0;
+      let owner_photo_url = "";
+      let cashflow = 0;
+      let expected_cashflow = 0;
+      let actual_cashflow = 0;
+
+      if (deltaCashflowItem) {
+        fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
+        ownerUID = deltaCashflowItem.owner_uid;
+        percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
+        owner_photo_url = deltaCashflowItem.owner_photo_url;
+        cashflow = deltaCashflowItem.cashflow;
+        expected_cashflow = deltaCashflowItem.expected_cashflow;
+        actual_cashflow = deltaCashflowItem.actual_cashflow;
+      }
+
+      let quarter;
+      let vacancy_perc = parseFloat(vacancyItem.vacancy_perc);
+      let delta_cf_perc = -1 * parseFloat(percent_delta_cashflow);
+
+      if (delta_cf_perc > -0.5 && vacancy_perc > -50) {
+        quarter = 1;
+      } else if (delta_cf_perc < -0.5 && vacancy_perc > -50) {
+        quarter = 2;
+      } else if (delta_cf_perc < -0.5 && vacancy_perc < -50) {
+        quarter = 3;
+      } else if (delta_cf_perc > -0.5 && vacancy_perc < -50) {
+        quarter = 4;
+      }
+
+      let borderColor;
+      switch (quarter) {
+        case 1:
+          borderColor = "#006400"; // Green
+          break;
+        case 2:
+          borderColor = "#FF8A00"; // Orange color
+          break;
+        case 3:
+          borderColor = "#D22B2B"; // Red color
+          break;
+        case 4:
+          borderColor = "#FFC85C"; // Yellow color
+          break;
+        default:
+          borderColor = "#000000"; // Black color
+      }
+
+      return {
+        owner_uid: ownerUID,
+        name: fullName.trim(),
+        photo: owner_photo_url,
+        vacancy_perc: parseFloat(vacancyItem.vacancy_perc).toFixed(2),
+        delta_cashflow_perc: percent_delta_cashflow || 0,
+        vacancy_num: vacancyItem.vacancy_num || 0,
+        cashflow: cashflow || 0,
+        expected_cashflow: expected_cashflow || 0,
+        actual_cashflow: actual_cashflow || 0,
+        delta_cashflow: actual_cashflow - expected_cashflow,
+        index: i,
+        color: borderColor,
+        total_properties: vacancyItem.total_properties || 0,
+      };
+    });
+  };
 
   const handleBackBtn = () => {
     // navigate('/PMContacts');
@@ -590,6 +676,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
     if (contactDetails) {
       // const paymentMethodString = contactDetails[index]?.payment_method;
       // console.log("contactDetails.payment_method - ", paymentMethodString);
+      console.log("here we are contactDetails")
       // const parsedPaymentMethods = paymentMethodString ? JSON.parse(paymentMethodString) : [];
       // setPaymentMethods(parsedPaymentMethods);
       // setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method));
@@ -975,7 +1062,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
 };
 
 const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth }) => {
-  // console.log("CashflowDataGrid - props.cashflowDetails - ", cashflowDetails);
+  console.log("CashflowDataGrid - props.cashflowDetails - ", cashflowDetails);
   const [data, setData] = useState(
     cashflowDetails.map((row, index) => {
       return { ...row, index };

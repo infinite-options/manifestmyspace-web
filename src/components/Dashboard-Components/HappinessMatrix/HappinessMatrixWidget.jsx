@@ -13,13 +13,15 @@ export default function HappinessMatrixWidget(props) {
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
   // const { page, setIndex, contactDetails, happinessData } = props;
   // const { page, setIndex, happinessData, data, dataSetter, cashflowData, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
-  const { page, setIndex, happinessData, data, dataSetter, contactDetails } = props;
+  const { page, setIndex, happinessData, dataforhappiness, data = [], dataSetter, contactDetails } = props;
 
   useEffect(() => {
     console.log("HappinessMatrixWidget - happinessData:", happinessData);
   }, [happinessData]);
 
   console.log("HappinessMatrixWidget - data -", data, typeof data);
+  // console.log("HappinessMatrixWidget - dataforhappiness -", dataforhappiness, typeof dataforhappiness);
+
   // console.log("HappinessMatrixWidget - happinessData -", happinessData, typeof happinessData);
   // console.log("HappinessMatrixWidget - happinessData2 -", happinessData?.delta_cashflow);
   // console.log("HappinessMatrixWidget - happinessData3 -", happinessData?.delta_cashflow.result);
@@ -37,6 +39,8 @@ export default function HappinessMatrixWidget(props) {
   console.log("HappinessMatrixWidget - cashflowDetailsByPropertyByMonth -", cashflowDetailsByPropertyByMonth);
 
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
+  // let [shifted_data, shift] = useState([...data]);
+
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
 
@@ -75,6 +79,11 @@ export default function HappinessMatrixWidget(props) {
     console.log("In getPoints: ", data);
     console.log("Type of data: ", typeof data);
     console.log("Is data an array: ", Array.isArray(data));
+
+    if (!Array.isArray(data)) {
+      console.error("Data is not an array:", data)
+      return;
+    }
 
     const points = [];
     data?.forEach((owner) => {
@@ -340,6 +349,7 @@ const CustomImage = (props) => {
   } = props;
 
   const [isClickedState, setIsClickedState] = useState(isClicked);
+  
   // useEffect(() => {
   //   console.log("isClickedState - ", isClickedState);
   // }, [isClickedState]);
@@ -353,7 +363,7 @@ const CustomImage = (props) => {
   const outlineWidth = isClicked ? 4 : 2;
 
   const handleClick = (payload) => {
-    // console.log("input to  handleClick: ", payload);
+    console.log("input to  handleClick: ", payload);
     setIsClickedState(true);
     // console.log("CustomImage - handeClick");
     if (onClick) {
@@ -370,11 +380,12 @@ const CustomImage = (props) => {
       state: {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
-        cashflowData: cashflowData,
-        cashflowDetails: cashflowDetails,
-        cashflowDetailsByProperty,
-        cashflowDetailsByProperty,
-        cashflowDetailsByPropertyByMonth: cashflowDetailsByPropertyByMonth,
+        index: index,
+			  // ownerUID: ownerData,
+			  // navigatingFrom: "PropertyNavigator",
+			  // index: index,
+			  // happinessMatrixData: dataforhappiness,
+			  // happinessData: happinessData,
         happinessMatrixData: data,
         happinessData: happinessData,
       },
