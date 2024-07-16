@@ -4,7 +4,7 @@ import { ArrowBack, ArrowForward, Description as DescriptionIcon } from '@mui/ic
 import Carousel from 'react-material-ui-carousel';
 import { useEffect } from 'react';
 import theme from '../../../theme/theme';
-
+import dayjs from "dayjs";
 function LaborTableReadOnly({ labor, setLabor }) {
 	const calculateTotal = (hours, cost) => {
 		return parseInt(hours) * parseInt(cost);
@@ -355,6 +355,21 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
 												<strong>{item.quote_total_estimate}</strong>
 											</Typography>
 										</Grid>
+                                        {maintenanceItem?.maintenance_request_status === "SCHEDULED" ? (
+  <>
+    <Grid item xs={6}>
+    <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
+        Scheduled Date: {maintenanceItem?.maintenance_scheduled_date}
+      </Typography>
+    </Grid>
+    <Grid item xs={6}>
+    <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
+        Scheduled Time: {dayjs(maintenanceItem?.maintenance_scheduled_time, "HH:mm").format("h:mm A")}
+      </Typography>
+    </Grid>
+  </>
+) : null}
+
 									</Grid>
 								</Box>
 							))}
