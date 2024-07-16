@@ -29,7 +29,7 @@ const AddNewRole = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user_uid, newRole } = location.state; // Access passed state here
-    const { setAuthData, updateProfileUid, selectRole, setLoggedIn } = useUser();
+    const { user, setAuthData, updateProfileUid, selectRole, setLoggedIn } = useUser();
     const [cookie, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookie["default_form_vals"];
 
@@ -42,6 +42,8 @@ const AddNewRole = () => {
     const [businessPhoneNumber, setBusinessPhoneNumber] = useState('');  
 
     console.log("cookiesData is set to ****", cookiesData)
+
+    console.log("user data has", user)
 
     const validate_form = () => {
         if ((newRole === "TENANT" || newRole === "OWNER" ) && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
@@ -148,26 +150,31 @@ const AddNewRole = () => {
 
         
 
-       // selectRole(newRole);
+       selectRole(newRole);
+       const existingRoles = user.role ? user.role.split(",") : [];
+       existingRoles.push(newRole);
+       const updatedRole = existingRoles.join(",");
 
-        // let role_id = {};
-        // if (newRole === "OWNER") role_id = { owner_id: data.owner_uid };
-        // if (newRole === "TENANT") role_id = { tenant_id: data.tenant_uid };
-        // if (newRole === "MANAGER") {
-        //     let businesses = cookiesData.businesses;        
-        //     businesses["MANAGEMENT"].business_uid = data.business_uid;
-        //     role_id = { businesses };
-        // }
-        // if (newRole === "MAINTENANCE") {
-        //     let businesses = cookiesData.businesses;
-        //     businesses["MAINTENANCE"].business_uid = data.business_uid;
-        //     role_id = { businesses };
-        // }
+        let role_id = {};
+        if (newRole === "OWNER") role_id = { owner_id: data.owner_uid };
+        if (newRole === "TENANT") role_id = { tenant_id: data.tenant_uid };
+        if (newRole === "MANAGER") {
+            let businesses = user.businesses;        
+            businesses["MANAGEMENT"].business_uid = data.business_uid;
+            businesses["MANAGEMENT"].business_owner_id = data.employee_uid;
+            role_id = { businesses };
+        }
+        if (newRole === "MAINTENANCE") {
+            let businesses = user.businesses;  
+            businesses["MAINTENANCE"].business_uid = data.business_uid;
+            businesses["MAINTENANCE"].business_owner_id = data.employee_uid;
+            role_id = { businesses };
+        }
 
-        // setCookie("user", { ...cookiesData, ...role_id });
+        setCookie("user", {  ...user, ...role_id , role: updatedRole});
 
-        // const { dashboardUrl } = roleMap[newRole];
-        // navigate(dashboardUrl);
+        const { dashboardUrl } = roleMap[newRole];
+        navigate(dashboardUrl);
     }
 
     const handleSignup = () => {

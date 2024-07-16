@@ -104,8 +104,15 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
         setState(profileData.business_state || "");
         setZip(profileData.business_zip || "");
 
-        setServices(JSON.parse(profileData.business_services_fees));
+        
         setLocations(JSON.parse(profileData.business_locations));
+
+        if(profileData.business_services_fees){
+            setServices(JSON.parse(profileData.business_services_fees));
+        }
+        if(profileData.business_locations){
+                setLocations(JSON.parse(profileData.business_locations));
+        }
 
         const paymentMethods = JSON.parse(profileData.paymentMethods);
                 const updatedPaymentMethods = {

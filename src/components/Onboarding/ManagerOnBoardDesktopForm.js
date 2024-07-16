@@ -121,9 +121,13 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
         setCity(profileData.business_city || "");
         setState(profileData.business_state || "");
         setZip(profileData.business_zip || "");
-
+        if(profileData.business_services_fees){
         setFees(JSON.parse(profileData.business_services_fees));
-        setLocations(JSON.parse(profileData.business_locations));
+        }
+        if(profileData.business_locations){
+            setLocations(JSON.parse(profileData.business_locations));
+        }
+       
 
         const paymentMethods = JSON.parse(profileData.paymentMethods);
                 const updatedPaymentMethods = {

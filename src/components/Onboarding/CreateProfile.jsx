@@ -167,12 +167,14 @@ const CreateProfile = () => {
         if (user.role === "MANAGER") {
         let businesses = userData.businesses;        
         businesses["MANAGEMENT"].business_uid = data.business_uid;
+        businesses["MANAGEMENT"].business_owner_id = data.employee_uid;
         role_id = { businesses };
         }
 
         if (user.role === "MAINTENANCE") {
         let businesses = userData.businesses;
         businesses["MAINTENANCE"].business_uid = data.business_uid;
+        businesses["MAINTENANCE"].business_owner_id = data.employee_uid;
         role_id = { businesses };
         }
 
@@ -212,6 +214,7 @@ const CreateProfile = () => {
                 console.log("createProfile - responseJSON - ", responseJSON);
                 if (responseJSON.message === "User already exists") {
                     alert(responseJSON.message);
+                    navigate('/newUser')
                     return;
                 } else {
                     setAuthData(responseJSON.result);
@@ -377,6 +380,7 @@ const CreateProfile = () => {
                                         id="filled-basic" 
                                         variant="filled"                                 
                                         sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
+                                        readOnly
                                     />
                                 </Grid>
                             )
@@ -394,6 +398,7 @@ const CreateProfile = () => {
                                             id="filled-basic" 
                                             variant="filled"                                 
                                             sx={{ marginTop: '5px', width: '100%', backgroundColor: '#F2F2F2'}}
+                                            readOnly
                                         />
                                 </Grid>
                             )
