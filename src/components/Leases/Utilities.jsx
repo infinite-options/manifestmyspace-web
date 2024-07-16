@@ -13,7 +13,18 @@ const formatUtilityName = (name) => name || '';
 const UtilityComponent = ({ newUtilities, utilities, utilitiesMap, handleNewUtilityChange }) => {
     console.log('utilcomp', newUtilities);
     return (
-        <Grid container sx={{ marginBottom: "5px", marginTop: '10px' }}>
+        <Grid container sx={{ marginBottom: "5px" , marginTop:'5px'}} spacing={4}>
+            <Grid item xs={5} />
+            <Grid item xs={7}>
+                <Grid container sx={{alignItems:'center', justifyContent:'center'}}>
+                    <Grid item xs={6} md={5}>
+                        <Typography sx={{ fontSize: "14px", color: "#3D5CAC" , fontWeight:'bold'}}>Current</Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                        <Typography sx={{ fontSize: "14px", color: "#3D5CAC", fontWeight:'bold' }}>Proposed</Typography>
+                    </Grid>
+                </Grid>
+            </Grid>
             <Grid item xs={1} />
             <Grid item xs={4} >
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>Utilities Responsibility</Typography>

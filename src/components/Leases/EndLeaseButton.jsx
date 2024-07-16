@@ -249,7 +249,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                 {selectedValue === 'The tenant does not plan on living here next year.' && (
                                                     <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: '10px' }}>
                                                         <Grid item xs={4}>
-                                                            <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-Out Date</Typography>
+                                                            <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC"  }}>Move-Out Date</Typography>
                                                         </Grid>
                                                         <Grid item xs={8}>
                                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -300,7 +300,19 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                 >
                                                     The tenant has a personal reason(s) for terminating the lease early.
                                                 </Typography>
+                                                
                                                 {selectedValue === 'The tenant has a personal reason(s) for terminating the lease early.' && (
+                                                    <>
+                                                    <Typography
+                                                    sx={{
+                                                        color: "#3D5CAC",
+                                                        fontWeight: theme.typography.primary.fontWeight,
+                                                        fontSize: '14px',
+                                                        marginTop:'10px'
+                                                    }}
+                                                >
+                                                    Please specify the reason.
+                                                </Typography>
                                                     <FormGroup>
                                                         <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'property'}
                                                             onChange={(event) => handleOption2CheckboxChange(event, "The tenant is moving into another property.")}
@@ -327,6 +339,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                             />
                                                         </Box>
                                                     </FormGroup>
+                                                    </>
                                                 )}
                                             </Box>
                                         }
@@ -365,7 +378,19 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                 >
                                                     The tenant is currently undergoing a legal issue(s).
                                                 </Typography>
+                                               
                                                 {selectedValue === 'The tenant is currently undergoing a legal issue(s).' && (
+                                                    <>
+                                                     <Typography
+                                                     sx={{
+                                                         color: "#3D5CAC",
+                                                         fontWeight: theme.typography.primary.fontWeight,
+                                                         fontSize: '14px',
+                                                         marginTop:'10px'
+                                                     }}
+                                                 >
+                                                     Please specify the reason.
+                                                 </Typography>
                                                     <FormGroup>
                                                         <FormControlLabel control={<Checkbox checked={selectedOption3Checkbox === 'crime'}
                                                             onChange={(event) => handleOption3CheckboxChange(event, "The tenant has committed a crime.")}
@@ -383,6 +408,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                             />
                                                         </Box>
                                                     </FormGroup>
+                                                    </>
                                                 )}
                                             </Box>
                                         }
@@ -422,7 +448,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                 {selectedValue === 'The property has been deemed unsafe or uninhabitable.' && (
                                                     <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: '10px' }}>
                                                         <Grid item xs={4}>
-                                                            <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>Move-Out Date</Typography>
+                                                            <Typography sx={{ fontSize: "14px", fontWeight: "bold" , color: "#3D5CAC" }}>Move-Out Date</Typography>
                                                         </Grid>
                                                         <Grid item xs={8}>
                                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
