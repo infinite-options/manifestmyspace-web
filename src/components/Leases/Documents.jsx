@@ -378,6 +378,8 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                 backgroundColor: '#fabd00',
                             },
                         }}>Save</Button>
+                        {isEditing && 
+                        <>
                         <Button onClick={handleDeleteClick} sx={{
                             background: "#F87C7A",
                             color: "#160449",
@@ -427,6 +429,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                 </Button>
                             </DialogActions>
                         </Dialog>
+                        </>}
                     </Box>
                 </Box>
             </Modal>

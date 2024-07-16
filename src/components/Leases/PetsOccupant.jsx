@@ -352,6 +352,8 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                         onClick={handleSave} color="primary">
                         Save
                     </Button>
+                    {isEditing && 
+                    <>
                     <Button
                         sx={{
                             background: "#F87C7A",
@@ -405,6 +407,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                             </Button>
                         </DialogActions>
                     </Dialog>
+                    </>}
                 </Box>
                 {/* </DialogActions> */}
             </Dialog>

@@ -386,6 +386,8 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                         onClick={handleSave} color="primary">
                         Save
                     </Button>
+                    {isEditing && 
+                    <>
                     <Button
                         sx={{
                             background: "#F87C7A",
@@ -439,6 +441,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                             </Button>
                         </DialogActions>
                     </Dialog>
+                    </>}
                 </Box>
                 {/* </DialogActions> */}
             </Dialog>

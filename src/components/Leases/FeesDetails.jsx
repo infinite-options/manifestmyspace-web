@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import {
-    Typography, Box, Paper, Grid, TextField, MenuItem, Button, FormControl, InputAdornment, Select, Dialog, DialogActions,
+    Typography, Box, Paper, Grid, TextField, MenuItem, Button, FormControl, InputAdornment, Select, Dialog, DialogActions, DialogContentText,
     DialogContent, DialogTitle, IconButton, Snackbar, Alert, InputLabel, Accordion, AccordionSummary, AccordionDetails,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const FeesDetails = ({getDateAdornmentString, setLeaseFees, leaseFees}) => {
+const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
     const [currentFeeRow, setcurrentFeeRow] = useState(null);
     const [isEditing, setIsFeeEditing] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -37,6 +37,7 @@ const FeesDetails = ({getDateAdornmentString, setLeaseFees, leaseFees}) => {
     const [open, setOpen] = useState(false);
     const color = theme.palette.form.main;
     const classes = useStyles();
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
     const feesColumns = [
         {
@@ -257,6 +258,24 @@ const FeesDetails = ({getDateAdornmentString, setLeaseFees, leaseFees}) => {
         setSnackbarOpen(true);
     };
 
+    const handleDeleteFee = () => {
+        setLeaseFees(leaseFees.filter(fee => fee.leaseFees_uid != currentFeeRow.leaseFees_uid));
+        handleFeeModalClose();
+    }
+
+    const handleDeleteClick = () => {
+        setOpenDeleteConfirmation(true);
+    };
+
+    const handleDeleteClose = () => {
+        setOpenDeleteConfirmation(false);
+    };
+
+    const handleDeleteConfirm = () => {
+        handleDeleteFee();
+        setOpenDeleteConfirmation(false);
+    }
+
     return (
         <>
             <Accordion sx={{ backgroundColor: color }}>
@@ -302,7 +321,7 @@ const FeesDetails = ({getDateAdornmentString, setLeaseFees, leaseFees}) => {
                                     due_by: '',
                                     due_by_date: dayjs(),
                                     fee_name: '',
-                                    frequency: 'Monthly',
+                                    frequency: '',
                                     late_by: '',
                                     late_fee: '',
                                     perDay_late_fee: '',
@@ -435,13 +454,13 @@ const FeesDetails = ({getDateAdornmentString, setLeaseFees, leaseFees}) => {
                                     {/* Frequency */}
                                     <Grid item md={6} sx={{ display: 'flex', alignItems: 'center', }}>
                                         <Grid container>
-                                            <Grid item md={3} sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <Grid item md={4} sx={{ display: 'flex', alignItems: 'center' }}>
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                                     Frequency
                                                 </Typography>
                                             </Grid>
                                             <Grid item md={8}>
-                                                <FormControl sx={{ width: '335px', height: '70px' }}>
+                                                <FormControl sx={{ width: '300px', height: '70px' }}>
                                                     <InputLabel sx={{ color: theme.palette.grey, textAlign: 'center', paddingTop: '5px' }}>Frequency</InputLabel>
                                                     <Select
                                                         value={currentFeeRow?.frequency || ''}
@@ -720,23 +739,6 @@ const FeesDetails = ({getDateAdornmentString, setLeaseFees, leaseFees}) => {
                             <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
                                 <Button variant="outlined"
                                     sx={{
-                                        background: "#F87C7A",
-                                        color: "#160449",
-                                        cursor: "pointer",
-                                        width: "100px",
-                                        height: "31px",
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                        textTransform: 'none',
-                                        '&:hover': {
-                                            backgroundColor: '#f76462',
-                                        },
-                                    }}
-                                    onClick={handleFeeModalClose}>
-                                    Cancel
-                                </Button>
-                                <Button variant="outlined"
-                                    sx={{
                                         marginRight: '5px', background: "#FFC614",
                                         color: "#160449",
                                         cursor: "pointer",
@@ -752,6 +754,63 @@ const FeesDetails = ({getDateAdornmentString, setLeaseFees, leaseFees}) => {
                                     onClick={handleAddNewFee}>
                                     Save
                                 </Button>
+                                {isEditing &&
+                                    <>
+                                        <Button variant="outlined"
+                                            sx={{
+                                                background: "#F87C7A",
+                                                color: "#160449",
+                                                cursor: "pointer",
+                                                width: "100px",
+                                                height: "31px",
+                                                fontWeight: theme.typography.secondary.fontWeight,
+                                                fontSize: theme.typography.smallFont,
+                                                textTransform: 'none',
+                                                '&:hover': {
+                                                    backgroundColor: '#f76462',
+                                                },
+                                            }}
+                                            onClick={handleDeleteClick}>
+                                            Delete
+                                        </Button>
+                                        <Dialog
+                                            open={openDeleteConfirmation}
+                                            onClose={handleDeleteClose}
+                                            aria-labelledby="alert-dialog-title"
+                                            aria-describedby="alert-dialog-description"
+                                        >
+                                            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText id="alert-dialog-description">
+                                                    Are you sure you want to delete this Fee?
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleDeleteClose} color="primary" sx={{
+                                                    textTransform: "none", background: "#F87C7A",
+                                                    color: "#160449",
+                                                    cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize: theme.typography.smallFont, '&:hover': {
+                                                        backgroundColor: '#f76462',
+                                                    },
+                                                }}>
+                                                    Cancel
+                                                </Button>
+                                                <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
+                                                    textTransform: "none", background: "#FFC614",
+                                                    color: "#160449",
+                                                    cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize: theme.typography.smallFont,
+                                                    '&:hover': {
+                                                        backgroundColor: '#fabd00',
+                                                    },
+                                                }}>
+                                                    Confirm
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </>
+                                }
                             </DialogActions>
                         </Dialog>
                     </>
@@ -760,7 +819,6 @@ const FeesDetails = ({getDateAdornmentString, setLeaseFees, leaseFees}) => {
             </Accordion>
         </>
     )
-
 }
 
 export default FeesDetails;
