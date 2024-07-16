@@ -185,6 +185,8 @@ import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
+import PropertyForm from "./Property/PropertyForm";
+
 function Main() {
   console.log("In Main Page");
   const { roleName, selectedRole } = useUser();
@@ -201,7 +203,6 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
-         
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
             <Route path="newUser" element={<NewUser2 />} />            
@@ -377,6 +378,9 @@ function Main() {
 
             <Route path="referUser" element={<ReferUser />} />
             <Route path="employeeAccess" element={<EmployeeAccess />} />
+
+
+            <Route path="newPropertyForm" element={<PropertyForm />} />
           </Route>
         </Routes>
         <Footer />
