@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function RenewLease({ leaseDetails, selectedLeaseId }) {
+export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked }) {
     const classes = useStyles();
     const [currentLease, setCurrentLease] = useState("");
     const [tenantWithId, setTenantWithId] = useState([]);
@@ -624,6 +624,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
         ["sunday-week-2", 13],
     ]);
 
+    const handleDeleteButtonClick = () => {
+        setIsEndClicked(true);
+    }
+
     return (
         <Box
             style={{
@@ -1002,6 +1006,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     </Grid>
                                                     <Grid item md={10}>
                                                         <TextField
+                                                            sx={{ backgroundColor: '#D6D5DA', }}
                                                             margin="dense"
                                                             label="Fee Name"
                                                             fullWidth
@@ -1020,6 +1025,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     </Grid>
                                                     <Grid item md={10}>
                                                         <TextField
+                                                            sx={{ backgroundColor: '#D6D5DA', }}
                                                             margin="dense"
                                                             label="Fee Type"
                                                             fullWidth
@@ -1038,6 +1044,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     </Grid>
                                                     <Grid item md={4}>
                                                         <TextField
+                                                            sx={{ backgroundColor: '#D6D5DA', }}
                                                             margin="dense"
                                                             label="Amount"
                                                             fullWidth
@@ -1067,7 +1074,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                                         className={classes.select}
                                                                         sx={{
                                                                             marginTop: "10px",
-                                                                            height: '50px'
+                                                                            height: '50px',
+                                                                            backgroundColor: '#D6D5DA',
                                                                         }}
                                                                         required
                                                                     >
@@ -1102,7 +1110,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                                         InputProps={{
                                                                             endAdornment: <InputAdornment position="start">{getDateAdornmentString(currentFeeRow.due_by)}</InputAdornment>,
                                                                         }}
-                                                                        sx={{ marginLeft: '5px', width: '295px' }}
+                                                                        sx={{ marginLeft: '5px', width: '295px', backgroundColor: '#D6D5DA', }}
                                                                     />
                                                                 )}
 
@@ -1132,7 +1140,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                                                     }}
                                                                                 />
                                                                             )}
-                                                                            sx={{ marginTop: "10px", marginLeft: '5px', width: '295px' }}
+                                                                            sx={{ marginTop: "10px", marginLeft: '5px', width: '295px', backgroundColor: '#D6D5DA', }}
                                                                         />
                                                                     </LocalizationProvider>)}
 
@@ -1150,7 +1158,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                                             // onChange={(e) => handleAvailableToPayChange(e, row.id, "weekly")}
                                                                             placeholder="Select Available to Pay By Day"
                                                                             className={classes.select}
-                                                                            sx={{ width: '295px', marginLeft: '5px', height: '40px' }}
+                                                                            sx={{ width: '295px', marginLeft: '5px', height: '40px', backgroundColor: '#D6D5DA', }}
                                                                         >
                                                                             {currentFeeRow.frequency &&
                                                                                 currentFeeRow.frequency === "Weekly" &&
@@ -1183,6 +1191,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                         {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "One-time" ||
                                                             currentFeeRow.frequency === "Annually" || currentFeeRow.frequency === "") && (
                                                                 <TextField
+                                                                    sx={{ backgroundColor: '#D6D5DA', }}
                                                                     margin="dense"
                                                                     label="# Days Before"
                                                                     fullWidth
@@ -1198,6 +1207,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                                 }}
                                                             >
                                                                 <Select
+                                                                    sx={{backgroundColor: '#D6D5DA',}}
                                                                     name="available_topay"
                                                                     value={currentFeeRow.available_topay !== null ? currentFeeRow.available_topay : ""}
                                                                     size="small"
@@ -1234,6 +1244,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     <Grid item md={4}>
                                                         {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "One-time" || currentFeeRow.frequency === "Annually" || currentFeeRow.frequency === "") && (
                                                             <TextField
+                                                                sx={{ backgroundColor: '#D6D5DA', }}
                                                                 margin="dense"
                                                                 label="# Days By"
                                                                 fullWidth
@@ -1250,6 +1261,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                                 }}
                                                             >
                                                                 <Select
+                                                                sx={{backgroundColor: '#D6D5DA',}}
                                                                     name="late_by"
                                                                     value={currentFeeRow.late_by !== null ? currentFeeRow.late_by : ""}
                                                                     size="small"
@@ -1283,6 +1295,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     </Grid>
                                                     <Grid item md={4}>
                                                         <TextField
+                                                            sx={{ backgroundColor: '#D6D5DA', }}
                                                             margin="dense"
                                                             label="Amount"
                                                             fullWidth
@@ -1301,6 +1314,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                                     </Grid>
                                                     <Grid item md={4}>
                                                         <TextField
+                                                            sx={{ backgroundColor: '#D6D5DA', }}
                                                             margin="dense"
                                                             label="Amount"
                                                             fullWidth
@@ -1455,87 +1469,117 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                         </Paper>
                     </Grid>
 
-                        <Grid item xs={12} md={12}>
-                            <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                                <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                    <Button
-                                        variant="outlined"
-                                        sx={{
-                                            background: "#6788B3",
-                                            color: theme.palette.background.default,
-                                            cursor: "pointer",
-                                            textTransform: "none",
-                                            minWidth: "150px",
-                                            minHeight: "35px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            '&:hover': {
-                                                background: '#9ab0cd',
-                                            },
-                                        }}
-                                        size="small"
-                                        onClick={handlePageToggle}
-                                    >
-                                        <Typography sx={{
-                                            textTransform: "none",
-                                            color: theme.typography.primary.black,
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.smallFont,
-                                            whiteSpace: "nowrap",
-                                            marginLeft: "1%",
-                                        }}>
-                                            {"Edit/Update"}
-                                        </Typography>
-                                    </Button>
-                                </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
+                            <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                <Button
+                                    variant="outlined"
+                                    sx={{
+                                        background: "#6788B3",
+                                        color: theme.palette.background.default,
+                                        cursor: "pointer",
+                                        textTransform: "none",
+                                        minWidth: "150px",
+                                        minHeight: "35px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        '&:hover': {
+                                            background: '#9ab0cd',
+                                        },
+                                    }}
+                                    size="small"
+                                // onClick={handlePageToggle}
+                                >
+                                    <Typography sx={{
+                                        textTransform: "none",
+                                        color: theme.typography.primary.black,
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        whiteSpace: "nowrap",
+                                        marginLeft: "1%",
+                                    }}>
+                                        {"Edit/Update"}
+                                    </Typography>
+                                </Button>
+                            </Grid>
 
-                                <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                    <Button
-                                        variant="outlined"
-                                        sx={{
-                                            background: "#ffa500",
-                                            color: theme.palette.background.default,
-                                            cursor: "pointer",
-                                            textTransform: "none",
-                                            minWidth: "150px",
-                                            minHeight: "35px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            '&:hover': {
-                                                background: '#ffc04d',
-                                            },
-                                        }}
-                                        size="small"
-                                        onClick={handlePageToggle}
-                                    >
-                                        <Typography sx={{
-                                            textTransform: "none",
-                                            color: theme.typography.primary.black,
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.smallFont,
-                                            whiteSpace: "nowrap",
-                                            marginLeft: "1%",
-                                        }}>
-                                            {"Renew"}
-                                        </Typography>
-                                    </Button>
-                                </Grid>
+                            <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                <Button
+                                    variant="outlined"
+                                    sx={{
+                                        background: "#ffa500",
+                                        color: theme.palette.background.default,
+                                        cursor: "pointer",
+                                        textTransform: "none",
+                                        minWidth: "150px",
+                                        minHeight: "35px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        '&:hover': {
+                                            background: '#ffc04d',
+                                        },
+                                    }}
+                                    size="small"
+                                // onClick={handlePageToggle}
+                                >
+                                    <Typography sx={{
+                                        textTransform: "none",
+                                        color: theme.typography.primary.black,
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        whiteSpace: "nowrap",
+                                        marginLeft: "1%",
+                                    }}>
+                                        {"Renew"}
+                                    </Typography>
+                                </Button>
+                            </Grid>
 
-                                <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                    <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
-                                        moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={false} />
-                                </Grid>
+                            <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                {/* <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
+                                        moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} /> */}
+                                <Button
+                                    variant="outlined"
+                                    sx={{
+                                        background: "#D4736D",
+                                        color: theme.palette.background.default,
+                                        cursor: "pointer",
+                                        textTransform: "none",
+                                        minWidth: "150px",
+                                        minHeight: "35px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        '&:hover': {
+                                            background: '#DEA19C',
+                                        },
+                                    }}
+                                    size="small"
+                                    onClick={handleDeleteButtonClick}
+                                >
+                                    <Typography sx={{
+                                        textTransform: "none",
+                                        color: theme.typography.primary.black,
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        whiteSpace: "nowrap",
+                                        marginLeft: "1%",
+                                    }}>
+                                        End
+                                    </Typography>
+                                </Button>
+                            </Grid>
 
-                                {/* <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            {/* <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
                                 <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
                                     moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={true} />
                             </Grid> */}
-                            </Grid>
                         </Grid>
+                    </Grid>
 
-                    {isPageUpdateOrRenew === true &&
+                    {/* {isPageUpdateOrRenew === true &&
                         <Grid item xs={12} md={12}>
                             <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
                                 <Grid item xs={6} md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
@@ -1577,7 +1621,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId }) {
                                 </Grid>
                             </Grid>
                         </Grid>
-                    }
+                    } */}
                 </Grid>
             </Paper>
         </Box >

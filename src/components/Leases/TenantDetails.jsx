@@ -25,27 +25,6 @@ const useStyles = makeStyles((theme) => ({
         '& .MuiInputBase-root': {
             backgroundColor: '#D6D5DA',
         },
-        '& .MuiInputLabel-root': {
-            textAlign: 'center',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '100%',
-            pointerEvents: 'none',
-        },
-        '& .MuiInputLabel-shrink': {
-            top: 0,
-            left: 50,
-            transformOrigin: 'top center',
-            textAlign: 'left',
-            color: '#9F9F9F',
-        },
-        '& .MuiInputLabel-shrink.Mui-focused': {
-            color: '#9F9F9F',
-        },
-        '& .MuiInput-underline:before': {
-            borderBottom: 'none',
-        },
     },
     alert: {
         marginTop: theme.spacing(2),
@@ -101,20 +80,20 @@ const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
             headerName: "Responsibility",
             flex: 1,
         },
-        {
-            field: 'actions',
-            headerName: '',
-            flex: 0.7,
-            renderCell: (params) => (
-                <Box>
-                    <IconButton
-                        onClick={() => handleEditClick(params.row)}
-                    >
-                        <EditIcon sx={{ color: "#3D5CAC" }} />
-                    </IconButton>
-                </Box>
-            )
-        }
+        // {
+        //     field: 'actions',
+        //     headerName: '',
+        //     flex: 0.7,
+        //     renderCell: (params) => (
+        //         <Box>
+        //             <IconButton
+        //                 onClick={() => handleEditClick(params.row)}
+        //             >
+        //                 <EditIcon sx={{ color: "#3D5CAC" }} />
+        //             </IconButton>
+        //         </Box>
+        //     )
+        // }
     ]
 
     const handleOpen = () => setOpen(true);
@@ -239,7 +218,7 @@ const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
                         >
                             Tenant Details
                         </Typography>
-                        <Button
+                        {/* <Button
                             sx={{
                                 "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                                 cursor: "pointer",
@@ -254,7 +233,7 @@ const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
                             onClick={handleAddClick}
                         >
                             <AddIcon sx={{ color: "#160449", fontSize: "18px" }} />
-                        </Button>
+                        </Button> */}
                     </Box>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -417,7 +396,7 @@ const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
                         </Grid>
                         <Grid item md={6}>
                             <TextField
-                                className={classes.textField}
+                            className={classes.textField}
                                 name="lt_responsibility"
                                 label="Responsibility"
                                 fullWidth
