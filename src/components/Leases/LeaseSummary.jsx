@@ -199,7 +199,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                 </Dialog>
             </Box>
             <Grid container spacing={2} sx={{ marginBottom: '15px' }}>
-                <Grid item md={0.5} />
+                <Grid item md={0.4} />
                 <Grid item xs={12} md={2.5}>
                     <Card
                         sx={{
