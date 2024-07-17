@@ -246,6 +246,8 @@ const PropertyForm = () => {
 								</Grid>
 								<Grid item xs={10}>
 									<TextField
+
+                                        value={city}
 										size="small"
 										fullWidth
 										sx={{
@@ -257,6 +259,7 @@ const PropertyForm = () => {
 										}}
 										placeholder="City"
                                         onChange={handleCityChange}
+                                        disabled
 									/>
 								</Grid>
 								<Grid item xs={2}>
@@ -273,6 +276,7 @@ const PropertyForm = () => {
 								</Grid>
 								<Grid item xs={10}>
 									<TextField
+                                    value={state}
 										size="small"
 										fullWidth
 										sx={{
@@ -284,6 +288,7 @@ const PropertyForm = () => {
 										}}
 										placeholder="State"
                                         onChange={handleStateChange}
+                                        disabled
 									/>
 								</Grid>
 								<Grid item xs={2}>
@@ -300,6 +305,8 @@ const PropertyForm = () => {
 								</Grid>
 								<Grid item xs={10}>
 									<TextField
+                                    disabled
+                                    value={zip}
 										size="small"
 										fullWidth
 										sx={{
@@ -321,8 +328,12 @@ const PropertyForm = () => {
 
 			<Card sx={{ backgroundColor: '#D6D5DA', marginBottom: '18px', padding: '16px', borderRadius: '8px' }}>
 				<CardContent className={classes.cardContent}>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={4} className={classes.addPicturesButtonContainer}>
+					<Grid container spacing={8}>
+						<Grid item xs={12} sm={4} sx={{
+		display: 'flex',
+		justifyContent: 'center', 
+		alignItems: 'center',
+	}}>
 							<ImageUploader
 								selectedImageList={selectedImageList}
 								setSelectedImageList={setSelectedImageList}
@@ -483,7 +494,7 @@ const PropertyForm = () => {
 									</Typography>
 								</Grid>
 								<Grid item xs={10}>
-									<Typography>0</Typography>
+									<Typography>{cost/squareFootage}</Typography>
 								</Grid>
 							</Grid>
 						</Grid>
