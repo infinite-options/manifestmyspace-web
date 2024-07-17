@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Paper, Box, Stack, ThemeProvider, Button, Typography, Backdrop, CircularProgress } from "@mui/material";
 import theme from "../../theme/theme";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@mui/material";
 import { useUser } from "../../contexts/UserContext";
@@ -27,8 +27,10 @@ function UserLogin() {
   console.log("In User Login");
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user_emai } = location.state || ''; // Access passed state here
   const [passModal, setpassModal] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(user_emai);
   const [password, setPassword] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
   const { setAuthData, setLoggedIn, selectRole } = useUser();
