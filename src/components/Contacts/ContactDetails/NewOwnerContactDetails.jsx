@@ -127,7 +127,7 @@ const NewOwnerContactDetails = (props) => {
     console.log("Contact Data - from owner 1 ", contactDetails);
     getDataFromAPI();
     console.log("Contact Data - from owner 3 ", contactDetails);
-  }, [contactDetails]);
+  }, []);
 
   //   const getDataFromAPI = async () => {
   //     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
