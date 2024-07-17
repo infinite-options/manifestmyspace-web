@@ -8,7 +8,7 @@ import OwnerOnBoardDeskTopForm from "./Onboarding/OwnerOnBoardDesktopForm";
 import MaintenanceOnBoardDesktopForm from "./Onboarding/MaintenanceOnBoardDesktopForm";
 import PMEmpOnBoardDesktopForm from "./Onboarding/PMEmpOnBoardDesktopForm";
 import MaintEmpOnBoardDesktopForm from "./Onboarding/MaintEmpOnBoardDesktopForm";
-import ProfileManager from "./Profile/ProfileManager"
+import ProfileManager from "./Profile/ProfileManager";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
@@ -48,7 +48,6 @@ import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
 import PMRent from "./Rent/PMRent/PMRent";
 import PMRentDetail from "./Rent/PMRent/PMRentDetail";
 
-
 import MaintenanceProfile from "./Profile/MaintenanceProfile/MaintenanceProfile";
 
 import ViewTransactionOwner from "./Transactions/ViewTransactionOwner";
@@ -77,6 +76,7 @@ import ManagerContactDetails from "./Contacts/ContactDetails/ManagerContactDetai
 import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceContactDetails";
 import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 import OwnerContactDetailsHappinessMatrix from "./Contacts/ContactDetails/OwnerContactDetailsHappinessMatrix";
+import NewOwnerContactDetails from "./Contacts/ContactDetails/NewOwnerContactDetails";
 import OwnerContactTest from "./Contacts/ContactDetails/OwnerContactTest";
 
 import PropertyList from "./Property/PropertyList";
@@ -201,11 +201,11 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
-         
+
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
-            <Route path="newUser" element={<NewUser2 />} />            
-            <Route path="createProfile" element={<CreateProfile />} /> 
+            <Route path="newUser" element={<NewUser2 />} />
+            <Route path="createProfile" element={<CreateProfile />} />
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
             <Route path="userLogin" element={<UserLogin />} />
@@ -224,7 +224,7 @@ function Main() {
 
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
-          <Route path="tt" element={<ProfileManager />} /> 
+            <Route path="tt" element={<ProfileManager />} />
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
@@ -314,7 +314,8 @@ function Main() {
             <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
             <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
             <Route path="ownerContactDetailsHappinessMatrix" element={<OwnerContactDetailsHappinessMatrix />} />
-            <Route path="ownerContactTest" element={<OwnerContactTest/>} />
+            <Route path="newOwnerContactDetails" element={<NewOwnerContactDetails />} />
+            <Route path="ownerContactTest" element={<OwnerContactTest />} />
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />

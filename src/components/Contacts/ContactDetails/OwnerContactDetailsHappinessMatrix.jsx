@@ -73,7 +73,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   console.log("happinessData OK - ", happinessData);
 
   // const contactDetails = location.state.dataDetails;
-  const [contactDetails, setContactDetails] = useState();
+  const [contactDetails, setContactDetails] = useState([]);
   const [contactsTab, setContactsTab] = useState("");
 
   // const selectedData = location.state.selectedData;
@@ -81,13 +81,13 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   const [index, setIndex] = useState(location.state.index);
   // const passedData = location.state.viewData;
   const ownerUID = location.state.ownerUID;
-  console.log("owner ID HERE ---- ", ownerUID, index)
+  console.log("owner ID HERE ---- ", ownerUID, index);
 
   const cashflowData = location.state?.cashflowData;
   const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
-  const cashflowDetails = happinessData?.delta_cashflow_details?.result || [];
-  const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result || [];
-  const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result || [];
+  const cashflowDetails = happinessData?.delta_cashflow_details?.result;
+  const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
+  const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
   const [filteredCashflowDetails, setFilteredCashflowDetails] = useState(cashflowDetails);
   const [filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty] = useState(cashflowDetailsByProperty);
   const [filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth] = useState(cashflowDetailsByPropertyByMonth);
@@ -106,11 +106,11 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
     }
   }, []);
 
-  // console.log("cashflowData OK - ", );
+  console.log("cashflowData OK - ");
 
-  // useEffect(() => {
-  //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
-  // }, [filteredCashflowDetails]);
+  useEffect(() => {
+    console.log("filteredCashflowDetails1 - ", filteredCashflowDetails);
+  }, [filteredCashflowDetails]);
 
   // useEffect(() => {
   //   console.log("filteredCashflowDetailsByProperty", filteredCashflowDetailsByProperty)
@@ -136,13 +136,14 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
 
     await axios
       .get(url)
-      .then((resp) => {
+      .then(async (resp) => {
         const data = resp.data["management_contacts"];
         const ownerContacts = data["owners"];
         console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
         setContactDetails(ownerContacts);
+        console.log("Inside Call: ", contactDetails);
         console.log("Set Contact Details 1", ownerContacts);
-        // console.log("Data to find index: ", ownerUID);
+        console.log("Data to find index: ", ownerUID);
         const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
         console.log("Owner Index: ", index);
         setIndex(index);
@@ -159,10 +160,16 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   };
 
   useEffect(() => {
+    console.log("Contact Data - from owner ", contactDetails);
+  }, [contactDetails]);
+
+  useEffect(() => {
     // console.log("navigatingFrom - ", navigatingFrom);
 
-    if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom == "PropertyNavigator") {
+    if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom === "PropertyNavigator") {
+      console.log("Before Call: ", contactDetails);
       getDataFromAPI();
+      console.log("After Call: ", contactDetails);
       setContactsTab("Owner");
     } else if (navigatingFrom === "PMContacts") {
       setContactDetails(location.state.dataDetails);
@@ -172,16 +179,22 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   }, []);
 
   useEffect(() => {
-    // console.log("INDEX UPDATED - ", index);
-    // location.state.index = index;
+    console.log("INDEX UPDATED - ", index);
+    console.log("CF Details - ", cashflowDetails);
+    console.log("Contact Details are NULL??: ", contactDetails);
+    location.state.index = index;
+    console.log("Checking Index");
     // contactDetails && console.log("DATA DETAILS", contactDetails[index]);
-    setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
-    setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+    // setFilteredCashflowDetails(cashflowDetails?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid));
+    setFilteredCashflowDetails(contactDetails != null ? cashflowDetails?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+    setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     setFilteredCashflowDetailsByPropertyByMonth(
-      contactDetails != null ? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []
+      contactDetails != null ? cashflowDetailsByPropertyByMonth?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []
     );
-    setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
-  }, [index]);
+    console.log("2nd Index: ", index);
+    console.log("2nd Index: ", cashflowData);
+    setFilteredCashflowData(contactDetails != null ? cashflowData?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+  }, [index, cashflowDetails]);
 
   //   console.log("Data details passed 1: ", contactDetails);
   //   console.log("Data details passed 2: ", contactDetails[0]);
@@ -297,7 +310,13 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
                       width: "100%",
                     }}
                   >
-                    <HappinessMatrixWidget page={"OwnerContactDetails"} data={happinessMatrixData} happinessData={happinessData} setIndex={setIndex} contactDetails={contactDetails} />
+                    <HappinessMatrixWidget
+                      page={"OwnerContactDetails"}
+                      data={happinessMatrixData}
+                      happinessData={happinessData}
+                      setIndex={setIndex}
+                      contactDetails={contactDetails}
+                    />
                   </Paper>
                 </Grid>
                 <Grid item xs={12}>
@@ -457,6 +476,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
 };
 
 const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails, filteredCashflowDetailsByProperty, filteredCashflowDetailsByPropertyByMonth }) => {
+  console.log("In OCDHM: filteredCashflowDetails:  ", filteredCashflowDetails);
   const { selectedRole, getProfileId } = useUser();
   const [propertiesData, setPropertiesData] = useState([]);
   const [contractsData, setContractsData] = useState([]);
@@ -676,7 +696,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
     if (contactDetails) {
       // const paymentMethodString = contactDetails[index]?.payment_method;
       // console.log("contactDetails.payment_method - ", paymentMethodString);
-      console.log("here we are contactDetails")
+      console.log("here we are contactDetails");
       // const parsedPaymentMethods = paymentMethodString ? JSON.parse(paymentMethodString) : [];
       // setPaymentMethods(parsedPaymentMethods);
       // setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method));
@@ -743,7 +763,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
       <Grid container item xs={12}>
         <Grid item xs={6}>
           <Typography sx={{ fontSize: "15px", fontWeight: "600", color: "#160449" }}>
-            Active {`(${paymentMethods.filter((method) => method.paymentMethod_status === "Active").length})`}
+            Active {`(${paymentMethods?.filter((method) => method.paymentMethod_status === "Active").length})`}
           </Typography>
           {paymentMethods
             .filter((method) => method.paymentMethod_status === "Active")
@@ -758,7 +778,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
         </Grid>
         <Grid item xs={6}>
           <Typography sx={{ fontSize: "15px", color: "#160449", fontWeight: "600" }}>
-            Inactive {`(${paymentMethods.filter((method) => method.paymentMethod_status === "Inactive").length})`}
+            Inactive {`(${paymentMethods?.filter((method) => method.paymentMethod_status === "Inactive").length})`}
           </Typography>
           {paymentMethods
             .filter((method) => method.paymentMethod_status === "Inactive")
