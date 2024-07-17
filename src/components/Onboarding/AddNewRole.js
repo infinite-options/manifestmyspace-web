@@ -29,7 +29,7 @@ const AddNewRole = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user_uid, newRole } = location.state; // Access passed state here
-    const { user, setAuthData, updateProfileUid, selectRole, setLoggedIn } = useUser();
+    const { user, setUser,setAuthData, updateProfileUid, selectRole, setLoggedIn } = useUser();
     const [cookie, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookie["default_form_vals"];
 
@@ -43,7 +43,7 @@ const AddNewRole = () => {
 
     console.log("cookiesData is set to ****", cookiesData)
 
-    console.log("user data has", user)
+    console.log("user data has ***$$", user)
 
     const validate_form = () => {
         if ((newRole === "TENANT" || newRole === "OWNER" ) && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
@@ -139,7 +139,30 @@ const AddNewRole = () => {
         }
     };
 
+    const checkIfUserExists = async (email) => {
+        try {
+            const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${email}`);
+            return response;
+        } catch (error) {
+            if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
+                return null;
+            } else {
+                throw error;
+            }
+        }
+    };
+
     const createUserProfile = async () => {
+        const emailToCheck = (newRole === "TENANT" || newRole === "OWNER") ? email : businessEmail;
+        const userExists = await checkIfUserExists(emailToCheck);
+        console.log(" userExists  ", userExists)
+        if (userExists && userExists.data.result[0].user_uid!=user.
+            user_uid
+            ) {
+            alert("User with this email already exists");
+            return;
+        }
+
         const payload = getPayload(newRole, user_uid);
         const form = encodeForm(payload);
         const data = await createProfile(form, newRole);
@@ -148,12 +171,10 @@ const AddNewRole = () => {
         setCookie("default_form_vals", { ...cookiesData, phoneNumber, email });
         console.log("Cookies after setting default_form_vals:", document.cookie);
 
-        
-
-       selectRole(newRole);
-       const existingRoles = user.role ? user.role.split(",") : [];
-       existingRoles.push(newRole);
-       const updatedRole = existingRoles.join(",");
+        selectRole(newRole);
+        const existingRoles = user.role ? user.role.split(",") : [];
+        existingRoles.push(newRole);
+        const updatedRole = existingRoles.join(",");
 
         let role_id = {};
         if (newRole === "OWNER") role_id = { owner_id: data.owner_uid };
@@ -171,7 +192,12 @@ const AddNewRole = () => {
             role_id = { businesses };
         }
 
+        console.log("user will have %%%", user)
+        console.log("user will have role_id%%%", role_id)
+        console.log("user will have role%%%", updatedRole)
         setCookie("user", {  ...user, ...role_id , role: updatedRole});
+       
+
 
         const { dashboardUrl } = roleMap[newRole];
         navigate(dashboardUrl);
@@ -228,6 +254,11 @@ const AddNewRole = () => {
                 <Container maxWidth="md"  sx={{ height: 'auto', backgroundColor: '#FFFFFF', padding: '50px', borderRadius: '60px',  }}>
                     <Grid container justifyContent="center" rowGap={20}>                    
                         <Grid container item xs={10} justifyContent='center' spacing={20} >
+                        <Grid item xs={12}>
+                            <Typography sx={{ fontSize: '28px', color: '#160449', fontWeight: 'bold' }}>
+                                {newRole.charAt(0) + newRole.slice(1).toLowerCase()} Profile
+                            </Typography>
+                        </Grid>
                             <Grid item xs={6}>
                                 <Typography sx={{ fontSize: '25px', color: '#160449',}}>
                                     First Name
