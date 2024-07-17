@@ -6,17 +6,20 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import AddressAutocompleteInput from "./AddressAutocompleteInput";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
+import ImageUploader from "../ImageUploader";
 
 const useStyles = makeStyles({
-  card: {
-    marginBottom: '16px',
-    backgroundColor: '#D6D5DA',
-    padding: '16px',
-  },
-  cardContent: {
-    padding: '16px',
-    backgroundColor: '#D6D5DA',
-  },
+    card: {
+        
+        backgroundColor: '#D6D5DA', // Grey background for card
+        padding: '16px',
+        borderRadius: '8px', // Rounded corners for card
+      },
+      cardContent: {
+        padding: '16px',
+        backgroundColor: '#D6D5DA', // Grey background for card content
+        borderRadius: '8px', // Rounded corners for card content
+      },
   button: {
     height: '100%',
     display: 'flex',
@@ -24,7 +27,7 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     border: '1px dashed #ccc',
     borderRadius: '8px',
-    color: '#3f51b5',
+    color: '#160449',
     textTransform: 'none', // Ensure text is not transformed to uppercase
   },
   formControl: {
@@ -56,16 +59,24 @@ const useStyles = makeStyles({
     fontWeight: theme.typography.primary.fontWeight,
     color: '#160449',
     fontSize: 16,
+    marginBottom: '8px', // Add space below the label
   },
   inputField: {
     backgroundColor: "white",
     borderColor: "black",
     borderRadius: "3px",
     height: '40px', // Consistent height for all text fields
+    marginTop: '8px', // Add space above the text field
   },
   autocompleteInput: {
     width: '100%',
     height: '40px', // Consistent height for the autocomplete input
+    marginTop: '8px', // Add space above the autocomplete input
+  },
+  addPicturesButtonContainer: {
+    display: 'flex',
+    justifyContent: 'center', // Center horizontally
+    alignItems: 'center', // Center vertically
   }
 });
 
@@ -74,51 +85,89 @@ const PropertyForm = () => {
   const { user, selectedRole, selectRole, Name } = useUser();
   //const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);
   const [readOnlyNotes, setReadOnlyNotes] = useState(false);
+  const [selectedImageList, setSelectedImageList] = useState([]);
+
   return (
-    <Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px' }}>
-      <Card className={classes.card}>
+    <Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', }}>
+      <Card sx={{backgroundColor: '#D6D5DA', 
+      marginBottom: '18px', 
+        padding: '16px',
+        borderRadius: '8px', }}>
         <CardContent className={classes.cardContent}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
-              <Button className={classes.button} fullWidth startIcon={<MapIcon />}>
+            <Grid item xs={12} sm={4} className={classes.addPicturesButtonContainer}>
+              <Button sx={{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px dashed #ccc',
+                borderRadius: '8px',
+                color: '#160449',
+                textTransform: 'none', // Ensure text is not transformed to uppercase
+              }} fullWidth startIcon={<MapIcon />}>
                 Show Google Map
               </Button>
             </Grid>
             <Grid item xs={12} sm={8}>
-              <Grid container spacing={1}>
+              <Grid container spacing={3}>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>Address</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>Address</Typography>
                 </Grid>
                 <Grid item xs={10}>
                   <AddressAutocompleteInput className={classes.autocompleteInput} />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>Unit</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>Unit</Typography>
                 </Grid>
                 <Grid item xs={10}>
                   <TextField
-                    className={classes.inputField}
+                    sx={{
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "3px",
+                        height: '40px', // Consistent height for all text fields
+                        marginTop: '4px', // Add space above the text field
+                      }}
                     size="small"
                     fullWidth
                   />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>City</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>City</Typography>
                 </Grid>
                 <Grid item xs={10}>
-                  <TextField size="small" fullWidth className={classes.inputField} placeholder="City" />
+                  <TextField size="small" fullWidth sx={{
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "3px",
+                        height: '40px', // Consistent height for all text fields
+                        marginTop: '4px', // Add space above the text field
+                      }} placeholder="City" />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>State</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>State</Typography>
                 </Grid>
                 <Grid item xs={10}>
-                  <TextField size="small" fullWidth className={classes.inputField} placeholder="State" />
+                  <TextField size="small" fullWidth sx={{
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "3px",
+                        height: '40px', // Consistent height for all text fields
+                        marginTop: '4px', // Add space above the text field
+                      }} placeholder="State" />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>Zip Code</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>Zip Code</Typography>
                 </Grid>
                 <Grid item xs={10}>
-                  <TextField size="small" fullWidth className={classes.inputField} placeholder="Zip Code" />
+                  <TextField size="small" fullWidth sx={{
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "3px",
+                        height: '40px', // Consistent height for all text fields
+                        marginTop: '4px', // Add space above the text field
+                      }} placeholder="Zip Code" />
                 </Grid>
               </Grid>
             </Grid>
@@ -126,18 +175,19 @@ const PropertyForm = () => {
         </CardContent>
       </Card>
 
-      <Card className={classes.card}>
+      <Card sx={{backgroundColor: '#D6D5DA', 
+      marginBottom: '18px', 
+        padding: '16px',
+        borderRadius: '8px', }}>
         <CardContent className={classes.cardContent}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
-              <Button className={classes.button} fullWidth startIcon={<AddAPhotoIcon />}>
-                Add Pictures
-              </Button>
+            <Grid item xs={12} sm={4} className={classes.addPicturesButtonContainer}>
+              <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"Add"}/>
             </Grid>
             <Grid item xs={12} sm={8}>
-              <Grid container spacing={1}>
+              <Grid container spacing={3}>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>Type</Typography>
+                  <Typography sx={{ marginTop: '4px', color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>Type</Typography>
                 </Grid>
                 <Grid item xs={10}>
                 <Select
@@ -145,6 +195,7 @@ const PropertyForm = () => {
                       backgroundColor: "white",
                       borderColor: "black",
                       borderRadius: "7px",
+                      marginTop: '4px',
                     }}
                     size="small"
                     fullWidth
@@ -158,31 +209,55 @@ const PropertyForm = () => {
                   </Select>
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>SqFt</Typography>
+                  <Typography sx={{ marginTop: '4px', color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>SqFt</Typography>
                 </Grid>
                 <Grid item xs={10}>
-                  <TextField size="small" fullWidth className={classes.inputField} placeholder="Enter sqft" />
+                  <TextField size="small" fullWidth sx={{
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "3px",
+                        height: '40px', // Consistent height for all text fields
+                        marginTop: '4px', // Add space above the text field
+                      }} placeholder="Enter sqft" />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>Bedrooms</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>Bedrooms</Typography>
                 </Grid>
                 <Grid item xs={10}>
-                  <TextField size="small" fullWidth className={classes.inputField} placeholder="# of bedrooms" />
+                  <TextField size="small" fullWidth sx={{
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "3px",
+                        height: '40px', // Consistent height for all text fields
+                        marginTop: '4px', // Add space above the text field
+                      }} placeholder="# of bedrooms" />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography size="small" sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>Bathrooms</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>Bathrooms</Typography>
                 </Grid>
                 <Grid item xs={10}>
-                  <TextField size="small" fullWidth className={classes.inputField} placeholder="# of bathrooms" />
+                  <TextField size="small" fullWidth sx={{
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "3px",
+                        height: '40px', // Consistent height for all text fields
+                        marginTop: '4px', // Add space above the text field
+                      }} placeholder="# of bathrooms" />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>Property Value</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>Property Value</Typography>
                 </Grid>
                 <Grid item xs={10}>
-                  <TextField size="small" fullWidth className={classes.inputField} placeholder="$" />
+                  <TextField size="small" fullWidth sx={{
+                        backgroundColor: "white",
+                        borderColor: "black",
+                        borderRadius: "3px",
+                        height: '40px', // Consistent height for all text fields
+                        marginTop: '4px', // Add space above the text field
+                      }} placeholder="$" />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>$/SqFt</Typography>
+                  <Typography sx={{ marginTop: '4px',color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>$/SqFt</Typography>
                 </Grid>
                 <Grid item xs={10}>
                 <Typography>0</Typography>
@@ -193,11 +268,14 @@ const PropertyForm = () => {
         </CardContent>
       </Card>
 
-      <Card className={classes.card}>
+      <Card sx={{backgroundColor: '#D6D5DA', 
+      marginBottom: '18px', 
+        padding: '16px',
+        borderRadius: '8px', }}>
         <CardContent className={classes.cardContent}>
             
         <Grid item xs={12}>
-                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 16 }}>
+                  <Typography sx={{ color: '#160449', fontWeight: theme.typography.primary.fontWeight, fontSize: 14 }}>
                     Owner Notes
                   </Typography>
                   <TextField
@@ -206,6 +284,7 @@ const PropertyForm = () => {
                       backgroundColor: readOnlyNotes ? theme.palette.form.main : "white",
                       borderColor: "black",
                       borderRadius: "7px",
+                      marginTop: '8px',
                     }}
                     InputProps={{
                       readOnly: readOnlyNotes,

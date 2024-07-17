@@ -185,7 +185,7 @@ import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
-import PropertyForm from "./Property/PropertyForm";
+import OwnerFirstProperty from "./OwnerDashboard/OwnerFirstProperty";
 
 function Main() {
   console.log("In Main Page");
@@ -380,7 +380,7 @@ function Main() {
             <Route path="employeeAccess" element={<EmployeeAccess />} />
 
 
-            <Route path="newPropertyForm" element={<PropertyForm />} />
+            <Route path="newPropertyForm" element={<OwnerFirstProperty />} />
           </Route>
         </Routes>
         <Footer />
