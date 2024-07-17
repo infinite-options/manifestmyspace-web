@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import MapIcon from '@mui/icons-material/Map';
+import { useLocation, useNavigate } from "react-router-dom";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import AddressAutocompleteInput from './AddressAutocompleteInput';
 import theme from '../../theme/theme';
@@ -94,6 +95,7 @@ const useStyles = makeStyles({
 
 const PropertyForm = () => {
 	const classes = useStyles();
+    let navigate = useNavigate();
 	const { user, selectedRole, selectRole, Name } = useUser();
 	//const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);
 	const [readOnlyNotes, setReadOnlyNotes] = useState(false);
