@@ -1,9 +1,7 @@
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import {
-    Typography, Box, Paper, Grid, TextField, MenuItem, Button, FormControl, InputAdornment, Select, Dialog, DialogActions,
-    DialogContent, DialogTitle, IconButton, Snackbar, Alert, InputLabel, Accordion, AccordionSummary, AccordionDetails,
-    Card, CardContent, CardMedia,
+    Typography, Box, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button
 } from "@mui/material";
 import dayjs from "dayjs";
 import { makeStyles } from "@material-ui/core/styles";
@@ -13,7 +11,6 @@ import AdultOccupant from "./AdultOccupant";
 import ChildrenOccupant from "./ChildrenOccupant";
 import PetsOccupant from "./PetsOccupant";
 import VehiclesOccupant from "./VehiclesOccupant";
-import EndLeaseButton from "./EndLeaseButton";
 import Documents from "./Documents";
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
@@ -22,10 +19,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import APIConfig from '../../utils/APIConfig';
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import propertyImage from "../../images/house.png";
 import TenantDetails from "./TenantDetails";
 import UtilitiesManager from "./Utilities";
 import FeesDetails from "./FeesDetails";
+import LeaseSummary from "./LeaseSummary";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -70,10 +67,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const [isRenewNeeded, setIsRenewNeeded] = useState(false);
     const alertRef = useRef(null);
     const [uploadedFiles, setuploadedFiles] = useState([]);
-    const [tenantUtils, setTenantUtils] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
-    //image slider
-    const [image, setImage] = useState([]);
 
 
     useEffect(() => {
@@ -86,15 +80,16 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
         //Set utilities details
         const utils = JSON.parse(filtered.property_utilities);
-        setUtilities(utils);
-        setNewUtilities(utils);
-        console.log('utils', utils);
-        const tenantUtils = utils
-            .filter((util) => util.utility_payer_id === "050-000043")
-            .map((util) => util.utility_desc)
-            .join(", ");
-        setTenantUtils(tenantUtils)
-        console.log('tenantUtils', tenantUtils);
+        if (utils === null) {
+            setUtilities([]);
+            setNewUtilities([]);
+        } else {
+            setUtilities(utils);
+            setNewUtilities(utils);
+        }
+        // setUtilities(utils);
+        // setNewUtilities(utils);
+        // console.log('utils', utils);
 
         //Set fees details
         const fees = JSON.parse(filtered.lease_fees);
@@ -106,18 +101,22 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         console.log('rent values', rentFee)
         setRent(rentFee);
 
-        const newUtilityIds = new Set(newUtilities.map(utility => utility.utility_type_id));
+        const newUtilityIds = utils !== null ? new Set(utils.map(utility => utility.utility_type_id)) : null;
         // Create a map of items that are present in utilitiesMap but not in newUtilities
-        const missingUtilitiesMap = new Map();
+        let missingUtilitiesMap = new Map();
 
-        for (const [key, value] of utilitiesMap) {
-            if (!newUtilityIds.has(key)) {
-                missingUtilitiesMap.set(key, value);
+        if (newUtilityIds) {
+            for (const [key, value] of utilitiesMap) {
+                if (!newUtilityIds.has(key)) {
+                    missingUtilitiesMap.set(key, value);
+                }
             }
+        } else {
+            missingUtilitiesMap = utilitiesMap;
         }
 
         setRemainingUtils(missingUtilitiesMap);
-        console.log('missing', typeof (missingUtilitiesMap));
+        console.log('missing', typeof (missingUtilitiesMap), missingUtilitiesMap);
         const docs = JSON.parse(filtered.lease_documents).map((doc, index) => ({
             ...doc,
             id: index
@@ -145,9 +144,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         setLeaseVehicles(vehicles);
         getListDetails();
 
-        //set images
-        const parsedPropertyImages = currentLease.property_images ? JSON.parse(currentLease.property_favorite_image) : null;
-        setImage(parsedPropertyImages === null ? propertyImage : parsedPropertyImages);
         setShowSpinner(false);
     }, [leaseDetails, selectedLeaseId])
 
@@ -300,17 +296,17 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
                 console.log("leaseApplicationFormData", leaseApplicationFormData);
 
-                // axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                //     .then((response) => {
-                //         console.log('Data updated successfully');
-                //         showSnackbar("Successfully Renewed the lease.", "success");
-                //     })
-                //     .catch((error) => {
-                //         if (error.response) {
-                //             console.log(error.response.data);
-                //             showSnackbar("Cannot Renew the lease. Please Try Again", "error");
-                //         }
-                //     });
+                axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                    .then((response) => {
+                        console.log('Data updated successfully');
+                        showSnackbar("Successfully Renewed the lease.", "success");
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            console.log(error.response.data);
+                            showSnackbar("Cannot Renew the lease. Please Try Again", "error");
+                        }
+                    });
             }
         } catch (error) {
             console.log("Cannot Renew the lease");
@@ -326,50 +322,46 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                 "Access-Control-Allow-Credentials": "*",
             };
 
-            if (isRenewNeeded) {
-                //step 1 - END the current lease
-
+            for (let i = 0; i < tenantWithId.length; i++) {
                 const leaseApplicationFormData = new FormData();
-                const formattedMoveOutDate = formatDate(moveoutDate);;
-                leaseApplicationFormData.append("lease_uid", currentLease.lease_uid);
-                leaseApplicationFormData.append("lease_status", "ENDED");
 
-                console.log('formattedMoveOutDate', formattedMoveOutDate, typeof (formattedMoveOutDate))
-                console.log('end form', leaseApplicationFormData);
-                axios
-                    .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+                // leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
+                const feesJSON = JSON.stringify(leaseFees)
+                leaseApplicationFormData.append("lease_fees", feesJSON);
+                leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
+                leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
+                leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
+                leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
+                if (uploadedFiles.length) {
+                    const documentsDetails = [];
+                    [...uploadedFiles].forEach((file, i) => {
+                        leaseApplicationFormData.append(`file-${i}`, file, file.name);
+                        // const fileType = contractFileTypes[i] || '';
+                        const fileType = 'pdf';
+                        const documentObject = {
+                            // file: file,
+                            fileIndex: i,
+                            fileName: file.name,
+                            fileType: fileType,
+                            type: file.type,
+                        };
+                        documentsDetails.push(documentObject);
+                    });
+                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
+                }
+
+                axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
-                        console.log("Data updated successfully", response);
+                        console.log('Data updated successfully', response);
+                        showSnackbar("Successfully Updated the lease.", "success");
                     })
                     .catch((error) => {
                         if (error.response) {
-                            showSnackbar("Cannot Update the lease. Please Try Again", "error");
                             console.log(error.response.data);
+                            showSnackbar("Cannot Update the lease. Please Try Again", "error");
                         }
                     });
 
-                //Step 2 - Create a new row for the lease
-                handleRenewLease();
-            } else {
-                for (let i = 0; i < tenantWithId.length; i++) {
-                    const leaseApplicationFormData = new FormData();
-
-                    leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
-                    const feesJSON = JSON.stringify(leaseFees)
-                    leaseApplicationFormData.append("lease_fees", feesJSON);
-
-                    axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                        .then((response) => {
-                            console.log('Data updated successfully');
-                            showSnackbar("Successfully Updated the lease.", "success");
-                        })
-                        .catch((error) => {
-                            if (error.response) {
-                                console.log(error.response.data);
-                                showSnackbar("Cannot Update the lease. Please Try Again", "error");
-                            }
-                        });
-                }
             }
         } catch (error) {
             console.log("Cannot Update the lease");
@@ -468,218 +460,23 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     </Grid>
                     {/* Start */}
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "10px", backgroundColor: color, paddingBottom: "10px" }}>
-                            <Grid container spacing={2}>
-                                <Grid item md={0.5} />
-                                <Grid item xs={12} md={2.5}>
-                                    <Card
-                                        sx={{
-                                            backgroundColor: color,
-                                            boxShadow: 'none',
-                                            elevation: '0',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            height: '100%', // Ensure card takes full height of its container
-                                        }}
-                                    >
-                                        <CardContent
-                                            sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                width: '100%',
-                                                height: '100%',
-                                                padding: '0 !important',
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                    height: '150px',
-                                                    width: '100%',
-                                                }}
-                                            >
-                                                <CardMedia
-                                                    component="img"
-                                                    image={image}
-                                                    sx={{
-                                                        elevation: '0',
-                                                        boxShadow: 'none',
-                                                        flexGrow: 1,
-                                                        objectFit: 'fill',
-                                                        width: '100%',
-                                                        height: '100px',
-                                                        marginTop: "5px"
-                                                    }}
-                                                />
-                                            </Box>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                                <Grid item xs={0} md={0.5} />
-                                <Grid item md={3}>
-                                    <Grid container marginTop="10px">
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>Lease Start</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>{currentLease.lease_start}</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>Lease End</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>{formatDate(currentLease.lease_end)}</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>Move In</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>{currentLease.lease_move_in_date}</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>Move Out</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>TBD</Typography>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={0} md={0.5} />
-                                <Grid item md={4}>
-                                    <Grid container marginTop="10px">
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>Rent</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>${rent.charge}</Typography>
-                                        </Grid>
-
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>Frequency</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>{rent.frequency}</Typography>
-                                        </Grid>
-
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>Available to Pay</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>{rent.available_topay} Days Before</Typography>
-                                        </Grid>
-
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.secondary.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>Due Date</Typography>
-                                        </Grid>
-                                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                                            <Typography sx={{
-                                                textTransform: 'none',
-                                                color: "#160449",
-                                                fontWeight: theme.typography.light.fontWeight,
-                                                fontSize: theme.typography.smallFont,
-                                            }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Paper>
+                        <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
+                            newStartDate={newStartDate} newEndDate={newEndDate} />
                     </Grid>
                     {/* End */}
 
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            {tenantWithId && tenantWithId.length > 0 && (
+                    {tenantWithId && tenantWithId.length > 0 && (
+                        <Grid item xs={12} md={12}>
+                            <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                                 <TenantDetails tenantWithId={tenantWithId} setTenantWithId={setTenantWithId} />
-                            )}
-                        </Paper>
-                    </Grid>
+                            </Paper>
+                        </Grid>
+                    )}
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            {leaseFees && 
-                            <FeesDetails getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees}/>
-                        }
+                            {leaseFees &&
+                                <FeesDetails getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
+                            }
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={12}>
@@ -690,22 +487,28 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                     aria-controls="occupants-content"
                                     id="occupants-header"
                                 >
-                                    <Typography
-                                        sx={{
-                                            color: "#160449",
-                                            fontWeight: theme.typography.primary.fontWeight,
-                                            fontSize: theme.typography.small,
-                                            textAlign: 'center',
-                                            paddingBottom: "10px",
-                                            paddingTop: "5px",
-                                            flexGrow: 1,
-                                            paddingLeft: "50px",
-                                        }}
-                                        paddingTop="5px"
-                                        paddingBottom="10px"
-                                    >
-                                        Occupants Details
-                                    </Typography>
+                                    <Grid container>
+                                        <Grid item md={11.2}>
+                                            <Typography
+                                                sx={{
+                                                    color: "#160449",
+                                                    fontWeight: theme.typography.primary.fontWeight,
+                                                    fontSize: theme.typography.small,
+                                                    textAlign: 'center',
+                                                    paddingBottom: "10px",
+                                                    paddingTop: "5px",
+                                                    flexGrow: 1,
+                                                    paddingLeft: "50px",
+                                                }}
+                                                paddingTop="5px"
+                                                paddingBottom="10px"
+                                            >
+                                                Occupants Details
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item md={0.5} />
+                                    </Grid>
+
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     {leaseAdults &&

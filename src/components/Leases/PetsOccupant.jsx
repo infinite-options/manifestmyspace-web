@@ -5,10 +5,6 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import theme from "../../theme/theme";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 import { Close } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -185,7 +181,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                         '& .MuiDataGrid-columnHeader': {
                             justifyContent: 'center',
                             alignItems: 'center',
-                            // color: "#3D5CAC",
+                            color: "#160449",
                         },
                         '& .MuiDataGrid-columnHeaderTitle': {
                             font: "bold",
@@ -195,7 +191,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                             fontWeight: "bold",
                         },
                         '& .MuiDataGrid-cell': {
-                            // color: "#3D5CAC",
+                            color: "#160449",
                             fontWeight: "bold",
                         },
 

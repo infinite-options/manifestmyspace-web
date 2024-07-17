@@ -173,9 +173,6 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
         //         </DialogActions>
         //     </Dialog> 
 
-
-
-
         <Box
             style={{
                 display: "flex",
@@ -227,7 +224,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                     aria-labelledby="demo-controlled-radio-buttons-group"
                                     name="controlled-radio-buttons-group"
                                     value={selectedValue}
-                                    onChange={(event)=> handleRadioChange(event, 0)}
+                                    onChange={(event) => handleRadioChange(event, 0)}
                                     id='0'
                                     sx={{ marginLeft: '5px', width: '100%' }}
                                 >
@@ -246,29 +243,9 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                 >
                                                     The tenant does not plan on living here next year.
                                                 </Typography>
-                                                {selectedValue === 'The tenant does not plan on living here next year.' && (
-                                                    <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: '10px' }}>
-                                                        <Grid item xs={4}>
-                                                            <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC"  }}>Move-Out Date</Typography>
-                                                        </Grid>
-                                                        <Grid item xs={8}>
-                                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                <DatePicker
-                                                                    value={moveoutDate}
-                                                                    onChange={e => {
-                                                                        const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                                        setMoveOutDate(dayjs(formattedDate));
-                                                                    }}
-                                                                />
-                                                            </LocalizationProvider>
-                                                        </Grid>
-                                                    </Grid>
-                                                )}
                                             </Box>
-
                                         }
                                     />
-
                                 </RadioGroup>
                             </FormControl>
                         </Paper>
@@ -281,7 +258,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                     aria-labelledby="demo-controlled-radio-buttons-group"
                                     name="controlled-radio-buttons-group"
                                     value={selectedValue}
-                                    onChange={(event)=> handleRadioChange(event, 1)}
+                                    onChange={(event) => handleRadioChange(event, 1)}
                                     id='1'
                                     sx={{ marginLeft: '5px', width: '100%' }}
                                 >
@@ -300,51 +277,50 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                 >
                                                     The tenant has a personal reason(s) for terminating the lease early.
                                                 </Typography>
-                                                
+
                                                 {selectedValue === 'The tenant has a personal reason(s) for terminating the lease early.' && (
                                                     <>
-                                                    <Typography
-                                                    sx={{
-                                                        color: "#3D5CAC",
-                                                        fontWeight: theme.typography.primary.fontWeight,
-                                                        fontSize: '14px',
-                                                        marginTop:'10px'
-                                                    }}
-                                                >
-                                                    Please specify the reason.
-                                                </Typography>
-                                                    <FormGroup>
-                                                        <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'property'}
-                                                            onChange={(event) => handleOption2CheckboxChange(event, "The tenant is moving into another property.")}
-                                                            value="property" />} label="The tenant is moving into another property." />
-                                                        <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'area'}
-                                                            onChange={(event) => handleOption2CheckboxChange(event, "The tenant is moving out of the area.")}
-                                                            value="area" />} label="The tenant is moving out of the area." />
-                                                        <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'rent'}
-                                                            onChange={(event) => handleOption2CheckboxChange(event, "The tenant is unable to pay rent.")}
-                                                            value="rent" />} label="The tenant is unable to pay rent." />
-                                                        <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'military'}
-                                                            onChange={(event) => handleOption2CheckboxChange(event, "The tenant is starting active military duty.")}
-                                                            value="military" />} label="The tenant is starting active military duty." />
-                                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                            <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'other'}
-                                                                onChange={(event) => handleOption2CheckboxChange(event, "Other")}
-                                                                value="other" />} label="Other:" />
-                                                            <TextField
-                                                                value={otherText}
-                                                                onChange={(e) => setOtherText(e.target.value)}
-                                                                label="Please provide a reason."
-                                                                variant="outlined"
-                                                                fullWidth
-                                                            />
-                                                        </Box>
-                                                    </FormGroup>
+                                                        <Typography
+                                                            sx={{
+                                                                color: "#3D5CAC",
+                                                                fontWeight: theme.typography.primary.fontWeight,
+                                                                fontSize: '14px',
+                                                                marginTop: '10px'
+                                                            }}
+                                                        >
+                                                            Please specify the reason.
+                                                        </Typography>
+                                                        <FormGroup>
+                                                            <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'property'}
+                                                                onChange={(event) => handleOption2CheckboxChange(event, "The tenant is moving into another property.")}
+                                                                value="property" />} label="The tenant is moving into another property." />
+                                                            <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'area'}
+                                                                onChange={(event) => handleOption2CheckboxChange(event, "The tenant is moving out of the area.")}
+                                                                value="area" />} label="The tenant is moving out of the area." />
+                                                            <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'rent'}
+                                                                onChange={(event) => handleOption2CheckboxChange(event, "The tenant is unable to pay rent.")}
+                                                                value="rent" />} label="The tenant is unable to pay rent." />
+                                                            <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'military'}
+                                                                onChange={(event) => handleOption2CheckboxChange(event, "The tenant is starting active military duty.")}
+                                                                value="military" />} label="The tenant is starting active military duty." />
+                                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                <FormControlLabel control={<Checkbox checked={selectedOption2Checkbox === 'other'}
+                                                                    onChange={(event) => handleOption2CheckboxChange(event, "Other")}
+                                                                    value="other" />} label="Other:" />
+                                                                <TextField
+                                                                    value={otherText}
+                                                                    onChange={(e) => setOtherText(e.target.value)}
+                                                                    label="Please provide a reason."
+                                                                    variant="outlined"
+                                                                    fullWidth
+                                                                />
+                                                            </Box>
+                                                        </FormGroup>
                                                     </>
                                                 )}
                                             </Box>
                                         }
                                     />
-
                                 </RadioGroup>
                             </FormControl>
                         </Paper>
@@ -358,7 +334,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                     aria-labelledby="demo-controlled-radio-buttons-group"
                                     name="controlled-radio-buttons-group"
                                     value={selectedValue}
-                                    onChange={(event)=> handleRadioChange(event, 2)}
+                                    onChange={(event) => handleRadioChange(event, 2)}
                                     id='2'
                                     sx={{ marginLeft: '5px', width: '100%' }}
                                 >
@@ -378,42 +354,41 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                 >
                                                     The tenant is currently undergoing a legal issue(s).
                                                 </Typography>
-                                               
+
                                                 {selectedValue === 'The tenant is currently undergoing a legal issue(s).' && (
                                                     <>
-                                                     <Typography
-                                                     sx={{
-                                                         color: "#3D5CAC",
-                                                         fontWeight: theme.typography.primary.fontWeight,
-                                                         fontSize: '14px',
-                                                         marginTop:'10px'
-                                                     }}
-                                                 >
-                                                     Please specify the reason.
-                                                 </Typography>
-                                                    <FormGroup>
-                                                        <FormControlLabel control={<Checkbox checked={selectedOption3Checkbox === 'crime'}
-                                                            onChange={(event) => handleOption3CheckboxChange(event, "The tenant has committed a crime.")}
-                                                            value="crime" />} label="The tenant has committed a crime." />
-                                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                            <FormControlLabel control={<Checkbox checked={selectedOption3Checkbox === 'other'}
-                                                                onChange={(event) => handleOption3CheckboxChange(event, "Other")}
-                                                                value="other" />} label="Other:" />
-                                                            <TextField
-                                                                value={otherText}
-                                                                onChange={(e) => setOtherText(e.target.value)}
-                                                                label="Please provide a reason."
-                                                                variant="outlined"
-                                                                fullWidth
-                                                            />
-                                                        </Box>
-                                                    </FormGroup>
+                                                        <Typography
+                                                            sx={{
+                                                                color: "#3D5CAC",
+                                                                fontWeight: theme.typography.primary.fontWeight,
+                                                                fontSize: '14px',
+                                                                marginTop: '10px'
+                                                            }}
+                                                        >
+                                                            Please specify the reason.
+                                                        </Typography>
+                                                        <FormGroup>
+                                                            <FormControlLabel control={<Checkbox checked={selectedOption3Checkbox === 'crime'}
+                                                                onChange={(event) => handleOption3CheckboxChange(event, "The tenant has committed a crime.")}
+                                                                value="crime" />} label="The tenant has committed a crime." />
+                                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                <FormControlLabel control={<Checkbox checked={selectedOption3Checkbox === 'other'}
+                                                                    onChange={(event) => handleOption3CheckboxChange(event, "Other")}
+                                                                    value="other" />} label="Other:" />
+                                                                <TextField
+                                                                    value={otherText}
+                                                                    onChange={(e) => setOtherText(e.target.value)}
+                                                                    label="Please provide a reason."
+                                                                    variant="outlined"
+                                                                    fullWidth
+                                                                />
+                                                            </Box>
+                                                        </FormGroup>
                                                     </>
                                                 )}
                                             </Box>
                                         }
                                     />
-
                                 </RadioGroup>
                             </FormControl>
                         </Paper>
@@ -426,7 +401,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                     aria-labelledby="demo-controlled-radio-buttons-group"
                                     name="controlled-radio-buttons-group"
                                     value={selectedValue}
-                                    onChange={(event)=> handleRadioChange(event, 3)}
+                                    onChange={(event) => handleRadioChange(event, 3)}
                                     id='3'
                                     sx={{ marginLeft: '5px', width: '100%' }}
                                 >
@@ -445,24 +420,6 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                 >
                                                     The property has been deemed unsafe or uninhabitable.
                                                 </Typography>
-                                                {selectedValue === 'The property has been deemed unsafe or uninhabitable.' && (
-                                                    <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: '10px' }}>
-                                                        <Grid item xs={4}>
-                                                            <Typography sx={{ fontSize: "14px", fontWeight: "bold" , color: "#3D5CAC" }}>Move-Out Date</Typography>
-                                                        </Grid>
-                                                        <Grid item xs={8}>
-                                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                <DatePicker
-                                                                    value={moveoutDate}
-                                                                    onChange={e => {
-                                                                        const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                                        setMoveOutDate(dayjs(formattedDate));
-                                                                    }}
-                                                                />
-                                                            </LocalizationProvider>
-                                                        </Grid>
-                                                    </Grid>
-                                                )}
                                             </Box>
                                         }
                                     />
@@ -471,6 +428,25 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                         </Paper>
                     </Grid>
                 </Grid>
+
+                <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: '10px' }}>
+                    <Grid item xs={3} />
+                    <Grid item xs={2}>
+                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>Move-Out Date</Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                value={moveoutDate}
+                                onChange={e => {
+                                    const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                    setMoveOutDate(dayjs(formattedDate));
+                                }}
+                            />
+                        </LocalizationProvider>
+                    </Grid>
+                </Grid>
+
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
                     <Button
                         sx={{
