@@ -13,7 +13,7 @@ const formatUtilityName = (name) => name || '';
 const UtilityComponent = ({ newUtilities, utilities, utilitiesMap, handleNewUtilityChange }) => {
     console.log('utilcomp', newUtilities);
     return (
-        <Grid container sx={{ marginBottom: "5px", marginTop: '5px' }} spacing={4}>
+        <Grid container sx={{ marginBottom: "20px", marginTop: '5px' }} spacing={4}>
             <Grid item xs={5} />
             <Grid item xs={7}>
                 <Grid container sx={{ alignItems: 'center', justifyContent: 'center' }}>

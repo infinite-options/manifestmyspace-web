@@ -24,12 +24,12 @@ export default function LeasesDashboard() {
         axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
         //axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
             const fetchData = res.data["Lease_Details"].result;
-            const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
-            setCurrentLease(filtered);
             if (res.status === 200) {
                 console.log('In Leases dashboard', fetchData);
                 setLeaseDetails(fetchData);
                 // setSelectedLeaseId(fetchData[0].lease_uid);
+                const filtered = fetchData.find(lease => lease.lease_uid === selectedLeaseId);
+                setCurrentLease(filtered);
                 setDataReady(true);
             }
         }).catch(err => {
