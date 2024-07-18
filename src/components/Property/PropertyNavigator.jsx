@@ -42,14 +42,11 @@ import APIConfig from '../../utils/APIConfig';
 import { v4 as uuidv4 } from 'uuid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import HappinessMatrixWidget from '../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget.jsx';
-// import ContactDetails from '../Contacts/ContactDetails.jsx';
 
 
 const getAppColor = (app) =>
 	app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
 
-// export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {
 export default function PropertyNavigator({
 	index,
 	propertyList,
@@ -67,11 +64,7 @@ export default function PropertyNavigator({
 
   const [propertyData, setPropertyData] = useState(propertyList);
   const [currentIndex, setCurrentIndex] = useState(index !== undefined ? index : 0);
-  // console.log(currentIndex);
-  // const [item, setItem] = useState(propertyData[currentIndex]);
   const [property, setProperty] = useState(propertyList[currentIndex]);
-  console.log('prop data', propertyData);
-  console.log('prop', property);
   const [currentId, setCurrentId] = useState(property.property_uid);
   const [contactDetails, setContactDetails] = useState([]);
   const [maintenanceData, setMaintenanceData] = useState([{}]);
@@ -87,7 +80,6 @@ export default function PropertyNavigator({
 
   const [happinessData, setHappinessData] = useState([]);
   const [dataforhappiness, setdataforhappiness] = useState([]);
-  console.log('Property Navigator to ownerhappiness -', happinessData);
 
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
@@ -102,15 +94,9 @@ export default function PropertyNavigator({
   };
 
   useEffect(() => {
-    // Fetch data when component mounts
     getDataFromAPI();
-    // Fetch other necessary data for happinessMatrixData and happinessData
   }, []);
 
-  // Testing July 15th - PART 1
-  const [showHappinessMatrixWidget, setShowHappinessMatrixWidget] = useState(false);
-  const [happinessMatrixData, setHappinessMatrixData] = useState([]);
-//   const [happinessData, setHappinessData] = useState([]);
 
 
 	const handleOpen = () => setOpen(true);
@@ -149,9 +135,6 @@ export default function PropertyNavigator({
 	const color = theme.palette.form.main;
 	const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid);
 
-	// console.log(propertyId)
-	console.log('Maintenance Request Data: ', maintenanceReqData);
-
 	let data = '';
 	const role = roleName();
 	if (role === 'Manager') {
@@ -159,7 +142,6 @@ export default function PropertyNavigator({
 	} else if (role === 'Owner') {
 		data = 'maintenance_request_status';
 	}
-	console.log('Role is: ', role, data);
 
 	const maintenanceColumns = [
 		{
@@ -185,21 +167,21 @@ export default function PropertyNavigator({
 		},
 	];
 
-	function getPropertyList(data) {
-		const propertyList = data['Property'].result;
-		const applications = data['Applications'].result;
-		const appsMap = new Map();
-		applications.forEach((a) => {
-			const appsByProperty = appsMap.get(a.property_uid) || [];
-			appsByProperty.push(a);
-			appsMap.set(a.property_uid, appsByProperty);
-		});
-		return propertyList.map((p) => {
-			p.applications = appsMap.get(p.property_uid) || [];
-			p.applicationsCount = [...p.applications].filter((a) => a.lease_status === 'NEW').length;
-			return p;
-		});
-	}
+	// function getPropertyList(data) {
+	// 	const propertyList = data['Property'].result;
+	// 	const applications = data['Applications'].result;
+	// 	const appsMap = new Map();
+	// 	applications.forEach((a) => {
+	// 		const appsByProperty = appsMap.get(a.property_uid) || [];
+	// 		appsByProperty.push(a);
+	// 		appsMap.set(a.property_uid, appsByProperty);
+	// 	});
+	// 	return propertyList.map((p) => {
+	// 		p.applications = appsMap.get(p.property_uid) || [];
+	// 		p.applicationsCount = [...p.applications].filter((a) => a.lease_status === 'NEW').length;
+	// 		return p;
+	// 	});
+	// }
 
 	useEffect(() => {
 		setPropertyData(propertyList);
@@ -216,7 +198,6 @@ export default function PropertyNavigator({
 	}, [index, propertyList]);
 
 	useEffect(() => {
-		// console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
 		setPropertyId(propertyData[currentIndex].property_uid);
 
 		const getContractsForOwner = async () => {
@@ -228,7 +209,6 @@ export default function PropertyNavigator({
 				const contractsResponse = await response.json();
 				var count = 0;
 				const contracts = contractsResponse.result.filter((contract) => contract.property_id === propertyId);
-				// console.log("--debug Contracts for owner--", contracts)
 				contracts.forEach((contract) => {
 					if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
 						count++;
@@ -241,7 +221,6 @@ export default function PropertyNavigator({
 			}
 		};
 		getContractsForOwner();
-		// refreshPropertyData();
 		const rentDetails = getRentStatus();
 		setpropertyRentStatus(rentDetails);
 
@@ -262,7 +241,6 @@ export default function PropertyNavigator({
     }
   }, [currentIndex, propertyId]);
 
-	//const [propertyId, setPropertyId] = useState('200-000028')
 	const tenant_detail =
 		property.lease_start && property.tenant_uid
 			? `${property.tenant_first_name} ${property.tenant_last_name}`
@@ -274,46 +252,10 @@ export default function PropertyNavigator({
 			: theme.typography.common.blue
 	);
 
-	//   useEffect(() => {
-	//     const getMaintenanceForProperty = async () => {
-	//       setShowSpinner(true);
-	//       try {
-	//         console.log("About to call maintenanceStatus endpoint Property Navigator");
-	//         // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`);
-	//         const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`);
-	//         // call maintenanceStatus
-	//         const propertyMaintenanceData = await responseProperty.json();
-	//         const propertyMaintenanceDataResult = propertyMaintenanceData.result;
-	//         setMaintenanceReqData(propertyMaintenanceDataResult);
-	//         const property_uid = property.property_uid;
-	//         var propertyMaintenanceList = [];
-	//         Object.keys(propertyMaintenanceDataResult).forEach((status) => {
-	//           // console.log("propertyMaintenanceDataResult[status]", status, propertyMaintenanceDataResult[status])
-	//           // console.log("propertyMaintenanceDataResult[status].maintenance_items", status, propertyMaintenanceDataResult[status].maintenance_items)
-	//           if (status === "COMPLETED" || status === "CANCELLED" || status === "PAID" || status === "0") {
-	//             delete propertyMaintenanceDataResult[status];
-	//           } else if (propertyMaintenanceDataResult[status].maintenance_items) {
-	//             propertyMaintenanceDataResult[status].maintenance_items = propertyMaintenanceDataResult[status].maintenance_items.filter(
-	//               (item) => item.maintenance_property_id === property_uid
-	//             );
-	//             propertyMaintenanceList = propertyMaintenanceList.concat(propertyMaintenanceDataResult[status].maintenance_items);
-	//           }
-	//         });
-	//         setMaintenanceData(propertyMaintenanceList);
-	//       } catch (error) {
-	//         console.log(error);
-	//       }
-	//       setShowSpinner(false);
-	//     };
-	//     getMaintenanceForProperty();
-	//   }, [currentIndex, propertyId]);
-
 	useEffect(() => {
 		let profileId = getProfileId();
 		console.log('getProfileID', getProfileId());
 		if (profileId.startsWith('600')) {
-			// maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
-			// console.log("Manager ID. and we need to return maintenance that is properly parsed")
 			maintenanceManagerDataCollectAndProcess(
 				setMaintenanceReqData,
 				setShowSpinner,
@@ -321,8 +263,6 @@ export default function PropertyNavigator({
 				profileId
 			);
 		} else if (profileId.startsWith('110')) {
-			// maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
-			// console.log("Manager ID. and we need to return maintenance that is properly parsed")
 			maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
 		} else if (profileId.startsWith('200')) {
 			maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
@@ -351,9 +291,6 @@ export default function PropertyNavigator({
 	  }, [dashboard_id]);
 
 	function getColorStatusBasedOnSelectedRole() {
-		// const role = roleName();
-		// console.log("role", role)
-
 		if (role === 'Manager') {
 			return theme.colorStatusPMO;
 		} else if (role === 'Owner') {
@@ -369,7 +306,6 @@ export default function PropertyNavigator({
 		}
 	}
 
-	// Testing July 15th - part 2
 	const handleOwnerClick = (ownerData) => {
 		navigate('/ownerContactDetailsHappinessMatrix', {
 		// navigate(`/ownerContactTest`, {
@@ -388,17 +324,10 @@ export default function PropertyNavigator({
 		const role = roleName();
 		console.log(role);
 		let status = 'NEW REQUEST';
-		console.log('initial Status: ', status);
-		console.log('handleOnClickNavigateToMaintenance');
-		console.log('row', row);
-		// console.log("maintenanceReqData", maintenanceReqData);
-		// console.log("maintenanceData", maintenanceData);
-		console.log('New data: ', property.maintenance);
-		// console.log("New ID: ", property.maintenance);
-		// console.log(
-		//   "maintenance_request_index",
-		//   maintenanceData.findIndex((item) => item.maintenance_request_uid === row.id)
-		// );
+		// console.log('initial Status: ', status);
+		// console.log('handleOnClickNavigateToMaintenance');
+		// console.log('row', row);
+		// console.log('New data: ', property.maintenance);
 		console.log(
 			'maintenance_request_index_new',
 			property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
@@ -407,9 +336,6 @@ export default function PropertyNavigator({
 		console.log('Row: ', row);
 		console.log('Row1: ', row.row);
 		console.log('Row2: ', row.row.maintenance_status);
-
-		// console.log("maintenanceItemsForStatus", maintenanceReqData[status]);
-		// console.log("allMaintenanceData", maintenanceReqData);
 
 		if (role === 'Manager') {
 			// These maitenance_status fields work for a Property Manager.  Need to make this Role Specific
@@ -436,12 +362,6 @@ export default function PropertyNavigator({
 				status = 'INFO REQUESTED';
 			}
 		}
-
-		console.log('Final status', status);
-		console.log(row.id);
-		console.log(maintenanceReqData[status].findIndex);
-		console.log(maintenanceReqData[status]);
-		console.log(maintenanceReqData);
 
 		try {
 			if (!isDesktop) {
@@ -479,82 +399,13 @@ export default function PropertyNavigator({
 		}
 	}
 
-	function displayTopMaintenanceItem() {
-		const colorStatus = getColorStatusBasedOnSelectedRole();
-		if (property.maintenanceCount > 0) {
-			// console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
-			return (
-				<DataGrid
-					rows={property.maintenance}
-					columns={maintenanceColumns}
-					disableColumnMenu={!isDesktop}
-					initialState={{
-						pagination: {
-							paginationModel: {
-								pageSize: 5,
-							},
-						},
-					}}
-					getRowId={(row) => row.maintenance_request_uid}
-					pageSizeOptions={[5]}
-					onRowClick={(row) => {
-						{
-							console.log('Row =', row);
-						}
-						handleOnClickNavigateToMaintenance(row);
-					}}
-					//   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
-				/>
-
-				// <DataGrid
-				//   rows={property.maintenance}
-				//   columns={maintenanceColumns}
-				//   initialState={{
-				//     pagination: {
-				//       paginationModel: {
-				//         pageSize: 5,
-				//       },
-				//     },
-				//   }}
-				//   getRowId={(row) => row.maintenance_request_uid}
-				//   pageSizeOptions={[5]}
-				//   onRowClick={(row) => {
-				//     {
-				//       console.log("List Item Clicked", property, i, propertyList);
-				//     }
-				//     handleOnClickNavigateToMaintenance(row)}}
-				// />
-			);
-		} else {
-			return 'No Open Maintenance Tickets';
-		}
-	}
-
-	//   function numberOfMaintenanceItems(maintenanceItems) {
-	//     if (maintenanceItems && maintenanceItems.length > 0) {
-	//       return maintenanceItems.filter((mi) => !!mi.maintenance_request_uid).length;
-	//     } else {
-	//       return 0;
-	//     }
-	//   }
-
-	function navigateToMaintenanceAccordion() {
-		// console.log("click to maintenance accordion for property")
-		navigate('/maintenance');
-
-		// TODO: Need to send props to /maintenance to navigate to correct tab and item
-	}
-
 	const handleNextCard = () => {
-		//   setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
 		let nextIndex = (currentIndex + 1) % propertyData.length;
 		setCurrentIndex(nextIndex);
 		const nextId = propertyData[nextIndex].property_uid;
-		// console.log("next property id", nextId)
 		setCurrentId(nextId);
 		setProperty(propertyData[nextIndex]);
 
-		// setImages(JSON.parse(propertyData[nextIndex].property_images));
 		const parsedPropertyImages = propertyData[nextIndex].property_images
 			? JSON.parse(propertyData[nextIndex].property_images)
 			: [];
@@ -563,18 +414,15 @@ export default function PropertyNavigator({
 		setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
 
 		setActiveStep(0);
-		//   setActiveStep((JSON.parse(propertyData[currentIndex+1].property_images)).findIndex(url => url === propertyData[currentIndex+1].property_favorite_image));
 	};
 
 	const handlePreviousCard = () => {
 		let previousIndex = (currentIndex - 1 + propertyData.length) % propertyData.length;
 		setCurrentIndex(previousIndex);
 		const previousId = propertyData[previousIndex].property_uid;
-		// console.log("previous property id", previousId)
 		setCurrentId(previousId);
 		setProperty(propertyData[previousIndex]);
 
-		// setImages(JSON.parse(propertyData[previousIndex].property_images));
 		const parsedPropertyImages = propertyData[previousIndex].property_images
 			? JSON.parse(propertyData[previousIndex].property_images)
 			: [];
@@ -583,7 +431,6 @@ export default function PropertyNavigator({
 		setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
 
 		setActiveStep(0);
-		// setActiveStep((JSON.parse(propertyData[currentIndex-1].property_images)).findIndex(url => url === propertyData[currentIndex-1].property_favorite_image));
 	};
 
 	const handleNext = () => {
@@ -607,7 +454,6 @@ export default function PropertyNavigator({
 				},
 			});
 		} else {
-			// console.log("--debug--", index, propertyData)
 			navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
 		}
 	};
@@ -1155,7 +1001,8 @@ export default function PropertyNavigator({
 										<Grid container spacing={2}>
 											<Grid item xs={12}>
 												{property.property_available_to_rent === 1 ? (
-													<Box>
+													// padding extra on the bottom
+													<Box sx ={{ pb: 40}}>
 														<Button
 															variant="outlined"
 															sx={{
