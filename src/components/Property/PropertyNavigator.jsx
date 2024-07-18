@@ -51,9 +51,9 @@ export default function PropertyNavigator({
 	index,
 	propertyList,
 	allRentStatus,
-	isDesktop,
 	rawPropertyData,
 	contracts,
+	isDesktop = true,
 	props,
 }) {
 	// console.log('In Property Navigator');
@@ -80,6 +80,8 @@ export default function PropertyNavigator({
 
   const [happinessData, setHappinessData] = useState([]);
   const [dataforhappiness, setdataforhappiness] = useState([]);
+
+  console.log("lcation state rent status", allRentStatus);
 
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
@@ -167,21 +169,21 @@ export default function PropertyNavigator({
 		},
 	];
 
-	// function getPropertyList(data) {
-	// 	const propertyList = data['Property'].result;
-	// 	const applications = data['Applications'].result;
-	// 	const appsMap = new Map();
-	// 	applications.forEach((a) => {
-	// 		const appsByProperty = appsMap.get(a.property_uid) || [];
-	// 		appsByProperty.push(a);
-	// 		appsMap.set(a.property_uid, appsByProperty);
-	// 	});
-	// 	return propertyList.map((p) => {
-	// 		p.applications = appsMap.get(p.property_uid) || [];
-	// 		p.applicationsCount = [...p.applications].filter((a) => a.lease_status === 'NEW').length;
-	// 		return p;
-	// 	});
-	// }
+	function getPropertyList(data) {
+		const propertyList = data['Property'].result;
+		const applications = data['Applications'].result;
+		const appsMap = new Map();
+		applications.forEach((a) => {
+			const appsByProperty = appsMap.get(a.property_uid) || [];
+			appsByProperty.push(a);
+			appsMap.set(a.property_uid, appsByProperty);
+		});
+		return propertyList.map((p) => {
+			p.applications = appsMap.get(p.property_uid) || [];
+			p.applicationsCount = [...p.applications].filter((a) => a.lease_status === 'NEW').length;
+			return p;
+		});
+	}
 
 	useEffect(() => {
 		setPropertyData(propertyList);
@@ -396,6 +398,72 @@ export default function PropertyNavigator({
 			console.log(error);
 			alert('Error navigating to maintenance detail', error);
 		}
+	}
+
+	function displayTopMaintenanceItem() {	
+		const colorStatus = getColorStatusBasedOnSelectedRole();	
+		if (property.maintenanceCount > 0) {	
+			// console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData	
+			return (	
+				<DataGrid	
+					rows={property.maintenance}	
+					columns={maintenanceColumns}	
+					disableColumnMenu={!isDesktop}	
+					initialState={{	
+						pagination: {	
+							paginationModel: {	
+								pageSize: 5,	
+							},	
+						},	
+					}}	
+					getRowId={(row) => row.maintenance_request_uid}	
+					pageSizeOptions={[5]}	
+					onRowClick={(row) => {	
+						{	
+							console.log('Row =', row);	
+						}	
+						handleOnClickNavigateToMaintenance(row);	
+					}}	
+					//   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}	
+				/>	
+
+				// <DataGrid	
+				//   rows={property.maintenance}	
+				//   columns={maintenanceColumns}	
+				//   initialState={{	
+				//     pagination: {	
+				//       paginationModel: {	
+				//         pageSize: 5,	
+				//       },	
+				//     },	
+				//   }}	
+				//   getRowId={(row) => row.maintenance_request_uid}	
+				//   pageSizeOptions={[5]}	
+				//   onRowClick={(row) => {	
+				//     {	
+				//       console.log("List Item Clicked", property, i, propertyList);	
+				//     }	
+				//     handleOnClickNavigateToMaintenance(row)}}	
+				// />	
+			);	
+		} else {	
+			return 'No Open Maintenance Tickets';	
+		}	
+	}	
+
+	//   function numberOfMaintenanceItems(maintenanceItems) {	
+	//     if (maintenanceItems && maintenanceItems.length > 0) {	
+	//       return maintenanceItems.filter((mi) => !!mi.maintenance_request_uid).length;	
+	//     } else {	
+	//       return 0;	
+	//     }	
+	//   }	
+
+	function navigateToMaintenanceAccordion() {	
+		// console.log("click to maintenance accordion for property")	
+		navigate('/maintenance');	
+
+		// TODO: Need to send props to /maintenance to navigate to correct tab and item	
 	}
 
 	const handleNextCard = () => {

@@ -56,6 +56,8 @@ function ManagerDashboard() {
   let dashboard_id = getProfileId();
   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
   const navigate = useNavigate();
+  const chartWidth = 400;	  // const chartWidth = 400;
+  const chartHeight = 350;
   let date = new Date();
   // const [loading, setLoading] = useState(true);
 
@@ -70,13 +72,17 @@ function ManagerDashboard() {
   const [happinessData, setHappinessData] = useState([]);
   const [dataforhappiness, setdataforhappiness] = useState([]);
 
-  // useEffect(() => {
-  //   console.log("ManagerDashboard - cashflowDetails - ", cashflowDetails);
-  // }, [cashflowDetails]);
+  useEffect(() => {
+    console.log("RentStatus check --", rentStatus);
+  }, [rentStatus]);
 
-  // useEffect(() => {
-  //   console.log("ManagerDashboard - cashflowData - ", cashflowData);
-  // }, [cashflowData]);
+  useEffect(() => {
+    console.log("property endpoint resp - ", property_endpoint_resp);
+  }, [property_endpoint_resp]);
+
+  useEffect(() => {
+    console.log("Contract requests - ", contractRequests);
+  }, [contractRequests]);
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];

@@ -14,12 +14,22 @@ export default function PropertyDetail({}) {
   const location = useLocation();
   let navigate = useNavigate();
   //   const [contractsForProperty, setContractsForProperty] = useState([]);
-  //   const contracts = location.state.contracts;
-  const propertyList = location.state.propertyList; // list of Property Details + Applications + Maintenance from /properties endpoint
-  const index = location.state.index;
-  const allRentStatus = location.state.allRentStatus;
-  const rawPropertyData = location.state.rawPropertyData;
-  const isDesktop = location.state.isDesktop;
+  // const contracts = location.state.contracts;
+  const propertyList = location.state?.propertyList; // list of Property Details + Applications + Maintenance from /properties endpoint
+  const index = location.state?.index;
+  const allRentStatus = location.state.allRentStatus?location.state.allRentStatus: [];
+  const rawPropertyData = location.state.rawPropertyData?location.state.rawPropertyData: [];
+  const isDesktop = location.state.isDesktop?location.state.isDesktop: true;
+
+  
+
+  console.log("LOCATION STATE", location.state)
+  console.log("all rentStatus", allRentStatus)
+
+  // useEffect(() => {
+  //   console.log("all rentStatus", allRentStatus)
+	// }, [allRentStatus]); 
+
   //   const [index, setIndex] = useState(location.state.index);
 
   // console.log("--debug-- all contracts PropertyDetail", contracts)
