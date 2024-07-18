@@ -122,11 +122,12 @@ const PropertyForm = () => {
     const [ownerId, setOwnerId] = useState(getProfileId());
     const [selectedOwner, setSelectedOwner] = useState("");
 	const [notes, setNotes] = useState('');
-	const [appliances, setAppliances] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
   const [isListed, setListed] = useState(false);
   const [ownerList, setOwnerList] = useState([]);
+  const [applianceList, setApplianceList] = useState([]);
+  const [selectedAppliances, setSelectedAppliances] = useState([]);
 
 	const handleAddressSelect = (address) => {
 		setAddress(address.street ? address.street : '');
@@ -182,6 +183,21 @@ const PropertyForm = () => {
     const handleListedChange = (event) => {
         setListed(event.target.checked);
       };
+	
+	  const handleNotesChange = (event) => {
+		setNotes(event.target.value);
+	  };
+
+	  const handleApplianceChange = (event) => {
+        const value = event.target.value;
+        setSelectedAppliances((prevSelected) => {
+            if (prevSelected.includes(value)) {
+                return prevSelected.filter((item) => item !== value);
+            } else {
+                return [...prevSelected, value];
+            }
+        });
+    };
 
     const handleSubmit = async (event) => {
         console.log("is it in handlesubmit");
@@ -196,6 +212,8 @@ const PropertyForm = () => {
         const fullAddress = `${address}, ${city}, ${state}, ${zip}`;
     
         const coordinates = await getLatLongFromAddress(fullAddress);
+
+		//console.log("----selectedAppliances----", selectedAppliances);
     
     
         if (coordinates) {
@@ -218,6 +236,10 @@ const PropertyForm = () => {
         formData.append("property_area", squareFootage);
         formData.append("property_listed", 0);
         formData.append("property_notes", notes);
+		// Add selected appliances in the correct format
+		selectedAppliances.forEach(appliance => {
+			formData.append("appliances", appliance);
+		});
     
         console.log("Formdata:", formData);
     
@@ -360,6 +382,20 @@ const PropertyForm = () => {
           getOwnerContacts();
         }
       }, []);
+
+	  useEffect(() => {
+        const fetchAppliances = async () => {
+            try {
+                const response = await fetch(`${APIConfig.baseURL.dev}/lists?list_category=appliances`);
+                const data = await response.json();
+                const validAppliances = data.result.filter(item => item.list_item.trim() !== "");
+            setApplianceList(validAppliances);
+            } catch (error) {
+                console.error("Error fetching appliances:", error);
+            }
+        };
+        fetchAppliances();
+    }, []);
 
 	return (
 		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px' }}>
@@ -763,6 +799,7 @@ const PropertyForm = () => {
 							}}
 							size="small"
 							multiline={true}
+							onChange={handleNotesChange}
 						/>
 					</Grid>
 					<Grid item xs={12}>
@@ -772,26 +809,20 @@ const PropertyForm = () => {
 							Appliances Included
 						</Typography>
 						<Grid container spacing={0}>
-							{[
-								'Fridge',
-								'Oven/Range',
-								'Cooktop',
-								'Washer',
-								'Dryer',
-								'Air Conditioning',
-								'Central Heating',
-								'Dishwasher',
-								'Garbage Disposal',
-								'Microwave',
-								'Ceiling Fans',
-								'Window Coverings',
-								'Fireplace',
-								'Other',
-							].map((appliance, index) => (
-								<Grid item xs={6} sm={4} key={index}>
-									<FormControlLabel control={<Checkbox />} label={appliance} />
-								</Grid>
-							))}
+						{applianceList.map((appliance, index) => (
+                                <Grid item xs={6} sm={4} key={index}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                value={appliance.list_uid}
+                                                checked={selectedAppliances.includes(appliance.list_uid)}
+                                                onChange={handleApplianceChange}
+                                            />
+                                        }
+                                        label={appliance.list_item}
+                                    />
+                                </Grid>
+                            ))}
 						</Grid>
 					</Grid>
 				</CardContent>
