@@ -18,18 +18,15 @@ export default function LeasesDashboard() {
     const [dataReady, setDataReady] = useState(false);
     const { getProfileId, isManager, roleName, selectedRole } = useUser();
     const [isEndClicked, setIsEndClicked] = useState(false);
-    const [currentLease, setCurrentLease] = useState(null);
 
     useEffect(() => {
         axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
-        //axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
+            //axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
             const fetchData = res.data["Lease_Details"].result;
             if (res.status === 200) {
                 console.log('In Leases dashboard', fetchData);
                 setLeaseDetails(fetchData);
                 // setSelectedLeaseId(fetchData[0].lease_uid);
-                const filtered = fetchData.find(lease => lease.lease_uid === selectedLeaseId);
-                setCurrentLease(filtered);
                 setDataReady(true);
             }
         }).catch(err => {
@@ -45,14 +42,15 @@ export default function LeasesDashboard() {
                         <CircularProgress color="inherit" />
                     </Backdrop>
                 ) : (<Grid container spacing={5}>
-                    <Grid item xs={12} md={leaseDetails && leaseDetails.length > 0 ? 4: 12}>
+                    <Grid item xs={12} md={leaseDetails && leaseDetails.length > 0 ? 4 : 12}>
                         <Leases leaseDetails={leaseDetails} setSelectedLeaseId={setSelectedLeaseId} />
                     </Grid>
-                    {selectedLeaseId != null && isEndClicked === false && (<Grid item xs={12} md={8}>
-                        <RenewLease leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked}/>
-                    </Grid>)}
+                    {selectedLeaseId != null && isEndClicked === false && (
+                        <Grid item xs={12} md={8}>
+                            <RenewLease leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} />
+                        </Grid>)}
                     {selectedLeaseId != null && isEndClicked === true && (<Grid item xs={12} md={8}>
-                        <EndLeaseButton theme={theme} leaseData={currentLease} setIsEndClicked={setIsEndClicked}/>
+                        <EndLeaseButton theme={theme} leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} />
                     </Grid>)}
                 </Grid>)}
             </Container>
