@@ -22,6 +22,7 @@ export default function Leases(props) {
   const [owner_checkbox_open, set_owner_checkbox_open] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
+  const currentYear = new Date().getFullYear();
   const [moveoutCount, setMoveoutCount] = useState(0);
   const [leaseDate, setLeaseDate] = useState([]);
   const [selectedProperties, setSelectedProperties] = useState([]);
@@ -171,17 +172,22 @@ export default function Leases(props) {
     const leases = new Map([]);
     let moveoutNum = 0;
     fetchData.forEach((lease) => {
-      const date = lease.lease_end.slice(0, 7);
-      console.log("Date after slice: ", date);
-      if (leases.get(date) === undefined) {
-        leases.set(date, [lease]);
-      } else {
-        const arr = leases.get(date);
-        arr.push(lease);
-        leases.set(date, arr);
-        console.log("ARR: ", arr);
-        moveoutNum += getMoveoutNum(arr);
-        console.log("Move out Num Total: ", moveoutNum);
+      const currentDate = new Date();
+      const leaseDate = new Date(lease.lease_end);
+      if (leaseDate.getFullYear() > currentDate.getFullYear() ||
+        (leaseDate.getFullYear() === currentDate.getFullYear() && leaseDate.getMonth() >= currentDate.getMonth())) {
+        const date = lease.lease_end.slice(0, 7);
+        console.log("Date after slice: ", date);
+        if (leases.get(date) === undefined) {
+          leases.set(date, [lease]);
+        } else {
+          const arr = leases.get(date);
+          arr.push(lease);
+          leases.set(date, arr);
+          console.log("ARR: ", arr);
+          moveoutNum += getMoveoutNum(arr);
+          console.log("Move out Num Total: ", moveoutNum);
+        }
       }
     });
     set_property_checkbox_items(fetchData);
@@ -411,14 +417,17 @@ export default function Leases(props) {
           {[...leaseDate.keys()].map((date, i) => {
             const leases = leaseDate.get(date);
             let tabColor = "#FFFFFF";
-            const endMonth = date.split("-")[1];
+            // const endMonth = date.split("-")[1];
+            const [endYear, endMonth] = date.split("-").map(Number);
             // console.log("lease endDate ", date, Number(endMonth), Number(currentMonth))
-            if (Number(currentMonth) === Number(endMonth)) {
+            // if (Number(currentMonth) === Number(endMonth)) {
+            if(currentYear === endYear && currentMonth === endMonth){
               tabColor = "#F87C7A";
-            } else if (Number(currentMonth + 1) === Number(endMonth + 1)) {
+            } else if (currentYear === endYear && currentMonth + 1 === endMonth || 
+              (currentMonth === 12 && currentYear + 1 === endYear && endMonth === 1)) {
               tabColor = "#FFC614";
             }
-            return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} setSelectedLeaseId={props.setSelectedLeaseId}/>;
+            return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} setSelectedLeaseId={props.setSelectedLeaseId} />;
           })}
         </Box>
         <Modal open={open} onClose={handle_property_checkbox_close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
@@ -506,7 +515,7 @@ function LeaseMonth(props) {
         display: "flex",
         flexDirection: "row",
         marginBottom: "20px",
-        marginTop:"20px",
+        marginTop: "20px",
       }}
     >
       <Box
@@ -544,7 +553,7 @@ function LeaseMonth(props) {
         }}
       >
         {leaseData.map((lease, i) => (
-          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId}/>
+          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId} />
         ))}
       </Box>
     </Box>
@@ -607,7 +616,7 @@ function LeaseComponent(props) {
         sx={{
           marginLeft: "0px",
           marginRight: "auto",
-          cursor:"pointer",
+          cursor: "pointer",
         }}
         onClick={(e) => {
           // navigate("/viewLease", {

@@ -214,7 +214,7 @@ const CreateProfile = () => {
                 console.log("createProfile - responseJSON - ", responseJSON);
                 if (responseJSON.message === "User already exists") {
                     alert(responseJSON.message);
-                    navigate('/newUser')
+                    navigate('/userLogin', { state: { user_emai: user.email } })
                     return;
                 } else {
                     setAuthData(responseJSON.result);
