@@ -21,6 +21,9 @@ import AddressAutocompleteInput from './AddressAutocompleteInput';
 import theme from '../../theme/theme';
 import { useUser } from '../../contexts/UserContext';
 import ImageUploader from '../ImageUploader';
+import { getLatLongFromAddress } from "../../utils/geocode";
+
+import APIConfig from "../../utils/APIConfig";
 
 const useStyles = makeStyles({
 	card: {
@@ -96,10 +99,14 @@ const useStyles = makeStyles({
 const PropertyForm = () => {
 	const classes = useStyles();
     let navigate = useNavigate();
+    const { getProfileId } = useUser();
 	const { user, selectedRole, selectRole, Name } = useUser();
-	//const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);
-	const [readOnlyNotes, setReadOnlyNotes] = useState(false);
+	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);
+	//const [readOnlyNotes, setReadOnlyNotes] = useState(false);
 	const [selectedImageList, setSelectedImageList] = useState([]);
+
+    const location = useLocation();
+  // const { property_endpoint_resp } = location.state;
 
 	const [address, setAddress] = useState('');
 	const [unit, setUnit] = useState('');
@@ -112,9 +119,14 @@ const PropertyForm = () => {
 	const [bedrooms, setBedrooms] = useState('');
 	const [bathrooms, setBathrooms] = useState('');
 	const [cost, setCost] = useState('');
-
+    const [ownerId, setOwnerId] = useState(getProfileId());
+    const [selectedOwner, setSelectedOwner] = useState("");
 	const [notes, setNotes] = useState('');
 	const [appliances, setAppliances] = useState([]);
+    const [showSpinner, setShowSpinner] = useState(false);
+    const [activeStep, setActiveStep] = useState(0);
+  const [isListed, setListed] = useState(false);
+  const [ownerList, setOwnerList] = useState([]);
 
 	const handleAddressSelect = (address) => {
 		setAddress(address.street ? address.street : '');
@@ -160,8 +172,194 @@ const PropertyForm = () => {
 	};
 
 	const handleBackButton = () => {
-		navigate(-1);
+		navigate(-1); };
+
+    const handleOwnerChange = (event) => {
+            setSelectedOwner(event.target.value);
+         
 	};
+
+    const handleListedChange = (event) => {
+        setListed(event.target.checked);
+      };
+
+    const handleSubmit = async (event) => {
+        console.log("is it in handlesubmit");
+        event.preventDefault();
+        setShowSpinner(true);
+        const formData = new FormData();
+    
+        const currentDate = new Date();
+        // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
+        const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
+    
+        const fullAddress = `${address}, ${city}, ${state}, ${zip}`;
+    
+        const coordinates = await getLatLongFromAddress(fullAddress);
+    
+    
+        if (coordinates) {
+          formData.append("property_latitude", coordinates.latitude);
+          formData.append("property_longitude", coordinates.longitude);
+        }
+    
+        formData.append("property_owner_id", selectedOwner ? selectedOwner : ownerId);
+        
+        formData.append("property_active_date", formattedDate);
+        formData.append("property_address", address);
+        formData.append("property_unit", unit);
+        formData.append("property_city", city);
+        formData.append("property_state", state);
+        formData.append("property_zip", zip);
+        formData.append("property_type", type);
+        formData.append("property_num_beds", bedrooms);
+        formData.append("property_num_baths", bathrooms);
+        formData.append("property_value", cost);
+        formData.append("property_area", squareFootage);
+        formData.append("property_listed", 0);
+        formData.append("property_notes", notes);
+    
+        console.log("Formdata:", formData);
+    
+        const files = selectedImageList;
+        let i = 0;
+        for (const file of selectedImageList) {
+          // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+          let key = `img_${i++}`;
+          if (file.file !== null) {
+            // newProperty[key] = file.file;
+            formData.append(key, file.file);
+          } else {
+            // newProperty[key] = file.image;
+            formData.append(key, file.image);
+          }
+          if (file.coverPhoto) {
+            formData.append("img_favorite", key);
+          }
+        }
+    
+        for (let [key, value] of formData.entries()) {
+          console.log("Property Data entered");
+          console.log(key, value);
+        }
+    
+        let responsePropertyUID = null;
+        try {
+          const response = await fetch(`${APIConfig.baseURL.dev}/properties`, {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          console.log("response data", data);
+          responsePropertyUID = data.property_UID;
+          console.log("response data - property UID: ", responsePropertyUID);
+        } catch (error) {
+          console.log("Error posting data:", error);
+        } 
+        /*
+        // create new contract if profile === manager
+        if (selectedRole === "MANAGER") {
+          const contractFormData = new FormData();
+    
+          console.log("In Create new contract");
+    
+          const currentDate = new Date();
+          const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
+    
+          // responsePropertyUID = [responsePropertyUID];  // This doesn't work since it returns the string in single quotes
+          responsePropertyUID = '["' + responsePropertyUID + '"]';
+          console.log("Reformated property data: ", responsePropertyUID);
+          contractFormData.append("contract_property_ids", responsePropertyUID);
+          console.log("Immediately after: ", contractFormData);
+          contractFormData.append("contract_business_id", getProfileId());
+          contractFormData.append("contract_start_date", formattedDate);
+          contractFormData.append("contract_status", "NEW");
+          // console.log("Contract Formdata:", contractFormData);
+    
+          console.log("In Create new contract - contractFormData = ", contractFormData);
+          const url = `${APIConfig.baseURL.dev}/contracts`;
+    
+          let responseContractUID = null;
+    
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: contractFormData,
+            });
+    
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+    
+            const data = await response.json();
+            console.log("contracts - POST - response data = ", data);
+    
+            responseContractUID = data.contract_UID;
+            console.log("response data - contract UID: ", responseContractUID);
+    
+            // console.log('navigating to /managementContractDetails', responseContractUID, getProfileId(), responsePropertyUID);
+    
+            navigate("/managementContractDetails", {
+              state: {
+                contract_uid: responseContractUID,
+                contract_business_id: getProfileId(),
+                contract_property_id: responsePropertyUID,
+                // property_endpoint_resp: property_endpoint_resp,
+              },
+            });
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        }
+     */
+        setAddress("");
+        setCity("");
+        setState("");
+        setZip("");
+        setType("");
+        setSquareFootage("");
+        setBedrooms("");
+        setBathrooms("");
+        setNotes("");
+        setSelectedImageList([]);
+        setActiveStep(0);
+        setShowSpinner(false);
+        if (selectedRole === "OWNER") {
+          navigate("/properties", {state:{isBack:true}});
+        }
+      };
+
+      useEffect(() => {
+        //This runs for a manager who wants to select an owner while adding a property
+        if (selectedRole === "MANAGER") {
+          console.log("MANAGER ID", ownerId);
+          const getOwnerContacts = async () => {
+            try {
+              const response = await fetch(`${APIConfig.baseURL.dev}/contacts/${getProfileId()}`);
+    
+              if (!response.ok) {
+                console.log("Error fetching owner data");
+                return;
+              }
+              const ownerdata = await response.json();
+              console.log(ownerdata);
+              let contactArray = ownerdata.management_contacts.owners;
+              let ownerObjList = [];
+              contactArray.forEach((contact) => {
+                let obj = {
+                  owner_id: contact.contact_uid,
+                  owner_name: contact.contact_first_name + " " + contact.contact_last_name,
+                };
+                ownerObjList.push(obj);
+              });
+              setOwnerList(ownerObjList);
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          getOwnerContacts();
+        }
+      }, []);
 
 	return (
 		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px' }}>
@@ -498,6 +696,48 @@ const PropertyForm = () => {
 								</Grid>
 							</Grid>
 						</Grid>
+                        <Grid item xs={12}>
+                  {selectedRole === "MANAGER" ? (
+                    <div>
+                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                        Owner
+                      </Typography>
+                      <Select
+                        sx={{
+                          backgroundColor: "white",
+                          borderColor: "black",
+                          borderRadius: "7px",
+                        }}
+                        size="small"
+                        fullWidth
+                        value={selectedOwner}
+                        onChange={handleOwnerChange}
+                        displayEmpty
+                      >
+                        <MenuItem value="" disabled>
+                          Select Owner
+                        </MenuItem>
+                        {ownerList.map((option, index) => (
+                          <MenuItem key={index} value={option.owner_id}>
+                            {option.owner_name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </Grid>
+                <Grid item xs={12}>
+                  {selectedRole === "MANAGER" ? (
+                    <div>
+                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label="Available to rent" />
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </Grid>
+              
 					</Grid>
 				</CardContent>
 			</Card>
@@ -571,6 +811,7 @@ const PropertyForm = () => {
 							fontWeight: 'bold',
 							textTransform: 'none',
 						}}
+                        onClick={handleSubmit}
 					>
 						Save Property
 					</Button>
