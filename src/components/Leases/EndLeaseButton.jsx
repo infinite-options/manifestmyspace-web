@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Button, Typography, Box, Grid, Paper, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio,
-    FormGroup, Checkbox, TextField
+    FormGroup, Checkbox, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Alert
 } from '@mui/material';
 import dayjs from 'dayjs';
 import Backdrop from "@mui/material/Backdrop";
@@ -9,20 +9,32 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useUser } from "../../contexts/UserContext";
+import axios from 'axios';
 
 
-const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndLeaseStatus, setIsEndClicked }) => {
+const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked }) => {
     const [open, setOpen] = useState(false);
     const [confirmationText, setConfirmationText] = useState("")
     const [showSpinner, setShowSpinner] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
     const [moveOutDate, setMoveOutDate] = useState(null);
-    const [moveOutReason, setMoveOutReason] = useState(null);
-    const [otherText, setOtherText] = useState('');
+    const [moveOutReason, setMoveOutReason] = useState("");
+    const [endLeaseStatus, setEndLeaseStatus] = useState('');
     const [selectedOption2Checkbox, setSelectedOption2Checkbox] = useState('');
     const [selectedOption3Checkbox, setSelectedOption3Checkbox] = useState('');
     const [selectedId, setSelectedId] = useState(null);
+    const [leaseData, setLeaseData] = useState({});
+    const [error, setError] = useState([]);
+    const [success, setSuccess] = useState([]);
+    const { selectedRole } = useUser();
     const color = theme.palette.form.main;
+
+    useEffect(() => {
+        const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
+        console.log('filtered', filtered);
+        setLeaseData(filtered);
+    }, [selectedId])
 
     const getEndLeaseConfirmation = () => {
         const currentDate = new Date();
@@ -43,18 +55,28 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
         const lowerBoundNoticeDateFormatted = dayjs(lowerBoundNoticeDate).format("MM-DD-YYYY");
         console.log("Notice Date: ", noticeDate);
         console.log("lowerBoundNoticeDateFormatted: ", lowerBoundNoticeDateFormatted);
+        let role = "";
+        if (selectedRole === "MANAGER"){
+            role = "Tenant";
+        } else {
+            role = "Property Manager";
+        }
 
         if (leaseData.lease_status === "ACTIVE" || leaseData.lease_status === "ACTIVE-M2M") {
-            if (currentDate <= noticeDate && currentDate >= lowerBoundNoticeDate) {
+            if (selectedId === 2) {
+                setEndLeaseStatus("TERMINATED");
+                return `This lease will be terminated immediately, effective from today. Are you sure you want to terminate the lease?`;
+            } else if (currentDate <= noticeDate && currentDate >= lowerBoundNoticeDate) {
                 console.log("Inside normal end processing - Ending status");
-                // setEndLeaseStatus("ENDING")
+                setEndLeaseStatus("ENDING")
                 return `Your lease will end on ${leaseEndDateFormatted} and 
                 you are responsible for rent payments until the end of the lease. Are you sure you want to end the lease?`;
             } else {
+
                 console.log("Inside early end processing - EarlyTermination status");
-                // setEndLeaseStatus("EARLY TERMINATION")
+                setEndLeaseStatus("EARLY TERMINATION")
                 return `Notice for ending the lease must be provided ${noticePeriod} days in advance. 
-                Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
+                Ending the lease early will require approval from the ${role}. Are you sure you want to end the lease?`;
             }
         } else {
             return 'ERROR: lease status is not "ACTIVE" or "ACTIVE-M2M"';
@@ -63,9 +85,18 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
 
 
     const handleClickOpen = async () => {
-        const confirmationText = getEndLeaseConfirmation();
-        await setConfirmationText(confirmationText);
-        setOpen(true);
+        const newError = [];
+        if (moveOutDate === null) newError.push("Move Out Date is required");
+        if (moveOutReason === "") newError.push("Move Out Reason is required");
+        console.log('moveOutReason', moveOutReason);
+        if (newError.length === 0) {
+            setError([]);
+            const confirmationText = getEndLeaseConfirmation();
+            await setConfirmationText(confirmationText);
+            setOpen(true);
+        } else {
+            setError(newError);
+        }
     };
 
     const handleClose = () => {
@@ -73,13 +104,17 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
     };
 
     const handleConfirm = () => {
-        // handleEndLease();
+        handleEndLease();
         setOpen(false);
     };
 
     const handleRadioChange = (event, id) => {
         console.log('event1', event);
-        setMoveOutReason(event.target.value);
+        if (id == 0 || id == 3) {
+            setMoveOutReason(event.target.value);
+        } else {
+            setMoveOutReason("");
+        }
         setSelectedValue(event.target.value);
         setSelectedId(id);
     };
@@ -100,79 +135,52 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
         setIsEndClicked(false);
     }
 
-    return (
-        // <Button
-        //         variant="outlined"
-        //         sx={{
-        //             background: "#D4736D",
-        //             color: theme.palette.background.default,
-        //             cursor: "pointer",
-        //             textTransform: "none",
-        //             minWidth: "150px",
-        //             minHeight: "35px",
-        //             display: "flex",
-        //             alignItems: "center",
-        //             justifyContent: "center",
-        //             '&:hover': {
-        //                 background: '#DEA19C',
-        //             },
-        //         }}
-        //         size="small"
-        //         onClick={handleClickOpen}
-        //     >
-        //         <Typography sx={{
-        //             textTransform: "none",
-        //             color: theme.typography.primary.black,
-        //             fontWeight: theme.typography.secondary.fontWeight,
-        //             fontSize: theme.typography.smallFont,
-        //             whiteSpace: "nowrap",
-        //             marginLeft: "1%",
-        //         }}>
-        //             End
-        //         </Typography>
-        //     </Button> 
-        //     <Dialog
-        //         open={open}
-        //         onClose={handleClose}
-        //         aria-labelledby="alert-dialog-title"
-        //         aria-describedby="alert-dialog-description"
-        //         maxWidth="md"
-        //     >
-        //         <DialogTitle id="alert-dialog-title">{"End Lease Confirmation"}</DialogTitle>
-        //         <DialogContent>
-        //             <DialogContentText id="alert-dialog-description">
-        //                 {confirmationText}
-        //             </DialogContentText>
-        //         </DialogContent>
-        //         <DialogActions>
-        //             <Button onClick={handleClose} sx={{
-        //                 background: "#D4736D",
-        //                 color: theme.palette.background.default,
-        //                 cursor: "pointer",
-        //                 textTransform: "none",
-        //                 '&:hover': {
-        //                     background: '#DEA19C',
-        //                 },
-        //             }}
-        //                 size="small">
-        //                 Cancel
-        //             </Button>
-        //             <Button onClick={handleConfirm} autoFocus variant="outlined"
-        //                 sx={{
-        //                     background: "#6788B3",
-        //                     color: theme.palette.background.default,
-        //                     cursor: "pointer",
-        //                     textTransform: "none",
-        //                     '&:hover': {
-        //                         background: '#92A9CB',
-        //                     },
-        //                 }}
-        //                 size="small">
-        //                 Confirm
-        //             </Button>
-        //         </DialogActions>
-        //     </Dialog> 
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        console.log('check date', dateString, date)
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}-${day}-${year}`;
+    }
 
+    const handleEndLease = () => {
+        const headers = {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials": "*",
+        };
+
+        const leaseApplicationFormData = new FormData();
+        const formattedMoveOutDate = formatDate(moveOutDate);;
+        leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
+        leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);
+        leaseApplicationFormData.append("lease_renew_status", endLeaseStatus);
+        leaseApplicationFormData.append("lease_end_reason", moveOutReason);
+        if (endLeaseStatus === "EARLY TERMINATION") {
+            const currentDate = new Date();
+            const currentDateFormatted = dayjs(currentDate).format("MM-DD-YYYY");
+            leaseApplicationFormData.append("lease_early_end_date", currentDateFormatted);
+        }
+
+        console.log('leaseApplicationFormData', leaseData.lease_uid, formattedMoveOutDate, endLeaseStatus, moveOutReason);
+        console.log('end form', leaseApplicationFormData);
+        axios
+            .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+            .then((response) => {
+                console.log("Data updated successfully", response);
+                setSuccess(`Your lease has been moved to ${endLeaseStatus} status.`, "success");
+            })
+            .catch((error) => {
+                if (error.response) {
+                    setError(["Cannot End the lease. Please Try Again"]);
+                    console.log(error.response.data);
+                }
+            });
+    }
+
+    return (
         <Box
             style={{
                 display: "flex",
@@ -217,6 +225,24 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                             Please provide a reason for why you are ending the tenant’s lease.
                         </Typography>
                     </Grid>
+                    {error.length > 0 && (
+                        <Box>
+                            <Alert severity="error">
+                                    {success}
+                            </Alert>
+                        </Box>
+                    )}
+                    {success.length > 0 && (
+                        <Box>
+                            <Alert severity="info">
+                                <ul>
+                                    {success.map((err, index) => (
+                                        <li key={index}>{err}</li>
+                                    ))}
+                                </ul>
+                            </Alert>
+                        </Box>
+                    )}
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
@@ -308,8 +334,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                                     onChange={(event) => handleOption2CheckboxChange(event, "Other")}
                                                                     value="other" />} label="Other:" />
                                                                 <TextField
-                                                                    value={otherText}
-                                                                    onChange={(e) => setOtherText(e.target.value)}
+                                                                    onChange={(e) => setMoveOutReason(`other: {e.target.value}`)}
                                                                     label="Please provide a reason."
                                                                     variant="outlined"
                                                                     fullWidth
@@ -376,8 +401,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                                                     onChange={(event) => handleOption3CheckboxChange(event, "Other")}
                                                                     value="other" />} label="Other:" />
                                                                 <TextField
-                                                                    value={otherText}
-                                                                    onChange={(e) => setOtherText(e.target.value)}
+                                                                    onChange={(e) => setMoveOutReason(`other: {e.target.value}`)}
                                                                     label="Please provide a reason."
                                                                     variant="outlined"
                                                                     fullWidth
@@ -437,7 +461,7 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                     <Grid item xs={7}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
-                                value={moveoutDate}
+                                value={moveOutDate}
                                 onChange={e => {
                                     const formattedDate = e ? e.format("MM-DD-YYYY") : null;
                                     setMoveOutDate(dayjs(formattedDate));
@@ -480,10 +504,56 @@ const EndLeaseButton = ({ theme, handleEndLease, moveoutDate, leaseData, setEndL
                                 backgroundColor: '#92A9CB',
                             },
                         }}
+                        onClick={handleClickOpen}
                         color="secondary">
                         Confirm
                     </Button>
                 </Box>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                    maxWidth="md"
+                >
+                    <DialogTitle id="alert-dialog-title">{"End Lease Confirmation"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {confirmationText}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
+                        <Button onClick={handleClose} sx={{
+                            background: "#D4736D",
+                            color: "#160449",
+                            cursor: "pointer",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            textTransform: "none",
+                            '&:hover': {
+                                background: '#DEA19C',
+                            },
+                        }}
+                            size="small">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleConfirm} autoFocus variant="outlined"
+                            sx={{
+                                background: "#6788B3",
+                                color: "#160449",
+                                cursor: "pointer",
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                textTransform: "none",
+                                '&:hover': {
+                                    background: '#92A9CB',
+                                },
+                            }}
+                            size="small">
+                            Confirm
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Paper>
         </Box>
 
