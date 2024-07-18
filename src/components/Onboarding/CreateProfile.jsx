@@ -325,6 +325,11 @@ const CreateProfile = () => {
                 <Container maxWidth="md"  sx={{ height: 'auto', backgroundColor: '#FFFFFF', padding: '50px', borderRadius: '60px',  }}>
                     <Grid container justifyContent="center" rowGap={20}>                    
                         <Grid container item xs={10} justifyContent='center' spacing={20} >
+                        <Grid item xs={12}>
+                            <Typography sx={{ fontSize: '28px', color: '#160449', fontWeight: 'bold' }}>
+                                {user.role.charAt(0) + user.role.slice(1).toLowerCase()} Profile
+                            </Typography>
+                        </Grid> 
                             <Grid item xs={6}>
                                 <Typography sx={{ fontSize: '25px', color: '#160449',}}>
                                     First Name
