@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function HappinessMatrixWidget(props) {
   const navigate = useNavigate();
-  const chartWidth = 400;
-  const chartHeight = 350;
+  // const chartWidth = 400;
+  // const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
   const { page, setIndex, happinessData, dataforhappiness, data = [], dataSetter, contactDetails } = props;
 

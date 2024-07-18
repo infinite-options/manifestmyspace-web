@@ -50,7 +50,7 @@ const useStyles = makeStyles({
 });
 
 function ManagerDashboard() {
-  console.log("In Manager Dashboard function");
+  // console.log("In Manager Dashboard function");
   const classes = useStyles();
   const { getProfileId, user, selectedRole } = useUser();
   let dashboard_id = getProfileId();
@@ -104,7 +104,7 @@ function ManagerDashboard() {
   const setting_matrix_data = (happiness_response) => {
     // console.log("In Setting Happiness Matrix", happiness_response);
     // Transforming the data
-    console.log("setting_matrix_data - happiness_response - ", happiness_response);
+    // console.log("setting_matrix_data - happiness_response - ", happiness_response);
     const transformedData = happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
       // console.log("In Happiness Matrix before vacancy");
       // console.log("setting_matrix_data - vacancyItem - ", vacancyItem);
@@ -272,7 +272,7 @@ function ManagerDashboard() {
       // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();
-        console.log("Manager Dashboard jsonData: ", jsonData);
+        // console.log("Manager Dashboard jsonData: ", jsonData);
         // const propertiesResponseJSON = await propertiesResponse.json();
 
         // MAINTENANCE Status
@@ -294,17 +294,17 @@ function ManagerDashboard() {
         // REVENUE DATA
         setRevenueData(jsonData.Profitability);
 
-        //CASHFLOW DETAILS
-        setCashflowData(jsonData?.HappinessMatrix?.delta_cashflow.result);
+        // //CASHFLOW DETAILS
+        // setCashflowData(jsonData?.HappinessMatrix?.delta_cashflow.result);
 
-        //CASHFLOW DETAILS
-        setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
+        // //CASHFLOW DETAILS
+        // setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
 
-        //CASHFLOW DETAILS
-        setCashflowDetailsByProperty(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property?.result);
+        // //CASHFLOW DETAILS
+        // setCashflowDetailsByProperty(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property?.result);
 
-        //CASHFLOW DETAILS
-        setCashflowDetailsByPropertyByMonth(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property_by_month?.result);
+        // //CASHFLOW DETAILS
+        // setCashflowDetailsByPropertyByMonth(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property_by_month?.result);
 
         // NEW PM REQUESTS
         // set_property_endpoint_resp(propertiesResponseJSON);
