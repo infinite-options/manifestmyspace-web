@@ -20,7 +20,7 @@ export default function HappinessMatrixWidget(props) {
   }, [happinessData]);
 
   console.log("HappinessMatrixWidget - data -", data, typeof data);
-  // console.log("HappinessMatrixWidget - dataforhappiness -", dataforhappiness, typeof dataforhappiness);
+  console.log("HappinessMatrixWidget - dataforhappiness -", dataforhappiness, typeof dataforhappiness);
 
   // console.log("HappinessMatrixWidget - happinessData -", happinessData, typeof happinessData);
   // console.log("HappinessMatrixWidget - happinessData2 -", happinessData?.delta_cashflow);
@@ -290,6 +290,7 @@ export default function HappinessMatrixWidget(props) {
                       {...props}
                       onClick={() => handlePointClick(props.payload)}
                       data={data}
+                      dataforhappiness={dataforhappiness}
                       happinessData={happinessData}
                       page={page}
                       contactDetails={contactDetails}
@@ -338,6 +339,7 @@ const CustomImage = (props) => {
     isVisible,
     index,
     cashflowData,
+    dataforhappiness,
     data,
     page,
     setIndex,
@@ -386,7 +388,7 @@ const CustomImage = (props) => {
 			  // index: index,
 			  // happinessMatrixData: dataforhappiness,
 			  // happinessData: happinessData,
-        happinessMatrixData: data,
+        happinessMatrixData: dataforhappiness,
         happinessData: happinessData,
       },
     });

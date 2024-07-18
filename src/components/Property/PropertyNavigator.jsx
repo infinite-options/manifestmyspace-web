@@ -4,6 +4,7 @@ import {
   Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge, Dialog, DialogActions,
   DialogContent, DialogTitle, IconButton, TextField, Snackbar, Alert, MenuItem, Select, FormControl, InputLabel
 } from "@mui/material";
+import axios from "axios";
 import theme from "../../theme/theme";
 import propertyImage from "./propertyImage.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -42,6 +43,7 @@ import { v4 as uuidv4 } from 'uuid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HappinessMatrixWidget from '../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget.jsx';
+// import ContactDetails from '../Contacts/ContactDetails.jsx';
 
 
 const getAppColor = (app) =>
@@ -71,6 +73,7 @@ export default function PropertyNavigator({
   console.log('prop data', propertyData);
   console.log('prop', property);
   const [currentId, setCurrentId] = useState(property.property_uid);
+  const [contactDetails, setContactDetails] = useState([]);
   const [maintenanceData, setMaintenanceData] = useState([{}]);
   const [propertyRentStatus, setpropertyRentStatus] = useState(allRentStatus);
   const [rentFee, setrentFee] = useState({});
@@ -85,6 +88,24 @@ export default function PropertyNavigator({
   const [happinessData, setHappinessData] = useState([]);
   const [dataforhappiness, setdataforhappiness] = useState([]);
   console.log('Property Navigator to ownerhappiness -', happinessData);
+
+  const getDataFromAPI = async () => {
+    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
+    try {
+      const response = await axios.get(url);
+      const data = response.data["management_contacts"];
+      const ownerContacts = data["owners"];
+      setContactDetails(ownerContacts);
+    } catch (error) {
+      console.error("Error fetching owner contacts: ", error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch data when component mounts
+    getDataFromAPI();
+    // Fetch other necessary data for happinessMatrixData and happinessData
+  }, []);
 
   // Testing July 15th - PART 1
   const [showHappinessMatrixWidget, setShowHappinessMatrixWidget] = useState(false);
@@ -350,13 +371,15 @@ export default function PropertyNavigator({
 
 	// Testing July 15th - part 2
 	const handleOwnerClick = (ownerData) => {
-		navigate(`/ownerContactDetailsHappinessMatrix`, {
+		navigate('/ownerContactDetailsHappinessMatrix', {
+		// navigate(`/ownerContactTest`, {
 			state: {
 			  ownerUID: ownerData,
 			  navigatingFrom: "PropertyNavigator",
 			  index: index,
 			  happinessMatrixData: dataforhappiness,
 			  happinessData: happinessData,
+			  contactDetail: contactDetails,
 			},
 		  });
 	  };
@@ -1643,6 +1666,7 @@ export default function PropertyNavigator({
 															cursor: 'pointer', 
 														}}
 														onClick={() => navigate('/ownerContactDetailsHappinessMatrix', { 
+														// onClick={() => navigate('/ownerContactTest', { 
 															state: {
 															  ownerUID: property.owner_uid,
 															  navigatingFrom: 'PropertyNavigator',

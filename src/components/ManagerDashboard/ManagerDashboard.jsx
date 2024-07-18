@@ -288,6 +288,9 @@ function ManagerDashboard() {
         setting_matrix_data(jsonData);
         setHappinessData(jsonData.HappinessMatrix);
 
+        // DATA FOR HAPPINESS
+        setdataforhappiness(jsonData);
+
         // REVENUE DATA
         setRevenueData(jsonData.Profitability);
 
@@ -364,6 +367,7 @@ function ManagerDashboard() {
                 <HappinessMatrixWidget
                   happinessData={happinessData}
                   data={matrixData}
+                  dataforhappiness={dataforhappiness}
                   // cashflowData={cashflowData}
                   // cashflowDetails={cashflowDetails}
                   // cashflowDetailsByProperty={cashflowDetailsByProperty}
