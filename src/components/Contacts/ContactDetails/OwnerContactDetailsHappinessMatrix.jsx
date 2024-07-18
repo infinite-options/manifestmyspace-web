@@ -54,37 +54,20 @@ import AES from "crypto-js/aes";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const OwnerContactDetailsHappinessMatrix = (props) => {
-  // const { happinessData, data } = props;
   console.log("In Owner Contact Details - Happiness Matrix", props);
-  // console.log("In Owner Contact Details - data -", data, typeof data);
-  // console.log("In Owner Contact Details - happinessData -", happinessData, typeof happinessData);
   const { selectedRole, getProfileId } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const navigatingFrom = location.state.navigatingFrom;
-
-  // const happinessMatrixData = location.state?.happinessMatrixData;
-  // console.log("HappinessMatrixData OK - ", happinessMatrixData);
-
   const happinessData = location.state?.happinessData;
-  console.log("happinessData OK - ", happinessData);
 
-  // const contactDetails = location.state.dataDetails;
   const [contactDetails, setContactDetails] = useState();
   const [contactsTab, setContactsTab] = useState("");
 
-  const [loading, setLoading] = useState(true);
-
-
-  // const selectedData = location.state.selectedData;
-  // const index = location.state.index;
   const [index, setIndex] = useState(location.state.index);
-  // const passedData = location.state.viewData;
   const ownerUID = location.state.ownerUID;
-  console.log("owner ID HERE ---- ", ownerUID, index)
 
   const cashflowData = location.state?.cashflowData;
   const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
@@ -99,8 +82,6 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   let [matrixData, setMatrixData] = useState([]);
 
   useEffect(() => {
-    console.log("location state - Matrix Data", location.state?.happinessMatrixData);
-    console.log("location state - everything", location.state);
     if (location.state?.happinessMatrixData) {
       try {
         setHappinessMatrixData(setting_matrix_data(location.state?.happinessMatrixData));
@@ -109,8 +90,6 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
       }
     }
   }, []);
-
-  // console.log("cashflowData OK - ", );
 
   // useEffect(() => {
   //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
@@ -125,21 +104,10 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   // }, [filteredCashflowDetailsByPropertyByMonth]);
 
   useEffect(() => {
-    console.log("cashflowData - from owner ", cashflowData);
-  }, [cashflowData]);
-
-  // useEffect(() => {
-  //   console.log("filteredCashflowData - ", filteredCashflowData);
-  // }, [filteredCashflowData]);
-
-  useEffect(() => {
-    // console.log("navigatingFrom - ", navigatingFrom);
-
     const getDataFromAPI = async () => {
       // const url = `http://localhost:4000/contacts/${getProfileId()}`;
       console.log("Calling contacts endpoint");
       const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
-      // setShowSpinner(true);
   
       await axios
         .get(url)
@@ -149,21 +117,12 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
           console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
           setContactDetails(ownerContacts);
           console.log("Set Contact Details 1", ownerContacts);
-          // console.log("Data to find index: ", ownerUID);
           const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
           console.log("Owner Index: ", index);
           setIndex(index);
-  
-          // setAllTenantsData(data["tenants"]);
-          // setAllMaintenanceData(data["maintenance"]);
-  
-          // setShowSpinner(false);
-          setLoading(false);
         })
         .catch((e) => {
           console.error(e);
-          setLoading(true)
-          // setShowSpinner(false);
         });
     };
 
@@ -178,9 +137,6 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   }, []);
 
   useEffect(() => {
-    // console.log("INDEX UPDATED - ", index);
-    // location.state.index = index;
-    // contactDetails && console.log("DATA DETAILS", contactDetails[index]);
     if (contactDetails) {
     setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
@@ -191,28 +147,10 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   }
   }, [index]);
 
-  //   console.log("Data details passed 1: ", contactDetails);
-  //   console.log("Data details passed 2: ", contactDetails[0]);
-  //   console.log("Data details passed 3: ", contactDetails[0].entities);
-  //   console.log("Data details passed 4: ", contactDetails[3].entities);
-
-  // console.log(selectedData);
-  // console.log("INDEX", index);
-  // console.log("SELECTED ROLE - ", selectedRole);
-
   const setting_matrix_data = (happiness_response) => {
     console.log("setting_matrix_data - happiness_response - ", happiness_response);
     console.log("NAVIGATING FROM", navigatingFrom);
-    if (navigatingFrom === "HappinessMatrixWidget") {
-      // happiness_response = happiness_response.HappinessMatrix?.vacancy?.result;
-      // happiness_response = happiness_response.HappinessMatrix?.vacancy?.result;
-      console.log("After navigation --", happiness_response)
-      if (!happiness_response) {
-        throw new Error("HappinessMatrix vacancy result is undefined");
-      }
-    } else if (!happiness_response?.HappinessMatrix?.vacancy?.result) {
-      throw new Error("HappinessMatrix vacancy result is undefined");
-    }
+    
     return happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
       const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
       let fullName = "";
@@ -299,16 +237,8 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
                   <Paper
                     elevation={0}
                     style={{
-                      // margin: '50p', // Add margin here
                       borderRadius: "10px",
                       backgroundColor: "#D6D5DA",
-                      // height: "400px",
-                      // [theme.breakpoints.down("sm")]: {
-                      //     width: "80%",
-                      // },
-                      // [theme.breakpoints.up("sm")]: {
-                      //     width: "50%",
-                      // },
                       width: "100%",
                     }}
                   >
@@ -319,16 +249,8 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
                   <Paper
                     elevation={0}
                     style={{
-                      // margin: '50p', // Add margin here
                       borderRadius: "10px",
                       backgroundColor: "#FFFFFF",
-                      // height: "500px",
-                      // [theme.breakpoints.down("sm")]: {
-                      //     width: "80%",
-                      // },
-                      // [theme.breakpoints.up("sm")]: {
-                      //     width: "50%",
-                      // },
                       width: "100%",
                     }}
                   >
@@ -356,8 +278,6 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
 };
 
 const AllContacts = ({ data, currentIndex, setIndex }) => {
-  // console.log("AllContacts - data -", data);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [contactsData, setContactsData] = useState([]);
   const [filteredContactsData, setFilteredContactsData] = useState([]);
@@ -374,10 +294,6 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
     console.log("Set FilteredContactsData 1");
     setFilteredContactsData(processedData);
   }, [data]);
-
-  // useEffect( () => {
-  //   console.log("contactsData - ", contactsData);
-  // }, [contactsData]);
 
   useEffect(() => {
     const filteredValues = contactsData?.filter((item) => {
@@ -422,16 +338,8 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
                   <Paper
                     elevation={0}
                     style={{
-                      // margin: '50p', // Add margin here
                       borderRadius: "10px",
                       backgroundColor: index === currentIndex ? "#9EAED6" : "#D6D5DA",
-                      // height: "100%",
-                      // [theme.breakpoints.down("sm")]: {
-                      //     width: "80%",
-                      // },
-                      // [theme.breakpoints.up("sm")]: {
-                      //     width: "50%",
-                      // },
                       width: "100%",
                     }}
                   >
@@ -476,48 +384,40 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
   const [propertiesData, setPropertiesData] = useState([]);
   const [contractsData, setContractsData] = useState([]);
 
-  const getPropertiesData = async () => {
-    const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;
-    // setShowSpinner(true);
+  // const getPropertiesData = async () => {
+  //   const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;
 
-    await axios
-      .get(url)
-      .then((resp) => {
-        const data = resp.data;
-        // console.log("properties endpoint - data - ", data);
-        setPropertiesData(data);
-        // setShowSpinner(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        // setShowSpinner(false);
-      });
-  };
+  //   await axios
+  //     .get(url)
+  //     .then((resp) => {
+  //       const data = resp.data;
+  //       setPropertiesData(data);
+  //     })
+  //     .catch((e) => {
+  //       console.error(e);
+  //     });
+  // };
 
-  const getContractsData = async () => {
-    // const url = `http://localhost:4000/contracts/${getProfileId()}`;
-    console.log("Calling contRacts endpoint");
-    const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;
-    // setShowSpinner(true);
+  // const getContractsData = async () => {
+  //   // const url = `http://localhost:4000/contracts/${getProfileId()}`;
+  //   console.log("Calling contRacts endpoint");
+  //   const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;
 
-    await axios
-      .get(url)
-      .then((resp) => {
-        const data = resp.data?.result;
-        // console.log("properties endpoint - data - ", data);
-        setContractsData(data);
-        // setShowSpinner(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        // setShowSpinner(false);
-      });
-  };
+  //   await axios
+  //     .get(url)
+  //     .then((resp) => {
+  //       const data = resp.data?.result;
+  //       setContractsData(data);
+  //     })
+  //     .catch((e) => {
+  //       console.error(e);
+  //     });
+  // };
 
-  useEffect(() => {
-    getPropertiesData();
-    getContractsData();
-  }, []);
+  // // useEffect(() => {
+  // //   getPropertiesData();
+  // //   getContractsData();
+  // // }, []);
 
   return (
     <Grid container sx={{ backgroundColor: theme.palette.primary.main, borderRadius: "10px", padding: "10px" }}>
@@ -611,17 +511,9 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
           <Paper
             elevation={0}
             style={{
-              // margin: '50p', // Add margin here
               borderRadius: "10px",
               backgroundColor: "#D6D5DA",
               height: 370,
-              // [theme.breakpoints.down("sm")]: {
-              //     width: "80%",
-              // },
-              // [theme.breakpoints.up("sm")]: {
-              //     width: "50%",
-              // },
-              // width: "100%",
               padding: "10px",
             }}
           >
@@ -632,16 +524,9 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
           <Paper
             elevation={0}
             style={{
-              // margin: '50p', // Add margin here
               borderRadius: "10px",
               backgroundColor: "#D6D5DA",
               height: 390,
-              // [theme.breakpoints.down("sm")]: {
-              //     width: "80%",
-              // },
-              // [theme.breakpoints.up("sm")]: {
-              //     width: "50%",
-              // },
               width: "100%",
             }}
           >
@@ -658,16 +543,9 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
           <Paper
             elevation={0}
             style={{
-              // margin: '50p', // Add margin here
               borderRadius: "10px",
               backgroundColor: "#D6D5DA",
               height: 355,
-              // [theme.breakpoints.down("sm")]: {
-              //     width: "80%",
-              // },
-              // [theme.breakpoints.up("sm")]: {
-              //     width: "50%",
-              // },
               width: "100%",
             }}
           >
@@ -689,20 +567,9 @@ const OwnerInformation = ({ contactDetails, index }) => {
 
   useEffect(() => {
     if (contactDetails) {
-      // const paymentMethodString = contactDetails[index]?.payment_method;
-      // console.log("contactDetails.payment_method - ", paymentMethodString);
-      console.log("here we are contactDetails")
-      // const parsedPaymentMethods = paymentMethodString ? JSON.parse(paymentMethodString) : [];
-      // setPaymentMethods(parsedPaymentMethods);
-      // setPaymentMethods(JSON.parse(contactDetails[index]?.payment_method));
-
       setPaymentMethods(contactDetails[index]?.payment_method ? JSON.parse(contactDetails[index]?.payment_method) : []);
     }
   }, [contactDetails]);
-
-  // useEffect( () => {
-  //   console.log("paymentMethods - ", paymentMethods);
-  // }, [paymentMethods]);
 
   const formatPaymentMethodType = (type) => {
     return type
@@ -741,8 +608,6 @@ const OwnerInformation = ({ contactDetails, index }) => {
           <Typography sx={{ fontSize: "15px", fontWeight: "600", color: "#160449" }}>SSN</Typography>
           <Typography sx={{ fontSize: "15px", color: "#160449" }}>
             {contactDetails && contactDetails[index]?.owner_ssn ? maskSSN(contactDetails[index]?.owner_ssn) : "No SSN provided"}
-            {/* {contactDetails && contactDetails[index]?.contact_ssn ? maskSSN(getDecryptedSSN(contactDetails[index]?.contact_ssn)) : "No SSN provided"} */}
-            {/* {contactDetails && "***-**-" + AES.decrypt(contactDetails[index]?.contact_ssn, process.env.REACT_APP_ENKEY).toString().slice(-4)} */}
           </Typography>
         </Grid>
         <Grid item xs={6}>
@@ -763,7 +628,6 @@ const OwnerInformation = ({ contactDetails, index }) => {
           {paymentMethods
             .filter((method) => method.paymentMethod_status === "Active")
             .map((method, index) => {
-              // console.log("payment method - ", method);
               return (
                 <Typography key={index} sx={{ fontSize: "15px", color: "#160449" }}>
                   {formatPaymentMethodType(method.paymentMethod_type)}
@@ -791,14 +655,11 @@ const OwnerInformation = ({ contactDetails, index }) => {
 };
 
 const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
-  // console.log("PropertiesInformation - propertiesData - ", propertiesData);
 
   const activeProperties = propertiesData?.Property?.result.filter((property) => property.owner_uid === ownerUID);
   const activePropertyUIDs = activeProperties?.map((property) => property.property_uid);
-  // console.log("PropertiesInformation - activeProperties - ", activeProperties);
 
   const maintenanceRequests = propertiesData?.MaintenanceRequests?.result.filter((request) => activePropertyUIDs.includes(request.maintenance_property_id));
-  // console.log("PropertiesInformation - maintenanceRequests - ", maintenanceRequests);
 
   const mapPropertiesToMaintenanceRequests = (maintenanceRequests) => {
     const propertyToRequests = {};
@@ -832,17 +693,6 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
         <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Active {`(${activeProperties?.length})`}</Typography>
       </Grid>
       <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
-        {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
-          {
-            activeProperties?.map( (property) => {
-              return (
-                <Grid item xs={12} sx={{ fontSize: '15px', color: '#160449'}}>
-                  {property.property_address}
-                </Grid>
-              )
-            })
-          }            
-        </Grid> */}
         <Grid item xs={12}>
           <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty} />
         </Grid>
@@ -860,17 +710,6 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
             <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>New {`(${newContracts?.length})`}</Typography>
           </Button>
         </Grid>
-        {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
-          {
-            newContracts?.map( (contract) => {
-              return (
-                <Grid item xs={12} sx={{ fontSize: '15px', color: '#160449'}}>
-                  {contract.property_address}
-                </Grid>
-              )
-            })
-          }  
-        </Grid> */}
         <Grid container item xs={6} justifyContent="center">
           <Button
             sx={{
@@ -883,17 +722,6 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
             <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>Sent {`(${sentContracts?.length})`}</Typography>
           </Button>
         </Grid>
-        {/* <Grid container item xs={12} sx={{ maxHeight: '60px', overflow: 'auto', }}>
-          {
-            sentContracts?.map( (contract) => {
-              return (
-                <Grid item xs={12} sx={{ fontSize: '15px', color: '#160449'}}>
-                  {contract.property_address}
-                </Grid>
-              )
-            })
-          }  
-        </Grid> */}
       </Grid>
     </>
   );
@@ -901,7 +729,6 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 
 const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   const navigate = useNavigate();
-  console.log("ROHIT - PropertiesDataGrid - data -   ", data);
   const paymentStatusColorMap = {
     "Paid On Time": theme.palette.priority.clear,
     "Partially Paid": theme.palette.priority.medium,
@@ -962,20 +789,6 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
             margin: "0px",
           }}
         >
-          {/* <Badge
-            overlap="circular"
-            color="success"
-            badgeContent={getNumOfApplications(params.row)}
-            invisible={!getNumOfApplications(params.row)}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            style={{
-              color: "#000000",
-              width: "100%",
-            }}
-          > */}
           <Typography
             sx={{
               color: theme.palette.primary.main,
@@ -993,7 +806,6 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
           >
             {params.row.rent_status}
           </Typography>
-          {/* </Badge> */}
         </Box>
       ),
     },
@@ -1059,14 +871,6 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
           columnHeaders: () => null,
         }}
         getRowId={(row) => row.property_uid}
-        // initialState={{
-        //   pagination: {
-        //     paginationModel: {
-        //       pageSize: 5,
-        //     },
-        //   },
-        // }}
-        // pageSizeOptions={[5]}
         sx={{
           border: "0px",
         }}
@@ -1077,17 +881,12 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
 };
 
 const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth }) => {
-  console.log("CashflowDataGrid - props.cashflowDetails - ", cashflowDetails);
   const [data, setData] = useState(
     cashflowDetails.map((row, index) => {
       return { ...row, index };
     })
   );
   const [tab, setTab] = useState("by_month");
-
-  // useEffect(() => {
-  //   console.log("CashflowDataGrid - data - ", data);
-  // }, [data]);
 
   useEffect(() => {
     if (tab === "by_month") {
@@ -1127,14 +926,6 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
         </span>
       ),
     },
-    // {
-    //   field: 'property_address',
-    //   headerName: 'Address',
-    //   width: 100,
-    //   renderCell: (params) => (
-    //     <span>{params.row.property_address !== null ? params.row.property_address : "-"}</span>
-    //   )
-    // },
     ...(tab !== "by_month"
       ? [
           {
@@ -1188,58 +979,6 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     },
   ];
 
-  // const monthNumbers = {
-  //   January: 1,
-  //   February: 2,
-  //   March: 3,
-  //   April: 4,
-  //   May: 5,
-  //   June: 6,
-  //   July: 7,
-  //   August: 8,
-  //   September: 9,
-  //   October: 10,
-  //   November: 11,
-  //   December: 12,
-  // };
-
-  // const processedData = data.map((row, index) => {
-  //   const monthNumber = monthNumbers[row.cf_month] || 0;
-  //   const yearMonth = `${row.cf_year}${String(monthNumber).padStart(2, '0')}`;
-
-  //   return {
-  //     ...row,
-  //     id: index + 1,
-  //     // month_num: monthNumbers[row.cf_month] || 0,
-  //     year_month: parseInt(yearMonth, 10),
-  //     year: parseInt(row.cf_year, 10),
-  //     actual_cashflow: parseFloat(row.actual_cashflow),
-  //     expected_cashflow: parseFloat(row.expected_cashflow),
-  //     delta_cashflow: parseFloat(row.delta_cashflow),
-  //   }
-  // });
-
-  // // console.log("processedData - ", processedData);
-
-  // const totalActualCashflow = processedData.reduce((sum, row) => sum + row.actual_cashflow, 0);
-  // const totalExpectedCashflow = processedData.reduce((sum, row) => sum + row.expected_cashflow, 0);
-  // const totalDeltaCashflow = processedData.reduce((total, row) => {
-  //   return total + (parseFloat(row.actual_cashflow) - parseFloat(row.expected_cashflow));
-  // }, 0);
-
-  // const totalsRow = {
-  //   id: processedData.length + 1,
-  //   owner_uid: 'Totals',
-  //   owner_name: '',
-  //   year_month: '',
-  //   year: '',
-  //   actual_cashflow: totalActualCashflow,
-  //   expected_cashflow: totalExpectedCashflow,
-  //   delta_cashflow: totalDeltaCashflow,
-  //   percent_delta_cashflow: '',
-  // };
-
-  // const rowsWithTotals = [...processedData, totalsRow];
 
   const handleSelectTab = (tabName) => {
     console.log("tabName - ", tabName);
@@ -1312,21 +1051,6 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
           rows={data}
           columns={columns}
           getRowId={(row) => row.index}
-          // initialState={{
-          //   pagination: {
-          //     paginationModel: {
-          //       pageSize: 5,
-          //     },
-          //   },
-          // }}
-          // pageSizeOptions={[5]}
-
-          // getRowClassName={(params) => {
-          //   if (params.id === totalsRow.id) {
-          //     return 'totals-row'; // Assign a class name to the totals row
-          //   }
-          //   return '';
-          // }}
           sx={{
             height: "300px",
             overflow: "auto",

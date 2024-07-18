@@ -6,47 +6,25 @@ import theme from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
 
 export default function HappinessMatrixWidget(props) {
-  console.log("In HappinessMatrixWidget");
   const navigate = useNavigate();
   const chartWidth = 400;
   const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  // const { page, setIndex, contactDetails, happinessData } = props;
-  // const { page, setIndex, happinessData, data, dataSetter, cashflowData, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
   const { page, setIndex, happinessData, dataforhappiness, data = [], dataSetter, contactDetails } = props;
 
-  useEffect(() => {
-    console.log("HappinessMatrixWidget - happinessData:", happinessData);
-  }, [happinessData]);
+  // useEffect(() => {
+  //   console.log("HappinessMatrixWidget - happinessData:", happinessData);
+  // }, [happinessData]);
 
-  console.log("HappinessMatrixWidget - data -", data, typeof data);
-  console.log("HappinessMatrixWidget - dataforhappiness -", dataforhappiness, typeof dataforhappiness);
-
-  // console.log("HappinessMatrixWidget - happinessData -", happinessData, typeof happinessData);
-  // console.log("HappinessMatrixWidget - happinessData2 -", happinessData?.delta_cashflow);
-  // console.log("HappinessMatrixWidget - happinessData3 -", happinessData?.delta_cashflow.result);
-
-  // data =
-  // contactDetails =
-  let cashflowData = happinessData?.delta_cashflow.result;
-  let cashflowDetails = happinessData?.delta_cashflow_details?.result;
-  let cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
-  let cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
-
-  console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
-  console.log("HappinessMatrixWidget - cashflowDetails -", cashflowDetails);
-  console.log("HappinessMatrixWidget - cashflowDetailsByProperty -", cashflowDetailsByProperty);
-  console.log("HappinessMatrixWidget - cashflowDetailsByPropertyByMonth -", cashflowDetailsByPropertyByMonth);
+  // let cashflowData = happinessData?.delta_cashflow.result;
+  // let cashflowDetails = happinessData?.delta_cashflow_details?.result;
+  // let cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
+  // let cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
 
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
-  // let [shifted_data, shift] = useState([...data]);
 
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
-
-  // useEffect(() => {
-  //   console.log(" HappinessMatrixWidget - pointsToPlot - ", pointsToPlot);
-  // }, [pointsToPlot]);
 
   // Function to check if two points overlap
   function overlap(owner1, owner2, margin = 5) {
@@ -76,18 +54,9 @@ export default function HappinessMatrixWidget(props) {
   }, []);
 
   function getPoints(data) {
-    console.log("In getPoints: ", data);
-    console.log("Type of data: ", typeof data);
-    console.log("Is data an array: ", Array.isArray(data));
-
-    if (!Array.isArray(data)) {
-      console.error("Data is not an array:", data)
-      return;
-    }
-
     const points = [];
     data?.forEach((owner) => {
-      console.log("In get points: ", owner.vacancy_perc, owner.delta_cashflow_perc);
+      // console.log("In get points: ", owner.vacancy_perc, owner.delta_cashflow_perc);
       let x = Number(owner.vacancy_perc);
       let y = Number(owner.delta_cashflow_perc);
 
@@ -96,13 +65,10 @@ export default function HappinessMatrixWidget(props) {
         y: -y,
         ...owner,
       };
-      // console.log("getPoints - owner - ", owner.name)
-      // console.log("getPoints - pointObject - ", pointObject);
 
       points.push(pointObject);
     });
 
-    // console.log("getPoints - points - ", points);
     setPointsToPlot(points);
   }
 
@@ -120,15 +86,15 @@ export default function HappinessMatrixWidget(props) {
   const [hiddenPoints, setHiddenPoints] = useState([]);
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
-  console.log("In HappinessMatrixWidget clickedIndex: ", clickedIndex);
+  // console.log("In HappinessMatrixWidget clickedIndex: ", clickedIndex);
 
-  useEffect(() => {
-    // console.log("hiddenPoints - ", hiddenPoints);
-  }, [hiddenPoints]);
+  // useEffect(() => {
+  //   // console.log("hiddenPoints - ", hiddenPoints);
+  // }, [hiddenPoints]);
 
-  useEffect(() => {
-    // console.log("shifted_data - ", shifted_data);
-  }, [shifted_data]);
+  // useEffect(() => {
+  //   // console.log("shifted_data - ", shifted_data);
+  // }, [shifted_data]);
 
   const handlePointClick = (payload) => {
     let { index } = payload;
@@ -251,36 +217,6 @@ export default function HappinessMatrixWidget(props) {
                     return null;
                   }}
                 />
-
-                {/* <Scatter
-                  name="A school"
-                  data={shifted_data}
-                  shape={(props) => (
-                    <CustomImage
-                      {...props}
-                      onClick={() => handlePointClick(props.payload)}
-                      isClicked={props.payload.index === clickedIndex}
-                      isVisible={!hiddenPoints.includes(props.payload.index)}
-                    />
-                  )}
-                >
-                  {shifted_data.map((point, index) => (
-                    !hiddenPoints.includes(index) && (
-                      <Scatter
-                        key={`hidden-${index}`}
-                        data={[point]}
-                        shape={(props) => (
-                          <CustomImage
-                            {...props}
-                            isClicked={false}
-                            isVisible={false}
-                          />
-                        )}
-                      />
-                    )
-                  ))}
-                </Scatter> */}
-
                 <Scatter
                   name="happiness_matrix"
                   data={pointsToPlot}
@@ -295,10 +231,10 @@ export default function HappinessMatrixWidget(props) {
                       page={page}
                       contactDetails={contactDetails}
                       setIndex={setIndex}
-                      cashflowDetails={cashflowDetails}
-                      cashflowDetailsByProperty={cashflowDetailsByProperty}
-                      cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
-                      cashflowData={cashflowData}
+                      // cashflowDetails={cashflowDetails}
+                      // cashflowDetailsByProperty={cashflowDetailsByProperty}
+                      // cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
+                      // cashflowData={cashflowData}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}
                     />
@@ -338,15 +274,10 @@ const CustomImage = (props) => {
     isClicked,
     isVisible,
     index,
-    cashflowData,
     dataforhappiness,
-    data,
     page,
     setIndex,
     contactDetails,
-    cashflowDetails,
-    cashflowDetailsByProperty,
-    cashflowDetailsByPropertyByMonth,
     happinessData,
   } = props;
 
@@ -365,7 +296,7 @@ const CustomImage = (props) => {
   const outlineWidth = isClicked ? 4 : 2;
 
   const handleClick = (payload) => {
-    console.log("input to  handleClick: ", payload);
+    // console.log("input to  handleClick: ", payload);
     setIsClickedState(true);
     // console.log("CustomImage - handeClick");
     if (onClick) {
@@ -383,11 +314,6 @@ const CustomImage = (props) => {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
         index: index,
-			  // ownerUID: ownerData,
-			  // navigatingFrom: "PropertyNavigator",
-			  // index: index,
-			  // happinessMatrixData: dataforhappiness,
-			  // happinessData: happinessData,
         happinessMatrixData: dataforhappiness,
         happinessData: happinessData,
       },
