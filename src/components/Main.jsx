@@ -16,6 +16,8 @@ import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
 import Cashflow from "./Cashflow/Cashflow";
+import ManagerCashflow from "./Cashflow/ManagerCashflow";
+import ManagerTransactions from "./Cashflow/ManagerTransactions";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
@@ -229,6 +231,8 @@ function Main() {
           <Route path="addNewRole" element={<AddNewRole />} /> 
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
+            <Route path="managerCashflow" element={<ManagerCashflow />} />
+            <Route path="managerTransactions" element={<ManagerTransactions />} />            
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
