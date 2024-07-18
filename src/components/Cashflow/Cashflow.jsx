@@ -657,7 +657,7 @@ function StatementTable(props) {
   // console.log("statement table year/month", year, month)
 
   function getCategoryCount(category) {
-    console.log("ROHIT - getCategoryCount - allItems - ", allItems);
+    // console.log("getCategoryCount - allItems - ", allItems);
     let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     return "(" + items.length + ")";
   }
@@ -666,7 +666,7 @@ function StatementTable(props) {
     let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     let items = filteredIitems?.map(item => ({ ...item, property:JSON.parse(item.property)}));
     
-    console.log("ROHIT - getCategoryItems", items)
+    // console.log("getCategoryItems", items)
     var key = "total_paid";
     if (activeView === "Cashflow") {
       key = "total_paid";

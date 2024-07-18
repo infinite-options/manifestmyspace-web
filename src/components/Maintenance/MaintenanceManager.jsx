@@ -147,7 +147,7 @@ export default function MaintenanceManager() {
 
 	const propertyIdFromPropertyDetail = location.state?.propertyId || null;
 	const selectedProperty = location.state?.selectedProperty || null;
-	// console.log("ROHIT - MaintenanceManager - selectedProperty - ", selectedProperty);
+	// console.log("MaintenanceManager - selectedProperty - ", selectedProperty);
 
 	const newDataObject = {};
 	newDataObject['NEW REQUEST'] = [];
@@ -165,9 +165,9 @@ export default function MaintenanceManager() {
 	const [filterPropertyList, setFilterPropertyList] = useState([]);
 	const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
 
-	useEffect(() => {
-		console.log("ROHIT - filterPropertyList - ", filterPropertyList);
-	}, [filterPropertyList]);
+	// useEffect(() => {
+	// 	console.log("filterPropertyList - ", filterPropertyList);
+	// }, [filterPropertyList]);
 
 	const businessId = user.businesses.MAINTENANCE.business_uid;
 
@@ -200,7 +200,7 @@ export default function MaintenanceManager() {
 			const addedAddresses = [];
 			for (const key in maintenanceData) {
 				for (const item of maintenanceData[key]) {
-					// console.log("ROHIT - maintenanceData item - ", item);
+					// console.log("maintenanceData item - ", item);
 					if (!addedAddresses.includes(item.property_address)) {
 						addedAddresses.push(item.property_address);
 						if (!propertyList.includes(item.property_address)) {
@@ -213,7 +213,7 @@ export default function MaintenanceManager() {
 					}
 				}
 			}
-			// console.log("ROHIT - MaintenanceManager - propertyList - ", propertyList);
+			// console.log("MaintenanceManager - propertyList - ", propertyList);
 			if (propertyIdFromPropertyDetail) {
 				for (const property of propertyList) {
 					if (property.property_uid !== propertyIdFromPropertyDetail) {

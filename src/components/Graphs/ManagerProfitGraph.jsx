@@ -5,11 +5,11 @@ import theme from "../../theme/theme";
 import { Stack, Typography } from "@mui/material";
 
 // THIS IS A DUPLICATE OF OwnerCashflowGraph.  See if there is a way to combine these 2 pages
-const DashboardChart = (props) => {
+const ProfitChart = (props) => {
   // I want props.revenueCashflowByMonth to be sorted in order of month and year
 
   const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
-  console.log("DashboardChart - data - ", data);
+  console.log("ProfitChart - data - ", data);
   const activeButton = props.activeButton;
   // console.log("Input data to graph: ", data);
   // console.log("Active button: ", activeButton);
@@ -60,11 +60,11 @@ const DashboardChart = (props) => {
           <Legend />
           <Bar
             yAxisId="left"
-            dataKey={activeButton === "ExpectedCashflow" ? "expected_cashflow" : "cashflow"}
+            dataKey={"profit"}
             fill={theme.typography.common.blue}
             barCategoryGap={10}
             barSize={15}
-            name="Actual Cashflow"
+            name="Actual Profit"
           >
             {data?.map((entry, index) => (
               <Cell
@@ -80,11 +80,11 @@ const DashboardChart = (props) => {
           
           <Bar
             yAxisId="left"
-            dataKey={"expected_cashflow"}
+            dataKey={"expected_profit"}
             fill={theme.palette.primary.mustardYellow}
             barCategoryGap={10}
             barSize={15}
-            name="Expected Cashflow"
+            name="Expected Profit"
           >
             {data?.map((entry, index) => (
               <Cell
@@ -111,20 +111,20 @@ const DashboardChart = (props) => {
           <Line
             yAxisId="left"
             type="monotone"
-            dataKey={"expected_revenue"}
+            dataKey={"expected_rent"}
             stroke={theme.palette.custom.red}
             strokeWidth={5}
-            name="Expected Revenue"
+            name="Expected Rent"
             dot={{ stroke: theme.palette.custom.red }}
           />
 
           <Line
             yAxisId="left"
             type="monotone"
-            dataKey={"revenue"}
+            dataKey={"rent"}
             stroke={"#000000"}
             strokeWidth={5}
-            name="Actual Revenue"
+            name="Actual Rent"
             dot={{ stroke: "#000000" }}
           />
         </ComposedChart>
@@ -133,4 +133,4 @@ const DashboardChart = (props) => {
   );
 };
 
-export default DashboardChart;
+export default ProfitChart;

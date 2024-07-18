@@ -14,7 +14,11 @@ export default function RevenueWidget({ revenueData }) {
 
   return (
     <>
-      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px" }}>
+      <Grid 
+        onClick={() => navigate("/managerCashflow")}
+        container 
+        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: 'pointer' }}
+      >
         <Grid container item xs={12} md={9} spacing={2} sx={{ padding: "20px" }}>
           <Grid
             item
@@ -103,13 +107,20 @@ export default function RevenueWidget({ revenueData }) {
                   backgroundColor: "#A9AAAB",
                 },
               }}
-              onClick={() => navigate("/payments")}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/payments")
+              }}
             >
               Pay Bills
             </Button>
           </Grid>
           <Grid item xs={6} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/managerTransactions");
+              }}
               variant="contained"
               sx={{
                 width: "60%",

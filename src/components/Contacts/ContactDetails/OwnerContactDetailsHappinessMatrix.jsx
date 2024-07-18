@@ -785,7 +785,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 
 const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   const navigate = useNavigate();
-  console.log("ROHIT - PropertiesDataGrid - data -   ", data);
+  console.log("PropertiesDataGrid - data -   ", data);
   const paymentStatusColorMap = {
     "Paid On Time": theme.palette.priority.clear,
     "Partially Paid": theme.palette.priority.medium,
