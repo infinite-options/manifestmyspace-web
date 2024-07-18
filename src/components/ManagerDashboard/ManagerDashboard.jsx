@@ -67,10 +67,6 @@ function ManagerDashboard() {
   const [contractRequests, setContractRequests] = useState([]);
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
-  const [cashflowDetails, setCashflowDetails] = useState([]);
-  const [cashflowDetailsByProperty, setCashflowDetailsByProperty] = useState([]);
-  const [cashflowDetailsByPropertyByMonth, setCashflowDetailsByPropertyByMonth] = useState([]);
-  const [cashflowData, setCashflowData] = useState([]);
   const [happinessData, setHappinessData] = useState([]);
   const [dataforhappiness, setdataforhappiness] = useState([]);
 
