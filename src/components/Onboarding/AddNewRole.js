@@ -196,7 +196,7 @@ const AddNewRole = () => {
         console.log("user will have role_id%%%", role_id)
         console.log("user will have role%%%", updatedRole)
         setCookie("user", {  ...user, ...role_id , role: updatedRole});
-       
+        setUser({  ...user, ...role_id , role: updatedRole});
 
 
         const { dashboardUrl } = roleMap[newRole];
