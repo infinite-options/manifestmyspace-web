@@ -203,7 +203,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
 
                     }}
                 />}
-            <Dialog open={open} onClose={handleClose} >
+            <Dialog open={open} onClose={handleClose}  maxWidth="md">
                 <DialogTitle
                     sx={{
                         display: 'flex',
@@ -234,7 +234,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
                                         setCurrentRow({ ...currentRow, year: formattedDate })
                                     }
                                     }
-                                    sx={{ marginTop: "10px", backgroundColor: '#D6D5DA', width: '270px' }}
+                                    sx={{ marginTop: "10px", backgroundColor: '#D6D5DA', width: '450px' }}
                                     fullWidth
                                     InputLabelProps={{
                                         sx: {
@@ -301,7 +301,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
                         </Grid>
                         <Grid item md={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
-                                <InputLabel required>State</InputLabel>
+                                <InputLabel>State</InputLabel>
                                 <Select
                                     className={classes.select}
                                     margin="dense"
@@ -360,6 +360,8 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
                         onClick={handleSave} color="primary">
                         Save
                     </Button>
+                    {isEditing && 
+                    <>
                     <Button
                         sx={{
                             background: "#F87C7A",
@@ -413,6 +415,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
                             </Button>
                         </DialogActions>
                     </Dialog>
+                    </>}
                 </Box>
                 {/* </DialogActions> */}
             </Dialog>

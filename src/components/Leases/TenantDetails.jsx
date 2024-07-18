@@ -25,34 +25,13 @@ const useStyles = makeStyles((theme) => ({
         '& .MuiInputBase-root': {
             backgroundColor: '#D6D5DA',
         },
-        '& .MuiInputLabel-root': {
-            textAlign: 'center',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '100%',
-            pointerEvents: 'none',
-        },
-        '& .MuiInputLabel-shrink': {
-            top: 0,
-            left: 50,
-            transformOrigin: 'top center',
-            textAlign: 'left',
-            color: '#9F9F9F',
-        },
-        '& .MuiInputLabel-shrink.Mui-focused': {
-            color: '#9F9F9F',
-        },
-        '& .MuiInput-underline:before': {
-            borderBottom: 'none',
-        },
     },
     alert: {
         marginTop: theme.spacing(2),
     },
 }));
 
-const TenantDetails = ({ tenantWithId }) => {
+const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
     console.log('tenantwithid', tenantWithId);
     const classes = useStyles();
     const [rows, setRows] = useState(tenantWithId);
@@ -101,20 +80,20 @@ const TenantDetails = ({ tenantWithId }) => {
             headerName: "Responsibility",
             flex: 1,
         },
-        {
-            field: 'actions',
-            headerName: '',
-            flex: 0.7,
-            renderCell: (params) => (
-                <Box>
-                    <IconButton
-                        onClick={() => handleEditClick(params.row)}
-                    >
-                        <EditIcon sx={{ color: "#3D5CAC" }} />
-                    </IconButton>
-                </Box>
-            )
-        }
+        // {
+        //     field: 'actions',
+        //     headerName: '',
+        //     flex: 0.7,
+        //     renderCell: (params) => (
+        //         <Box>
+        //             <IconButton
+        //                 onClick={() => handleEditClick(params.row)}
+        //             >
+        //                 <EditIcon sx={{ color: "#3D5CAC" }} />
+        //             </IconButton>
+        //         </Box>
+        //     )
+        // }
     ]
 
     const handleOpen = () => setOpen(true);
@@ -168,6 +147,7 @@ const TenantDetails = ({ tenantWithId }) => {
             setError(null);
         }
         setRows(rows.filter(row => row.tenant_uid !== currentRow.tenant_uid));
+        setTenantWithId(rows.filter(row => row.tenant_uid !== currentRow.tenant_uid));
         handleClose();
     }
 
@@ -187,8 +167,10 @@ const TenantDetails = ({ tenantWithId }) => {
             if (isEditing) {
                 currTotalResp = totalResponsility + Number(currentRow.lt_responsibility);
                 setRows(rows.map(row => (row.tenant_uid === currentRow.tenant_uid ? currentRow : row)));
+                setTenantWithId(rows.map(row => (row.tenant_uid === currentRow.tenant_uid ? currentRow : row)))
             } else {
                 setRows([...rows, { ...currentRow, tenant_uid: rows.length }]);
+                setTenantWithId([...rows, { ...currentRow, tenant_uid: rows.length }])
             }
             setTotalResponsibility(currTotalResp);
             handleClose();
@@ -221,38 +203,42 @@ const TenantDetails = ({ tenantWithId }) => {
                     aria-controls="documents-content"
                     id="documents-header"
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                        <Typography
-                            sx={{
-                                color: "#160449",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.small,
-                                textAlign: 'center',
-                                paddingBottom: "10px",
-                                paddingTop: "5px",
-                                flexGrow: 1,
-                                paddingLeft: "50px"
-                            }}
-                        >
-                            Tenant Details
-                        </Typography>
-                        <Button
-                            sx={{
-                                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-                                cursor: "pointer",
-                                textTransform: "none",
-                                minWidth: "40px",
-                                minHeight: "40px",
-                                width: "40px",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}
-                            size="small"
-                            onClick={handleAddClick}
-                        >
-                            <AddIcon sx={{ color: "#160449", fontSize: "18px" }} />
-                        </Button>
-                    </Box>
+                    <Grid container>
+                        <Grid item md={11.2}>
+                            <Typography
+                                sx={{
+                                    color: "#160449",
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.small,
+                                    textAlign: 'center',
+                                    paddingBottom: "10px",
+                                    paddingTop: "5px",
+                                    flexGrow: 1,
+                                    paddingLeft: "50px"
+                                }}
+                            >
+                                Tenant Details
+                            </Typography>
+                        </Grid>
+                        <Grid item md={0.5}>
+                            {/* <Button
+                                sx={{
+                                    "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                                    cursor: "pointer",
+                                    textTransform: "none",
+                                    minWidth: "40px",
+                                    minHeight: "40px",
+                                    width: "40px",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}
+                                size="small"
+                                onClick={handleAddClick}
+                            >
+                                <AddIcon sx={{ color: "#160449", fontSize: "18px" }} />
+                            </Button> */}
+                        </Grid>
+                    </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
                     <DataGrid
@@ -294,8 +280,8 @@ const TenantDetails = ({ tenantWithId }) => {
                             color: "#160449",
                             fontWeight: theme.typography.primary.fontWeight,
                             fontSize: theme.typography.small,
-                            flexGrow: 1, 
-                            textAlign: 'center', 
+                            flexGrow: 1,
+                            textAlign: 'center',
                         }}>
                             Tenant Details
                         </Typography>
@@ -328,18 +314,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_first_name}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={6}>
@@ -352,18 +326,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_last_name}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={12} sx={{ marginTop: '10px' }}>
@@ -381,18 +343,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_phone_number}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={6}>
@@ -405,18 +355,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_email}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={12} sx={{ marginTop: '10px' }}>
@@ -435,18 +373,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_drivers_license_number}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                         <Grid item md={6}>
@@ -459,18 +385,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.tenant_ssn}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
 
@@ -480,7 +394,7 @@ const TenantDetails = ({ tenantWithId }) => {
                             </Typography>
                         </Grid>
                         <Grid item md={2.5} sx={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Typography sx={{ fontSize: "12px", color: "#273B4A", marginTop: "30px" }}>
+                            <Typography sx={{ fontSize: "14px", color: "#273B4A", marginTop: "30px" }}>
                                 Responsibility %
                             </Typography>
                         </Grid>
@@ -493,18 +407,6 @@ const TenantDetails = ({ tenantWithId }) => {
                                 margin="normal"
                                 value={currentRow && currentRow.lt_responsibility}
                                 onChange={handleInputChange}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                InputLabelProps={{
-                                    style: {
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                    },
-                                }}
                             />
                         </Grid>
                     </Grid>
@@ -522,20 +424,20 @@ const TenantDetails = ({ tenantWithId }) => {
                                 backgroundColor: '#fabd00',
                             },
                         }}>Save</Button>
-                        {isEditing === true && 
-                        <Button onClick={handleDeleteClick} sx={{
-                            background: "#F87C7A",
-                            color: "#160449",
-                            cursor: "pointer",
-                            width: "100px",
-                            height: "31px",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            textTransform: 'none',
-                            '&:hover': {
-                                backgroundColor: '#f76462',
-                            },
-                        }}>Delete</Button>}
+                        {isEditing === true &&
+                            <Button onClick={handleDeleteClick} sx={{
+                                background: "#F87C7A",
+                                color: "#160449",
+                                cursor: "pointer",
+                                width: "100px",
+                                height: "31px",
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                textTransform: 'none',
+                                '&:hover': {
+                                    backgroundColor: '#f76462',
+                                },
+                            }}>Delete</Button>}
 
                         <Dialog
                             open={openDeleteConfirmation}

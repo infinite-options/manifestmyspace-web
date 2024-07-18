@@ -106,25 +106,50 @@ export default function OwnerPropertyRentWidget(props) {
             onClick={() => navigate("/pmRent")}
           />
 
-          <text
-            x={120}
-            y={113}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            cursor="pointer"
-            style={{
-              fontFamily: "Source Sans Pro",
-              fontSize: "14px",
-              fill: "#160449",
-              fontWeight: "800",
-            }}
-            onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-          >
-            View all {totalPropertiesCount}
-            <tspan x={120} y={125}>
-              properties
-            </tspan>
-          </text>
+{
+  totalPropertiesCount > 0 ? (
+    <text
+      x={120}
+      y={113}
+      textAnchor="middle"
+      dominantBaseline="middle"
+      cursor="pointer"
+      style={{
+        fontFamily: "Source Sans Pro",
+        fontSize: "14px",
+        fill: "#160449",
+        fontWeight: "800",
+      }}
+      onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+    >
+      View all {totalPropertiesCount}
+      <tspan x={120} y={125}>
+        properties
+      </tspan>
+    </text>
+  ) : (
+    <text
+      x={120}
+      y={113}
+      textAnchor="middle"
+      dominantBaseline="middle"
+      cursor="pointer"
+      style={{
+        fontFamily: "Source Sans Pro",
+        fontSize: "14px",
+        fill: "#160449",
+        fontWeight: "800",
+      }}
+      onClick={() => navigate('/newPropertyForm')}
+    >
+      Add your first
+      <tspan x={120} y={125}>
+        property here
+      </tspan>
+    </text>
+  )
+}
+
         </PieChart>
       </Grid>
     </Grid>
