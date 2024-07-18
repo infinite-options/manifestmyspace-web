@@ -58,6 +58,7 @@ const ProfileManager = () => {
   const [notifications, setNotifications] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [allowCookies, setAllowCookies] = useState(true);
+  const [settingsChanged, setSettingsChanged] = useState(false);
 
   useEffect(() => {
     setActiveForm(selectedRole);
@@ -65,20 +66,22 @@ const ProfileManager = () => {
   }, [isSave, selectedRole]);
 
   useEffect(() => {
-    const updateUserInfo = async () => {
-      try {
-        const response = await axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo', {
-          notifications: notifications.toString(),
-          dark_mode: darkMode.toString(),
-          cookies: allowCookies.toString(),
-          user_uid: user.user_uid
-        });
-        console.log('User info updated:', response.data);
-      } catch (error) {
-        console.error('Error updating user info:', error);
-      }
-    };
-    updateUserInfo();
+    if (settingsChanged) {
+      const updateUserInfo = async () => {
+        try {
+          const response = await axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo', {
+            notifications: notifications.toString(),
+            dark_mode: darkMode.toString(),
+            cookies: allowCookies.toString(),
+            user_uid: user.user_uid
+          });
+          console.log('User info updated:', response.data);
+        } catch (error) {
+          console.error('Error updating user info:', error);
+        }
+      };
+      updateUserInfo();
+    }
   }, [notifications, darkMode, allowCookies]);
 
   const fetchProfileData = async () => {
@@ -199,15 +202,24 @@ const ProfileManager = () => {
         <Stack spacing={2} mt={5}>
           <Box className={classes.settingsItem}>
             <Typography>Allow notifications</Typography>
-            <Switch checked={notifications} onChange={(e) => setNotifications(e.target.checked)} />
+            <Switch checked={notifications} onChange={(e) => {
+              setNotifications(e.target.checked);
+              setSettingsChanged(true);
+            }} />
           </Box>
           <Box className={classes.settingsItem}>
             <Typography>Dark mode</Typography>
-            <Switch checked={darkMode} onChange={(e) => setDarkMode(e.target.checked)} />
+            <Switch checked={darkMode} onChange={(e) => {
+              setDarkMode(e.target.checked);
+              setSettingsChanged(true);
+            }} />
           </Box>
           <Box className={classes.settingsItem}>
             <Typography>Allow Cookies</Typography>
-            <Switch checked={allowCookies} onChange={(e) => setAllowCookies(e.target.checked)} />
+            <Switch checked={allowCookies} onChange={(e) => {
+              setAllowCookies(e.target.checked);
+              setSettingsChanged(true);
+            }} />
           </Box>
           <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>Privacy policy</Link>
           <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>Terms and conditions</Link>

@@ -184,6 +184,93 @@ const CreateProfile = () => {
         navigate(dashboardUrl);
     }
 
+    const handleLogin = async () => {
+        let email=user.email
+        let password=user.password
+        if (email === "" || password === "") {
+          alert("Please fill out all fields");
+          return;
+        }
+        // setShowSpinner(true);
+        axios
+          .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/AccountSalt/MYSPACE", {
+            email: email,
+          })
+          .then((res) => {
+            let saltObject = res;
+            if (saltObject.data.code === 200) {
+              let hashAlg = saltObject.data.result[0].password_algorithm;
+              let salt = saltObject.data.result[0].password_salt;
+    
+              if (hashAlg != null && salt != null) {
+                // Make sure the data exists
+                if (hashAlg !== "" && salt !== "") {
+                  // Rename hash algorithm so client can understand
+                  switch (hashAlg) {
+                    case "SHA256":
+                      hashAlg = "SHA-256";
+                      break;
+                    default:
+                      break;
+                  }
+                  // Salt plain text password
+                  let saltedPassword = password + salt;
+                  // Encode salted password to prepare for hashing
+                  const encoder = new TextEncoder();
+                  const data = encoder.encode(saltedPassword);
+                  //Hash salted password
+                  crypto.subtle.digest(hashAlg, data).then((res) => {
+                    let hash = res;
+                    // Decode hash with hex digest
+                    let hashArray = Array.from(new Uint8Array(hash));
+                    let hashedPassword = hashArray
+                      .map((byte) => {
+                        return byte.toString(16).padStart(2, "0");
+                      })
+                      .join("");
+                    console.log(hashedPassword);
+                    let loginObject = {
+                      email: email,
+                      password: hashedPassword,
+                    };
+                    console.log(JSON.stringify(loginObject));
+                    axios
+                      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
+                      .then((response) => {
+                        console.log(response.data.message);
+                        const { message, result } = response.data;
+                        if (message === "Incorrect password") {
+                          alert(response.data.message);
+                          // setShowSpinner(false);
+                        } else if (message === "Email doesn't exist") {
+                          //setUserDoesntExist(true);
+                          // setShowSpinner(false);
+                        } else if (message === "Login successful") {
+                          setAuthData(result);
+                          const { role } = result.user;
+                          const openingRole = role.split(",")[0];
+                          selectRole(openingRole);
+                          setLoggedIn(true);
+                          const { dashboardUrl } = roleMap[openingRole];
+                          navigate(dashboardUrl);
+                        }
+                      })
+                      .catch((err) => {
+                        if (err.response) {
+                          console.log(err.response);
+                        }
+                        console.log(err);
+                      });
+                  });
+                }
+              }
+            } else {
+             // setUserDoesntExist(true);
+              // setShowSpinner(false);
+            }
+          });
+      };
+
     const handleSignup = () => {
         if (validate_form() === false) return;
 
@@ -213,8 +300,9 @@ const CreateProfile = () => {
             .then(responseJSON => {                    
                 console.log("createProfile - responseJSON - ", responseJSON);
                 if (responseJSON.message === "User already exists") {
-                    alert(responseJSON.message);
-                    navigate('/userLogin', { state: { user_emai: user.email } })
+                    alert("User already exists! Logging with existing credentials");
+                    handleLogin();
+                    //navigate('/userLogin', { state: { user_emai: user.email } })
                     return;
                 } else {
                     setAuthData(responseJSON.result);
