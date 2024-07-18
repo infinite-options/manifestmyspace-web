@@ -56,9 +56,9 @@ export default function PropertyNavigator({
 	contracts,
 	props,
 }) {
-	console.log('In Property Navigator');
-	console.log(index, propertyList);
-	console.log(contracts);
+	// console.log('In Property Navigator');
+	// console.log(index, propertyList);
+	// console.log(contracts);
 	const navigate = useNavigate();
 	const { getProfileId, isManager, roleName, selectedRole } = useUser();
 
@@ -106,8 +106,8 @@ export default function PropertyNavigator({
 	const parsedPropertyImages = propertyData[currentIndex].property_images
 		? JSON.parse(propertyData[currentIndex].property_images)
 		: [];
-	console.log('parsedImages:', parsedPropertyImages);
-	console.log('parsedImages.length:', parsedPropertyImages.length);
+	// console.log('parsedImages:', parsedPropertyImages);
+	// console.log('parsedImages.length:', parsedPropertyImages.length);
 
 	// Initialize state with parsed images or fallback to propertyImage if empty
 	const [images, setImages] = useState(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
@@ -117,19 +117,19 @@ export default function PropertyNavigator({
 
 	// Log images and its length after it's updated
 	useEffect(() => {
-		console.log("What's in Images: ", images, images.length);
+		// console.log("What's in Images: ", images, images.length);
 		setMaxSteps(images.length); // Update maxSteps state
-		console.log('MaxSteps: ', images.length); // Log maxSteps within useEffect
+		// console.log('MaxSteps: ', images.length); // Log maxSteps within useEffect
 	}, [images]); // This useEffect will re-run whenever the 'images' state changes
 
-	console.log('MaxSteps: ', maxSteps); // Log maxSteps outside of useEffect
+	// console.log('MaxSteps: ', maxSteps); // Log maxSteps outside of useEffect
 
 	const [activeStep, setActiveStep] = useState(0);
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [contractsData, setContractsData] = useState(contracts);
 	const [contractsNewSent, setContractsNewSent] = useState(0);
 	const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
-	console.log('Maintenance Request Data1: ', maintenanceReqData);
+	// console.log('Maintenance Request Data1: ', maintenanceReqData);
 	const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
 
 	const color = theme.palette.form.main;
@@ -227,7 +227,7 @@ export default function PropertyNavigator({
 		if (property.leaseFees !== null) {
 			const rent = JSON.parse(propertyData[currentIndex].leaseFees).find((fee) => fee.fee_name === 'Rent');
 			setrentFee(rent);
-			console.log('check rent', rent);
+			// console.log('check rent', rent);
 		} else {
 			setrentFee(null);
 		}
@@ -237,7 +237,7 @@ export default function PropertyNavigator({
     if (property.appliances != null) {
       setAppliances(propertyApplicances);
       getApplianceCategories();
-      console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
+    //   console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
     }
   }, [currentIndex, propertyId]);
 
@@ -254,7 +254,7 @@ export default function PropertyNavigator({
 
 	useEffect(() => {
 		let profileId = getProfileId();
-		console.log('getProfileID', getProfileId());
+		// console.log('getProfileID', getProfileId());
 		if (profileId.startsWith('600')) {
 			maintenanceManagerDataCollectAndProcess(
 				setMaintenanceReqData,
@@ -281,7 +281,6 @@ export default function PropertyNavigator({
 			const jsonData = await response.json();
 			setHappinessData(jsonData.HappinessMatrix);
 			setdataforhappiness(jsonData)
-			console.log("JSON DATA - DATA", jsonData)
 		  } catch (error) {
 			console.error(error);
 		  }
@@ -328,19 +327,19 @@ export default function PropertyNavigator({
 		// console.log('handleOnClickNavigateToMaintenance');
 		// console.log('row', row);
 		// console.log('New data: ', property.maintenance);
-		console.log(
-			'maintenance_request_index_new',
-			property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
-		);
+		// console.log(
+		// 	'maintenance_request_index_new',
+		// 	property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
+		// );
 
-		console.log('Row: ', row);
-		console.log('Row1: ', row.row);
-		console.log('Row2: ', row.row.maintenance_status);
+		// console.log('Row: ', row);
+		// console.log('Row1: ', row.row);
+		// console.log('Row2: ', row.row.maintenance_status);
 
 		if (role === 'Manager') {
 			// These maitenance_status fields work for a Property Manager.  Need to make this Role Specific
 			status = row.row.maintenance_status;
-			console.log('Manager status', status);
+			// console.log('Manager status', status);
 
 			if (status === 'NEW' || status === 'INFO') {
 				status = 'NEW REQUEST';
@@ -354,7 +353,7 @@ export default function PropertyNavigator({
 		if (role === 'Owner') {
 			// Owner Status
 			status = row.row.maintenance_request_status;
-			console.log('Owner status', status);
+			// console.log('Owner status', status);
 
 			if (status === 'NEW') {
 				status = 'NEW REQUEST';
@@ -409,8 +408,8 @@ export default function PropertyNavigator({
 		const parsedPropertyImages = propertyData[nextIndex].property_images
 			? JSON.parse(propertyData[nextIndex].property_images)
 			: [];
-		console.log('parsedImages:', parsedPropertyImages);
-		console.log('parsedImages.length:', parsedPropertyImages.length);
+		// console.log('parsedImages:', parsedPropertyImages);
+		// console.log('parsedImages.length:', parsedPropertyImages.length);
 		setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
 
 		setActiveStep(0);
@@ -426,8 +425,8 @@ export default function PropertyNavigator({
 		const parsedPropertyImages = propertyData[previousIndex].property_images
 			? JSON.parse(propertyData[previousIndex].property_images)
 			: [];
-		console.log('parsedImages:', parsedPropertyImages);
-		console.log('parsedImages.length:', parsedPropertyImages.length);
+		// console.log('parsedImages:', parsedPropertyImages);
+		// console.log('parsedImages.length:', parsedPropertyImages.length);
 		setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
 
 		setActiveStep(0);
