@@ -116,8 +116,8 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
     };
 
     const handleDelete = (id) => {
-        setVehicles(vehicles.filter(veh => veh.id !== id));
-        setLeaseVehicles(vehicles.filter(veh => veh.id !== id));
+        setVehicles(vehicles.filter(veh => veh.id !== currentRow.id));
+        setLeaseVehicles(vehicles.filter(veh => veh.id !== currentRow.id));
         handleClose();
     };
 
@@ -158,7 +158,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
         <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>
-                    Vehicles ({vehicles.length})</Typography>
+                    Vehicles ({leaseVehicles.length})</Typography>
                 <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
