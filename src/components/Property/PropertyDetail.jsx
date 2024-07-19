@@ -14,12 +14,22 @@ export default function PropertyDetail({}) {
   const location = useLocation();
   let navigate = useNavigate();
   //   const [contractsForProperty, setContractsForProperty] = useState([]);
-  //   const contracts = location.state.contracts;
-  const propertyList = location.state.propertyList; // list of Property Details + Applications + Maintenance from /properties endpoint
-  const index = location.state.index;
-  const allRentStatus = location.state.allRentStatus;
-  const rawPropertyData = location.state.rawPropertyData;
-  const isDesktop = location.state.isDesktop;
+  // const contracts = location.state.contracts;
+  const propertyList = location.state?.propertyList; // list of Property Details + Applications + Maintenance from /properties endpoint
+  const index = location.state?.index;
+  const allRentStatus = location.state.allRentStatus?location.state.allRentStatus: [];
+  const rawPropertyData = location.state.rawPropertyData?location.state.rawPropertyData: [];
+  const isDesktop = location.state.isDesktop?location.state.isDesktop: true;
+
+  
+
+  console.log("LOCATION STATE", location.state)
+  console.log("all rentStatus", allRentStatus)
+
+  // useEffect(() => {
+  //   console.log("all rentStatus", allRentStatus)
+	// }, [allRentStatus]); 
+
   //   const [index, setIndex] = useState(location.state.index);
 
   // console.log("--debug-- all contracts PropertyDetail", contracts)
@@ -57,73 +67,78 @@ export default function PropertyDetail({}) {
         style={{
           display: "flex",
           justifyContent: "center",
-          alignItems: 'center',
-          width: "100%", // Take up full screen width
-          minHeight: "100vh", // Set the Box height to full height
-          marginTop: theme.spacing(2), // Set the margin to 20px
-          marginBottom: theme.spacing(2), // Set the margin to 20px
-          paddingBottom: "50px",
+          alignItems: "center",
+          width: "100%",
+          padding: theme.spacing(2),
         }}
       >
         <Paper
           style={{
-            margin: "30px",
+            maxWidth: "900px",
+            width: "100%",
+            padding: theme.spacing(2),
             backgroundColor: theme.palette.primary.main,
-            width: "100%", // Occupy full width with 25px margins on each side
-            paddingTop: "10px",
-            paddingBottom: "30px",
           }}
         >
-          <Stack
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            sx={{
-              paddingBottom: "0px",
-            }}
-          >
-            <Box direction="row" justifyContent="center" alignItems="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                All Properties
-              </Typography>
-            </Box>
-            <Box position="absolute" right={30}>
-              <Button onClick={() => navigateToAddProperty()}>
-                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-              </Button>
-            </Box>
-          </Stack>
-          <Stack direction="column" justifyContent="center" alignItems="center">
-            <Box>
-              <Button
-                onClick={() => handleBackButton()}
+          <Stack direction="column" alignItems="center">
+            <Box display="flex" justifyContent="center" width="100%" position="relative">
+              <Typography
                 sx={{
-                  textTransform: "none",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: "16px",
-                  "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.largeFont,
                 }}
               >
-                {/* <UTurnLeftIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px', transform: 'rotate(90deg)', fontWeight: theme.typography.common.fontWeight}}/> */}
-                <img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
-                <Typography>Return to Viewing All Properties</Typography>
+                All Properties
+              </Typography>
+              <Button
+                onClick={navigateToAddProperty}
+                sx={{
+                  position: "absolute",
+                  right: 0,
+                }}
+              >
+                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px" }} />
               </Button>
             </Box>
-          </Stack>
-          <Stack direction="column" justifyContent="center" alignItems="center">
-            <Box
+            <Button
+              onClick={handleBackButton}
               sx={{
-                borderBottom: 0,
-                width: "90%",
-                alignItems:"center",
-                justifyContent:"center"
+                textTransform: "none",
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.common.fontWeight,
+                fontSize: "16px",
+                marginTop: theme.spacing(2),
+                display: "flex",
+                alignItems: "center",
+                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
               }}
             >
-              {/* <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyList={propertyList} contracts={contractsForProperty} /> */}
-              {/* <PropertyNavigator currentIndex={index} setCurrentIndex={setIndex} propertyList={propertyList} /> */}
-              <PropertyNavigator index={index} propertyList={propertyList} 
-              allRentStatus={allRentStatus} isDesktop={isDesktop} rawPropertyData={rawPropertyData}/>
+              <Box
+                component="img"
+                src={refundIcon}
+                sx={{
+                  width: "25px",
+                  height: "25px",
+                  marginRight: "10px",
+                  objectFit: "contain",
+                }}
+              />
+              <Typography>Return to Viewing All Properties</Typography>
+            </Button>
+            <Box
+              sx={{
+                marginTop: theme.spacing(4),
+                width: "100%",
+              }}
+            >
+              <PropertyNavigator
+                index={index}
+                propertyList={propertyList}
+                allRentStatus={allRentStatus}
+                isDesktop={isDesktop}
+                rawPropertyData={rawPropertyData}
+              />
             </Box>
           </Stack>
         </Paper>
