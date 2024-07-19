@@ -237,11 +237,18 @@ const PropertyForm = () => {
         formData.append("property_listed", 0);
         formData.append("property_notes", notes);
 		// Add selected appliances in the correct format
-		selectedAppliances.forEach(appliance => {
-			formData.append("appliances", appliance);
-		});
-    
-        console.log("Formdata:", formData);
+
+		console.log("----selectedAppliances---", JSON.stringify(selectedAppliances));
+    /*selectedAppliances.forEach(appliance => {
+        formData.append("appliances[]", JSON.stringify(appliance));
+    }); */
+	formData.append("appliances", JSON.stringify(selectedAppliances));
+    console.log("Formdata:", formData);
+
+    for (let [key, value] of formData.entries()) {
+        console.log("Property Data entered");
+        console.log(key, value);
+    }
     
         const files = selectedImageList;
         let i = 0;
@@ -260,10 +267,7 @@ const PropertyForm = () => {
           }
         }
     
-        for (let [key, value] of formData.entries()) {
-          console.log("Property Data entered");
-          console.log(key, value);
-        }
+        
     
         let responsePropertyUID = null;
         try {
@@ -728,7 +732,7 @@ const PropertyForm = () => {
 									</Typography>
 								</Grid>
 								<Grid item xs={10}>
-									<Typography>{cost/squareFootage}</Typography>
+									<Typography>{cost / squareFootage}</Typography>
 								</Grid>
 							</Grid>
 						</Grid>
