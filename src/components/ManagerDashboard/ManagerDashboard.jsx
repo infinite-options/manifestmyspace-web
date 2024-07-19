@@ -235,6 +235,7 @@ function ManagerDashboard() {
       const emp_verification = async () => {
         try {
           const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+          // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
           if (!response.ok) {
             throw new Error("Failed to fetch data");
           }

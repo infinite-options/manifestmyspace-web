@@ -81,10 +81,11 @@ export default function PropertyNavigator({
   const [happinessData, setHappinessData] = useState([]);
   const [dataforhappiness, setdataforhappiness] = useState([]);
 
-  console.log("lcation state rent status", allRentStatus);
+//   console.log("lcation state rent status", allRentStatus);
 
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
+	// const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
     try {
       const response = await axios.get(url);
       const data = response.data["management_contacts"];
@@ -205,6 +206,7 @@ export default function PropertyNavigator({
 		const getContractsForOwner = async () => {
 			try {
 				const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
+				// const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
 				if (!response.ok) {
 					console.log('Error fetching contracts data');
 				}
@@ -276,7 +278,8 @@ export default function PropertyNavigator({
 		const fetchDashboardData = async () => {
 		  setShowSpinner(true);
 		  try {
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`);
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
 			if (!response.ok) {
 			  throw new Error('Failed to fetch dashboard data');
 			}
@@ -669,7 +672,8 @@ export default function PropertyNavigator({
 
   const getApplianceCategories = async () => {
     try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+	  const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+      //const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
       if (!response.ok) {
         console.log("Error fetching lists data");
       }

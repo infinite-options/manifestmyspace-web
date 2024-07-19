@@ -58,7 +58,7 @@ export default function PropertyRentWidget(props) {
     const propertyRentDetails = async () => {
       try {
         const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-        //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+        // const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/600-000003`);
         const rentResponse = await response.json();
         setAllRentStatus(rentResponse.RentStatus.result);
       } catch (error) {
