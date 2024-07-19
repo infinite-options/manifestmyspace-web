@@ -116,6 +116,16 @@ const NewUser = () => {
                                 
                             </ToggleButton>
 
+                            <ToggleButton value="PM_EMPLOYEE" aria-label="pm_employee"  sx={{ backgroundColor: '#FFFFFF', color: '#000000', height: '150px', width: '200px',}}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <ManageAccountsOutlinedIcon sx={{height: '50%', width: '50%', }}/>
+                                    <Typography sx={{ fontSize: '20px', fontWeight: 'bold',}}>
+                                        Management Employee
+                                    </Typography>
+                                </Box>
+                                
+                            </ToggleButton>
+
                             <ToggleButton value="TENANT" aria-label="tenant" sx={{ backgroundColor: '#FFFFFF', color: '#000000', height: '150px', width: '200px',}}>
                                 
                                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -131,6 +141,15 @@ const NewUser = () => {
                                     <ConstructionOutlinedIcon sx={{height: '50%', width: '50%', }}/>
                                     <Typography sx={{ fontSize: '20px', fontWeight: 'bold', }}>
                                         Maintenance
+                                    </Typography>
+                                </Box>
+                            </ToggleButton>
+
+                            <ToggleButton value="MAINT_EMPLOYEE" aria-label="maint_employee" sx={{ backgroundColor: '#FFFFFF', color: '#000000', height: '150px', width: '200px',}}>                                
+                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <ConstructionOutlinedIcon sx={{height: '50%', width: '50%', }}/>
+                                    <Typography sx={{ fontSize: '20px', fontWeight: 'bold', }}>
+                                        Maintenance Employee
                                     </Typography>
                                 </Box>
                             </ToggleButton>
