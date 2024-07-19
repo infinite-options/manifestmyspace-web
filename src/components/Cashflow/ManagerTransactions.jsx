@@ -112,6 +112,8 @@ export default function ManagerTransactions() {
 
   const [ transactions, setTransactions ] = useState([]);
 
+  const [ transactionsNew, setTransactionsNew ] = useState([]); // rohit - change to transactions
+
   async function fetchCashflow(userProfileId, month, year) {
     try {
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
@@ -123,6 +125,16 @@ export default function ManagerTransactions() {
       return cashflow.data;
     } catch (error) {
       console.error("Error fetching cashflow data:", error);
+    }
+  }
+
+  const getPurchaseGroupStatus = ( purchaseGroup ) => {
+    if(purchaseGroup.pur_amount_due_total === purchaseGroup.total_paid_total){
+        return "fully_paid";
+    } else if (purchaseGroup.total_paid_total === null){
+        return "not_paid";
+    } else {
+        return "partially_paid";
     }
   }
 
@@ -142,9 +154,13 @@ export default function ManagerTransactions() {
 //     console.log("payouts - ", payouts);
 //   }, [payouts]);
 
-//   useEffect(() => {
-//     console.log("transactions - ", transactions);
-//   }, [transactions]);
+  useEffect(() => {
+    console.log("ROHIT - transactions - ", transactions);
+  }, [transactions]);
+
+  useEffect(() => {
+    console.log("ROHIT - transactionsNew - ", transactionsNew);
+  }, [transactionsNew]);
 
   useEffect(() => {
     fetchCashflow(profileId)
@@ -325,6 +341,63 @@ export default function ManagerTransactions() {
     // console.log("transactionsCurrentMonth - ", transactionsData)
 
     setTransactions(transactionsData);
+
+    const transactionsByProperty = transactionsData?.reduce((acc, item) => {
+      const propertyUID = item.property_id;
+      const propertyInfo = {
+          property_id: item.property_id,
+          property_address: item.property_address,
+          property_unit: item.property_unit,
+      }
+
+      // const totalExpected = item.purchaseGroups?.reduce( (acc, item) => {
+      //   return acc + parseFloat(item.pur_amount_due_total) || 0
+      // }, 0);
+      
+      
+      // const totalActual = parseFloat(item.total_paid_total) || 0
+
+
+      if (!acc[propertyUID]) {
+          // acc[propertyUID] = [];
+          acc[propertyUID] = {
+              propertyInfo: propertyInfo,
+              purchaseGroups: [],
+              // totalExpected: 0,
+              // totalActual: 0,
+          };
+      }
+
+      const groupStatus = getPurchaseGroupStatus(item)      
+      acc[propertyUID].purchaseGroups.push({...item, purchaseGroupStatus: groupStatus});
+      // acc[propertyUID].totalExpected += totalExpected;
+      // acc[propertyUID].totalActual += totalActual;
+      
+      return acc;
+  }, {})    
+
+  if (transactionsByProperty && Object.keys(transactionsByProperty).length > 0) {
+    Object.keys(transactionsByProperty)?.forEach(propertyUID => {
+      const purchaseGroups = transactionsByProperty[propertyUID].purchaseGroups;
+      const allFullyPaid = purchaseGroups.every(group => group.purchaseGroupStatus === "fully_paid");
+
+      const totalExpected = transactionsByProperty[propertyUID].purchaseGroups?.reduce( (acc, item) => {
+        return acc + parseFloat(item.pur_amount_due_total) || 0
+      }, 0);
+
+      const totalActual = transactionsByProperty[propertyUID].purchaseGroups?.reduce( (acc, item) => {
+        return acc + parseFloat(item.total_paid_total) || 0
+      }, 0);
+
+      transactionsByProperty[propertyUID].propertyPurchaseStatus = allFullyPaid ? "fully_paid" : "not_paid";
+      transactionsByProperty[propertyUID].totalExpected = totalExpected;
+      transactionsByProperty[propertyUID].totalActual = totalActual;
+    });
+  }
+
+  console.log("ROHIT - transactionsByProperty - ", transactionsByProperty);
+
+  setTransactionsNew(transactionsByProperty);
     
   }, [month, year, cashflowData]);
 
@@ -340,6 +413,16 @@ export default function ManagerTransactions() {
         return "#A52A2A";
     } else {
         return "#FFC614";
+    }
+  }
+
+  const getPropertyCircleColor = ( property ) => {
+    if(property.propertyPurchaseStatus === "fully_paid"){
+        return "#76B148";
+    } else if (property.propertyPurchaseStatus === "not_paid"){
+        return "#A52A2A";
+    } else {
+        return "#000000";
     }
   }
 
@@ -521,54 +604,116 @@ export default function ManagerTransactions() {
                         </Box>
 
                     </Grid>
-                </Grid>
-                                
+                </Grid>                      
+
                 {
-                    transactions && transactions.map( (transaction, index) => {        
-                        const isPayable = isTransactionPayable(transaction);
-                        return (
-                            <Accordion
-                                sx={{
-                                    backgroundColor: theme.palette.primary.main,
-                                    boxShadow: "none",
-                                    marginTop: '5px',
-                                }}
-                                key={transaction.pur_group}
-                            >                                                       
-                            <Grid container item xs={12}>
-                                <Grid container justifyContent="flex-start" item xs={6.5}>
-                                    <Grid container direction="row" sx={{ height: '35px',}}>
-                                        <Grid container alignContent="flex-start" item xs={10}>
-                                            <AccordionSummary 
-                                                sx={{
-                                                    '&.Mui-expanded': {
-                                                        minHeight: 'unset', // Override the min-height when expanded
-                                                    },
-                                                }}
-                                                expandIcon={<ExpandMoreIcon />}
-                                            >
-                                                <Box style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Box 
-                                                        sx={{
-                                                            width: '20px',
-                                                            height: '20px',
-                                                            borderRadius: '50%',
-                                                            backgroundColor: getCircleColor(transaction) , 
-                                                            marginRight: '10px',
-                                                        }}
-                                                    >
+                  transactionsNew && Object.keys(transactionsNew)?.map( (propertyID, index) => {
+                    const property = transactionsNew[propertyID]                                                        
+                    return (
+                      <Accordion
+                          sx={{
+                              backgroundColor: theme.palette.primary.main,
+                              boxShadow: "none",
+                              marginTop: '15px',
+                          }}
+                          key={propertyID}
+                      >                                                       
+                      <Grid container item xs={12}>
+                          <Grid container justifyContent="flex-start" item xs={6.5}>
+                              <Grid container direction="row" sx={{ height: '35px',}}>
+                                  <Grid container alignContent="flex-start" item xs={10}>
+                                      <AccordionSummary 
+                                          sx={{
+                                              '&.Mui-expanded': {
+                                                  minHeight: 'unset', // Override the min-height when expanded
+                                              },
+                                          }}
+                                          expandIcon={<ExpandMoreIcon />}
+                                      >
+                                          <Box style={{ display: 'flex', alignItems: 'center' }}>
+                                              <Box 
+                                                  sx={{
+                                                      width: '20px',
+                                                      height: '20px',
+                                                      borderRadius: '50%',
+                                                      backgroundColor: getPropertyCircleColor(property) , 
+                                                      marginRight: '10px',
+                                                  }}
+                                              >
+                                              </Box>
+                                              <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                                                  {`${property.propertyInfo?.property_address}, Unit - ${property.propertyInfo?.property_unit}`}
+                                              </Typography>                                               
+                                          </Box>
+                                      </AccordionSummary>
+                                  </Grid>                                  
+                              </Grid>
+                          </Grid>                                    
+                          <Grid container justifyContent="flex-end" alignItems="center" item xs={3}>
+                              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>                                    
+                                  ${property?.totalExpected ? property?.totalExpected : "0.00"}
+                              </Typography>                                    
+                          </Grid>
+
+                          <Grid container justifyContent="flex-end" alignItems="center" item xs={2}>
+                              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                  ${property?.totalActual ? property?.totalActual : "0.00"}                                
+                              </Typography>
+
+                          </Grid>
+
+
+                      </Grid>
+
+                      <AccordionDetails>
+                          {
+                            property.purchaseGroups?.map( (purGroup, index) => {
+                              const isPayable = isTransactionPayable(purGroup);
+                              return (
+                                <Accordion
+                                    sx={{
+                                        backgroundColor: theme.palette.primary.main,
+                                        boxShadow: "none",
+                                        marginTop: '5px',
+                                        marginLeft: '10px',
+
+                                    }}
+                                    key={purGroup.pur_group}
+                                >                                                       
+                                <Grid container item xs={12}>
+                                    <Grid container justifyContent="flex-start" item xs={6.5}>
+                                        <Grid container direction="row" sx={{ height: '35px',}}>
+                                            <Grid container alignContent="flex-start" item xs={10}>
+                                                <AccordionSummary 
+                                                    sx={{
+                                                        '&.Mui-expanded': {
+                                                            minHeight: 'unset', // Override the min-height when expanded
+                                                        },
+                                                    }}
+                                                    expandIcon={<ExpandMoreIcon />}
+                                                >
+                                                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <Box 
+                                                            sx={{
+                                                                width: '20px',
+                                                                height: '20px',
+                                                                borderRadius: '50%',
+                                                                backgroundColor: getCircleColor(purGroup) , 
+                                                                marginRight: '10px',
+                                                            }}
+                                                        >
+                                                        </Box>
+                                                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                                                            {`Purchase Group - ${purGroup.pur_group}`}
+                                                        </Typography>                                               
                                                     </Box>
-                                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                                                        Purchase Group: {transaction.pur_group}
-                                                    </Typography>                                               
-                                                </Box>
-                                            </AccordionSummary>
-                                        </Grid>
-                                        <Grid item xs={2}>
+                                                </AccordionSummary>
+                                            </Grid> 
+                                            <Grid item xs={2}>
                                             {
                                                 isPayable && (
                                                     <Button 
-                                                        onClick={ () =>  handlePayment(transaction)}
+                                                        onClick={ () =>  handlePayment(purGroup)}
                                                         sx={{
                                                             backgroundColor: '#8696BE',
                                                             color: "#160449",
@@ -584,93 +729,76 @@ export default function ManagerTransactions() {
                                                     </Button>
                                                 )
                                             }
+                                        </Grid>                                 
                                         </Grid>
+                                    </Grid>                                    
+                                    <Grid container justifyContent="flex-end" alignItems="center" item xs={3}>
+                                        <Typography sx={{ color: "#000000", fontWeight: theme.typography.common.fontWeight }}>                                    
+                                            ${purGroup?.pur_amount_due_total ? purGroup?.pur_amount_due_total : "0.00"}
+                                        </Typography>                                    
                                     </Grid>
-                                </Grid>                                    
-                                <Grid container justifyContent="flex-end" alignItems="center" item xs={3}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>                                    
-                                        ${transaction?.pur_amount_due_total ? transaction?.pur_amount_due_total : "0.00"}
-                                    </Typography>                                    
-                                </Grid>
 
-                                <Grid container justifyContent="flex-end" alignItems="center" item xs={2}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                        ${transaction?.total_paid_total ? transaction?.total_paid_total : "0.00"}                                
-                                    </Typography>
+                                    <Grid container justifyContent="flex-end" alignItems="center" item xs={2}>
+                                        <Typography sx={{ color: "#000000", fontWeight: theme.typography.common.fontWeight }}>
+                                            ${purGroup?.total_paid_total ? purGroup?.total_paid_total : "0.00"}                                
+                                        </Typography>
+
+                                    </Grid>
+
 
                                 </Grid>
 
+                                <AccordionDetails>
+                                  {
+                                    purGroup?.transactions?.map((purchase, index) => {
+                                        return (
+                                            <>                                                
+                                                <Grid container item xs={12}>
+                                                    <Grid container justifyContent="flex-start" item xs={6.5} sx={{ paddingLeft: '30px',}}>
+                                                        
+                                                      <Typography>
+                                                          {purchase.pur_payer?.startsWith('350') && purchase.pur_receiver?.startsWith('600') ? "Tenant Payment" : ""}
+                                                          {purchase.pur_payer?.startsWith('600') && purchase.pur_receiver?.startsWith('110') ? "Owner Payment" : ""}
+                                                          {purchase.pur_payer?.startsWith('110') && purchase.pur_receiver?.startsWith('600') ? "Manager Payment" : ""}
+                                                      </Typography>
+                                                        
+                                                    </Grid>                                    
+                                                    <Grid container justifyContent="flex-end" item xs={3}>
+                                                        <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>                                    
+                                                            ${purchase?.pur_amount_due ? purchase?.pur_amount_due : "0"}
+                                                        </Typography>                                    
+                                                    </Grid>
 
-                            </Grid>
-
-                            <AccordionDetails>
-                                <Grid item xs={12}  sx={{ paddingLeft: '30px',}}>
-                                    <Typography>
-                                        Property: {`${transaction.property_address}, Unit - ${transaction.property_unit}`}
-                                    </Typography>                            
-                                </Grid>
-                                {
-                                transaction?.transactions?.map((purchase, index) => {
-                                    return (
-                                        <>
-                                            {/* <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                                                pur_uid: {purchase.purchase_uid}
-                                            </Typography> */}
-                                            {/* <Box key={purchase.purchase_uid} component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                                                <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>                                                
-                                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                                                        {purchase.pur_payer?.startsWith('350') && purchase.pur_receiver?.startsWith('600') ? "Tenant Payment" : ""}
-                                                        {purchase.pur_payer?.startsWith('600') && purchase.pur_receiver?.startsWith('110') ? "Owner Payment" : ""}
-                                                        {purchase.pur_payer?.startsWith('110') && purchase.pur_receiver?.startsWith('600') ? "Manager Payment" : ""}
-                                                    </Typography>                                                
-                                                </Box>
-                                                <Box display="flex" justifyContent="center" alignItems="center" sx={{ width: '200px',}}>
-                                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>                                    
-                                                        ${purchase?.pur_amount_due ? purchase?.pur_amount_due : "0"}
-                                                    </Typography>
-                                                </Box>
-                                                <Box display="flex" justifyContent="flex-end" alignItems="center" sx={{ width: '200px',}}>
-                                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                        ${purchase?.total_paid ? purchase?.total_paid : "0"}                                
-                                                    </Typography>
-                                                </Box>
-                                            </Box>    */}
-
-                                            <Grid container item xs={12}>
-                                                <Grid container justifyContent="flex-start" item xs={6.5} sx={{ paddingLeft: '30px',}}>
-                                                    
-                                                        <Typography>
-                                                            {purchase.pur_payer?.startsWith('350') && purchase.pur_receiver?.startsWith('600') ? "Tenant Payment" : ""}
-                                                            {purchase.pur_payer?.startsWith('600') && purchase.pur_receiver?.startsWith('110') ? "Owner Payment" : ""}
-                                                            {purchase.pur_payer?.startsWith('110') && purchase.pur_receiver?.startsWith('600') ? "Manager Payment" : ""}
+                                                    <Grid container justifyContent="flex-end" item xs={2}>
+                                                        <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>
+                                                            ${purchase?.total_paid ? purchase?.total_paid : "0"}                                
                                                         </Typography>
-                                                    
-                                                </Grid>                                    
-                                                <Grid container justifyContent="flex-end" item xs={3}>
-                                                    <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>                                    
-                                                        ${purchase?.pur_amount_due ? purchase?.pur_amount_due : "0"}
-                                                    </Typography>                                    
-                                                </Grid>
 
-                                                <Grid container justifyContent="flex-end" item xs={2}>
-                                                    <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>
-                                                        ${purchase?.total_paid ? purchase?.total_paid : "0"}                                
-                                                    </Typography>
-
-                                                </Grid>
+                                                    </Grid>
 
 
-                                            </Grid>                                         
-                                        </>
+                                                </Grid>                                         
+                                            </>
 
-                                    );
-                                })
-                            }
-                            </AccordionDetails>
-                            </Accordion>     
-                        );
-                    })
-                }                           
+                                        );
+                                    })
+                                  }
+                                </AccordionDetails>
+                              </Accordion>  
+                              );
+                            })
+                          }
+                      </AccordionDetails>
+                      </Accordion>     
+                  );
+
+                  })
+                }
+
+
+
+
+                
                 
               </Paper>              
             </Box>                                
