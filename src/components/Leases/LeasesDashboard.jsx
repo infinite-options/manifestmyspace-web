@@ -18,8 +18,10 @@ export default function LeasesDashboard() {
     const [dataReady, setDataReady] = useState(false);
     const { getProfileId, isManager, roleName, selectedRole } = useUser();
     const [isEndClicked, setIsEndClicked] = useState(false);
+    const [isUpdate, setIsUpdate] = useState(false);
 
     useEffect(() => {
+        console.log('useeffect called');
         axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
             //axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
             const fetchData = res.data["Lease_Details"].result;
@@ -32,7 +34,11 @@ export default function LeasesDashboard() {
         }).catch(err => {
             console.log("Error in fetching lease details", err)
         })
-    }, [])
+    }, [isUpdate])
+
+    const handleUpdate = () => {
+        setIsUpdate(!isUpdate);
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -50,7 +56,7 @@ export default function LeasesDashboard() {
                             <RenewLease leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} />
                         </Grid>)}
                     {selectedLeaseId != null && isEndClicked === true && (<Grid item xs={12} md={8}>
-                        <EndLeaseButton theme={theme} leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} />
+                        <EndLeaseButton theme={theme} leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} handleUpdate={handleUpdate}/>
                     </Grid>)}
                 </Grid>)}
             </Container>

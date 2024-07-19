@@ -226,6 +226,14 @@ const PropertyInfo = (props) => {
             >
               {property.property_city + ", " + property.property_state + " " + property.property_zip}
             </Typography>
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontSize: "18px",
+              }}
+            >
+              {property.property_uid}
+            </Typography>
           </Stack>
           <Stack alignItems="center" justifyContent="center" spacing={5} sx={{ padding: "20px" }}>
             <Box

@@ -788,6 +788,19 @@ export default function PropertyNavigator({
 							{property.property_address} {property.property_unit}, {property.property_city}{' '}
 							{property.property_state} {property.property_zip}
 						</Typography>
+						
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: theme.typography.largeFont,
+                          textAlign: "center",
+                          marginTop: '10px',
+                        }}
+                      >
+                        {property.property_id}
+                      </Typography>
+         
 						<Typography
 							sx={{
 								color: '#3D5CAC',
