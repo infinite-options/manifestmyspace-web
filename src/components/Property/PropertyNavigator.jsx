@@ -625,13 +625,17 @@ export default function PropertyNavigator({
 					<Box
 						sx={{
 							width: '100%',
+							height: '100%',
 							margin: '0px',
 							textAlign: 'center',
 							color: '#F2F2F2',
 							backgroundColor: paymentStatusColorMap(params.value),
 							overflowWrap: 'break-word',
 							whiteSpace: 'break-spaces',
-							fontSize: '13px',
+							fontSize: '8.5px',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
 						}}
 					>
 						{params.value}
@@ -1897,6 +1901,7 @@ export default function PropertyNavigator({
 										}}
 										getRowId={(row) => row.rent_detail_index}
 										pageSizeOptions={[12]}
+										rowHeight={30}
 										sx={{
 											'& .MuiDataGrid-cell': {
 												justifyContent: 'center',
