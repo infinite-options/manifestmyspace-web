@@ -117,8 +117,8 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
     };
 
     const handleDelete = (id) => {
-        setChildren(children.filter(child => child.id !== id));
-        setLeaseChildren(children.filter(child => child.id !== id));
+        setChildren(children.filter(child => child.id !== currentRow.id));
+        setLeaseChildren(children.filter(child => child.id !== currentRow.id));
         handleClose();
     };
 
@@ -158,7 +158,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
     return (
         <Box sx={{ width: '100%', }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Children ({children.length})</Typography>
+                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Children ({leaseChildren.length})</Typography>
                 <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },

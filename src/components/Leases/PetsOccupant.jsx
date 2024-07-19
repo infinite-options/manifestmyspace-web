@@ -111,8 +111,9 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
     };
 
     const handleDelete = (id) => {
-        setPets(pets.filter(pet => pet.id !== id));
-        setLeasePets(pets.filter(pet => pet.id !== id));
+        console.log('currentrow', currentRow.id, pets);
+        setPets(pets.filter(pet => pet.id !== currentRow.id));
+        setLeasePets(pets.filter(pet => pet.id !== currentRow.id));
         handleClose();
     };
 
@@ -152,7 +153,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Pets ({pets.length})</Typography>
+                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Pets ({leasePets.length})</Typography>
                 <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
