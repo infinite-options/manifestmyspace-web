@@ -22,11 +22,17 @@ async function fetchCashflow2(userProfileId, month, year) {
 }
 
 function getRevenueList(data) {
-  return data.response_revenue.result;
+  // return data.response_revenue.result;
+  // console.log("getRevenueList - data - ", data);
+  // console.log("revenueList - ",data?.result?.filter(item => item.pur_cf_type === "revenue"));
+  return data?.result?.filter(item => item.pur_cf_type === "revenue");
 }
 
 function getExpenseList(data) {
-  return data.response_expense.result;
+  // return data.response_expense.result;  
+  // console.log("getExpenseList - data - ", data);
+  // console.log("expenseList - ",data?.result?.filter(item => item.pur_cf_type === "expense"));
+  return data?.result?.filter(item => item.pur_cf_type === "expense");
 }
 
 function getPast12MonthsCashflow(data, month, year) {
@@ -137,7 +143,7 @@ function getPast12MonthsExpectedCashflow(data, month, year) {
       year: currentYear,
       expected_cashflow: expectedMonthRevenue - expectedMonthExpense,
       cashflow: currentMonthRevenue - currentMonthExpense,
-      
+
       expected_revenue: expectedMonthRevenue,
       revenue:currentMonthRevenue,
       expected_expense: expectedMonthExpense,
@@ -182,16 +188,16 @@ function getExpectedRevenueByType(data, month, year) {
 function getTotalRevenueByType(data, month, year, expected) {
   // console.log(data, month, year)
 
-  var key = "sum(total_paid)";
+  var key = "total_paid";
 
   if (expected === true) {
-    key = "sum(pur_amount_due)";
+    key = "pur_amount_due";
   } else {
-    key = "sum(total_paid)";
+    key = "total_paid";
   }
 
-  let revenueItems = data.response_revenue_by_month_by_type.result.filter((item) => item.cf_month === month && item.cf_year === year);
-  let totalRent = revenueItems.reduce((acc, revenue) => {
+  let revenueItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year);
+  let totalRent = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
       // console.log("revenue", revenue[key])
       // console.log("acc", acc)
@@ -199,37 +205,37 @@ function getTotalRevenueByType(data, month, year, expected) {
     }
     return acc;
   }, 0.0);
-  let totalDeposits = revenueItems.reduce((acc, revenue) => {
+  let totalDeposits = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "DEPOSITS") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
-  let totalExtraCharges = revenueItems.reduce((acc, revenue) => {
+  let totalExtraCharges = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "EXTRA CHARGES") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
-  let totalUtilities = revenueItems.reduce((acc, revenue) => {
+  let totalUtilities = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "UTILITIES") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
-  let totalLateFee = revenueItems.reduce((acc, revenue) => {
+  let totalLateFee = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "LATE FEE") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
-  let totalMaintenance = revenueItems.reduce((acc, revenue) => {
+  let totalMaintenance = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "MAINTENANCE") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
-  let totalRepairs = revenueItems.reduce((acc, revenue) => {
+  let totalRepairs = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "REPAIRS") {
       return acc + parseFloat(revenue[key]);
     }
@@ -250,66 +256,66 @@ function getTotalRevenueByType(data, month, year, expected) {
 function getTotalExpenseByType(data, month, year, expected) {
   // console.log(data, month, year)
 
-  var key = "sum(total_paid)";
+  var key = "total_paid";
 
   if (expected === true) {
-    key = "sum(pur_amount_due)";
+    key = "pur_amount_due";
   } else {
-    key = "sum(total_paid)";
+    key = "total_paid";
   }
 
-  let expenseItems = data.response_expense_by_month_by_type.result.filter((item) => item.cf_month === month && item.cf_year === year);
+  let expenseItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year);
 
-  let totalMaintenance = expenseItems.reduce((acc, expense) => {
+  let totalMaintenance = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MAINTENANCE") {
       return acc + parseFloat(expense[key]);
     }
     return acc;
   }, 0.0);
 
-  let totalRepairs = expenseItems.reduce((acc, expense) => {
+  let totalRepairs = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "REPAIRS") {
       return acc + parseFloat(expense[key]);
     }
     return acc;
   }, 0.0);
 
-  let totalMortgage = expenseItems.reduce((acc, expense) => {
+  let totalMortgage = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MORTGAGE") {
       return acc + parseFloat(expense[key]);
     }
     return acc;
   }, 0.0);
 
-  let totalTaxes = expenseItems.reduce((acc, expense) => {
+  let totalTaxes = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "TAXES") {
       return acc + parseFloat(expense[key]);
     }
     return acc;
   }, 0.0);
 
-  let totalInsurance = expenseItems.reduce((acc, expense) => {
+  let totalInsurance = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "INSURANCE") {
       return acc + parseFloat(expense[key]);
     }
     return acc;
   }, 0.0);
 
-  let totalUtilities = expenseItems.reduce((acc, expense) => {
+  let totalUtilities = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "UTILITIES") {
       return acc + parseFloat(expense[key]);
     }
     return acc;
   }, 0.0);
 
-  let totalManagement = expenseItems.reduce((acc, expense) => {
+  let totalManagement = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MANAGEMENT") {
       return acc + parseFloat(expense[key]);
     }
     return acc;
   }, 0.0);
 
-  let totalBillPosting = expenseItems.reduce((acc, expense) => {
+  let totalBillPosting = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "BILL POSTING") {
       return acc + parseFloat(expense[key]);
     }

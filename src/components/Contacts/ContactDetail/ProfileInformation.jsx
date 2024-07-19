@@ -40,7 +40,7 @@ import AES from "crypto-js/aes";
 import APIConfig from "../../../utils/APIConfig";
 
 const ProfileInformation = ({ contactDetails, type }) => {
-    // console.log("ROHTI - ProfileInformation - props.type - ", type)
+    // console.log("ProfileInformation - props.type - ", type)
     const [ paymentMethods, setPaymentMethods ] = useState([]);  
   
     useEffect( () => {

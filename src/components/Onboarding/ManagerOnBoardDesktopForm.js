@@ -78,14 +78,14 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const[ employee_photo_url, setEmployeePhoto]=useState('')
   const [paymentMethods, setPaymentMethods] = useState({
-      paypal: { value: "", checked: false },
-      apple_pay: { value: "", checked: false },
-      stripe: { value: "", checked: false },
-      zelle: { value: "", checked: false },
-      venmo: { value: "", checked: false },
-      credit_card: { value: "", checked: false },
-      bank_account: { account_number: "", routing_number: "", checked: false },
-  });
+    paypal: { value: "", checked: false, uid: "" },
+    apple_pay: { value: "", checked: false, uid: "" },
+    stripe: { value: "", checked: false, uid: "" },
+    zelle: { value: "", checked: false, uid: "" },
+    venmo: { value: "", checked: false, uid: "" },
+    credit_card: { value: "", checked: false, uid: "" },
+    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
+});
 
   // Personal info state variables
   const [empFirstName, setEmpFirstName] = useState("");
@@ -121,35 +121,41 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
         setCity(profileData.business_city || "");
         setState(profileData.business_state || "");
         setZip(profileData.business_zip || "");
-
+        if(profileData.business_services_fees){
         setFees(JSON.parse(profileData.business_services_fees));
-        setLocations(JSON.parse(profileData.business_locations));
+        }
+        if(profileData.business_locations){
+            setLocations(JSON.parse(profileData.business_locations));
+        }
+       
 
         const paymentMethods = JSON.parse(profileData.paymentMethods);
-            const updatedPaymentMethods = {
-                paypal: { value: "", checked: false },
-                apple_pay: { value: "", checked: false },
-                stripe: { value: "", checked: false },
-                zelle: { value: "", checked: false },
-                venmo: { value: "", checked: false },
-                credit_card: { value: "", checked: false },
-                bank_account: { account_number: "", routing_number: "", checked: false },
-            };
-            paymentMethods.forEach((method) => {
-                if (method.paymentMethod_type === "bank_account") {
-                    updatedPaymentMethods.bank_account = {
-                        account_number: method.paymentMethod_account_number || "",
-                        routing_number: method.paymentMethod_routing_number || "",
-                        checked: true,
-                    };
-                } else {
-                    updatedPaymentMethods[method.paymentMethod_type] = {
-                        value: method.paymentMethod_name,
-                        checked: true,
-                    };
-                }
-            });
-            setPaymentMethods(updatedPaymentMethods);
+                const updatedPaymentMethods = {
+                    paypal: { value: "", checked: false, uid: "" },
+                    apple_pay: { value: "", checked: false, uid: "" },
+                    stripe: { value: "", checked: false, uid: "" },
+                    zelle: { value: "", checked: false, uid: "" },
+                    venmo: { value: "", checked: false, uid: "" },
+                    credit_card: { value: "", checked: false, uid: "" },
+                    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
+                };
+                paymentMethods.forEach((method) => {
+                    if (method.paymentMethod_type === "bank_account") {
+                        updatedPaymentMethods.bank_account = {
+                            account_number: method.paymentMethod_account_number || "",
+                            routing_number: method.paymentMethod_routing_number || "",
+                            checked: true,
+                            uid: method.paymentMethod_uid,
+                        };
+                    } else {
+                        updatedPaymentMethods[method.paymentMethod_type] = {
+                            value: method.paymentMethod_name,
+                            checked: true,
+                            uid: method.paymentMethod_uid,
+                        };
+                    }
+                });
+                setPaymentMethods(updatedPaymentMethods);
 
             setShowSpinner(false);
         } catch (error) {
@@ -410,16 +416,15 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
           alert("Please enter a valid zip code");
           return false;
       }
-      if (!DataValidator.ssn_validate(ssn)) {
-          alert("Please enter a valid SSN");
-          return false;
-      }
+      
       
       console.log("fees",fees);
       console.log("location",locations);
       const payload = getPayload();
       const form = encodeForm(payload);
       const data = await saveProfile(form);
+      const paymentSetup = await handlePaymentStep();
+       
       //const createEmp= await SaveEmpStep();
       
 
@@ -467,6 +472,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
 
     const formPayload= encodeForm(payload);
     const data = await saveProfile(formPayload);
+    
       
     // for (const key of Object.keys(payload)) {
     //   if (key === "employee_photo" && payload[key]) formPayload.append(key, payload[key].file);
@@ -519,45 +525,59 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
     setBusinessName(event.target.value);
   };
 
-  const handlePaymentStep = async (bussiness_id) => {
-     // setShowSpinner(true);
-      const keys = Object.keys(paymentMethods);
-      
-      const payload =  [];
-      keys.forEach((key) => {
-          if (paymentMethods[key].value !== "") {
-              let paymentMethodPayload = {
-                  paymentMethod_profile_id: bussiness_id,
-                  paymentMethod_type: key,
-              };
-              if (key === "bank_account") {
-                  const bankAccount = paymentMethods[key];
-                  if (bankAccount.routing_number && bankAccount.account_number) {
-                      paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
-                      paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-                      payload.push(paymentMethodPayload);
-                  }
-              } else {
-                  paymentMethodPayload.paymentMethod_value = paymentMethods[key].value;
-                  payload.push(paymentMethodPayload);
-              }
-          }
-      });
-      // const finalPayload={
-      //   ...profile,
-      //   paymentpayload
-      // }
-      // console.log("Payment payload: ", finalPayload);
-      const response = await axios.post(
-          "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
-          payload,
-          { headers: { "Content-Type": "application/json" } }
-      );
-      console.log("POST response: ", response);
-      //setShowSpinner(false);
-      setCookie("default_form_vals", { ...cookiesData, paymentMethods });
-      // Handle navigation based on user type, if needed
-  };
+  const handlePaymentStep = async () => {
+    setShowSpinner(true);
+    const keys = Object.keys(paymentMethods);
+    const putPayload = [];
+    const postPayload = [];
+    keys.forEach((key) => {
+        if (paymentMethods[key].value !== "" || (key === "bank_account" && paymentMethods[key].checked)) {
+            let paymentMethodPayload = {
+                paymentMethod_type: key,
+                paymentMethod_profile_id: getProfileId(),
+                
+            };
+            if (key === "bank_account") {
+                const bankAccount = paymentMethods[key];
+                if (bankAccount.routing_number && bankAccount.account_number) {
+                    paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
+                    paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
+                    if (bankAccount.uid) {
+                        putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
+                    } else {
+                        postPayload.push(paymentMethodPayload);
+                    }
+                }
+            } else {
+                paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
+                if (paymentMethods[key].uid) {
+                    putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
+                } else {
+                    postPayload.push(paymentMethodPayload);
+                }
+            }
+        }
+    });
+
+    if (putPayload.length > 0) {
+        await axios.put(
+            "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+            putPayload,
+            { headers: { "Content-Type": "application/json" } }
+        );
+    }
+
+    if (postPayload.length > 0) {
+        await axios.post(
+            "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+            postPayload,
+            { headers: { "Content-Type": "application/json" } }
+        );
+    }
+
+    setShowSpinner(false);
+    setCookie("default_form_vals", { ...cookiesData, paymentMethods });
+};
 
   const paymentMethodsArray = [
       { name: "PayPal", icon: PayPal, state: paymentMethods.paypal },

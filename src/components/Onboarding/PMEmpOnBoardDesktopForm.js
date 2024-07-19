@@ -64,17 +64,17 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
-    const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getRoleId } = useUser();
+    const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getRoleId, getProfileId } = useUser();
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
-        paypal: { value: "", checked: false },
-        apple_pay: { value: "", checked: false },
-        stripe: { value: "", checked: false },
-        zelle: { value: "", checked: false },
-        venmo: { value: "", checked: false },
-        credit_card: { value: "", checked: false },
-        bank_account: { account_number: "", routing_number: "", checked: false },
+        paypal: { value: "", checked: false, uid: "" },
+        apple_pay: { value: "", checked: false, uid: "" },
+        stripe: { value: "", checked: false, uid: "" },
+        zelle: { value: "", checked: false, uid: "" },
+        venmo: { value: "", checked: false, uid: "" },
+        credit_card: { value: "", checked: false, uid: "" },
+        bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
     });
     const [businesses, setBusinesses] = useState([]);
     const [selectedBusiness, setSelectedBusiness] = useState(profileData.employee_business_id || "");
@@ -110,15 +110,16 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
                 setSelectedBusiness(profileData.employee_business_id || "");
                 setPhoto(profileData.employee_photo_url ? { image: profileData.employee_photo_url } : null);
                 
-                const paymentMethods = JSON.parse(profileData.paymentMethods);
+                const paymentMethods = JSON.parse(profileData.employeePaymentMethods);
+                console.log("paymentMethods for emp", paymentMethods)
                 const updatedPaymentMethods = {
-                    paypal: { value: "", checked: false },
-                    apple_pay: { value: "", checked: false },
-                    stripe: { value: "", checked: false },
-                    zelle: { value: "", checked: false },
-                    venmo: { value: "", checked: false },
-                    credit_card: { value: "", checked: false },
-                    bank_account: { account_number: "", routing_number: "", checked: false },
+                    paypal: { value: "", checked: false, uid: "" },
+                    apple_pay: { value: "", checked: false, uid: "" },
+                    stripe: { value: "", checked: false, uid: "" },
+                    zelle: { value: "", checked: false, uid: "" },
+                    venmo: { value: "", checked: false, uid: "" },
+                    credit_card: { value: "", checked: false, uid: "" },
+                    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
                 };
                 paymentMethods.forEach((method) => {
                     if (method.paymentMethod_type === "bank_account") {
@@ -126,11 +127,13 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
                             account_number: method.paymentMethod_account_number || "",
                             routing_number: method.paymentMethod_routing_number || "",
                             checked: true,
+                            uid: method.paymentMethod_uid,
                         };
                     } else {
                         updatedPaymentMethods[method.paymentMethod_type] = {
                             value: method.paymentMethod_name,
                             checked: true,
+                            uid: method.paymentMethod_uid,
                         };
                     }
                 });
@@ -284,7 +287,9 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         const form = new FormData();
         for (let key in payload) {
             if (photoFields.has(key)) {
-                if (payload[key]) form.append(key, payload[key].file);
+                if (payload[key] && payload[key].file instanceof File) {
+                    form.append(key, payload[key].file);
+                }
             } else {
                 form.append(key, payload[key]);
             }
@@ -326,16 +331,17 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         const payload = getPayload();
         const form = encodeForm(payload);
         const data = await createProfile(form);
-        setShowSpinner(false);
-        if (data.employee_uid) {
-            updateProfileUid({ employee_id: data.employee_uid });
-            let role_id = {};
-            role_id = { employee_id: data.employee_uid };
-            setCookie("user", { ...user, ...role_id });
-            const paymentSetup = await handlePaymentStep(data.employee_uid);
-            console.log(paymentSetup);
-            setDashboardButtonEnabled(true);
-        }
+        const paymentSetup = await handlePaymentStep();
+        // setShowSpinner(false);
+        // if (data.employee_uid) {
+        //     updateProfileUid({ employee_id: data.employee_uid });
+        //     let role_id = {};
+        //     role_id = { employee_id: data.employee_uid };
+        //     setCookie("user", { ...user, ...role_id });
+        //     const paymentSetup = await handlePaymentStep(data.employee_uid);
+        //     console.log(paymentSetup);
+        //     setDashboardButtonEnabled(true);
+        // }
         setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
         // navigate("/onboardingRouter");
         return;
@@ -378,39 +384,59 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         setNextStepDisabled(disable_state);
     }, [paymentMethods]);
 
-    const handlePaymentStep = async (employee_id) => {
+   
+    const handlePaymentStep = async () => {
         setShowSpinner(true);
         const keys = Object.keys(paymentMethods);
-        const payload = [];
+        const putPayload = [];
+        const postPayload = [];
         keys.forEach((key) => {
-            if (paymentMethods[key].value !== "") {
+            if (paymentMethods[key].value !== "" || (key === "bank_account" && paymentMethods[key].checked)) {
                 let paymentMethodPayload = {
-                    paymentMethod_profile_id: employee_id,
                     paymentMethod_type: key,
+                    paymentMethod_profile_id: getProfileId(),
+                    
                 };
                 if (key === "bank_account") {
                     const bankAccount = paymentMethods[key];
                     if (bankAccount.routing_number && bankAccount.account_number) {
                         paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
                         paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-                        payload.push(paymentMethodPayload);
+                        if (bankAccount.uid) {
+                            putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
+                        } else {
+                            postPayload.push(paymentMethodPayload);
+                        }
                     }
                 } else {
-                    paymentMethodPayload.paymentMethod_value = paymentMethods[key].value;
-                    payload.push(paymentMethodPayload);
+                    paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
+                    if (paymentMethods[key].uid) {
+                        putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
+                    } else {
+                        postPayload.push(paymentMethodPayload);
+                    }
                 }
             }
         });
-        console.log("Payment payload: ", payload);
-        const response = await axios.post(
-            "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
-            payload,
-            { headers: { "Content-Type": "application/json" } }
-        );
-        console.log("POST response: ", response);
+
+        if (putPayload.length > 0) {
+            await axios.put(
+                "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+                putPayload,
+                { headers: { "Content-Type": "application/json" } }
+            );
+        }
+
+        if (postPayload.length > 0) {
+            await axios.post(
+                "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+                postPayload,
+                { headers: { "Content-Type": "application/json" } }
+            );
+        }
+
         setShowSpinner(false);
         setCookie("default_form_vals", { ...cookiesData, paymentMethods });
-        // Handle navigation based on user type, if needed
     };
 
     const paymentMethodsArray = [

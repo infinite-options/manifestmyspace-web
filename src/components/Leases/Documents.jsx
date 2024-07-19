@@ -6,12 +6,10 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import { DataGrid } from '@mui/x-data-grid';
-import dayjs from 'dayjs';
 import theme from "../../theme/theme";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { makeStyles } from "@material-ui/core/styles";
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Close } from '@mui/icons-material';
 
@@ -29,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
 const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles }) => {
     const [open, setOpen] = useState(false);
     const [currentRow, setcurrentRow] = useState(null);
-    // const [docs, setDocs] = useState([]);
     const color = theme.palette.form.main;
     const [isEditing, setIsEditing] = useState(false);
     const [newFiles, setNewFiles] = useState(null);
@@ -46,15 +43,21 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
     const handleFileUpload = (e) => {
         console.log('uploaded file', e.target.files);
         console.log('documents', documents);
-        const curr = { ...currentRow, filename: e.target.files[0].name, id: documents.length };
-        console.log(curr);
-        setcurrentRow(curr);
+        if (isEditing === true) {
+            const curr = { ...currentRow, filename: e.target.files[0].name };
+            setcurrentRow(curr);
+        } else {
+            const curr = { ...currentRow, filename: e.target.files[0].name, id: documents.length };
+            console.log(curr);
+            setcurrentRow(curr);
+        }
         // setDocs((prevFiles) => [...prevFiles, ...e.target.files]);
         const filesArray = Array.from(e.target.files).map(file => ({
             name: file.name,
             type: currentRow.type,
             file: file
         }));
+        console.log('filesArray', filesArray);
         setNewFiles(filesArray);
         // Create a URL for the file preview
         const file = e.target.files[0];
@@ -62,19 +65,23 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
     };
 
     const handleSubmit = () => {
+        let newArr = [...newFiles]
+        newArr[0].type = currentRow.type;
+        setNewFiles(newArr);
+        setuploadedFiles((prevFiles => [...prevFiles, ...newArr]));
         if (isEditing === true) {
+            console.log('current row is', currentRow);
             setDocuments(documents.map(doc => (doc.id === currentRow.id ? currentRow : doc)))
-
         } else {
             console.log('arr', newFiles);
             setDocuments((prevFiles) => [...prevFiles, currentRow]);
-            setuploadedFiles((prevFiles => [...prevFiles, ...newFiles]));
             setNewFiles(null);
         }
         handleClose();
     };
 
     const handleEditClick = (row) => {
+        console.log('on edit', row);
         setFilePreview(row.link);
         setcurrentRow(row);
         setIsEditing(true);
@@ -164,47 +171,51 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                     aria-controls="documents-content"
                     id="documents-header"
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                        <Typography
-                            sx={{
-                                color: "#160449",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.small,
-                                textAlign: 'center',
-                                paddingBottom: "10px",
-                                paddingTop: "5px",
-                                flexGrow: 1,
-                                paddingLeft: "50px"
-                            }}
-                        >
-                            Documents
-                        </Typography>
-                        <Button
-                            sx={{
-                                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-                                cursor: "pointer",
-                                textTransform: "none",
-                                minWidth: "40px",
-                                minHeight: "40px",
-                                width: "40px",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}
-                            size="small"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setcurrentRow({
-                                    filename: '',
-                                    type: '',
-                                    link: ''
-                                });
-                                setIsEditing(false);
-                                handleOpen();
-                            }}
-                        >
-                            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                        </Button>
-                    </Box>
+                    <Grid container>
+                        <Grid item md={11.2}>
+                            <Typography
+                                sx={{
+                                    color: "#160449",
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.small,
+                                    textAlign: 'center',
+                                    paddingBottom: "10px",
+                                    paddingTop: "5px",
+                                    flexGrow: 1,
+                                    paddingLeft: "50px"
+                                }}
+                            >
+                                Documents
+                            </Typography>
+                        </Grid>
+                        <Grid item md={0.5}>
+                            <Button
+                                sx={{
+                                    "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                                    cursor: "pointer",
+                                    textTransform: "none",
+                                    minWidth: "40px",
+                                    minHeight: "40px",
+                                    width: "40px",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}
+                                size="small"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setcurrentRow({
+                                        filename: '',
+                                        type: '',
+                                        link: ''
+                                    });
+                                    setIsEditing(false);
+                                    handleOpen();
+                                }}
+                            >
+                                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
                     <DataGrid
@@ -333,7 +344,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                         },
                                     }}
                                 >
-                                    <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" , paddingBottom:'2px'}} /> Upload
+                                    <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC", paddingBottom: '2px' }} /> Upload
                                     <input
                                         id="file-upload"
                                         type="file"
@@ -347,12 +358,12 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                         {/* <Grid item md={0.5} /> */}
                         <Grid item md={5}>
                             <Box sx={{ marginTop: "10px", backgroundColor: "#D9D9D9" }}>
-                                    <iframe
-                                        src={filePreview}
-                                        width="100%"
-                                        height="322px"
-                                        title="File Preview"
-                                    />
+                                <iframe
+                                    src={filePreview}
+                                    width="100%"
+                                    height="322px"
+                                    title="File Preview"
+                                />
                             </Box>
                         </Grid>
                     </Grid>
@@ -360,7 +371,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                         <Button onClick={handleSubmit} sx={{
                             background: "#FFC614",
                             color: "#160449",
-                            marginRight:'30px',
+                            marginRight: '30px',
                             cursor: "pointer",
                             width: "100px",
                             height: "31px",
@@ -371,55 +382,58 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                 backgroundColor: '#fabd00',
                             },
                         }}>Save</Button>
-                        <Button onClick={handleDeleteClick} sx={{
-                            background: "#F87C7A",
-                            color: "#160449",
-                            cursor: "pointer",
-                            width: "100px",
-                            height: "31px",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            textTransform: 'none',
-                            '&:hover': {
-                                backgroundColor: '#f76462',
-                            },
-                        }}>Delete</Button>
-                        <Dialog
-                            open={openDeleteConfirmation}
-                            onClose={handleDeleteClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                        >
-                            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                    Are you sure you want to delete this Document?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleDeleteClose} color="primary" sx={{
-                                    textTransform: "none", background: "#F87C7A",
+                        {isEditing &&
+                            <>
+                                <Button onClick={handleDeleteClick} sx={{
+                                    background: "#F87C7A",
                                     color: "#160449",
-                                    cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont, '&:hover': {
+                                    cursor: "pointer",
+                                    width: "100px",
+                                    height: "31px",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                    textTransform: 'none',
+                                    '&:hover': {
                                         backgroundColor: '#f76462',
                                     },
-                                }}>
-                                    Cancel
-                                </Button>
-                                <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
-                                    textTransform: "none", background: "#FFC614",
-                                    color: "#160449",
-                                    cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont,
-                                    '&:hover': {
-                                        backgroundColor: '#fabd00',
-                                    },
-                                }}>
-                                    Confirm
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                                }}>Delete</Button>
+                                <Dialog
+                                    open={openDeleteConfirmation}
+                                    onClose={handleDeleteClose}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
+                                >
+                                    <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id="alert-dialog-description">
+                                            Are you sure you want to delete this Document?
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleDeleteClose} color="primary" sx={{
+                                            textTransform: "none", background: "#F87C7A",
+                                            color: "#160449",
+                                            cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: theme.typography.smallFont, '&:hover': {
+                                                backgroundColor: '#f76462',
+                                            },
+                                        }}>
+                                            Cancel
+                                        </Button>
+                                        <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
+                                            textTransform: "none", background: "#FFC614",
+                                            color: "#160449",
+                                            cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: theme.typography.smallFont,
+                                            '&:hover': {
+                                                backgroundColor: '#fabd00',
+                                            },
+                                        }}>
+                                            Confirm
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </>}
                     </Box>
                 </Box>
             </Modal>

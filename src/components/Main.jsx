@@ -9,12 +9,15 @@ import MaintenanceOnBoardDesktopForm from "./Onboarding/MaintenanceOnBoardDeskto
 import PMEmpOnBoardDesktopForm from "./Onboarding/PMEmpOnBoardDesktopForm";
 import MaintEmpOnBoardDesktopForm from "./Onboarding/MaintEmpOnBoardDesktopForm";
 import ProfileManager from "./Profile/ProfileManager"
+import AddNewRole from "./Onboarding/AddNewRole";
 
 import SelectMonthComponent from "./SelectMonthComponent";
 import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
 import Cashflow from "./Cashflow/Cashflow";
+import ManagerCashflow from "./Cashflow/ManagerCashflow";
+import ManagerTransactions from "./Cashflow/ManagerTransactions";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
@@ -185,6 +188,8 @@ import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
 import PublicProfile from "./Profile/PublicProfile";
 
+import OwnerFirstProperty from "./OwnerDashboard/OwnerFirstProperty";
+
 function Main() {
   console.log("In Main Page");
   const { roleName, selectedRole } = useUser();
@@ -201,7 +206,6 @@ function Main() {
           {/* Public Routes */}
           <Route path="/" element={<PublicRoutes />}>
             <Route path="/" element={<LandingPage />} />
-         
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
             <Route path="newUser" element={<NewUser2 />} />            
@@ -225,8 +229,11 @@ function Main() {
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
           <Route path="tt" element={<ProfileManager />} /> 
+          <Route path="addNewRole" element={<AddNewRole />} /> 
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
+            <Route path="managerCashflow" element={<ManagerCashflow />} />
+            <Route path="managerTransactions" element={<ManagerTransactions />} />            
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
@@ -377,6 +384,9 @@ function Main() {
 
             <Route path="referUser" element={<ReferUser />} />
             <Route path="employeeAccess" element={<EmployeeAccess />} />
+
+
+            <Route path="newPropertyForm" element={<OwnerFirstProperty />} />
           </Route>
         </Routes>
         <Footer />
