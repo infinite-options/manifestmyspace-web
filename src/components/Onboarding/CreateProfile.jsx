@@ -19,7 +19,9 @@ import {
     Dialog,
     DialogContent,
     DialogActions,
-    DialogTitle  
+    DialogTitle,
+    MenuItem,
+    Select,  
 } from '@mui/material';
 import theme from '../../theme/theme';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -35,6 +37,8 @@ import managerDashboardImage from './images/dashboard-images/manager-dashboard.p
 import maintenanceDashboardImage from './images/dashboard-images/maintenance-dashboard.png'; 
 import ownerDashboardImage from './images/dashboard-images/owner-dashboard.png'; 
 import tenantDashboardImage from './images/dashboard-images/tenant-dashboard.png'; 
+
+import { objToQueryString } from "../utils/helper";
 
 
 
@@ -53,10 +57,42 @@ const CreateProfile = () => {
     const [ lastName, setLastName ] = useState('');
     const [ businessName, setBusinessName ] = useState('');
     const [ phoneNumber, setPhoneNumber ] = useState('');  
-    const [ businessPhoneNumber, setBusinessPhoneNumber ] = useState('');  
+    const [ businessPhoneNumber, setBusinessPhoneNumber ] = useState(''); 
+    
+    //employees
+    const [ businessList, setBusinessList ] = useState([]);
+    const [ selectedBusiness, setSelectedBusiness ] = useState(null);
+
+    const fetchBusinesses = async (businessType) => {
+        const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
+        const args = {
+            business_type: businessType,
+        };
+        const response = await axios.get(url + objToQueryString(args));
+        setBusinessList(response.data.result);
+    };
+
+    useEffect(() => {
+        if(user?.role === "PM_EMPLOYEE"){
+            fetchBusinesses("MANAGEMENT");
+        }
+        else if(user?.role === "MAINT_EMPLOYEE"){
+            fetchBusinesses("MAINTENANCE");
+        } else {
+            return;
+        }
+    }, []);
+
+    useEffect(() => {
+        console.log("ROHIT - businessList - ", businessList)
+    }, [businessList]);
+
+    useEffect(() => {
+        console.log("ROHIT - selectedBusiness - ", selectedBusiness)
+    }, [selectedBusiness]);
 
     const validate_form = () => {
-        if ((user.role === "TENANT" || user.role === "OWNER" ) && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
+        if ((user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
           alert("Please fill out all fields");
           return false;
         }        
@@ -64,7 +100,7 @@ const CreateProfile = () => {
             alert("Please fill out all fields");
             return false;
         }        
-        if ((user.role === "TENANT" || user.role === "OWNER" ) && (!DataValidator.phone_validate(phoneNumber))) {
+        if ((user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (!DataValidator.phone_validate(phoneNumber))) {
           alert("Please enter a valid phone number");
           return false;
         }
@@ -72,7 +108,7 @@ const CreateProfile = () => {
             alert("Please enter a valid phone number");
             return false;
         }
-        if ((user.role === "TENANT" || user.role === "OWNER" ) && (!DataValidator.email_validate(email))) {
+        if ((user.role === "TENANT" || user.role === "OWNER"  || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE" ) && (!DataValidator.email_validate(email))) {
             alert("Please enter a valid email");
             return false;
         }
@@ -93,6 +129,15 @@ const CreateProfile = () => {
               business_phone_number: businessPhoneNumber,
               business_email: businessEmail,              
             };
+          case "PM_EMPLOYEE":
+            return {
+                employee_user_id: userUID,
+                employee_first_name: firstName,
+                employee_last_name: lastName,
+                employee_phone_number: phoneNumber,
+                employee_email: email,
+                employee_business_id: selectedBusiness?.business_uid,             
+            };
           case "MAINTENANCE":
             return {
               business_user_id: userUID,
@@ -100,6 +145,15 @@ const CreateProfile = () => {
               business_name: businessName,              
               business_phone_number: businessPhoneNumber,
               business_email: businessEmail,              
+            };
+          case "MAINT_EMPLOYEE":
+            return {
+                employee_user_id: userUID,
+                employee_first_name: firstName,
+                employee_last_name: lastName,
+                employee_phone_number: phoneNumber,
+                employee_email: email,
+                employee_business_id: selectedBusiness?.business_uid,             
             };
           case "OWNER":
             return {
@@ -382,6 +436,10 @@ const CreateProfile = () => {
         }
     }
     
+    const handleBusinessChange = (event) => {
+        setSelectedBusiness(event.target.value)        
+    }
+    
 
     return (
         <ThemeProvider theme={theme}>
@@ -415,7 +473,13 @@ const CreateProfile = () => {
                         <Grid container item xs={10} justifyContent='center' spacing={20} >
                         <Grid item xs={12}>
                             <Typography sx={{ fontSize: '28px', color: '#160449', fontWeight: 'bold' }}>
-                                {user.role.charAt(0) + user.role.slice(1).toLowerCase()} Profile
+                                {/* {user.role.charAt(0) + user.role.slice(1).toLowerCase()} Profile */}
+                                {user.role === "MANAGER"? "Property Manager Profile" : ""}
+                                {user.role === "MAINTENANCE"? "Maintenance Manager Profile" : ""}
+                                {user.role === "PM_EMPLOYEE"? "Management Employee Profile" : ""}
+                                {user.role === "MAINT_EMPLOYEE"? "Maintenance Employee Profile" : ""}
+                                {user.role === "OWNER"? "Owner Profile" : ""}
+                                {user.role === "TENANT"? "Tenant Profile" : ""}
                             </Typography>
                         </Grid> 
                             <Grid item xs={6}>
@@ -462,7 +526,7 @@ const CreateProfile = () => {
                         }
 
                         {
-                            (user.role === "TENANT" || user.role === "OWNER") && (
+                            (user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (
                                 <Grid item xs={10}>
                                     <Typography sx={{ fontSize: '25px', color: '#160449',}}>
                                         Email
@@ -498,7 +562,7 @@ const CreateProfile = () => {
                         }   
 
                         {
-                            (user.role === "TENANT" || user.role === "OWNER") && (
+                            (user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (
 
                                 <Grid item xs={10}>
                                         <Typography sx={{ fontSize: '25px', color: '#160449',}}>
@@ -531,6 +595,38 @@ const CreateProfile = () => {
                                     />
                                 </Grid>
 
+                            )
+                        }
+
+                        {
+                            (user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (
+                                <>
+                                <Grid item xs={10}>                    
+                                    <Typography
+                                        sx={{
+                                        color: theme.typography.common.blue,
+                                        // fontWeight: theme.typography.primary.fontWeight,
+                                        }}
+                                    >
+                                        {"Select Business"}
+                                    </Typography>
+                                    <Select
+                                        defaultValue=""
+                                        value={selectedBusiness}
+                                        onChange={(e) => handleBusinessChange(e)}
+                                        size="large"
+                                        fullWidth
+                                        sx={{
+                                        backgroundColor: "#F2F2F2",
+                                        }}                    
+                                    >
+                                        {businessList?.map((row, index) => (
+                                            <MenuItem key={index} value={row}>{row.business_name}</MenuItem>
+                                        ))}
+                                    </Select>                    
+                                    
+                                </Grid>
+                                </>   
                             )
                         }
 
