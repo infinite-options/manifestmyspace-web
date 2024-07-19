@@ -23,15 +23,15 @@ async function fetchCashflow2(userProfileId, month, year) {
 
 function getRevenueList(data) {
   // return data.response_revenue.result;
-  console.log("ROHIT - getRevenueList - data - ", data);
-  console.log("ROHIT - revenueList - ",data?.result?.filter(item => item.pur_cf_type === "revenue"));
+  // console.log("getRevenueList - data - ", data);
+  // console.log("revenueList - ",data?.result?.filter(item => item.pur_cf_type === "revenue"));
   return data?.result?.filter(item => item.pur_cf_type === "revenue");
 }
 
 function getExpenseList(data) {
   // return data.response_expense.result;  
-  console.log("ROHIT - getExpenseList - data - ", data);
-  console.log("ROHIT - expenseList - ",data?.result?.filter(item => item.pur_cf_type === "expense"));
+  // console.log("getExpenseList - data - ", data);
+  // console.log("expenseList - ",data?.result?.filter(item => item.pur_cf_type === "expense"));
   return data?.result?.filter(item => item.pur_cf_type === "expense");
 }
 
