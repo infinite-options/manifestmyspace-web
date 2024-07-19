@@ -14,6 +14,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { makeStyles } from '@material-ui/core/styles';
 import { Close } from '@mui/icons-material';
+import DataValidator from "../DataValidator";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -110,6 +111,10 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
         handleClose();
     };
 
+    const validateData = () => {
+
+    }
+
     const handleEditClick = (row) => {
         setCurrentRow(row);
         setIsEditing(true);
@@ -157,7 +162,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Adults ({adults.length})</Typography>
+                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Adults ({leaseAdults.length})</Typography>
                 <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
@@ -240,6 +245,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                                 margin="dense"
                                 label="First Name"
                                 fullWidth
+                                required
                                 variant="outlined"
                                 value={currentRow?.name || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, name: e.target.value })}
@@ -253,6 +259,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                                 margin="dense"
                                 label="Last Name"
                                 fullWidth
+                                required
                                 variant="outlined"
                                 value={currentRow?.last_name || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, last_name: e.target.value })}
@@ -271,6 +278,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                                 margin="dense"
                                 label="Email"
                                 fullWidth
+                                required
                                 variant="outlined"
                                 value={currentRow?.email || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, email: e.target.value })}
@@ -283,6 +291,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                                 margin="dense"
                                 label="Phone Number"
                                 fullWidth
+                                required
                                 variant="outlined"
                                 value={currentRow?.phone_number || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, phone_number: e.target.value })}
@@ -343,7 +352,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
 
                         <Grid item md={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ height: "30px" }}>
-                                <InputLabel>
+                                <InputLabel required>
                                     Relationship
                                 </InputLabel>
                                 <Select
