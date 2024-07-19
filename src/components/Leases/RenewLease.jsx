@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import {
-    Typography, Box, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button, Snackbar, Alert,
+    Typography, Box, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button, Snackbar, Alert, AlertTitle
 } from "@mui/material";
 import dayjs from "dayjs";
 import { makeStyles } from "@material-ui/core/styles";
@@ -195,6 +195,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
     const handleRenewLease = async () => {
         try {
+            setShowSpinner(true);
             //Renew the lease by creating a new lease row in DB with lease status - "PROCESSING" if requested by Manager 
             //or "NEW" if requested by tenant
             const headers = {
@@ -204,70 +205,69 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                 "Access-Control-Allow-Credentials": "*",
             };
             console.log('tenantWithId', tenantWithId, typeof (tenantWithId));
-            // Renew for all tenants in tenants list
+            const leaseApplicationFormData = new FormData();
+            let date = new Date()
             for (let i = 0; i < tenantWithId.length; i++) {
-                const leaseApplicationFormData = new FormData();
-                let date = new Date()
+            leaseApplicationFormData.append('lease_property_id', currentLease.property_uid);
+            leaseApplicationFormData.append("lease_start", formatDate(newStartDate));
+            leaseApplicationFormData.append("lease_end", formatDate(newEndDate));
+            leaseApplicationFormData.append("lease_end_notice_period", currentLease.lease_end_notice_period);
+            leaseApplicationFormData.append('lease_assigned_contacts', currentLease.lease_assigned_contacts);
+            leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
+            leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
+            leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
+            leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
+            leaseApplicationFormData.append('lease_application_date', formatDate(date.toLocaleDateString()));
+            leaseApplicationFormData.append('tenant_uid', tenantWithId[i].tenant_uid);
+            leaseApplicationFormData.append('lease_referred', currentLease.lease_referred)
+            leaseApplicationFormData.append("lease_move_in_date", currentLease.lease_move_in_date);
+            leaseApplicationFormData.append("property_listed_rent", newRent);
+            leaseApplicationFormData.append("frequency", newFreq);
+            const feesJSON = JSON.stringify(leaseFees)
+            leaseApplicationFormData.append("lease_fees", feesJSON);
 
-                leaseApplicationFormData.append('lease_property_id', currentLease.property_uid);
-                leaseApplicationFormData.append("lease_start", formatDate(newStartDate));
-                leaseApplicationFormData.append("lease_end", formatDate(newEndDate));
-                leaseApplicationFormData.append("lease_end_notice_period", currentLease.lease_end_notice_period);
-                leaseApplicationFormData.append('lease_assigned_contacts', currentLease.lease_assigned_contacts);
-                //leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
-                leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
-                leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
-                leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
-                leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
-                leaseApplicationFormData.append('lease_application_date', formatDate(date.toLocaleDateString()));
-                leaseApplicationFormData.append('tenant_uid', tenantWithId[i].tenant_uid);
-                leaseApplicationFormData.append('lease_referred', currentLease.lease_referred)
-                leaseApplicationFormData.append("lease_move_in_date", currentLease.lease_move_in_date);
-                leaseApplicationFormData.append("property_listed_rent", newRent);
-                leaseApplicationFormData.append("frequency", newFreq);
-                const feesJSON = JSON.stringify(leaseFees)
-                leaseApplicationFormData.append("lease_fees", feesJSON);
+            if (selectedRole === "MANAGER") {
+                leaseApplicationFormData.append('lease_status', "PROCESSING");
+            } else {
+                leaseApplicationFormData.append('lease_status', "NEW");
+            }
 
-                if (selectedRole === "MANAGER") {
-                    leaseApplicationFormData.append('lease_renew_status', "PROCESSING");
-                } else {
-                    leaseApplicationFormData.append('lease_renew_status', "NEW");
-                }
+            if (uploadedFiles.length) {
+                console.log('count', uploadedFiles.length);
+                const documentsDetails = [];
+                [...uploadedFiles].forEach((file, i) => {
+                    console.log('file', file, typeof (file));
+                    leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
+                    const fileType = file.name.split('.').pop();
+                    const documentObject = {
+                        // file: file,
+                        fileIndex: i,
+                        fileName: file.name,
+                        fileType: fileType, //lease or other type
+                        type: file.type,
+                    };
+                    documentsDetails.push(documentObject);
+                });
+                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
+                console.log("docs", documentsDetails);
+            }
 
-                if (uploadedFiles.length) {
-                    console.log('count', uploadedFiles.length);
-                    const documentsDetails = [];
-                    [...uploadedFiles].forEach((file, i) => {
-                        console.log('file', file, typeof (file));
-                        leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
-                        const fileType = file.name.split('.').pop();
-                        const documentObject = {
-                            // file: file,
-                            fileIndex: i,
-                            fileName: file.name,
-                            fileType: fileType, //lease or other type
-                            type: file.type,
-                        };
-                        documentsDetails.push(documentObject);
-                    });
-                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
-                    console.log("docs", documentsDetails);
-                }
+            console.log("leaseApplicationFormData", leaseApplicationFormData);
 
-                console.log("leaseApplicationFormData", leaseApplicationFormData);
-
-                axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                    .then((response) => {
-                        setuploadedFiles([]);
-                        console.log('Data updated successfully');
-                        showSnackbar("Successfully Renewed the lease.", "success");
-                    })
-                    .catch((error) => {
-                        if (error.response) {
-                            console.log(error.response.data);
-                            showSnackbar("Cannot Renew the lease. Please Try Again", "error");
-                        }
-                    });
+            axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                .then((response) => {
+                    setuploadedFiles([]);
+                    setShowSpinner(false);
+                    console.log('Data updated successfully');
+                    showSnackbar("Your lease has been renewed successfully.", "success");
+                })
+                .catch((error) => {
+                    setShowSpinner(false);
+                    if (error.response) {
+                        console.log(error.response.data);
+                        showSnackbar("Cannot Renew the lease. Please Try Again", "error");
+                    }
+                });
             }
         } catch (error) {
             console.log("Cannot Renew the lease", error);
@@ -275,7 +275,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     }
 
     const editOrUpdateLease = async () => {
+        // console.log('inside edit')
         try {
+            setShowSpinner(true);
             const headers = {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "*",
@@ -283,49 +285,50 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                 "Access-Control-Allow-Credentials": "*",
             };
 
-            for (let i = 0; i < tenantWithId.length; i++) {
-                const leaseApplicationFormData = new FormData();
+            const leaseApplicationFormData = new FormData();
 
-                // leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
-                const feesJSON = JSON.stringify(leaseFees)
-                leaseApplicationFormData.append("lease_fees", feesJSON);
-                leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
-                leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
-                leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
-                leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
-                if (uploadedFiles.length) {
-                    const documentsDetails = [];
-                    [...uploadedFiles].forEach((file, i) => {
-                        leaseApplicationFormData.append(`file-${i}`, file, file.name);
-                        // const fileType = contractFileTypes[i] || '';
-                        const fileType = 'pdf';
-                        const documentObject = {
-                            // file: file,
-                            fileIndex: i,
-                            fileName: file.name,
-                            fileType: fileType,
-                            type: file.type,
-                        };
-                        documentsDetails.push(documentObject);
-                    });
-                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
-                }
-
-                axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                    .then((response) => {
-                        console.log('Data updated successfully', response);
-                        showSnackbar("Successfully Updated the lease.", "success");
-                    })
-                    .catch((error) => {
-                        if (error.response) {
-                            console.log(error.response.data);
-                            showSnackbar("Cannot Update the lease. Please Try Again", "error");
-                        }
-                    });
-
+            // leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
+            const feesJSON = JSON.stringify(leaseFees)
+            leaseApplicationFormData.append("lease_fees", feesJSON);
+            leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
+            leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
+            leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
+            leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
+            leaseApplicationFormData.append('lease_uid', currentLease.lease_uid);
+            if (uploadedFiles.length) {
+                const documentsDetails = [];
+                [...uploadedFiles].forEach((file, i) => {
+                    leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
+                    const fileType = 'pdf';
+                    const documentObject = {
+                        // file: file,
+                        fileIndex: i,
+                        fileName: file.name,
+                        fileType: fileType,
+                        type: file.type,
+                    };
+                    documentsDetails.push(documentObject);
+                });
+                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
             }
+
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                .then((response) => {
+                    setShowSpinner(false);
+                    console.log('Data updated successfully', response);
+                    showSnackbar("Your lease has been successfully updated.", "success");
+                })
+                .catch((error) => {
+                    setShowSpinner(false);
+                    if (error.response) {
+                        console.log(error.response.data);
+                        showSnackbar("Cannot update the lease. Please try again", "error");
+                    }
+                });
+
         } catch (error) {
-            console.log("Cannot Update the lease");
+            showSnackbar("Cannot update the lease. Please try again", "error");
+            console.log("Cannot Update the lease", error);
         }
     }
 
@@ -418,6 +421,30 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                 <img src={LeaseIcon} />
                             </Button>}
                         </Box>
+                        <Box sx={{ display: "block" }}>
+                            <Typography
+                                sx={{
+                                    color: "#160449",
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.largeFont,
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {currentLease.lease_property_id}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ display: "block" }}>
+                            <Typography
+                                sx={{
+                                    color: "#160449",
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.largeFont,
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {currentLease.lease_uid}
+                            </Typography>
+                        </Box>
                     </Grid>
                     {/* Start */}
                     <Grid item xs={12} md={12}>
@@ -506,6 +533,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
                     <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                             <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
                             {snackbarMessage}
                         </Alert>
                     </Snackbar>

@@ -13,7 +13,7 @@ import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
 
 
-const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked }) => {
+const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate }) => {
     const [open, setOpen] = useState(false);
     const [confirmationText, setConfirmationText] = useState("")
     const [showSpinner, setShowSpinner] = useState(false);
@@ -103,9 +103,11 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked 
         setOpen(false);
     };
 
-    const handleConfirm = () => {
-        handleEndLease();
+    const handleConfirm = async () => {
+        await handleEndLease();
         setOpen(false);
+        await handleUpdate();
+        await setIsEndClicked(false);
     };
 
     const handleRadioChange = (event, id) => {
@@ -145,6 +147,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked 
     }
 
     const handleEndLease = () => {
+        setShowSpinner(true);
         const headers = {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "*",
@@ -169,6 +172,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked 
         axios
             .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
             .then((response) => {
+                setShowSpinner(false);
                 console.log("Data updated successfully", response);
                 setSuccess(`Your lease has been moved to ${endLeaseStatus} status.`, "success");
             })
@@ -225,18 +229,18 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked 
                             Please provide a reason for why you are ending the tenant’s lease.
                         </Typography>
                     </Grid>
-                    {error.length > 0 && (
+                    {success.length > 0 && (
                         <Box>
-                            <Alert severity="error">
+                            <Alert severity="success">
                                     {success}
                             </Alert>
                         </Box>
                     )}
-                    {success.length > 0 && (
+                    {error.length > 0 && (
                         <Box>
-                            <Alert severity="info">
+                            <Alert severity="error">
                                 <ul>
-                                    {success.map((err, index) => (
+                                    {error.map((err, index) => (
                                         <li key={index}>{err}</li>
                                     ))}
                                 </ul>
@@ -334,7 +338,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked 
                                                                     onChange={(event) => handleOption2CheckboxChange(event, "Other")}
                                                                     value="other" />} label="Other:" />
                                                                 <TextField
-                                                                    onChange={(e) => setMoveOutReason(`other: {e.target.value}`)}
+                                                                    onChange={(e) => setMoveOutReason(`other: ${e.target.value}`)}
                                                                     label="Please provide a reason."
                                                                     variant="outlined"
                                                                     fullWidth
@@ -401,7 +405,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked 
                                                                     onChange={(event) => handleOption3CheckboxChange(event, "Other")}
                                                                     value="other" />} label="Other:" />
                                                                 <TextField
-                                                                    onChange={(e) => setMoveOutReason(`other: {e.target.value}`)}
+                                                                    onChange={(e) => setMoveOutReason(`other: ${e.target.value}`)}
                                                                     label="Please provide a reason."
                                                                     variant="outlined"
                                                                     fullWidth
