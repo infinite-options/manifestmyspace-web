@@ -4,6 +4,7 @@ import {
   Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge, Dialog, DialogActions,
   DialogContent, DialogTitle, IconButton, TextField, Snackbar, Alert, MenuItem, Select, FormControl, InputLabel
 } from "@mui/material";
+import axios from "axios";
 import theme from "../../theme/theme";
 import propertyImage from "./propertyImage.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -42,33 +43,30 @@ import { v4 as uuidv4 } from 'uuid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+
 const getAppColor = (app) =>
 	app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
 
-// export default function PropertyNavigator({ currentIndex, setCurrentIndex, propertyList, contracts, props }) {
 export default function PropertyNavigator({
 	index,
 	propertyList,
 	allRentStatus,
-	isDesktop,
 	rawPropertyData,
 	contracts,
+	isDesktop = true,
 	props,
 }) {
-	console.log('In Property Navigator');
-	console.log(index, propertyList);
-	console.log(contracts);
+	// console.log('In Property Navigator');
+	// console.log(index, propertyList);
+	// console.log(contracts);
 	const navigate = useNavigate();
 	const { getProfileId, isManager, roleName, selectedRole } = useUser();
 
   const [propertyData, setPropertyData] = useState(propertyList);
   const [currentIndex, setCurrentIndex] = useState(index !== undefined ? index : 0);
-  // console.log(currentIndex);
-  // const [item, setItem] = useState(propertyData[currentIndex]);
   const [property, setProperty] = useState(propertyList[currentIndex]);
-  console.log('prop data', propertyData);
-  console.log('prop', property);
   const [currentId, setCurrentId] = useState(property.property_uid);
+  const [contactDetails, setContactDetails] = useState([]);
   const [maintenanceData, setMaintenanceData] = useState([{}]);
   const [propertyRentStatus, setpropertyRentStatus] = useState(allRentStatus);
   const [rentFee, setrentFee] = useState({});
@@ -80,6 +78,30 @@ export default function PropertyNavigator({
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [applianceCategories, setApplianceCategories] = useState([]);
 
+  const [happinessData, setHappinessData] = useState([]);
+  const [dataforhappiness, setdataforhappiness] = useState([]);
+
+//   console.log("lcation state rent status", allRentStatus);
+
+  const getDataFromAPI = async () => {
+    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
+	// const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
+    try {
+      const response = await axios.get(url);
+      const data = response.data["management_contacts"];
+      const ownerContacts = data["owners"];
+      setContactDetails(ownerContacts);
+    } catch (error) {
+      console.error("Error fetching owner contacts: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getDataFromAPI();
+  }, []);
+
+
+
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
@@ -87,8 +109,8 @@ export default function PropertyNavigator({
 	const parsedPropertyImages = propertyData[currentIndex].property_images
 		? JSON.parse(propertyData[currentIndex].property_images)
 		: [];
-	console.log('parsedImages:', parsedPropertyImages);
-	console.log('parsedImages.length:', parsedPropertyImages.length);
+	// console.log('parsedImages:', parsedPropertyImages);
+	// console.log('parsedImages.length:', parsedPropertyImages.length);
 
 	// Initialize state with parsed images or fallback to propertyImage if empty
 	const [images, setImages] = useState(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
@@ -98,26 +120,23 @@ export default function PropertyNavigator({
 
 	// Log images and its length after it's updated
 	useEffect(() => {
-		console.log("What's in Images: ", images, images.length);
+		// console.log("What's in Images: ", images, images.length);
 		setMaxSteps(images.length); // Update maxSteps state
-		console.log('MaxSteps: ', images.length); // Log maxSteps within useEffect
+		// console.log('MaxSteps: ', images.length); // Log maxSteps within useEffect
 	}, [images]); // This useEffect will re-run whenever the 'images' state changes
 
-	console.log('MaxSteps: ', maxSteps); // Log maxSteps outside of useEffect
+	// console.log('MaxSteps: ', maxSteps); // Log maxSteps outside of useEffect
 
 	const [activeStep, setActiveStep] = useState(0);
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [contractsData, setContractsData] = useState(contracts);
 	const [contractsNewSent, setContractsNewSent] = useState(0);
 	const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
-	console.log('Maintenance Request Data1: ', maintenanceReqData);
+	// console.log('Maintenance Request Data1: ', maintenanceReqData);
 	const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
 
 	const color = theme.palette.form.main;
 	const [propertyId, setPropertyId] = useState(propertyData[currentIndex].property_uid);
-
-	// console.log(propertyId)
-	console.log('Maintenance Request Data: ', maintenanceReqData);
 
 	let data = '';
 	const role = roleName();
@@ -126,7 +145,6 @@ export default function PropertyNavigator({
 	} else if (role === 'Owner') {
 		data = 'maintenance_request_status';
 	}
-	console.log('Role is: ', role, data);
 
 	const maintenanceColumns = [
 		{
@@ -183,19 +201,18 @@ export default function PropertyNavigator({
 	}, [index, propertyList]);
 
 	useEffect(() => {
-		// console.log("--debug NEW propertyId--", propertyData[currentIndex].property_uid)
 		setPropertyId(propertyData[currentIndex].property_uid);
 
 		const getContractsForOwner = async () => {
 			try {
 				const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
+				// const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
 				if (!response.ok) {
 					console.log('Error fetching contracts data');
 				}
 				const contractsResponse = await response.json();
 				var count = 0;
 				const contracts = contractsResponse.result.filter((contract) => contract.property_id === propertyId);
-				// console.log("--debug Contracts for owner--", contracts)
 				contracts.forEach((contract) => {
 					if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
 						count++;
@@ -208,14 +225,13 @@ export default function PropertyNavigator({
 			}
 		};
 		getContractsForOwner();
-		// refreshPropertyData();
 		const rentDetails = getRentStatus();
 		setpropertyRentStatus(rentDetails);
 
 		if (property.leaseFees !== null) {
 			const rent = JSON.parse(propertyData[currentIndex].leaseFees).find((fee) => fee.fee_name === 'Rent');
 			setrentFee(rent);
-			console.log('check rent', rent);
+			// console.log('check rent', rent);
 		} else {
 			setrentFee(null);
 		}
@@ -225,11 +241,10 @@ export default function PropertyNavigator({
     if (property.appliances != null) {
       setAppliances(propertyApplicances);
       getApplianceCategories();
-      console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
+    //   console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
     }
   }, [currentIndex, propertyId]);
 
-	//const [propertyId, setPropertyId] = useState('200-000028')
 	const tenant_detail =
 		property.lease_start && property.tenant_uid
 			? `${property.tenant_first_name} ${property.tenant_last_name}`
@@ -241,46 +256,10 @@ export default function PropertyNavigator({
 			: theme.typography.common.blue
 	);
 
-	//   useEffect(() => {
-	//     const getMaintenanceForProperty = async () => {
-	//       setShowSpinner(true);
-	//       try {
-	//         console.log("About to call maintenanceStatus endpoint Property Navigator");
-	//         // const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceByProperty/${property.property_uid}`);
-	//         const responseProperty = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceStatus/${getProfileId()}`);
-	//         // call maintenanceStatus
-	//         const propertyMaintenanceData = await responseProperty.json();
-	//         const propertyMaintenanceDataResult = propertyMaintenanceData.result;
-	//         setMaintenanceReqData(propertyMaintenanceDataResult);
-	//         const property_uid = property.property_uid;
-	//         var propertyMaintenanceList = [];
-	//         Object.keys(propertyMaintenanceDataResult).forEach((status) => {
-	//           // console.log("propertyMaintenanceDataResult[status]", status, propertyMaintenanceDataResult[status])
-	//           // console.log("propertyMaintenanceDataResult[status].maintenance_items", status, propertyMaintenanceDataResult[status].maintenance_items)
-	//           if (status === "COMPLETED" || status === "CANCELLED" || status === "PAID" || status === "0") {
-	//             delete propertyMaintenanceDataResult[status];
-	//           } else if (propertyMaintenanceDataResult[status].maintenance_items) {
-	//             propertyMaintenanceDataResult[status].maintenance_items = propertyMaintenanceDataResult[status].maintenance_items.filter(
-	//               (item) => item.maintenance_property_id === property_uid
-	//             );
-	//             propertyMaintenanceList = propertyMaintenanceList.concat(propertyMaintenanceDataResult[status].maintenance_items);
-	//           }
-	//         });
-	//         setMaintenanceData(propertyMaintenanceList);
-	//       } catch (error) {
-	//         console.log(error);
-	//       }
-	//       setShowSpinner(false);
-	//     };
-	//     getMaintenanceForProperty();
-	//   }, [currentIndex, propertyId]);
-
 	useEffect(() => {
 		let profileId = getProfileId();
-		console.log('getProfileID', getProfileId());
+		// console.log('getProfileID', getProfileId());
 		if (profileId.startsWith('600')) {
-			// maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
-			// console.log("Manager ID. and we need to return maintenance that is properly parsed")
 			maintenanceManagerDataCollectAndProcess(
 				setMaintenanceReqData,
 				setShowSpinner,
@@ -288,18 +267,34 @@ export default function PropertyNavigator({
 				profileId
 			);
 		} else if (profileId.startsWith('110')) {
-			// maintenanceDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, propertyId)
-			// console.log("Manager ID. and we need to return maintenance that is properly parsed")
 			maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
 		} else if (profileId.startsWith('200')) {
 			maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
 		}
 	}, [currentIndex, propertyId]);
 
-	function getColorStatusBasedOnSelectedRole() {
-		// const role = roleName();
-		// console.log("role", role)
+	let dashboard_id = getProfileId();
+	useEffect(() => {
+		const fetchDashboardData = async () => {
+		  setShowSpinner(true);
+		  try {
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
+			if (!response.ok) {
+			  throw new Error('Failed to fetch dashboard data');
+			}
+			const jsonData = await response.json();
+			setHappinessData(jsonData.HappinessMatrix);
+			setdataforhappiness(jsonData)
+		  } catch (error) {
+			console.error(error);
+		  }
+		  setShowSpinner(false);
+		};
+		fetchDashboardData();
+	  }, [dashboard_id]);
 
+	function getColorStatusBasedOnSelectedRole() {
 		if (role === 'Manager') {
 			return theme.colorStatusPMO;
 		} else if (role === 'Owner') {
@@ -315,37 +310,41 @@ export default function PropertyNavigator({
 		}
 	}
 
+	const handleOwnerClick = (ownerData) => {
+		navigate('/ownerContactDetailsHappinessMatrix', {
+		// navigate(`/ownerContactTest`, {
+			state: {
+			  ownerUID: ownerData,
+			  navigatingFrom: "PropertyNavigator",
+			  index: index,
+			  happinessMatrixData: dataforhappiness,
+			  happinessData: happinessData,
+			  contactDetail: contactDetails,
+			},
+		  });
+	  };
+	  
 	function handleOnClickNavigateToMaintenance(row) {
 		const role = roleName();
 		console.log(role);
 		let status = 'NEW REQUEST';
-		console.log('initial Status: ', status);
-		console.log('handleOnClickNavigateToMaintenance');
-		console.log('row', row);
-		// console.log("maintenanceReqData", maintenanceReqData);
-		// console.log("maintenanceData", maintenanceData);
-		console.log('New data: ', property.maintenance);
-		// console.log("New ID: ", property.maintenance);
+		// console.log('initial Status: ', status);
+		// console.log('handleOnClickNavigateToMaintenance');
+		// console.log('row', row);
+		// console.log('New data: ', property.maintenance);
 		// console.log(
-		//   "maintenance_request_index",
-		//   maintenanceData.findIndex((item) => item.maintenance_request_uid === row.id)
+		// 	'maintenance_request_index_new',
+		// 	property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
 		// );
-		console.log(
-			'maintenance_request_index_new',
-			property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
-		);
 
-		console.log('Row: ', row);
-		console.log('Row1: ', row.row);
-		console.log('Row2: ', row.row.maintenance_status);
-
-		// console.log("maintenanceItemsForStatus", maintenanceReqData[status]);
-		// console.log("allMaintenanceData", maintenanceReqData);
+		// console.log('Row: ', row);
+		// console.log('Row1: ', row.row);
+		// console.log('Row2: ', row.row.maintenance_status);
 
 		if (role === 'Manager') {
 			// These maitenance_status fields work for a Property Manager.  Need to make this Role Specific
 			status = row.row.maintenance_status;
-			console.log('Manager status', status);
+			// console.log('Manager status', status);
 
 			if (status === 'NEW' || status === 'INFO') {
 				status = 'NEW REQUEST';
@@ -359,7 +358,7 @@ export default function PropertyNavigator({
 		if (role === 'Owner') {
 			// Owner Status
 			status = row.row.maintenance_request_status;
-			console.log('Owner status', status);
+			// console.log('Owner status', status);
 
 			if (status === 'NEW') {
 				status = 'NEW REQUEST';
@@ -367,12 +366,6 @@ export default function PropertyNavigator({
 				status = 'INFO REQUESTED';
 			}
 		}
-
-		console.log('Final status', status);
-		console.log(row.id);
-		console.log(maintenanceReqData[status].findIndex);
-		console.log(maintenanceReqData[status]);
-		console.log(maintenanceReqData);
 
 		try {
 			if (!isDesktop) {
@@ -410,111 +403,104 @@ export default function PropertyNavigator({
 		}
 	}
 
-	function displayTopMaintenanceItem() {
-		const colorStatus = getColorStatusBasedOnSelectedRole();
-		if (property.maintenanceCount > 0) {
-			// console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
-			return (
-				<DataGrid
-					rows={property.maintenance}
-					columns={maintenanceColumns}
-					disableColumnMenu={!isDesktop}
-					initialState={{
-						pagination: {
-							paginationModel: {
-								pageSize: 5,
-							},
-						},
-					}}
-					getRowId={(row) => row.maintenance_request_uid}
-					pageSizeOptions={[5]}
-					onRowClick={(row) => {
-						{
-							console.log('Row =', row);
-						}
-						handleOnClickNavigateToMaintenance(row);
-					}}
-					//   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
-				/>
+	function displayTopMaintenanceItem() {	
+		const colorStatus = getColorStatusBasedOnSelectedRole();	
+		if (property.maintenanceCount > 0) {	
+			// console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData	
+			return (	
+				<DataGrid	
+					rows={property.maintenance}	
+					columns={maintenanceColumns}	
+					disableColumnMenu={!isDesktop}	
+					initialState={{	
+						pagination: {	
+							paginationModel: {	
+								pageSize: 5,	
+							},	
+						},	
+					}}	
+					getRowId={(row) => row.maintenance_request_uid}	
+					pageSizeOptions={[5]}	
+					onRowClick={(row) => {	
+						{	
+							console.log('Row =', row);	
+						}	
+						handleOnClickNavigateToMaintenance(row);	
+					}}	
+					//   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}	
+				/>	
 
-				// <DataGrid
-				//   rows={property.maintenance}
-				//   columns={maintenanceColumns}
-				//   initialState={{
-				//     pagination: {
-				//       paginationModel: {
-				//         pageSize: 5,
-				//       },
-				//     },
-				//   }}
-				//   getRowId={(row) => row.maintenance_request_uid}
-				//   pageSizeOptions={[5]}
-				//   onRowClick={(row) => {
-				//     {
-				//       console.log("List Item Clicked", property, i, propertyList);
-				//     }
-				//     handleOnClickNavigateToMaintenance(row)}}
-				// />
-			);
-		} else {
-			return 'No Open Maintenance Tickets';
-		}
-	}
+				// <DataGrid	
+				//   rows={property.maintenance}	
+				//   columns={maintenanceColumns}	
+				//   initialState={{	
+				//     pagination: {	
+				//       paginationModel: {	
+				//         pageSize: 5,	
+				//       },	
+				//     },	
+				//   }}	
+				//   getRowId={(row) => row.maintenance_request_uid}	
+				//   pageSizeOptions={[5]}	
+				//   onRowClick={(row) => {	
+				//     {	
+				//       console.log("List Item Clicked", property, i, propertyList);	
+				//     }	
+				//     handleOnClickNavigateToMaintenance(row)}}	
+				// />	
+			);	
+		} else {	
+			return 'No Open Maintenance Tickets';	
+		}	
+	}	
 
-	//   function numberOfMaintenanceItems(maintenanceItems) {
-	//     if (maintenanceItems && maintenanceItems.length > 0) {
-	//       return maintenanceItems.filter((mi) => !!mi.maintenance_request_uid).length;
-	//     } else {
-	//       return 0;
-	//     }
-	//   }
+	//   function numberOfMaintenanceItems(maintenanceItems) {	
+	//     if (maintenanceItems && maintenanceItems.length > 0) {	
+	//       return maintenanceItems.filter((mi) => !!mi.maintenance_request_uid).length;	
+	//     } else {	
+	//       return 0;	
+	//     }	
+	//   }	
 
-	function navigateToMaintenanceAccordion() {
-		// console.log("click to maintenance accordion for property")
-		navigate('/maintenance');
+	function navigateToMaintenanceAccordion() {	
+		// console.log("click to maintenance accordion for property")	
+		navigate('/maintenance');	
 
-		// TODO: Need to send props to /maintenance to navigate to correct tab and item
+		// TODO: Need to send props to /maintenance to navigate to correct tab and item	
 	}
 
 	const handleNextCard = () => {
-		//   setCurrentIndex((prevIndex) => (prevIndex + 1) % propertyData.length);
 		let nextIndex = (currentIndex + 1) % propertyData.length;
 		setCurrentIndex(nextIndex);
 		const nextId = propertyData[nextIndex].property_uid;
-		// console.log("next property id", nextId)
 		setCurrentId(nextId);
 		setProperty(propertyData[nextIndex]);
 
-		// setImages(JSON.parse(propertyData[nextIndex].property_images));
 		const parsedPropertyImages = propertyData[nextIndex].property_images
 			? JSON.parse(propertyData[nextIndex].property_images)
 			: [];
-		console.log('parsedImages:', parsedPropertyImages);
-		console.log('parsedImages.length:', parsedPropertyImages.length);
+		// console.log('parsedImages:', parsedPropertyImages);
+		// console.log('parsedImages.length:', parsedPropertyImages.length);
 		setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
 
 		setActiveStep(0);
-		//   setActiveStep((JSON.parse(propertyData[currentIndex+1].property_images)).findIndex(url => url === propertyData[currentIndex+1].property_favorite_image));
 	};
 
 	const handlePreviousCard = () => {
 		let previousIndex = (currentIndex - 1 + propertyData.length) % propertyData.length;
 		setCurrentIndex(previousIndex);
 		const previousId = propertyData[previousIndex].property_uid;
-		// console.log("previous property id", previousId)
 		setCurrentId(previousId);
 		setProperty(propertyData[previousIndex]);
 
-		// setImages(JSON.parse(propertyData[previousIndex].property_images));
 		const parsedPropertyImages = propertyData[previousIndex].property_images
 			? JSON.parse(propertyData[previousIndex].property_images)
 			: [];
-		console.log('parsedImages:', parsedPropertyImages);
-		console.log('parsedImages.length:', parsedPropertyImages.length);
+		// console.log('parsedImages:', parsedPropertyImages);
+		// console.log('parsedImages.length:', parsedPropertyImages.length);
 		setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
 
 		setActiveStep(0);
-		// setActiveStep((JSON.parse(propertyData[currentIndex-1].property_images)).findIndex(url => url === propertyData[currentIndex-1].property_favorite_image));
 	};
 
 	const handleNext = () => {
@@ -538,7 +524,6 @@ export default function PropertyNavigator({
 				},
 			});
 		} else {
-			// console.log("--debug--", index, propertyData)
 			navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
 		}
 	};
@@ -691,7 +676,8 @@ export default function PropertyNavigator({
 
   const getApplianceCategories = async () => {
     try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+	  const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+      //const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
       if (!response.ok) {
         console.log("Error fetching lists data");
       }
@@ -1090,7 +1076,8 @@ export default function PropertyNavigator({
 										<Grid container spacing={2}>
 											<Grid item xs={12}>
 												{property.property_available_to_rent === 1 ? (
-													<Box>
+													// padding extra on the bottom
+													<Box sx ={{ pb: 40}}>
 														<Button
 															variant="outlined"
 															sx={{
@@ -1598,7 +1585,18 @@ export default function PropertyNavigator({
 															display: 'flex',
 															justifyContent: 'space-between',
 															alignItems: 'center',
+															cursor: 'pointer', 
 														}}
+														onClick={() => navigate('/ownerContactDetailsHappinessMatrix', { 
+														// onClick={() => navigate('/ownerContactTest', { 
+															state: {
+															  ownerUID: property.owner_uid,
+															  navigatingFrom: 'PropertyNavigator',
+															  index: index,
+															  happinessData: happinessData,
+															  happinessMatrixData: dataforhappiness
+															}
+														  })}
 													>
 														<Typography
 															sx={{
@@ -1618,7 +1616,28 @@ export default function PropertyNavigator({
 															}}
 															onClick={() => handleManagerChange(currentIndex)}
 														/>
-													</Box>
+														</Box>
+														</Grid>
+												<Grid item xs={6} md={6}>
+												<Box
+													sx={{
+													display: 'flex',
+													justifyContent: 'space-between',
+													alignItems: 'center',
+													}}
+												>
+													<Typography
+													sx={{
+														textTransform: 'none',
+														color: theme.typography.primary.black,
+														fontWeight: theme.typography.light.fontWeight,
+														fontSize: theme.typography.smallFont,
+														cursor: 'pointer',
+													}}
+													onClick={() => handleOwnerClick(property.owner_uid)}
+													>
+													</Typography>
+												</Box>
 												</Grid>
 											</>
 										)}
