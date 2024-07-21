@@ -67,6 +67,7 @@ function TenantProfileEdit() {
 
   const [occupantsDataComplete, setOccupantsDataComplete] = useState(true);
 
+  // PM: Could we delete this function?
   const parseJSONFields = (obj) => {
     console.log("In parseJSONFields");
     if (!obj || typeof obj !== "object") {
@@ -98,9 +99,11 @@ function TenantProfileEdit() {
     console.log("In useEffect 89");
     setShowSpinner(true);
     console.log("Execute axios get");
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/tenantProfile/${getProfileId()}`).then((res) => {
-      let responseData = res.data.Profile.result[0];
+    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`).then((res) => {
+      let responseData = res.data.profile.result[0];
+      console.log("After profile endpoint call: ", responseData);
       parseJSONFields(responseData);
+      console.log("After Parsing call: ", responseData);
       console.log("responseData.tenant_ssn:", responseData.tenant_ssn);
       if (responseData.tenant_ssn) {
         responseData.tenant_ssn = maskSSN(responseData.tenant_ssn);
@@ -133,13 +136,16 @@ function TenantProfileEdit() {
       if (responseData.tenant_photo_url) {
         setTenantProfileImage(responseData.tenant_photo_url);
       }
-      setModifiedData({
-        tenant_uid: responseData.tenant_uid,
-        tenant_adult_occupants: responseData.tenant_adult_occupants,
-        tenant_children_occupants: responseData.tenant_children_occupants,
-        tenant_pet_occupants: responseData.tenant_pet_occupants,
-        tenant_vehicle_info: responseData.tenant_vehicle_info,
-      });
+
+      // Consider not setting Modified Data until it is actually modified
+      // setModifiedData({
+      //   tenant_uid: responseData.tenant_uid,
+      //   tenant_adult_occupants: responseData.tenant_adult_occupants,
+      //   tenant_children_occupants: responseData.tenant_children_occupants,
+      //   tenant_pet_occupants: responseData.tenant_pet_occupants,
+      //   tenant_vehicle_info: responseData.tenant_vehicle_info,
+      // });
+
       // setTenantLeaseStartDate(responseData.tenant_lease_start_date)
       // setTenantLeaseEndDate(responseData.tenant_lease_end_date)
       // setTenantMonthlyRent(responseData.tenant_monthly_rent)
@@ -153,15 +159,19 @@ function TenantProfileEdit() {
   }, []);
 
   useEffect(() => {
-    console.log("In useEffect 146");
-    setModifiedData((prevData) => ({
-      ...prevData,
-      tenant_adult_occupants: tenantAdultOccupants,
-      tenant_children_occupants: tenantChildrenOccupants,
-      tenant_pet_occupants: tenantPetOccupants,
-      tenant_vehicle_info: tenantVehicleInfo,
-    }));
-  }, [tenantAdultOccupants, tenantChildrenOccupants, tenantPetOccupants, tenantVehicleInfo]);
+    console.log("Modified Data Print: ", modifiedData, typeof modifiedData);
+  }, [modifiedData]);
+
+  // useEffect(() => {
+  //   console.log("In useEffect 146");
+  //   setModifiedData((prevData) => ({
+  //     ...prevData,
+  //     tenant_adult_occupants: tenantAdultOccupants,
+  //     tenant_children_occupants: tenantChildrenOccupants,
+  //     tenant_pet_occupants: tenantPetOccupants,
+  //     tenant_vehicle_info: tenantVehicleInfo,
+  //   }));
+  // }, [tenantAdultOccupants, tenantChildrenOccupants, tenantPetOccupants, tenantVehicleInfo]);
 
   // Handle changes to form fields
   const handleInputChange = (event) => {
@@ -170,39 +180,39 @@ function TenantProfileEdit() {
     console.log(name);
     console.log(value);
 
-    if (name === "tenant_first_name") {
-      setTenantFirstName(value);
-    } else if (name === "tenant_last_name") {
-      setTenantLastName(value);
-    } else if (name === "tenant_email") {
-      setTenantEmail(value);
-    } else if (name === "tenant_phone_number") {
-      setTenantPhoneNumber(value);
-    } else if (name === "tenant_ssn") {
-      setTenantSSN(value);
-    } else if (name === "tenant_drivers_license_number") {
-      setTenantLicenseNumber(value);
-    } else if (name === "tenant_drivers_license_state") {
-      setTenantLicenseState(value);
-    } else if (name === "tenant_current_salary") {
-      setTenantCurrentSalary(value);
-    } else if (name === "tenant_salary_frequency") {
-      setTenantSalaryFrequency(value);
-    } else if (name === "tenant_current_job_title") {
-      setTenantJobTitle(value);
-    } else if (name === "tenant_current_job_company") {
-      setTenantCompanyName(value);
-    } else if (name === "tenant_address") {
-      setTenantAddress(value);
-    } else if (name === "tenant_unit") {
-      setTenantUnit(value);
-    } else if (name === "tenant_state") {
-      setTenantState(value);
-    } else if (name === "tenant_city") {
-      setTenantCity(value);
-    } else if (name === "tenant_zip") {
-      setTenantZip(value);
-    }
+    // if (name === "tenant_first_name") {
+    //   setTenantFirstName(value);
+    // } else if (name === "tenant_last_name") {
+    //   setTenantLastName(value);
+    // } else if (name === "tenant_email") {
+    //   setTenantEmail(value);
+    // } else if (name === "tenant_phone_number") {
+    //   setTenantPhoneNumber(value);
+    // } else if (name === "tenant_ssn") {
+    //   setTenantSSN(value);
+    // } else if (name === "tenant_drivers_license_number") {
+    //   setTenantLicenseNumber(value);
+    // } else if (name === "tenant_drivers_license_state") {
+    //   setTenantLicenseState(value);
+    // } else if (name === "tenant_current_salary") {
+    //   setTenantCurrentSalary(value);
+    // } else if (name === "tenant_salary_frequency") {
+    //   setTenantSalaryFrequency(value);
+    // } else if (name === "tenant_current_job_title") {
+    //   setTenantJobTitle(value);
+    // } else if (name === "tenant_current_job_company") {
+    //   setTenantCompanyName(value);
+    // } else if (name === "tenant_address") {
+    //   setTenantAddress(value);
+    // } else if (name === "tenant_unit") {
+    //   setTenantUnit(value);
+    // } else if (name === "tenant_state") {
+    //   setTenantState(value);
+    // } else if (name === "tenant_city") {
+    //   setTenantCity(value);
+    // } else if (name === "tenant_zip") {
+    //   setTenantZip(value);
+    // }
 
     setModifiedData((prevData) => ({
       ...prevData,
@@ -226,6 +236,7 @@ function TenantProfileEdit() {
 
   // RANJIT Modificatoins
   const profileFormData = new FormData();
+  console.log("Profile Form Data Initial: ", profileFormData);
   console.log("modifiedData", modifiedData, typeof modifiedData);
   // profileFormData.append("tenant_uid", useUser());
   // profileFormData.append("tenant_uid", '350-000017');
@@ -236,12 +247,13 @@ function TenantProfileEdit() {
   // profileFormData.append("tenant_children_occupants", [{"dob": "2006-01-04", "name": "Arman", "relationship": "Cousin"}]);
   // leaseApplicationFormData.append("lease_status", "ENDED");
 
-  profileFormData.append("tenant_adult_occupants", JSON.stringify(modifiedData["tenant_adult_occupants"]));
-  profileFormData.append("tenant_children_occupants", JSON.stringify(modifiedData["tenant_children_occupants"]));
-  profileFormData.append("tenant_pet_occupants", JSON.stringify(modifiedData["tenant_pet_occupants"]));
-  profileFormData.append("tenant_vehicle_info", JSON.stringify(modifiedData["tenant_vehicle_info"]));
+  // profileFormData.append("tenant_adult_occupants", JSON.stringify(modifiedData["tenant_adult_occupants"]));
+  // profileFormData.append("tenant_children_occupants", JSON.stringify(modifiedData["tenant_children_occupants"]));
+  // profileFormData.append("tenant_pet_occupants", JSON.stringify(modifiedData["tenant_pet_occupants"]));
+  // profileFormData.append("tenant_vehicle_info", JSON.stringify(modifiedData["tenant_vehicle_info"]));
 
   profileFormData.append("tenant_uid", getProfileId());
+  console.log("Profile Form Data 3: ", profileFormData);
   for (const item of profileFormData) {
     console.log(item[0], item[1]);
   }
@@ -285,11 +297,13 @@ function TenantProfileEdit() {
     }
 
     for (const key in modifiedData) {
+      console.log("Profile Form Data Before Modified Data: ", profileFormData);
       if (Object.hasOwnProperty.call(modifiedData, key)) {
         const value = modifiedData[key];
         const serializedValue = value !== null && typeof value === "object" ? JSON.stringify(value) : String(value);
 
         profileFormData.append(key, serializedValue);
+        console.log("Profile Form Data 1: ", profileFormData);
       }
     }
 
@@ -315,7 +329,6 @@ function TenantProfileEdit() {
       if (confirmed) {
         navigate(-1);
       }
-            
     }
   };
 
@@ -1592,7 +1605,7 @@ function ProfileTableCell(props) {
     const fieldName = props.field;
 
     // console.log("In Debug Function")
-    // console.log(fieldName, value)
+    console.log("Field Name: ", fieldName, value);
     // console.log("prevData: ",prevData)
 
     setData((prevData) => {
@@ -1602,6 +1615,10 @@ function ProfileTableCell(props) {
         [props.subField]: value,
       };
       console.log("Updated ", fieldName, " with ", newData);
+      setModifiedData((prevData) => ({
+        ...prevData,
+        [fieldName]: newData,
+      }));
       return newData;
     });
   };

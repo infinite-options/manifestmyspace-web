@@ -21,9 +21,9 @@ export default function TenantApplication() {
   const [property, setProperty] = useState(location.state.property);
   const [status, setStatus] = useState(location.state.status);
   const [lease, setLease] = useState(location.state.lease);
+  console.log("in tenant application property", property);
   console.log("in tenant application status", status);
-  // console.log("lease", lease)
-  // console.log(property)
+  console.log("in tenant application lease", lease);
 
   const [tenantProfile, setTenantProfile] = useState(null);
 
@@ -222,10 +222,21 @@ export default function TenantApplication() {
       leaseApplicationData.append("lease_rent", "[]");
       leaseApplicationData.append("lease_application_date", date.toLocaleDateString());
       leaseApplicationData.append("tenant_uid", getProfileId());
-      const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-        method: "POST",
-        body: leaseApplicationData,
-      });
+
+      let leaseApplicationResponse;
+
+      if (lease && lease.lt_lease_id) {
+        leaseApplicationData.append("lease_uid", lease.lt_lease_id);
+        leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+          method: "PUT",
+          body: leaseApplicationData,
+        });
+      } else {
+        leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+          method: "POST",
+          body: leaseApplicationData,
+        });
+      }
 
       const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
         method: "POST",
