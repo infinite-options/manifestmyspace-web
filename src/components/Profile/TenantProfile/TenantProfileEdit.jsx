@@ -158,9 +158,9 @@ function TenantProfileEdit() {
     });
   }, []);
 
-  useEffect(() => {
-    console.log("Modified Data Print: ", modifiedData, typeof modifiedData);
-  }, [modifiedData]);
+  // useEffect(() => {
+  //   console.log("Modified Data Print: ", modifiedData, typeof modifiedData);
+  // }, [modifiedData]);
 
   // useEffect(() => {
   //   console.log("In useEffect 146");
@@ -255,6 +255,7 @@ function TenantProfileEdit() {
   profileFormData.append("tenant_uid", getProfileId());
   console.log("Profile Form Data 3: ", profileFormData);
   for (const item of profileFormData) {
+    console.log("Hidden Info");
     console.log(item[0], item[1]);
   }
 
@@ -1452,19 +1453,15 @@ function DocumentCard(props) {
 }
 
 function ProfileTenantTable(props) {
-  const { isEdited, setIsEdited } = useContext(TenantProfileEditContext);
+  const { setModifiedData, isEdited, setIsEdited } = useContext(TenantProfileEditContext);
   const title = props.title;
   const headers = props.headers;
 
-  const field = props.field;
+  const fieldName = props.field;
+  console.log("in  ProfileTenantTable, Field Name: ", fieldName);
 
   const data = props.data;
   const setData = props.setData;
-
-  useEffect(() => {
-    //console.log(`${field} --> ${data}`);
-    console.log(field, " --> ", data);
-  }, [data]);
 
   const addRow = () => {
     const newRow = headers.reduce((acc, header) => {
@@ -1477,7 +1474,14 @@ function ProfileTenantTable(props) {
       setData([newRow]);
       return;
     }
-    setData((prevData) => [...prevData, newRow]);
+    // setData((prevData) => [...prevData, newRow]);
+    setData((prevData) => {
+      setModifiedData((prevData) => ({
+        ...prevData,
+        [fieldName]: newRow,
+      }));
+      return [...prevData, newRow];
+    });
   };
 
   const deleteRow = (index) => {
@@ -1487,6 +1491,10 @@ function ProfileTenantTable(props) {
     setData((prevData) => {
       const newData = prevData.filter((_, i) => i !== index);
       console.log("Deleted row at index ", index, ", new data: ", newData);
+      setModifiedData((prevData) => ({
+        ...prevData,
+        [fieldName]: newData,
+      }));
       return newData;
     });
   };
@@ -1539,7 +1547,7 @@ function ProfileTenantTable(props) {
             <>
               {headers.map((header, i) => (
                 <ProfileTableCell
-                  field={field}
+                  field={fieldName}
                   key={i}
                   value={rowData[headerToDataKeyMap[header]]}
                   index={index}
@@ -1605,7 +1613,7 @@ function ProfileTableCell(props) {
     const fieldName = props.field;
 
     // console.log("In Debug Function")
-    console.log("Field Name: ", fieldName, value);
+    console.log("In ProfileTableCell, Field Name: ", fieldName, value);
     // console.log("prevData: ",prevData)
 
     setData((prevData) => {
