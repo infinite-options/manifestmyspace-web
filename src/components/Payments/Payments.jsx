@@ -15,6 +15,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
+import AccountBalanceWidget from "./AccountBalanceWidget";
 import { AccountBalance } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -251,153 +252,230 @@ export default function Payments(props) {
         </Backdrop>
 
         <Container maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
-        <Grid container spacing={6} sx={{height: '90%'}}>          
-          <Grid item xs={12} md={4}>
-            {
-              selectedRole === "MANAGER" && (
-                <ManagerCashflowWidget propsMonth={managerCashflowWidgetData?.propsMonth} propsYear={managerCashflowWidgetData?.propsYear} profitsTotal={managerCashflowWidgetData?.profitsTotal} rentsTotal={managerCashflowWidgetData?.rentsTotal} payoutsTotal={managerCashflowWidgetData?.payoutsTotal} graphData={managerCashflowWidgetData?.graphData}/>
-              )
-            }
+          <Grid container spacing={6} sx={{height: '90%'}}>          
+            <Grid item xs={12} md={4}>
+              {
+                selectedRole === "MANAGER" && (
+                  <ManagerCashflowWidget propsMonth={managerCashflowWidgetData?.propsMonth} propsYear={managerCashflowWidgetData?.propsYear} profitsTotal={managerCashflowWidgetData?.profitsTotal} rentsTotal={managerCashflowWidgetData?.rentsTotal} payoutsTotal={managerCashflowWidgetData?.payoutsTotal} graphData={managerCashflowWidgetData?.graphData}/>
+                )
+              }
 
-            {
-              selectedRole === "TENANT" && (
-                <AccountBalanceWidget selectedProperty={accountBalanceWidgetData?.selectedProperty} selectedLease={accountBalanceWidgetData?.selectedLease} propertyAddr={accountBalanceWidgetData?.propertyAddr} propertyData={accountBalanceWidgetData?.propertyData} total={accountBalanceWidgetData?.total} rentFees={accountBalanceWidgetData?.rentFees} lateFees={accountBalanceWidgetData?.lateFees} utilityFees={accountBalanceWidgetData?.utilityFees} />
-              )
-            }
-            
-          </Grid>
+              {
+                selectedRole === "TENANT" && (
+                  <AccountBalanceWidget selectedProperty={accountBalanceWidgetData?.selectedProperty} selectedLease={accountBalanceWidgetData?.selectedLease} propertyAddr={accountBalanceWidgetData?.propertyAddr} propertyData={accountBalanceWidgetData?.propertyData} total={accountBalanceWidgetData?.total} rentFees={accountBalanceWidgetData?.rentFees} lateFees={accountBalanceWidgetData?.lateFees} utilityFees={accountBalanceWidgetData?.utilityFees} />
+                )
+              }
+              
+            </Grid>
 
-          <Grid container item xs={12} md={8} columnSpacing={6}>
-            <Paper
-              component={Stack}
-              direction="column"
-              justifyContent="center"
-              style={{
-                justifyContent: "center",
-                width: "100%", // Take up full screen width
-                // marginTop: "20px", // Set the margin to 20px
-                marginBottom: "40px",
-                boxShadow: "none",
-              }}
-            >
-              <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative">
-                <Typography
+            <Grid container item xs={12} md={8} columnSpacing={6}>
+              <Paper
+                component={Stack}
+                direction="column"
+                justifyContent="center"
+                style={{
+                  justifyContent: "center",
+                  width: "100%", // Take up full screen width
+                  // marginTop: "20px", // Set the margin to 20px
+                  marginBottom: "40px",
+                  boxShadow: "none",
+                }}
+              >
+                <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative">
+                  <Typography
+                    sx={{
+                      justifySelf: "center",
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.largeFont,
+                    }}
+                  >
+                    {roleName()} Payments
+                  </Typography>
+                </Box>
+
+                <Box
                   sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.largeFont,
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "#160449",
+                    paddingTop: "10px",
                   }}
                 >
-                  {roleName()} Payments
-                </Typography>
-              </Box>
+                  <Box
+                    sx={{
+                      height: "30px",
+                      width: "30px",
+                      backgroundColor: "#bbb",
+                      borderRadius: "50%",
+                      // marginRight: "10px",
+                    }}
+                    onClick={() => {
+                      console.log("Navigate to Property or Tenant Profile");
+                    }}
+                  ></Box>
+                  <Box
+                    sx={{
+                      fontSize: "11px",
+                      fontWeight: "600",
+                    }}
+                  ></Box>
+                </Box>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "#160449",
-                  paddingTop: "10px",
-                }}
-              >
-                <Box
-                  sx={{
-                    height: "30px",
-                    width: "30px",
-                    backgroundColor: "#bbb",
-                    borderRadius: "50%",
-                    // marginRight: "10px",
+                <Paper
+                  style={{
+                    margin: "25px",
+                    padding: "20px",
+                    backgroundColor: theme.palette.primary.main,
+                    // height: "25%",
+                    [theme.breakpoints.down("sm")]: {
+                      width: "80%",
+                    },
+                    [theme.breakpoints.up("sm")]: {
+                      width: "50%",
+                    },
                   }}
-                  onClick={() => {
-                    console.log("Navigate to Property or Tenant Profile");
-                  }}
-                ></Box>
-                <Box
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: "600",
-                  }}
-                ></Box>
-              </Box>
-
-              <Paper
-                style={{
-                  margin: "25px",
-                  padding: "20px",
-                  backgroundColor: theme.palette.primary.main,
-                  // height: "25%",
-                  [theme.breakpoints.down("sm")]: {
-                    width: "80%",
-                  },
-                  [theme.breakpoints.up("sm")]: {
-                    width: "50%",
-                  },
-                }}
-              >
-                <Stack direction="row" justifyContent="left" m={2}>
-                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Balance</Typography>
-                </Stack>
-                <Stack direction="row" justifyContent="center" m={2}>
-                  <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                      <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
-                        ${total.toFixed(2)}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Button
-                        disabled={total <= 0}
-                        sx={{
-                          backgroundColor: "#3D5CAC",
-                          borderRadius: "10px",
-                          color: "#FFFFFF",
-                          width: "100%",
-                        }}
-                        onClick={() => {
-                          // paymentData.business_code = paymentNotes;
-                          const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
-                          console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
-                          console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
-                          navigate("/selectPayment", {
-                            state: { paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo },
-                          });
-                        }}
-                      >
-                        <Typography
-                          variant="outlined"
-                          style={{
-                            textTransform: "none",
+                >
+                  <Stack direction="row" justifyContent="left" m={2}>
+                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Balance</Typography>
+                  </Stack>
+                  <Stack direction="row" justifyContent="center" m={2}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
+                          ${total.toFixed(2)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Button
+                          disabled={total <= 0}
+                          sx={{
+                            backgroundColor: "#3D5CAC",
+                            borderRadius: "10px",
                             color: "#FFFFFF",
-                            fontSize: "18px",
-                            fontFamily: "Source Sans Pro",
-                            fontWeight: "600",
+                            width: "100%",
+                          }}
+                          onClick={() => {
+                            // paymentData.business_code = paymentNotes;
+                            const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
+                            console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
+                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
+                            navigate("/selectPayment", {
+                              state: { paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo, managerCashflowWidgetData: managerCashflowWidgetData, accountBalanceWidgetData: accountBalanceWidgetData  },
+                            });
                           }}
                         >
-                          Select Payment
-                        </Typography>
-                      </Button>
+                          <Typography
+                            variant="outlined"
+                            style={{
+                              textTransform: "none",
+                              color: "#FFFFFF",
+                              fontSize: "18px",
+                              fontFamily: "Source Sans Pro",
+                              fontWeight: "600",
+                            }}
+                          >
+                            Select Payment
+                          </Typography>
+                        </Button>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
+                  </Stack>
 
-                <Stack
-                  direction="row"
-                  justifyContent="center"
-                  m={2}
-                  sx={{
-                    paddingTop: "25px",
-                    paddingBottom: "15px",
-                  }}
-                >
-                  <TextField variant="filled" fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label="Payment Notes" />
-                </Stack>
-              </Paper>
+                  <Stack
+                    direction="row"
+                    justifyContent="center"
+                    m={2}
+                    sx={{
+                      paddingTop: "25px",
+                      paddingBottom: "15px",
+                    }}
+                  >
+                    <TextField variant="filled" fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label="Payment Notes" />
+                  </Stack>
+                </Paper>
 
-              {/* What is shown in Balance Details Depends on Role */}
-              {customer_role === "350" ? (
+                {/* What is shown in Balance Details Depends on Role */}
+                {customer_role === "350" ? (
+                  <Paper
+                    style={{
+                      margin: "25px",
+                      padding: 20,
+                      backgroundColor: theme.palette.primary.main,
+                      // height: "25%",
+                    }}
+                  >
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                        Balance Details - Money Payable
+                      </Typography>
+                      <Typography
+                        sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                      >
+                        ${totalToBePaid.toFixed(2)}
+                      </Typography>
+                    </Stack>
+
+                    <Stack>
+                      <TenantBalanceTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                    </Stack>
+                  </Paper>
+                ) : (
+                  <Paper
+                    style={{
+                      margin: "25px",
+                      padding: 20,
+                      backgroundColor: theme.palette.primary.main,
+                      // height: "25%",
+                    }}
+                  >
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                        Balance Details - Money Payable
+                      </Typography>
+                      <Typography
+                        sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                      >
+                        ${totalPayable.toFixed(2)}
+                      </Typography>
+                    </Stack>
+
+                    <Stack>
+                      <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                    </Stack>
+                  </Paper>
+                )}
+
+                {/* Conditional rendering for Money To Be Paid section */}
+                {customer_role !== "350" && (
+                  <Paper
+                    style={{
+                      margin: "25px",
+                      padding: 20,
+                      backgroundColor: theme.palette.primary.main,
+                      // height: "25%",
+                    }}
+                  >
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                        Money To Be Paid
+                      </Typography>
+                      <Typography
+                        sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                      >
+                        ${totalToBePaid.toFixed(2)}
+                      </Typography>
+                    </Stack>
+
+                    <Stack>
+                      <MoneyPayableTable data={moneyToBePaid} />
+                    </Stack>
+                  </Paper>
+                )}
+
+                {/* All Roles show Money Paid */}
                 <Paper
                   style={{
                     margin: "25px",
@@ -408,152 +486,75 @@ export default function Payments(props) {
                 >
                   <Stack direction="row" justifyContent="space-between">
                     <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                      Balance Details - Money Payable
+                      Payment History - Money Paid
                     </Typography>
-                    <Typography
-                      sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
-                    >
-                      ${totalToBePaid.toFixed(2)}
+                    <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                      ${totalPaid.toFixed(2)}
                     </Typography>
                   </Stack>
 
                   <Stack>
-                    <TenantBalanceTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                    <MoneyPaidTable data={moneyPaid} />
                   </Stack>
                 </Paper>
-              ) : (
-                <Paper
-                  style={{
-                    margin: "25px",
-                    padding: 20,
-                    backgroundColor: theme.palette.primary.main,
-                    // height: "25%",
-                  }}
-                >
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                      Balance Details - Money Payable
-                    </Typography>
-                    <Typography
-                      sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
-                    >
-                      ${totalPayable.toFixed(2)}
-                    </Typography>
-                  </Stack>
 
-                  <Stack>
-                    <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
-                  </Stack>
-                </Paper>
-              )}
+                {/* Conditional rendering for Money Received section */}
+                {paymentData.customer_uid.substring(0, 3) !== "350" && (
+                  <Paper
+                    style={{
+                      margin: "25px",
+                      padding: 20,
+                      backgroundColor: theme.palette.primary.main,
+                      // height: "25%",
+                    }}
+                  >
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                        Money Received
+                      </Typography>
+                      <Typography
+                        sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                      >
+                        ${totalReceived.toFixed(2)}
+                      </Typography>
+                    </Stack>
 
-              {/* Conditional rendering for Money To Be Paid section */}
-              {customer_role !== "350" && (
-                <Paper
-                  style={{
-                    margin: "25px",
-                    padding: 20,
-                    backgroundColor: theme.palette.primary.main,
-                    // height: "25%",
-                  }}
-                >
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                      Money To Be Paid
-                    </Typography>
-                    <Typography
-                      sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
-                    >
-                      ${totalToBePaid.toFixed(2)}
-                    </Typography>
-                  </Stack>
+                    <Stack>
+                      <MoneyReceivedTable data={moneyReceived} />
+                    </Stack>
+                  </Paper>
+                )}
 
-                  <Stack>
-                    <MoneyPayableTable data={moneyToBePaid} />
-                  </Stack>
-                </Paper>
-              )}
+                {/* Conditional rendering for Money To Be Received section */}
+                {paymentData.customer_uid.substring(0, 3) !== "350" && (
+                  <Paper
+                    style={{
+                      margin: "25px",
+                      padding: 20,
+                      backgroundColor: theme.palette.primary.main,
+                      // height: "25%",
+                    }}
+                  >
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                        Money To Be Received
+                      </Typography>
+                      <Typography
+                        sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                      >
+                        ${totalToBeReceived.toFixed(2)}
+                      </Typography>
+                    </Stack>
 
-              {/* All Roles show Money Paid */}
-              <Paper
-                style={{
-                  margin: "25px",
-                  padding: 20,
-                  backgroundColor: theme.palette.primary.main,
-                  // height: "25%",
-                }}
-              >
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                    Payment History - Money Paid
-                  </Typography>
-                  <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                    ${totalPaid.toFixed(2)}
-                  </Typography>
-                </Stack>
-
-                <Stack>
-                  <MoneyPaidTable data={moneyPaid} />
-                </Stack>
-              </Paper>
-
-              {/* Conditional rendering for Money Received section */}
-              {paymentData.customer_uid.substring(0, 3) !== "350" && (
-                <Paper
-                  style={{
-                    margin: "25px",
-                    padding: 20,
-                    backgroundColor: theme.palette.primary.main,
-                    // height: "25%",
-                  }}
-                >
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                      Money Received
-                    </Typography>
-                    <Typography
-                      sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
-                    >
-                      ${totalReceived.toFixed(2)}
-                    </Typography>
-                  </Stack>
-
-                  <Stack>
-                    <MoneyReceivedTable data={moneyReceived} />
-                  </Stack>
-                </Paper>
-              )}
-
-              {/* Conditional rendering for Money To Be Received section */}
-              {paymentData.customer_uid.substring(0, 3) !== "350" && (
-                <Paper
-                  style={{
-                    margin: "25px",
-                    padding: 20,
-                    backgroundColor: theme.palette.primary.main,
-                    // height: "25%",
-                  }}
-                >
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                      Money To Be Received
-                    </Typography>
-                    <Typography
-                      sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
-                    >
-                      ${totalToBeReceived.toFixed(2)}
-                    </Typography>
-                  </Stack>
-
-                  <Stack>
-                    <MoneyReceivedTable data={moneyToBeReceived} />
-                  </Stack>
-                </Paper>
-              )}
-          </Paper>                        
+                    <Stack>
+                      <MoneyReceivedTable data={moneyToBeReceived} />
+                    </Stack>
+                  </Paper>
+                )}
+            </Paper>                        
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
+        </Container>
         
       </ThemeProvider>
     </>
@@ -1652,277 +1653,3 @@ function MoneyPayableTable(props) {
 
 
 //TENANT
-const AccountBalanceWidget = ({ selectedProperty, selectedLease, propertyAddr, propertyData, total, rentFees, lateFees, utilityFees, }) => {
-  const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isMedium = useMediaQuery(theme.breakpoints.down("md"));
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const open = Boolean(anchorEl);
-
-  const returnLeaseStatusColor = (status) => {
-    const statusColorMapping = {
-      ACTIVE: "#3D5CAC",
-      REFUSED: "#FF8832",
-      WITHDRAWN: "#FF8832",
-      NEW: "#FAD102",
-      PROCESSING: "#00D100",
-      REJECTED: "#FA0202",
-      ENDED: "#000000",
-      RESCIND: "#FF8832",
-    };
-    // return property?.property_status ? statusColorMapping[property?.property_status] : "#ddd"
-    return status ? statusColorMapping[status] : "#ddd";
-  };
-
-  const showLeaseStatusIndicator = (lease_status) => {
-    return (
-      <>
-        {lease_status === "ACTIVE" ? <CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }} /> : null /* blue */}
-        {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ? <CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }} /> : null /* orange */}
-        {lease_status === "NEW" ? <CircleIcon fontSize="small" sx={{ color: "#FAD102", paddingRight: "10px" }} /> : null /* yellow */}
-        {lease_status === "PROCESSING" ? <CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }} /> : null /* green */}
-        {lease_status === "REJECTED" ? <CircleIcon fontSize="small" sx={{ color: "#FA0202", paddingRight: "10px" }} /> : null /* red */}
-        {lease_status === "RESCIND" ? <CircleIcon fontSize="small" sx={{ color: "#000000", paddingRight: "10px" }} /> : null /* black */}
-        {lease_status === "ENDED" ? <CircleIcon fontSize="small" sx={{ color: "#2E2E2E", paddingRight: "10px" }} /> : null /* black */}
-      </>
-    );
-  };
-
-
-
-  const handleOpen = useCallback((event) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  function handleViewLeaseNavigate(lease_uid) {
-    navigate("/viewLease", {
-      state: {
-        lease_id: lease_uid,
-        // property_uid: propertyId,
-      },
-    });
-  }
-
-  
-
-
-  return (
-    <DashboardTab fullHeight={!isMobile ? true : false}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "10px",
-          paddingRight: "0px",
-          flex: "1",
-        }}
-      >
-        <Box
-          sx={{
-            marginLeft: "5px",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Account Balance</Typography>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "left",
-                alignItems: "center",
-                color: "#160449",
-                // width: "100%",
-              }}
-            >
-              <Box
-                sx={{
-                  height: "30px",
-                  width: "30px",
-                  backgroundColor: returnLeaseStatusColor(selectedProperty?.lease_status),
-                  borderRadius: "50%",
-                  marginRight: "10px",
-                }}
-              />
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  fontSize: "22px",
-                  fontWeight: "600",
-                  color: "#3D5CAC",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: "22px",
-                    fontWeight: "600",
-                    color: "#3D5CAC",
-                    // flexGrow: 1
-                  }}
-                >
-                  <Typography>{propertyAddr}</Typography>
-                  
-                </Box>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                fontSize: { xs: "35px", sm: "35px", md: "35px", lg: "55px" },
-                fontWeight: "bold",
-                color: "#3D5CAC",
-                margin: "10px",
-                alignItems: "center",
-                alignContent: "center",
-              }}
-            >
-              ${total}
-            </Box>
-            <Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>
-              Due: {selectedProperty == null || !selectedProperty.earliest_due_date ? "No Data" : selectedProperty.earliest_due_date}
-            </Box>
-          </Box>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItem: "center",
-          justifyContent: "center",
-          margin: "20px",
-        }}
-      >
-        
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItem: "center",
-          justifyContent: "center",
-          margin: isMobile ? "10px" : "20px",
-          paddingTop: isMobile ? "5px" : isMedium ? "10px" : "20px",
-          paddingBottom: isMobile ? "5px" : "20px",
-        }}
-      >
-        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold" }}>Balance Details</Typography>
-
-        <Grid container>
-          <Grid item xs={6} sx={{ color: "#3D5CAC", fontSize: "20px", fontWeight: 700 }}>
-            {" "}
-            Description{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#3D5CAC", fontSize: "20px", fontWeight: 700, textAlign: "right" }}>
-            {" "}
-            Amount{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
-            {" "}
-            Rent{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
-            {" "}
-            ${rentFees}{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
-            {" "}
-            Late Fees{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
-            {" "}
-            ${lateFees}{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
-            {" "}
-            Utility{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
-            {" "}
-            ${utilityFees}{" "}
-          </Grid>
-        </Grid>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItem: "center",
-          justifyContent: "center",
-          margin: isMobile ? "10px" : "20px",
-          paddingTop: isMobile ? "5px" : "20px",
-          paddingBottom: isMobile ? "5px" : "20px",
-        }}
-      >
-        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold" }}>Lease Details</Typography>
-        <Grid container>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
-            {" "}
-            Start Date{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
-            {" "}
-            {selectedLease?.lease_start ? selectedLease?.lease_start : ""}{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
-            {" "}
-            End Date
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
-            {" "}
-            {selectedLease?.lease_end ? selectedLease?.lease_end : ""}{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
-            {" "}
-            Address{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
-            {" "}
-            {selectedLease?.property_address ? selectedLease?.property_address : ""} {selectedLease?.property_unit ? selectedLease?.property_unit : ""}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
-            {" "}
-            Lease UID{" "}
-          </Grid>
-          <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
-            {" "}
-            {selectedLease?.lease_uid}
-          </Grid>
-        </Grid>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItem: "left",
-          justifyContent: "left",
-          margin: isMobile ? "0px" : "20px",
-          paddingBottom: isMobile ? "5px" : "10px",
-          cursor: "pointer",
-          color: "#3D5CAC",
-          fontSize: "20px",
-          fontWeight: 600,
-        }}
-        onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
-      >
-        <img src={documentIcon} alt="document-icon" style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-        <u>View Full Lease</u>
-      </Box>
-    </DashboardTab>
-
-  );
-}
