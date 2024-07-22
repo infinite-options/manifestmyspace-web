@@ -24,12 +24,13 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault("America/Los_Angeles");
 
 const PropertyInfo = (props) => {
+console.log("props in info",props)
   const location = useLocation();
   const navigate = useNavigate();
-  const index = location.state.index;
-  const property = location.state.data;
-  const status = location.state.status;
-  const lease = location.state.lease;
+  const index = props.index;
+  const property = props.data;
+  const status = props.status;
+  const lease = props.lease;
   const ppt_images = property.property_images.split(",");
   const [showScheduler, setShowScheduler] = useState(false);
   const [schedulerDate, setSchedulerDate] = useState();
@@ -150,7 +151,7 @@ const PropertyInfo = (props) => {
       <Scheduler show={showScheduler} setShow={setShowScheduler} date={schedulerDate} setDate={setSchedulerDate} />
       <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative">
         <Button
-          onClick={() => navigate(-1)}
+          onClick={() => props.setRightPane({ type: "listings" })}
           sx={{
             textTransform: "none",
             padding: "10px 10px 0px 10px",
