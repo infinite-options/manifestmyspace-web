@@ -60,7 +60,15 @@ const ProfileManager = () => {
   const [allowCookies, setAllowCookies] = useState(true);
   const [settingsChanged, setSettingsChanged] = useState(false);
 
+  
   useEffect(() => {
+    if(user.dark_mode)
+  {setDarkMode(user.dark_mode=='true')} 
+  if(user.notifications)
+  {setNotifications(user.notifications=='true')} 
+  if(user.allowCookies)
+  {setAllowCookies(user.allowCookies=='true')} 
+
     setActiveForm(selectedRole);
     fetchProfileData();
   }, [isSave, selectedRole]);
@@ -83,6 +91,8 @@ const ProfileManager = () => {
       updateUserInfo();
     }
   }, [notifications, darkMode, allowCookies]);
+
+  console.log("user data is", user)
 
   const fetchProfileData = async () => {
     try {
