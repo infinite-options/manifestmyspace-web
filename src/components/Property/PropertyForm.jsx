@@ -412,14 +412,14 @@ const PropertyForm = () => {
 				<CardContent className={classes.cardContent}>
 					<Grid container spacing={8}>
 						<Grid item xs={12} sm={4} className={classes.addPicturesButtonContainer}>
-						{coordinates && (
+						
             <StaticMap
-              latitude={coordinates.latitude}
-              longitude={coordinates.longitude}
+              latitude={coordinates?.latitude}
+              longitude={coordinates?.longitude}
               size="400x400"
               zoom={15}
+			  defaultCenter={{ lat: 37.3382, lng: -121.8863 }}
             />
-      )}
 						</Grid>
 						<Grid item xs={12} sm={8}>
 							<Grid container spacing={3}>
