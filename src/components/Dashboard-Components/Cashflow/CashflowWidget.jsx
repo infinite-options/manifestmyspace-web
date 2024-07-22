@@ -69,8 +69,8 @@ function CashflowWidget({ data }) {
   const expenseCurrentMonth = data?.result?.find( (item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense")  
   const revenueCurrentMonth = data?.result?.find( (item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue")
 
-  console.log("ROHIT - expenseCurrentMonth - ", expenseCurrentMonth);
-  console.log("ROHIT - revenueCurrentMonth - ", revenueCurrentMonth);
+  console.log("expenseCurrentMonth - ", expenseCurrentMonth);
+  console.log("revenueCurrentMonth - ", revenueCurrentMonth);
 
   // useEffect(() => {
   //   fetchCashflow(profileId)

@@ -6,22 +6,25 @@ import theme from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
 
 export default function HappinessMatrixWidget(props) {
-  console.log("In HappinessMatrixWidget");
   const navigate = useNavigate();
-  const chartWidth = 400;
-  const chartHeight = 350;
+  // const chartWidth = 400;
+  // const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { page, setIndex, data, dataSetter, cashflowData, contactDetails, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth } = props;
-  // console.log("HappinessMatrixWidget - data -", data);
-  // console.log("HappinessMatrixWidget - cashflowData -", cashflowData);
+  const { page, setIndex, happinessData, dataforhappiness, data = [], dataSetter, contactDetails } = props;
+
+  // useEffect(() => {
+  //   console.log("HappinessMatrixWidget - happinessData:", happinessData);
+  // }, [happinessData]);
+
+  // let cashflowData = happinessData?.delta_cashflow.result;
+  // let cashflowDetails = happinessData?.delta_cashflow_details?.result;
+  // let cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
+  // let cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
 
   let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
 
-  const [pointsToPlot, setPointsToPlot] = useState([]);
 
-  // useEffect(() => {
-  //   console.log(" HappinessMatrixWidget - pointsToPlot - ", pointsToPlot);
-  // }, [pointsToPlot]);
+  const [pointsToPlot, setPointsToPlot] = useState([]);
 
   // Function to check if two points overlap
   function overlap(owner1, owner2, margin = 5) {
@@ -53,6 +56,7 @@ export default function HappinessMatrixWidget(props) {
   function getPoints(data) {
     const points = [];
     data?.forEach((owner) => {
+      // console.log("In get points: ", owner.vacancy_perc, owner.delta_cashflow_perc);
       let x = Number(owner.vacancy_perc);
       let y = Number(owner.delta_cashflow_perc);
 
@@ -61,18 +65,14 @@ export default function HappinessMatrixWidget(props) {
         y: -y,
         ...owner,
       };
-      // console.log("getPoints - owner - ", owner.name)
-      // console.log("getPoints - pointObject - ", pointObject);
 
       points.push(pointObject);
     });
 
-    // console.log("getPoints - points - ", points);
     setPointsToPlot(points);
   }
 
   useEffect(() => {
-    // console.log("props.data -  ", props.data);
     getPoints(props.data);
   }, [props.data]);
 
@@ -86,15 +86,15 @@ export default function HappinessMatrixWidget(props) {
   const [hiddenPoints, setHiddenPoints] = useState([]);
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
-  console.log("In HappinessMatrixWidget clickedIndex: ", clickedIndex);
+  // console.log("In HappinessMatrixWidget clickedIndex: ", clickedIndex);
 
-  useEffect(() => {
-    // console.log("hiddenPoints - ", hiddenPoints);
-  }, [hiddenPoints]);
+  // useEffect(() => {
+  //   // console.log("hiddenPoints - ", hiddenPoints);
+  // }, [hiddenPoints]);
 
-  useEffect(() => {
-    // console.log("shifted_data - ", shifted_data);
-  }, [shifted_data]);
+  // useEffect(() => {
+  //   // console.log("shifted_data - ", shifted_data);
+  // }, [shifted_data]);
 
   const handlePointClick = (payload) => {
     let { index } = payload;
@@ -217,36 +217,6 @@ export default function HappinessMatrixWidget(props) {
                     return null;
                   }}
                 />
-
-                {/* <Scatter
-                  name="A school"
-                  data={shifted_data}
-                  shape={(props) => (
-                    <CustomImage
-                      {...props}
-                      onClick={() => handlePointClick(props.payload)}
-                      isClicked={props.payload.index === clickedIndex}
-                      isVisible={!hiddenPoints.includes(props.payload.index)}
-                    />
-                  )}
-                >
-                  {shifted_data.map((point, index) => (
-                    !hiddenPoints.includes(index) && (
-                      <Scatter
-                        key={`hidden-${index}`}
-                        data={[point]}
-                        shape={(props) => (
-                          <CustomImage
-                            {...props}
-                            isClicked={false}
-                            isVisible={false}
-                          />
-                        )}
-                      />
-                    )
-                  ))}
-                </Scatter> */}
-
                 <Scatter
                   name="happiness_matrix"
                   data={pointsToPlot}
@@ -256,13 +226,15 @@ export default function HappinessMatrixWidget(props) {
                       {...props}
                       onClick={() => handlePointClick(props.payload)}
                       data={data}
+                      dataforhappiness={dataforhappiness}
+                      happinessData={happinessData}
                       page={page}
                       contactDetails={contactDetails}
                       setIndex={setIndex}
-                      cashflowDetails={cashflowDetails}
-                      cashflowDetailsByProperty={cashflowDetailsByProperty}
-                      cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
-                      cashflowData={cashflowData}
+                      // cashflowDetails={cashflowDetails}
+                      // cashflowDetailsByProperty={cashflowDetailsByProperty}
+                      // cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
+                      // cashflowData={cashflowData}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}
                     />
@@ -292,7 +264,7 @@ export default function HappinessMatrixWidget(props) {
 }
 
 const CustomImage = (props) => {
-  console.log("In CustomImage");
+  // console.log("In CustomImage");
   const navigate = useNavigate();
   const {
     cx,
@@ -302,17 +274,15 @@ const CustomImage = (props) => {
     isClicked,
     isVisible,
     index,
-    cashflowData,
-    data,
+    dataforhappiness,
     page,
     setIndex,
     contactDetails,
-    cashflowDetails,
-    cashflowDetailsByProperty,
-    cashflowDetailsByPropertyByMonth,
+    happinessData,
   } = props;
 
   const [isClickedState, setIsClickedState] = useState(isClicked);
+  
   // useEffect(() => {
   //   console.log("isClickedState - ", isClickedState);
   // }, [isClickedState]);
@@ -323,9 +293,10 @@ const CustomImage = (props) => {
   }
 
   const diameter = 30;
-  const outlineWidth = isClicked ? 4 : 2;  
+  const outlineWidth = isClicked ? 4 : 2;
 
   const handleClick = (payload) => {
+    // console.log("input to  handleClick: ", payload);
     setIsClickedState(true);
     // console.log("CustomImage - handeClick");
     if (onClick) {
@@ -337,16 +308,14 @@ const CustomImage = (props) => {
       setIndex(idx);
       return;
     }
+
     navigate(`/ownerContactDetailsHappinessMatrix`, {
       state: {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
-        cashflowData: cashflowData,
-        cashflowDetails: cashflowDetails,
-        cashflowDetailsByProperty,
-        cashflowDetailsByProperty,
-        cashflowDetailsByPropertyByMonth: cashflowDetailsByPropertyByMonth,
-        happinessMatrixData: data,
+        index: index,
+        happinessMatrixData: dataforhappiness,
+        happinessData: happinessData,
       },
     });
   };
@@ -356,7 +325,11 @@ const CustomImage = (props) => {
     <g onClick={() => handleClick(payload)}>
       <foreignObject x={cx - diameter / 2} y={cy - diameter / 2} width={diameter} height={diameter}>
         {![null, undefined, ""].includes(payload?.photo) ? (
-          <img src={payload.photo} alt="scatter-image" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", filter: isClickedState ? "brightness(0.7)" : "none", }} />
+          <img
+            src={payload.photo}
+            alt="scatter-image"
+            style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", filter: isClickedState ? "brightness(0.7)" : "none" }}
+          />
         ) : (
           <AccountCircleIcon
             sx={{

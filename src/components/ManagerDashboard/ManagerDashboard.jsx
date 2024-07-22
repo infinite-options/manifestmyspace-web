@@ -28,6 +28,8 @@ import { Paper } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
 
+import PropertyNavigator from "../Property/PropertyNavigator";
+
 const useStyles = makeStyles({
   button: {
     width: "100%",
@@ -48,14 +50,17 @@ const useStyles = makeStyles({
 });
 
 function ManagerDashboard() {
-  console.log("In Manager Dashboard function");
+  // console.log("In Manager Dashboard function");
   const classes = useStyles();
   const { getProfileId, user, selectedRole } = useUser();
   let dashboard_id = getProfileId();
   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
   const navigate = useNavigate();
+  const chartWidth = 400;	  // const chartWidth = 400;
+  const chartHeight = 350;
   let date = new Date();
   // const [loading, setLoading] = useState(true);
+
   const [rentStatus, setRentStatus] = useState([]);
   const [leaseStatus, setLeaseStatus] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
@@ -64,19 +69,20 @@ function ManagerDashboard() {
   const [contractRequests, setContractRequests] = useState([]);
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
-  const [cashflowDetails, setCashflowDetails] = useState([]);
-  const [cashflowDetailsByProperty, setCashflowDetailsByProperty] = useState([]);
-  const [cashflowDetailsByPropertyByMonth, setCashflowDetailsByPropertyByMonth] = useState([]);
-  const [cashflowData, setCashflowData] = useState([]);
+  const [happinessData, setHappinessData] = useState([]);
+  const [dataforhappiness, setdataforhappiness] = useState([]);
 
-  // useEffect(() => {
-  //   console.log("ManagerDashboard - cashflowDetails - ", cashflowDetails);
-  // }, [cashflowDetails]);
+  useEffect(() => {
+    console.log("RentStatus check --", rentStatus);
+  }, [rentStatus]);
 
-  // useEffect(() => {
-  //   console.log("ManagerDashboard - cashflowData - ", cashflowData);
-  // }, [cashflowData]);
+  useEffect(() => {
+    console.log("property endpoint resp - ", property_endpoint_resp);
+  }, [property_endpoint_resp]);
 
+  useEffect(() => {
+    console.log("Contract requests - ", contractRequests);
+  }, [contractRequests]);
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
@@ -229,6 +235,7 @@ function ManagerDashboard() {
       const emp_verification = async () => {
         try {
           const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+          // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
           if (!response.ok) {
             throw new Error("Failed to fetch data");
           }
@@ -268,6 +275,7 @@ function ManagerDashboard() {
       // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();
+        // console.log("Manager Dashboard jsonData: ", jsonData);
         // const propertiesResponseJSON = await propertiesResponse.json();
 
         // MAINTENANCE Status
@@ -281,22 +289,25 @@ function ManagerDashboard() {
 
         // HAPPINESS MATRIX
         setting_matrix_data(jsonData);
+        setHappinessData(jsonData.HappinessMatrix);
+
+        // DATA FOR HAPPINESS
+        setdataforhappiness(jsonData);
 
         // REVENUE DATA
         setRevenueData(jsonData.Profitability);
 
-        //CASHFLOW DETAILS
-        setCashflowData(jsonData?.HappinessMatrix?.delta_cashflow.result);
+        // //CASHFLOW DETAILS
+        // setCashflowData(jsonData?.HappinessMatrix?.delta_cashflow.result);
 
-        //CASHFLOW DETAILS
-        setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
+        // //CASHFLOW DETAILS
+        // setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
 
-        //CASHFLOW DETAILS
-        setCashflowDetailsByProperty(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property?.result);
+        // //CASHFLOW DETAILS
+        // setCashflowDetailsByProperty(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property?.result);
 
-        //CASHFLOW DETAILS
-        setCashflowDetailsByPropertyByMonth(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property_by_month?.result);
-
+        // //CASHFLOW DETAILS
+        // setCashflowDetailsByPropertyByMonth(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property_by_month?.result);
 
         // NEW PM REQUESTS
         // set_property_endpoint_resp(propertiesResponseJSON);
@@ -356,13 +367,24 @@ function ManagerDashboard() {
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget data={matrixData} cashflowData={cashflowData} cashflowDetails={cashflowDetails} cashflowDetailsByProperty={cashflowDetailsByProperty} cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth} />
+                <HappinessMatrixWidget
+                  happinessData={happinessData}
+                  data={matrixData}
+                  dataforhappiness={dataforhappiness}
+                  // cashflowData={cashflowData}
+                  // cashflowDetails={cashflowDetails}
+                  // cashflowDetailsByProperty={cashflowDetailsByProperty}
+                  // cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
+                />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget maintenanceData={maintenanceStatusData} />
               </Grid>
             </Grid>
           </Grid>
+          {/* <Grid item xs={12} md={6}>
+            <PropertyNavigator happinessData={happinessData} />
+          </Grid> */}
         </Grid>
       </Container>
     </ThemeProvider>

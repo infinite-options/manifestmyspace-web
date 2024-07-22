@@ -16,6 +16,8 @@ import AddExpense from "./Cashflow/AddExpense";
 import AddRevenue from "./Cashflow/AddRevenue";
 import AddUtility from "./Cashflow/AddUtility";
 import Cashflow from "./Cashflow/Cashflow";
+import ManagerCashflow from "./Cashflow/ManagerCashflow";
+import ManagerTransactions from "./Cashflow/ManagerTransactions";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
 import LeasePDF from "./Leases/LeasePDF";
@@ -78,6 +80,7 @@ import ManagerContactDetails from "./Contacts/ContactDetails/ManagerContactDetai
 import MaintenanceContactDetails from "./Contacts/ContactDetails/MaintenanceContactDetails";
 import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 import OwnerContactDetailsHappinessMatrix from "./Contacts/ContactDetails/OwnerContactDetailsHappinessMatrix";
+import OwnerContactTest from "./Contacts/ContactDetails/OwnerContactTest";
 
 import PropertyList from "./Property/PropertyList";
 // import PMProperties from "./Property/PMProperties";
@@ -229,6 +232,8 @@ function Main() {
           <Route path="addNewRole" element={<AddNewRole />} /> 
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
+            <Route path="managerCashflow" element={<ManagerCashflow />} />
+            <Route path="managerTransactions" element={<ManagerTransactions />} />            
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
@@ -316,6 +321,7 @@ function Main() {
             <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
             <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
             <Route path="ownerContactDetailsHappinessMatrix" element={<OwnerContactDetailsHappinessMatrix />} />
+            <Route path="ownerContactTest" element={<OwnerContactTest/>} />
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
