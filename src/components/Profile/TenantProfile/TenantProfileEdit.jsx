@@ -26,6 +26,7 @@ function TenantProfileEdit() {
   const [profileData, setProfileData] = useState({});
   const [modifiedData, setModifiedData] = useState({});
   const [isEdited, setIsEdited] = useState(false);
+  const [isTypeChanged, setIsTypeChanged] = useState(false);
 
   const [tenantProfileImage, setTenantProfileImage] = useState(ProfileImg);
 
@@ -259,11 +260,28 @@ function TenantProfileEdit() {
     console.log(item[0], item[1]);
   }
 
+  // Handle File Type Changes
+  const changeFileType = (id, docType) => {
+    const updatedDocuments = previouslyUploadedDocs.map((doc) => {
+      if (doc.id === id) {
+        return { ...doc, type: docType };
+      }
+      return doc;
+    });
+    setIsTypeChanged(true);
+    setIsEdited(true);
+    return updatedDocuments;
+  };
+
   // Handle form submission n- RANJIT
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("FORM SUBMITTED");
     console.log(modifiedData);
+
+    if (isTypeChanged === true) {
+      profileFormData.append("tenant_documents", JSON.stringify(changeFileType()));
+    }
 
     if (tenantFiles.length > 0 || deletedDocs.length > 0) {
       profileFormData.append("tenant_documents", JSON.stringify(previouslyUploadedDocs));
@@ -1118,6 +1136,7 @@ function TenantProfileEdit() {
                                   const updatedTypes = [...tenantFileTypes];
                                   updatedTypes[i] = e.target.value;
                                   console.log("File Type: ", e.target.value);
+                                  changeFileType(i, updatedTypes[i]);
                                   setTenantFileTypes(updatedTypes);
                                   setIsEdited(true);
                                 }}
