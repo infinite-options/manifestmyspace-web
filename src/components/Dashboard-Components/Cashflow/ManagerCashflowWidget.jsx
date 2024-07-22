@@ -164,7 +164,7 @@ function getTotalRevenueByMonthYear(data, month, year) {
         expected_rent: expectedMonthRent,
         rent: currentMonthRent,
   
-        monthYear: currentMonth.slice(0, 3) + " " + currentYear.slice(2, 4),
+        monthYear: currentMonth?.slice(0, 3) + " " + currentYear?.slice(2, 4),
         // "expected_revenue": expectedMonthRevenue,
         // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
       });
@@ -346,7 +346,7 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
           })
         }
       > */}
-      <Container sx={{ height: "100%", backgroundColor: "#F2F2F2", borderRadius: "5px", marginTop: "2px" }}>
+      <Container sx={{  backgroundColor: "#F2F2F2", borderRadius: "5px", marginTop: "2px" }}>
         <Grid
           container
           rowSpacing={1}
@@ -543,7 +543,7 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
           </Grid>
 
           <Grid item container xs={12} sx={{ marginBottom: "10px", marginTop: '10px', }}>
-              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <Button
                   variant="outlined"
                   id="revenue"
@@ -560,13 +560,14 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   onClick={(e) => {
                     e.stopPropagation();
                     // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                    navigate("/payments", {state: {managerCashflowWidgetData : { profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, } }});
                   }}
                 >                                    
                   Pay Bills
                 </Button>
               </Grid>
 
-              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <Button
                   variant="outlined"
                   id="revenue"
@@ -580,12 +581,37 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                     marginBottom: "10px",
                     borderRadius: "5px",
                   }}
-                //   onClick={(e) => {
-                //     e.stopPropagation();
-                //     navigate("/managerTransactions");
-                //   }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate("/managerTransactions");
+                  }}
                 >                                    
                   Transactions
+                </Button>
+              </Grid>
+
+              <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                <Button
+                  variant="outlined"
+                  id="profits"
+                  // className={classes.button}
+                  style={{
+                    // height: "100%",
+                    // width: '80%',
+                    backgroundColor: "#D0D0D0",
+                    color: "#160449",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate("/managerCashflow");
+                  }}
+                >                                    
+                  Profits
                 </Button>
               </Grid>
             </Grid>
