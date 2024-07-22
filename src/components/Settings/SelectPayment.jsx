@@ -6,7 +6,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider } from "@mui/material";
+import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider, Container, ThemeProvider, } from "@mui/material";
 
 // Stripe Imports
 import StripeFeesDialog from "./StripeFeesDialog";
@@ -30,6 +30,9 @@ import ApplePay from "../../images/ApplePay.png";
 
 import APIConfig from "../../utils/APIConfig";
 
+import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
+import AccountBalanceWidget from "../Payments/AccountBalanceWidget";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -51,11 +54,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SelectPayment(props) {
   const location = useLocation();
+  const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole, } = useUser();
   console.log("--DEBUG-- props", props);
   console.log("--DEBUG-- location.state", location.state);
+
+  const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
+  const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
+  console.log("ROHIT - SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
+  console.log("ROHIT - selectedRole - ", selectedRole);
+
   const classes = useStyles();
-  const navigate = useNavigate();
-  const { getProfileId, paymentRoutingBasedOnSelectedRole } = useUser();
+  const navigate = useNavigate();  
   const [showSpinner, setShowSpinner] = useState(false);
   // const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
@@ -314,303 +323,333 @@ export default function SelectPayment(props) {
   };
 
   return (
-    <div style={{ padding: "30px" }}>
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
+    // <div style={{ padding: "30px" }}>
+    <>
+      <ThemeProvider theme={theme}>
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
 
-      <Stack direction="row" justifyContent="center">
-        <Box position="absolute" left={30}>
-          <Button onClick={() => navigate(-1)}>
-            <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-          </Button>
-        </Box>
-        <Typography
-          sx={{
-            justifySelf: "center",
-            color: theme.typography.common.blue,
-            fontWeight: theme.typography.primary.fontWeight,
-            fontSize: theme.typography.largeFont,
-          }}
-        >
-          Select Payment Method
-        </Typography>
-      </Stack>
-      <Paper
-        style={{
-          margin: "25px",
-          padding: "10px",
-          backgroundColor: theme.palette.primary.main,
-          height: "25%",
-          [theme.breakpoints.down("sm")]: {
-            width: "80%",
-          },
-          [theme.breakpoints.up("sm")]: {
-            width: "50%",
-          },
-        }}
-      >
-        <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
-          <Typography
-            sx={{
-              justifySelf: "center",
-              color: "#160449",
-              fontWeight: theme.typography.medium.fontWeight,
-              fontSize: theme.typography.largeFont,
-            }}
-          >
-            Total Balance
-          </Typography>
-        </Stack>
+        <Container  disableGutters maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
+          <Grid container spacing={6} sx={{height: '90%'}}>          
+            <Grid item xs={12} md={4}>
+              {
+                selectedRole === "MANAGER" && (
+                  <ManagerCashflowWidget propsMonth={managerCashflowWidgetData?.propsMonth} propsYear={managerCashflowWidgetData?.propsYear} profitsTotal={managerCashflowWidgetData?.profitsTotal} rentsTotal={managerCashflowWidgetData?.rentsTotal} payoutsTotal={managerCashflowWidgetData?.payoutsTotal} graphData={managerCashflowWidgetData?.graphData}/>
+                )
+              }
 
-        <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
-          <Typography
-            sx={{
-              justifySelf: "center",
-              color: "#7A9AEA",
-              fontWeight: theme.typography.medium.fontWeight,
-              fontSize: theme.typography.largeFont,
-            }}
-          >
-            {"$" + (balance + convenience_fee).toFixed(2)}
-            </Typography>
-        </Stack>
-        <Divider light />
-        <Stack>
-          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6} justifyContent="center" alignItems="center">
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: "#160449",
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                Balance
-              </Typography>
+              {
+                selectedRole === "TENANT" && (
+                  <AccountBalanceWidget selectedProperty={accountBalanceWidgetData?.selectedProperty} selectedLease={accountBalanceWidgetData?.selectedLease} propertyAddr={accountBalanceWidgetData?.propertyAddr} propertyData={accountBalanceWidgetData?.propertyData} total={accountBalanceWidgetData?.total} rentFees={accountBalanceWidgetData?.rentFees} lateFees={accountBalanceWidgetData?.lateFees} utilityFees={accountBalanceWidgetData?.utilityFees} />
+                )
+              }            
             </Grid>
 
-            <Grid item xs={6} alignItems="center">
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: "#160449",
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"$" + balance.toFixed(2)}
-              </Typography>
-            </Grid>
+            <Grid container item xs={12} md={8} columnSpacing={6}>
+              <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
-            <Grid item xs={6} alignItems="center">
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: "#160449",
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
+              {/* <Stack direction="row" > */}
+              <Grid container item xs={12} justifyContent="center">
+                {/* <Grid item xs={1} >
+                  <Button onClick={() => navigate(-1)}>
+                    <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+                  </Button>
+                </Grid> */}
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                  }}
+                >
+                  Select Payment Method
+                </Typography>
+              {/* </Stack> */}
+              </Grid>
+              <Paper
+                style={{
+                  width: '100%',
+                  margin: "25px",
+                  marginBottom: '0px',
+                  padding: "10px",
+                  backgroundColor: theme.palette.primary.main,
+                  // height: "25%",
+                  // [theme.breakpoints.down("sm")]: {
+                  //   width: "80%",
+                  // },
+                  // [theme.breakpoints.up("sm")]: {
+                  //   width: "50%",
+                  // },
                 }}
               >
-                Convenience Fees
-              </Typography>
-            </Grid>
+                <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
+                  <Typography
+                    sx={{
+                      justifySelf: "center",
+                      color: "#160449",
+                      fontWeight: theme.typography.medium.fontWeight,
+                      fontSize: theme.typography.largeFont,
+                    }}
+                  >
+                    Total Balance
+                  </Typography>
+                </Stack>
 
-            <Grid item xs={6} alignItems="center">
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: "#160449",
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"$" + convenience_fee.toFixed(2)}
-              </Typography>
-            </Grid>
+                <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
+                  <Typography
+                    sx={{
+                      justifySelf: "center",
+                      color: "#7A9AEA",
+                      fontWeight: theme.typography.medium.fontWeight,
+                      fontSize: theme.typography.largeFont,
+                    }}
+                  >
+                    {"$" + (balance + convenience_fee).toFixed(2)}
+                    </Typography>
+                </Stack>
+                <Divider light />
+                <Stack>
+                  <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid item xs={6} justifyContent="center" alignItems="center">
+                      <Typography
+                        sx={{
+                          justifySelf: "center",
+                          color: "#160449",
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Balance
+                      </Typography>
+                    </Grid>
 
-            <Grid item xs={6} alignItems="center">
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: "#160449",
-                  fontWeight: theme.typography.medium.fontWeight,
-                  fontSize: theme.typography.smallFont,
+                    <Grid item xs={6} alignItems="center">
+                      <Typography
+                        sx={{
+                          justifySelf: "center",
+                          color: "#160449",
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {"$" + balance.toFixed(2)}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={6} alignItems="center">
+                      <Typography
+                        sx={{
+                          justifySelf: "center",
+                          color: "#160449",
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Convenience Fees
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={6} alignItems="center">
+                      <Typography
+                        sx={{
+                          justifySelf: "center",
+                          color: "#160449",
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {"$" + convenience_fee.toFixed(2)}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={6} alignItems="center">
+                      <Typography
+                        sx={{
+                          justifySelf: "center",
+                          color: "#160449",
+                          fontWeight: theme.typography.medium.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Total
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} alignItems="center">
+                      <Typography
+                        sx={{
+                          justifySelf: "center",
+                          color: "#160449",
+                          fontWeight: theme.typography.medium.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {"$" + (balance + convenience_fee).toFixed(2)}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Stack>
+              </Paper>
+
+              <Paper
+                style={{
+                  margin: "25px",
+                  padding: "20px",
+                  backgroundColor: theme.palette.primary.main,
+                  // height: '25%',
+                  [theme.breakpoints.down("sm")]: {
+                    width: "80%",
+                  },
+                  [theme.breakpoints.up("sm")]: {
+                    width: "50%",
+                  },
                 }}
               >
-                Total
-              </Typography>
-            </Grid>
-            <Grid item xs={6} alignItems="center">
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: "#160449",
-                  fontWeight: theme.typography.medium.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"$" + (balance + convenience_fee).toFixed(2)}
-              </Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Payment Methods</Typography>
+                <Divider light />
+                <FormControl component="fieldset">
+                  <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
+                    <FormControlLabel
+                      value="Bank Transfer"
+                      control={<Radio />}
+                      label={
+                        <>
+                          <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
+                            <img src={BankIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
+                          </div>
+                          <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
+                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>.08% Convenience Fee - max $5</Typography>
+                          </div>
+                        </>
+                      }
+                    />
+                    <FormControlLabel
+                      value="Credit Card"
+                      control={<Radio />}
+                      label={
+                        <>
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <img src={CreditCardIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+                            Credit Card
+                          </div>
+                          <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
+                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>3% Convenience Fee</Typography>
+                          </div>
+                        </>
+                      }
+                    />
+                  </RadioGroup>
+                </FormControl>
+
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>
+                  Other Payment Methods
+                </Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
+                  Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle, please include the transaction confirmation number.
+                </Typography>
+
+                <Divider light />
+
+                <FormControl component="fieldset">
+                  <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
+                    <FormControlLabel
+                      value="PayPal"
+                      control={<Radio />}
+                      label={
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <img src={PayPal} alt="PayPal" style={{ marginRight: "8px", height: "24px" }} />
+                          Paypal {paymentMethodInfo.paypal ? paymentMethodInfo.paypal : "No Payment Info"}
+                        </div>
+                      }
+                    />
+                    <FormControlLabel
+                      value="Apple Pay"
+                      control={<Radio />}
+                      label={
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
+                          Apple Pay {paymentMethodInfo.apple_pay ? `Make payment to: ${paymentMethodInfo.apple_pay}` : "No Payment Info"}
+                        </div>
+                      }
+                    />
+                    <FormControlLabel
+                      value="Zelle"
+                      control={<Radio />}
+                      label={
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
+                          Zelle {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"}
+                          <TextField
+                            id="confirmation-number"
+                            label="Confirmation Number"
+                            variant="outlined"
+                            size="small"
+                            value={confirmationNumber}
+                            sx={{ marginLeft: "10px" }} // Add some spacing between the image and the textfield
+                            disabled={selectedMethod!=='Zelle'}
+                            onChange={(e) => setConfirmationNumber(e.target.value)}
+                          />
+                        </div>
+                      }
+                    />
+
+                    <FormControlLabel
+                      value="Venmo"
+                      control={<Radio />}
+                      label={
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <img src={Venmo} alt="Venmo" style={{ marginRight: "8px", height: "24px" }} />
+                          Venmo {paymentMethodInfo.venmo ? paymentMethodInfo.venmo : "No Payment Info"}
+                        </div>
+                      }
+                    />
+
+                    <FormControlLabel
+                      value="Stripe"
+                      control={<Radio />}
+                      label={
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <img src={Stripe} alt="Stripe" style={{ marginRight: "8px", height: "24px" }} />
+                          Stripe
+                        </div>
+                      }
+                    />
+                  </RadioGroup>
+                </FormControl>
+                
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  sx={{
+                    backgroundColor: "#3D5CAC",
+                    color: theme.palette.background.default,
+                    width: "100%", // Center the button horizontally
+                    borderRadius: "10px", // Rounded corners
+                    marginTop: "20px", // Add some spacing to the top
+                  }}
+                  disabled={isMakePaymentDisabled}>
+                  Make Payment
+                </Button>
+              </Paper>
+              <Elements stripe={stripePromise}>
+                <StripePayment
+                  submit={submit}
+                  message={paymentData.business_code}
+                  amount={totalBalance}
+                  paidBy={paymentData.customer_uid}
+                  show={stripePayment}
+                  setShow={setStripePayment}
+                />
+              </Elements>                                  
             </Grid>
           </Grid>
-        </Stack>
-      </Paper>
-
-      <Paper
-        style={{
-          margin: "25px",
-          padding: "20px",
-          backgroundColor: theme.palette.primary.main,
-          // height: '25%',
-          [theme.breakpoints.down("sm")]: {
-            width: "80%",
-          },
-          [theme.breakpoints.up("sm")]: {
-            width: "50%",
-          },
-        }}
-      >
-        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Payment Methods</Typography>
-        <Divider light />
-        <FormControl component="fieldset">
-          <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
-            <FormControlLabel
-              value="Bank Transfer"
-              control={<Radio />}
-              label={
-                <>
-                  <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
-                    <img src={BankIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
-                  </div>
-                  <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                    <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>.08% Convenience Fee - max $5</Typography>
-                  </div>
-                </>
-              }
-            />
-            <FormControlLabel
-              value="Credit Card"
-              control={<Radio />}
-              label={
-                <>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <img src={CreditCardIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
-                    Credit Card
-                  </div>
-                  <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                    <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>3% Convenience Fee</Typography>
-                  </div>
-                </>
-              }
-            />
-          </RadioGroup>
-        </FormControl>
-
-        <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>
-          Other Payment Methods
-        </Typography>
-        <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
-          Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle, please include the transaction confirmation number.
-        </Typography>
-
-        <Divider light />
-
-        <FormControl component="fieldset">
-          <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
-            <FormControlLabel
-              value="PayPal"
-              control={<Radio />}
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={PayPal} alt="PayPal" style={{ marginRight: "8px", height: "24px" }} />
-                  Paypal {paymentMethodInfo.paypal ? paymentMethodInfo.paypal : "No Payment Info"}
-                </div>
-              }
-            />
-            <FormControlLabel
-              value="Apple Pay"
-              control={<Radio />}
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
-                  Apple Pay {paymentMethodInfo.apple_pay ? `Make payment to: ${paymentMethodInfo.apple_pay}` : "No Payment Info"}
-                </div>
-              }
-            />
-            <FormControlLabel
-              value="Zelle"
-              control={<Radio />}
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
-                  Zelle {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"}
-                  <TextField
-                    id="confirmation-number"
-                    label="Confirmation Number"
-                    variant="outlined"
-                    size="small"
-                    value={confirmationNumber}
-                    sx={{ marginLeft: "10px" }} // Add some spacing between the image and the textfield
-                    disabled={selectedMethod!=='Zelle'}
-                    onChange={(e) => setConfirmationNumber(e.target.value)}
-                  />
-                </div>
-              }
-            />
-
-            <FormControlLabel
-              value="Venmo"
-              control={<Radio />}
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={Venmo} alt="Venmo" style={{ marginRight: "8px", height: "24px" }} />
-                  Venmo {paymentMethodInfo.venmo ? paymentMethodInfo.venmo : "No Payment Info"}
-                </div>
-              }
-            />
-
-            <FormControlLabel
-              value="Stripe"
-              control={<Radio />}
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={Stripe} alt="Stripe" style={{ marginRight: "8px", height: "24px" }} />
-                  Stripe
-                </div>
-              }
-            />
-          </RadioGroup>
-        </FormControl>
-        
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          sx={{
-            backgroundColor: "#3D5CAC",
-            color: theme.palette.background.default,
-            width: "100%", // Center the button horizontally
-            borderRadius: "10px", // Rounded corners
-            marginTop: "20px", // Add some spacing to the top
-          }}
-          disabled={isMakePaymentDisabled}>
-          Make Payment
-        </Button>
-      </Paper>
-      <Elements stripe={stripePromise}>
-        <StripePayment
-          submit={submit}
-          message={paymentData.business_code}
-          amount={totalBalance}
-          paidBy={paymentData.customer_uid}
-          show={stripePayment}
-          setShow={setStripePayment}
-        />
-      </Elements>
-    </div>
+        </Container>
+      </ThemeProvider>
+      
+    {/* </div> */}
+    </>
   );
 }
 
