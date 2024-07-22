@@ -24,6 +24,7 @@ import ImageUploader from '../ImageUploader';
 import { getLatLongFromAddress } from "../../utils/geocode";
 import StaticMap from "./StaticMap"
 import APIConfig from "../../utils/APIConfig";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const useStyles = makeStyles({
 	card: {
@@ -408,6 +409,11 @@ const PropertyForm = () => {
 
 	return (
 		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px' }}>
+			
+			<Button onClick={() => navigate(-1)}>
+                <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
+              </Button>
+            
 			<Card sx={{ backgroundColor: '#D6D5DA', marginBottom: '18px', padding: '16px', borderRadius: '8px' }}>
 				<CardContent className={classes.cardContent}>
 					<Grid container spacing={8}>
