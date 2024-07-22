@@ -241,6 +241,7 @@ const CreateProfile = () => {
                         const { message, result } = response.data;
                         if (message === "Incorrect password") {
                           alert(response.data.message);
+                          navigate('/userLogin', { state: { user_emai: user.email } })
                           // setShowSpinner(false);
                         } else if (message === "Email doesn't exist") {
                           //setUserDoesntExist(true);

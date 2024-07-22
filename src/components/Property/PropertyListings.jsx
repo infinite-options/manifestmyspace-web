@@ -4,14 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { ThemeProvider, Box, Paper, Stack, Typography, Button, Menu, MenuItem, IconButton, InputBase, Card, CardContent, CardActions, Rating } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
-import { ArrowDropDown, FilterDrama, LocationOn, Search, Tune, TurnedInNot } from "@mui/icons-material";
+import { ArrowDropDown, LocationOn, TurnedInNot } from "@mui/icons-material";
 import ReactImageGallery from "react-image-gallery";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import defaultPropertyImage from "./paintedLadies.jpeg";
 import PropertiesMap from "../Maps/PropertiesMap";
-
 import APIConfig from "../../utils/APIConfig";
 
 const SearchBar = ({ propertyList, setFilteredItems, ...props }) => {
@@ -179,7 +178,6 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
               <ArrowDropDown />
             </Button>
             <Menu anchorEl={menuStates.price} open={Boolean(menuStates.price)} onClose={() => setMenuStates((prev) => ({ ...prev, price: null }))}>
-              {/* The values here are just examples */}
               <MenuItem onClick={() => handleSelect("price", "Low-High")}>Low-High</MenuItem>
               <MenuItem onClick={() => handleSelect("price", "High-Low")}>High-Low</MenuItem>
               {selectedFilters.price !== "" ? <MenuItem onClick={() => clearFilters("price")}>Clear</MenuItem> : null}
@@ -202,7 +200,6 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
               <ArrowDropDown />
             </Button>
             <Menu anchorEl={menuStates.type} open={Boolean(menuStates.type)} onClose={() => setMenuStates((prev) => ({ ...prev, type: null }))}>
-              {/* The values here are just examples */}
               <MenuItem onClick={() => handleSelect("type", "House")}>House</MenuItem>
               <MenuItem onClick={() => handleSelect("type", "Apartment")}>Apartment</MenuItem>
               <MenuItem onClick={() => handleSelect("type", "Condo")}>Condo</MenuItem>
@@ -229,7 +226,6 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
               <ArrowDropDown />
             </Button>
             <Menu anchorEl={menuStates.beds} open={Boolean(menuStates.beds)} onClose={() => setMenuStates((prev) => ({ ...prev, beds: null }))}>
-              {/* The values here are just examples */}
               <MenuItem onClick={() => handleSelect("beds", "1")}>1</MenuItem>
               <MenuItem onClick={() => handleSelect("beds", "2")}>2</MenuItem>
               <MenuItem onClick={() => handleSelect("beds", "3+")}>3+</MenuItem>
@@ -253,7 +249,6 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
               <ArrowDropDown />
             </Button>
             <Menu anchorEl={menuStates.bath} open={Boolean(menuStates.bath)} onClose={() => setMenuStates((prev) => ({ ...prev, bath: null }))}>
-              {/* The values here are just examples */}
               <MenuItem onClick={() => handleSelect("bath", "1")}>1</MenuItem>
               <MenuItem onClick={() => handleSelect("bath", "2")}>2</MenuItem>
               <MenuItem onClick={() => handleSelect("bath", "3+")}>3+</MenuItem>
@@ -282,7 +277,7 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
   );
 };
 
-const PropertyListings = (props) => {
+const PropertyListings = ({ setRightPane }) => {
   const [propertyData, setPropertyData] = useState([]);
   const [userLeases, setUserLeases] = useState([]);
   const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);
@@ -291,9 +286,6 @@ const PropertyListings = (props) => {
   const { getProfileId } = useUser();
   const profileId = getProfileId();
   const [showSpinner, setShowSpinner] = useState(false);
-  const [searchText, setSearchText] = useState("");
-
-  // const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties';
 
   useEffect(() => {
     setShowSpinner(true);
@@ -301,48 +293,11 @@ const PropertyListings = (props) => {
   }, []);
 
   async function fetchData() {
-    // const leaseResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
     const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
-    // const propertyResponse = await fetch(`http://localhost:4000/listings/${getProfileId()}`)
-
-    // if (!leaseResponse.ok || !propertyResponse.ok) {
-    //     // Handle the error as needed (maybe set an error state or log the error)
-    //     console.error("API call failed");
-    //     setShowSpinner(false);
-    //     return;
-    // }
-
-    // const leaseData = await leaseResponse.json();
-    // console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result)
     const propertyData = await propertyResponse.json();
     setUserLeases(propertyData?.Tenant_Leases.result);
-    // if (JSON.stringify(leaseData) === "{}") {
-    //   console.log("No Lease Data");
-    //   if (!propertyData.Available_Listings.result) {
-    //     console.error("Data is missing from the API response");
-    //     setShowSpinner(false);
-    //     return;
-    //   } else {
-    //     setPropertyData(propertyData.Available_Listings.result);
-    //   }
-    // } else {
-    //   if (!leaseData.Lease_Details.result || !propertyData.Available_Listings.result) {
-    //     console.error("Data is missing from the API response");
-    //     setShowSpinner(false);
-    //     return;
-    //   } else {
-    //     setTenantLeaseDetails(leaseData.Lease_Details.result);
-    //     // setTenantLeaseDetails(propertyData.Tenant_Leases.result);
-    //     setPropertyData(propertyData.Available_Listings.result);
-    //   }
-    // }
-
-    // setTenantLeaseDetails(propertyData?.Tenant_Leases.result);
     setPropertyData(propertyData?.Available_Listings.result);
-
-    // sortProperties(leaseData, propertyData.Available_Listings.result);
     sortProperties(propertyData?.Tenant_Leases.result, propertyData?.Available_Listings.result);
-
     setShowSpinner(false);
   }
 
@@ -357,16 +312,14 @@ const PropertyListings = (props) => {
         const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
         // console.log("applied to property at index", appliedPropertyIndex, lease.lease_status)
         if (appliedPropertyIndex > -1) {
-          // Make sure the property was found
-          const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0]; // Remove the property and store it
+          const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0];
           if (appliedProperty.lease_status === "ACTIVE") {
             activePropertyArray.push(appliedProperty);
           } else {
-            sortedProperties.unshift(appliedProperty); // Add the property to the beginning of the array
+            sortedProperties.unshift(appliedProperty);
           }
         }
       });
-
       setSortedProperties([...activePropertyArray, ...sortedProperties]);
       setDisplayProperties([...activePropertyArray, ...sortedProperties]);
     } else {
@@ -385,9 +338,9 @@ const PropertyListings = (props) => {
           display: "flex",
           fontFamily: "Source Sans Pro",
           justifyContent: "center",
-          width: "100%", // Take up full screen width
-          minHeight: "90vh", // Set the Box height to full height
-          marginTop: theme.spacing(2), // Set the margin to 20px
+          width: "100%",
+          minHeight: "90vh",
+          marginTop: theme.spacing(2),
         }}
       >
         <Paper
@@ -395,7 +348,7 @@ const PropertyListings = (props) => {
             margin: "30px",
             padding: theme.spacing(2),
             backgroundColor: theme.palette.primary.main,
-            width: "85%", // Occupy full width with 25px margins on each side
+            width: "85%",
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },
@@ -467,7 +420,6 @@ const PropertyListings = (props) => {
               }}
             >
               Apartments For Rent In San Jose CA
-              {/* Units Available for Rent */}
             </Typography>
             <Typography
               sx={{
@@ -478,14 +430,13 @@ const PropertyListings = (props) => {
               {displayProperties.length} Available
             </Typography>
           </Stack>
-          <Stack sx={{padding: 5,}}>
-            <PropertiesMap properties={displayProperties}/>
+          <Stack sx={{ padding: 5 }}>
+            <PropertiesMap properties={displayProperties} />
           </Stack>
-          {console.log("sorted properties", displayProperties)}
           {displayProperties.length > 0 &&
             displayProperties.map((property, index) => {
               var status = "";
-              let i = sortedProperties.findIndex((p) => p.property_uid === property.property_uid); // This is to make sure the filtered property items don't confuse with sorted property items, and there's no wrong label or attribute
+              let i = sortedProperties.findIndex((p) => p.property_uid === property.property_uid);
               const appliedData = userLeases
                 .filter((lease) => lease.lease_property_id === property.property_uid && lease.lease_uid !== null)
                 .sort((a, b) => {
@@ -494,17 +445,10 @@ const PropertyListings = (props) => {
                   return uidB - uidA;
                 })[0];
 
-              //   console.log("appliedData", appliedData);
-              //   console.log("userLeases", userLeases);
               if (appliedData) {
-                console.log(appliedData.lease_status, appliedData.property_area, appliedData.lease_start, appliedData.lease_status);
                 status = appliedData.lease_status;
-                console.log(appliedData.property_address, "lease status", status);
               }
-              // else{
-              //     console.log("No Lease Data for Property", property.property_address)
-              // }
-              return <PropertyCard data={property} key={i} status={status} leaseData={appliedData} />;
+              return <PropertyCard data={property} key={i} status={status} leaseData={appliedData} setRightPane={setRightPane} />;
             })}
         </Paper>
       </Box>
@@ -512,27 +456,12 @@ const PropertyListings = (props) => {
   );
 };
 
-function PropertyCard(props) {
+function PropertyCard({ data, status, leaseData, setRightPane }) {
   const navigate = useNavigate();
-  console.log("Props in PropertyListing.jsx: ", props);
-
-  const [status, setStatus] = useState(props.status);
-  console.log("Status in PropertyListing.jsx: ", status);
-
-  const [lease, setLease] = useState(props.leaseData || {});
-  console.log("Lease in PropertyListing.jsx: ", lease);
-
-  const property = props.data;
-  console.log("Property in PropertyListing.jsx: ", property);
-
+  const [lease, setLease] = useState(leaseData || {});
+  const property = data;
   const propertyImages = property?.property_images || "";
   const ppt_images = propertyImages.split(",");
-
-  // useEffect(() => {
-  //     if(status !== "" || status !== null){
-  //         console.log(property.property_address, "has status", status)
-  //     }
-  // }, []);
 
   function parseImageData(data) {
     if (data === undefined) {
@@ -564,9 +493,10 @@ function PropertyCard(props) {
   }).format(property?.property_listed_rent);
 
   const handleDetailsButton = () => {
-    navigate("/propertyInfo", {
+    setRightPane({
+      type: "propertyInfo",
       state: {
-        index: props.index,
+        index: data.property_uid,
         data: property,
         status: status,
         lease: lease,
@@ -625,9 +555,6 @@ function PropertyCard(props) {
         textTransform: "none",
       }}
       onClick={() => {
-        console.log("lease:", lease);
-        console.log("property:", property);
-        console.log("status:", status);
         navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
       }}
     >
@@ -917,7 +844,6 @@ function PropertyCard(props) {
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
-
                   fontSize: "16px",
                 }}
               >
@@ -937,7 +863,6 @@ function PropertyCard(props) {
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
-
                   fontSize: "16px",
                 }}
               >
@@ -957,7 +882,6 @@ function PropertyCard(props) {
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
-
                   fontSize: "16px",
                 }}
               >
@@ -977,7 +901,6 @@ function PropertyCard(props) {
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
-
                   fontSize: "16px",
                 }}
               >
@@ -989,7 +912,6 @@ function PropertyCard(props) {
       </CardContent>
       <CardActions
         sx={{
-          // justifyContent: 'space-evenly',
           justifyContent: "center",
           flexWrap: { xs: "wrap", sm: "wrap", md: "nowrap" },
           display: "flex",
@@ -1050,7 +972,6 @@ function PropertyCard(props) {
             <Button
               variant="contained"
               sx={{
-                //backgroundColor: theme.typography.common.blue,
                 backgroundColor: "#7AD15B",
                 color: theme.typography.secondary.white,
                 marginLeft: "5px",
