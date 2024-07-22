@@ -34,19 +34,21 @@ import ArticleIcon from "@mui/icons-material/Article"; // For "Document"
 import PhoneIcon from "@mui/icons-material/Phone"; // For "Phone"
 import BuildIcon from "@mui/icons-material/Build"; // For "Maintenance"
 import AddIcon from "@mui/icons-material/Add"; // For "New Request"
-import { PropertyCard } from "../Property/PropertyListings";
+import { PropertyCard, PropertyListings } from "../Property/PropertyListings";
 import CircleIcon from "@mui/icons-material/Circle";
 import { DataGrid } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 import documentIcon from "../../images/Subtract.png";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import NewCardSlider from "../Announcement/NewCardSlider";
+import PropertyInfo from "../Property/PropertyInfo";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
   const navigate = useNavigate();
   const location = useLocation();
   const [showSpinner, setShowSpinner] = useState(false);
+  const [rightPane, setRightPane] = useState("");
 
   const [paymentData, setPaymentData] = useState({});
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -173,7 +175,6 @@ function TenantDashboard(props) {
         setPaymentHistory(paymentsReceivedData || []);
         setPaymentExpected(paymentsExpectedData || []);
 
-        // setAnnouncementsData(announcementsData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
         setAllAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
 
         let propertyAddress = propertyData[0] !== undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data";
@@ -195,8 +196,12 @@ function TenantDashboard(props) {
       setShowSpinner(false);
     };
     getTenantData();
-    setRefresh(false); //refersh set for image
-  }, [getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance]); // NOTE:  removed refresh from dependancies array to reduce endpoint calls by 1 set.  Not sure what the impact of removing refresh is.
+    setRefresh(false);
+  }, [getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance]);
+
+  useEffect(() => {
+    setRightPane("");
+  }, []);
 
   useEffect(() => {
     const navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
@@ -274,6 +279,17 @@ function TenantDashboard(props) {
     return maintenanceDataArray.sort((a, b) => statusSortPriority[a.maintenance_request_status] - statusSortPriority[b.maintenance_request_status]);
   }
 
+  const renderRightPane = () => {
+    switch (rightPane.type) {
+      case "listings":
+        return <PropertyListings setRightPane={setRightPane} />;
+      case "propertyInfo":
+        return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
+      default:
+        return null;
+    }
+  };
+
   function handleTenantMaintenanceNavigate() {
     let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address);
     const propertyLeaseData = leaseDetails.find((item) => item.lease_property_id === selectedProperty.lease_property_id);
@@ -288,7 +304,6 @@ function TenantDashboard(props) {
     navigate("/viewLease", {
       state: {
         lease_id: lease_uid,
-        // property_uid: propertyId,
       },
     });
   }
@@ -361,7 +376,7 @@ function TenantDashboard(props) {
                       textTransform: "none",
                       whiteSpace: "nowrap",
                     }}
-                    onClick={() => navigate("/listings")}
+                    onClick={() => setRightPane({ type: "listings" })} 
                   >
                     <SearchIcon />
                     {!isMobile && "Search Property"}
@@ -403,7 +418,6 @@ function TenantDashboard(props) {
                               justifyContent: "left",
                               alignItems: "center",
                               color: "#160449",
-                              // width: "100%",
                             }}
                           >
                             <Box
@@ -431,7 +445,6 @@ function TenantDashboard(props) {
                                   fontSize: "22px",
                                   fontWeight: "600",
                                   color: "#3D5CAC",
-                                  // flexGrow: 1
                                 }}
                               >
                                 <Typography>{propertyAddr}</Typography>
@@ -631,173 +644,175 @@ function TenantDashboard(props) {
                   </DashboardTab>
                 </Grid>
                 <Grid item xs={12} md={8}>
-                  <Grid container>
-                    <Grid item xs={12}>
-                      <DashboardTab>
-                        <Grid
-                          container
-                          direction="row"
-                          sx={{
-                            // paddingTop: "10px",
-                            paddingBottom: "10px",
-                          }}
-                        >
-                          <Grid item xs={2}></Grid>
-                          <Grid item xs={8}>
-                            <Box
-                              sx={{
-                                flexGrow: 1, // Allow this Box to grow and fill space
-                                display: "flex",
-                                justifyContent: "center", // Center the content of this Box
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                  color: "#160449",
-                                  fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                Announcements
-                              </Typography>
-                            </Box>
-                          </Grid>
-                          <Grid item xs={2}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                zIndex: 1, // Look into this for all the components
-                                flex: 1,
-                                height: "100%",
-                              }}
-                            >
+                  {rightPane !== "" ? (
+                    renderRightPane()
+                  ) : (
+                    <Grid container>
+                      <Grid item xs={12}>
+                        <DashboardTab>
+                          <Grid
+                            container
+                            direction="row"
+                            sx={{
+                              paddingBottom: "10px",
+                            }}
+                          >
+                            <Grid item xs={2}></Grid>
+                            <Grid item xs={8}>
                               <Box
                                 sx={{
-                                  color: "#007AFF",
-                                  fontSize: "18px",
-                                  paddingRight: "25px",
-                                  fontWeight: "bold",
-                                }}
-                                onClick={() => {
-                                  navigate("/announcements", { state: { announcementsData, propertyAddr } });
+                                  flexGrow: 1, // Allow this Box to grow and fill space
+                                  display: "flex",
+                                  justifyContent: "center", // Center the content of this Box
                                 }}
                               >
-                                {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
+                                <Typography
+                                  sx={{
+                                    color: "#160449",
+                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Announcements
+                                </Typography>
                               </Box>
-                            </Box>
-                          </Grid>
-                        </Grid>
-                        {announcementsData.length > 0 ? (
-                          <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
-                        ) : (
-                          <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
-                            <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
-                          </Box>
-                        )}
-                      </DashboardTab>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <DashboardTab>
-                        <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                          <Grid item xs={2}></Grid>
-                          <Grid item xs={8}>
-                            <Box
-                              sx={{
-                                flexGrow: 1, // Allow this Box to grow and fill space
-                                display: "flex",
-                                justifyContent: "center", // Center the content of this Box
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                  color: "#160449",
-                                  fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                Payment History 2
-                              </Typography>
-                            </Box>
-                          </Grid>
-                          <Grid item xs={2}></Grid>
-                        </Grid>
-                        <Stack>
-                          <TenantPaymentHistoryTable data={filteredPaymentHistory} isMobile={isMobile} isMedium={isMedium} />
-                        </Stack>
-                      </DashboardTab>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <DashboardTab>
-                        <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                          <Grid item xs={2}></Grid>
-                          <Grid item xs={8}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                zIndex: 1, // Look into this for all the components
-                                flex: 1,
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                  fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                Maintenance ({maintenanceRequests.length})
-                              </Typography>
-                            </Box>
-                          </Grid>
-                          <Grid item xs={2}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                zIndex: 1, // Look into this for all the components
-                                flex: 1,
-                                height: "100%",
-                              }}
-                            >
+                            </Grid>
+                            <Grid item xs={2}>
                               <Box
                                 sx={{
-                                  display: "flex", // Enables flexbox
-                                  flexDirection: "row", // Sets the flex direction to row
-                                  justifyContent: "center", // Centers content horizontally
-                                  alignItems: "center", // Centers content vertically
-                                  backgroundColor: "#3D5CAC",
-                                  color: "#FFFFFF",
-                                  textTransform: "none",
-                                  fontSize: isMobile ? "8px" : "16px",
-                                  "&:hover": {
-                                    backgroundColor: "#3457A0", // Optional: Darken on hover
-                                  },
-                                  padding: isMobile ? "0px" : "10px",
-                                  margin: isMobile ? "1px" : "auto",
-                                  borderRadius: 1,
-                                  cursor: "pointer",
+                                  display: "flex",
+                                  justifyContent: "center",
                                   alignItems: "center",
-                                  fontWeight: "bold",
-                                  fontSize: "18px",
+                                  zIndex: 1, // Look into this for all the components
+                                  flex: 1,
+                                  height: "100%",
                                 }}
-                                onClick={() => handleTenantMaintenanceNavigate()}
                               >
-                                <AddIcon />
-                                {/* {!isMobile && !isMedium && <span style={{ marginLeft: "8px" }}>New Request</span>} */}
+                                <Box
+                                  sx={{
+                                    color: "#007AFF",
+                                    fontSize: "18px",
+                                    paddingRight: "25px",
+                                    fontWeight: "bold",
+                                  }}
+                                  onClick={() => {
+                                    navigate("/announcements", { state: { announcementsData, propertyAddr } });
+                                  }}
+                                >
+                                  {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
+                                </Box>
                               </Box>
-                            </Box>
+                            </Grid>
                           </Grid>
-                        </Grid>
-                        <Stack>
-                          <TenantMaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate} isMobile={isMobile} isMedium={isMedium} />
-                        </Stack>
-                      </DashboardTab>
+                          {announcementsData.length > 0 ? (
+                            <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
+                          ) : (
+                            <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
+                              <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
+                            </Box>
+                          )}
+                        </DashboardTab>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <DashboardTab>
+                          <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                            <Grid item xs={2}></Grid>
+                            <Grid item xs={8}>
+                              <Box
+                                sx={{
+                                  flexGrow: 1, // Allow this Box to grow and fill space
+                                  display: "flex",
+                                  justifyContent: "center", // Center the content of this Box
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    color: "#160449",
+                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Payment History
+                                </Typography>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={2}></Grid>
+                          </Grid>
+                          <Stack>
+                            <TenantPaymentHistoryTable data={filteredPaymentHistory} isMobile={isMobile} isMedium={isMedium} />
+                          </Stack>
+                        </DashboardTab>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <DashboardTab>
+                          <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                            <Grid item xs={2}></Grid>
+                            <Grid item xs={8}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  zIndex: 1, // Look into this for all the components
+                                  flex: 1,
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Maintenance ({maintenanceRequests.length})
+                                </Typography>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={2}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  zIndex: 1, // Look into this for all the components
+                                  flex: 1,
+                                  height: "100%",
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    display: "flex", // Enables flexbox
+                                    flexDirection: "row", // Sets the flex direction to row
+                                    justifyContent: "center", // Centers content horizontally
+                                    alignItems: "center", // Centers content vertically
+                                    backgroundColor: "#3D5CAC",
+                                    color: "#FFFFFF",
+                                    textTransform: "none",
+                                    fontSize: isMobile ? "8px" : "16px",
+                                    "&:hover": {
+                                      backgroundColor: "#3457A0", // Optional: Darken on hover
+                                    },
+                                    padding: isMobile ? "0px" : "10px",
+                                    margin: isMobile ? "1px" : "auto",
+                                    borderRadius: 1,
+                                    cursor: "pointer",
+                                    alignItems: "center",
+                                    fontWeight: "bold",
+                                    fontSize: "18px",
+                                  }}
+                                  onClick={() => handleTenantMaintenanceNavigate()}
+                                >
+                                  <AddIcon />
+                                </Box>
+                              </Box>
+                            </Grid>
+                          </Grid>
+                          <Stack>
+                            <TenantMaintenanceRequestsTable data={maintenanceRequests} navToMaintenance={handleTenantMaintenanceNavigate} isMobile={isMobile} isMedium={isMedium} />
+                          </Stack>
+                        </DashboardTab>
+                      </Grid>
                     </Grid>
-                  </Grid>
+                  )}
                 </Grid>
               </Grid>
             ) : (
@@ -810,7 +825,6 @@ function TenantDashboard(props) {
       ) : (
         <></>
       )}
-      {/* </Box> */}
     </Container>
   );
 }
@@ -885,11 +899,10 @@ function TenantPaymentHistoryTable(props) {
       headerName: "Status",
       flex: 1,
       headerStyle: {
-        fontWeight: "bold", // Apply inline style to the header cell
+        fontWeight: "bold",
       },
       renderCell: (params) => (
         <Box
-          // label={params.value} // This value is all caps, so I need to convert it to regular cased
           sx={{
             backgroundColor: theme.colorStatusPaymentHistoryTenant.find((item) => item.status === params.value)?.color,
             textTransform: "none",
@@ -905,7 +918,6 @@ function TenantPaymentHistoryTable(props) {
         >
           {params.value}
         </Box>
-        // <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>
       ),
     },
 
@@ -914,7 +926,7 @@ function TenantPaymentHistoryTable(props) {
       headerName: "Total Paid",
       flex: 0.7,
       headerStyle: {
-        fontWeight: "bold", // Apply inline style to the header cell
+        fontWeight: "bold",
       },
       renderCell: (params) => (
         <Box
@@ -933,39 +945,6 @@ function TenantPaymentHistoryTable(props) {
   ];
 
   const desktopColumnsList = [
-    // {
-    //   field: "property_address",
-    //   headerName: "Address",
-    //   flex: 2,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
-    // {
-    //   field: "property_unit",
-    //   headerName: "Unit",
-    //   flex: 1,
-    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },
-    // {
-    //   field: "pur_amount_due",
-    //   headerName: "Amount Due",
-    //   flex: 0.7,
-    //   headerStyle: {
-    //     fontWeight: "bold", // Apply inline style to the header cell
-    //   },
-    //   renderCell: (params) => (
-    //     <Box
-    //       sx={{
-    //         fontWeight: "bold",
-    //         width: "100%",
-    //         display: "flex",
-    //         flexDirection: "row",
-    //         justifyContent: "flex-end",
-    //       }}
-    //     >
-    //       $ {parseFloat(params.value).toFixed(2)}
-    //     </Box>
-    //   ),
-    // },
     {
       field: "purchase_uid",
       headerName: "Purchase (400)",
@@ -1039,15 +1018,7 @@ function TenantMaintenanceRequestsTable(props) {
   const data = props.data;
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;
-  // const getColorForPriority = (priority) => {
-  //   const colorObj = theme.colorStatusMaintenancePriorityTenant.find(item => item.status.toLowerCae() == priority.toLowerCase());
-  //   const color = colorObj? colorObj.color : '#000000';
-  //   console.log('Priority: ${priority}, color: ${color}');
-  //   return color;
-  // }
   console.log("TenantMaintenanceRequestTable", isMobile);
-  // console.log("Data in MRD from props: ", data)
-  // console.log( theme.colorStatusMaintenanceTenant.find(item => item.status === "NEW REQUEST") )
   const location = useLocation();
   let navigate = useNavigate();
 
@@ -1072,9 +1043,7 @@ function TenantMaintenanceRequestsTable(props) {
     return date;
   }
 
-  // Set favorite image
   data.forEach((item) => {
-    // console.log("For Each Item: ", item)
     let favoriteImage = "";
     const maintenanceImagesList = JSON.parse(item.maintenance_images);
 
@@ -1083,41 +1052,38 @@ function TenantMaintenanceRequestsTable(props) {
     } else {
       favoriteImage = PlaceholderImage;
     }
-    // This line actually sets the favorite image in the data object to favoriteImage
     item.favorite_image = favoriteImage;
   });
 
-  // Function for status color
   const getColorForStatus = (status) => {
     switch (status) {
       case "NEW":
-        return "#B62C2A"; // Red
+        return "#B62C2A";
       case "INFO REQUESTED":
-        return "#D4736D"; // Light Red
+        return "#D4736D";
       case "PROCESSING":
-        return "#DEA19C"; // Lighter Red
+        return "#DEA19C";
       case "SCHEDULED":
-        return "#99CCFF"; // Lighter Blue
+        return "#99CCFF";
       case "COMPLETED":
-        return "#6699FF"; // Light Blue
+        return "#6699FF";
       case "CANCELLED":
-        return "#0000FF"; // Blue
+        return "#0000FF";
       default:
-        return "#000000"; // Black
+        return "#000000";
     }
   };
 
-  // Function for Priority color
   const getColorForPriority = (priority) => {
     switch (priority) {
       case "Low":
-        return "#FFFF00"; // Yellow
+        return "#FFFF00";
       case "Medium":
-        return "#FFA500"; // Orange
+        return "#FFA500";
       case "High":
-        return "#FF0000"; // Red
+        return "#FF0000";
       default:
-        return "#FFFFFF"; // White
+        return "#FFFFFF";
     }
   };
 
@@ -1132,9 +1098,8 @@ function TenantMaintenanceRequestsTable(props) {
             fontWeight: "bold",
             textAlign: "center",
             background: getColorForStatus(params.row.maintenance_request_status),
-            //backgroundColor: theme.colorStatusMaintenanceTenant.find((item) => item.status === params.row.maintenance_request_status)?.color || "#FF0000", // checking 2
             padding: "5px",
-            color: "#FFFFFF", //checking 1
+            color: "#FFFFFF",
             borderRadius: "4px",
           }}
         >
@@ -1150,7 +1115,6 @@ function TenantMaintenanceRequestsTable(props) {
       headerStyle: {
         fontWeight: "bold",
       },
-      // align: "center",
       renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value ? params.value : "-"}</Box>,
       headerAlign: "center",
     },
@@ -1183,7 +1147,7 @@ function TenantMaintenanceRequestsTable(props) {
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: getColorForPriority(params.value),
-              color: "#000000", // Font color set to black
+              color: "#000000",
               width: "80px",
               height: "30px",
               borderRadius: "15px",
@@ -1206,7 +1170,6 @@ function TenantMaintenanceRequestsTable(props) {
       renderCell: (params) => <Box sx={{ width: "100%", fontWeight: "bold", textAlign: "center" }}>{params.value ? getValidDate(params.value) : "-"}</Box>,
       headerAlign: "center",
     },
-
     {
       field: "maintenance_scheduled_time",
       headerName: "Scheduled Time",
@@ -1229,31 +1192,28 @@ function TenantMaintenanceRequestsTable(props) {
   };
 
   if (data.length > 0) {
-    // console.log("Passed Data ", data);
     return (
-      <>
-        <DataGrid
-          rows={data}
-          columns={columnList()}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
+      <DataGrid
+        rows={data}
+        columns={columnList()}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
             },
-          }}
-          getRowId={(row) => row.maintenance_request_uid}
-          pageSizeOptions={[5, 10, 25, 100]}
-          onRowClick={(row) => {
-            console.log("Row =", row);
-            navigate(`/tenantMaintenanceItemDetail`, {
-              state: {
-                item: row.row,
-              },
-            });
-          }}
-        />
-      </>
+          },
+        }}
+        getRowId={(row) => row.maintenance_request_uid}
+        pageSizeOptions={[5, 10, 25, 100]}
+        onRowClick={(row) => {
+          console.log("Row =", row);
+          navigate(`/tenantMaintenanceItemDetail`, {
+            state: {
+              item: row.row,
+            },
+          });
+        }}
+      />
     );
   } else {
     return (
