@@ -426,6 +426,7 @@ export default function ManagerCashflow() {
                     backgroundColor: theme.palette.primary.main,
                     boxShadow: "none",
                   }}
+                  expanded={true}
                 >
                   {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
                   <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
