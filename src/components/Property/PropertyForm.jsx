@@ -729,8 +729,8 @@ const PropertyForm = () => {
 									</Typography>
 								</Grid>
 								<Grid item xs={10}>
-									<Typography>{cost / squareFootage}</Typography>
-								</Grid>
+        <Typography>{squareFootage ? Math.round(cost / squareFootage) : 0}</Typography>
+    </Grid>
 							</Grid>
 						</Grid>
                         <Grid item xs={12}>
