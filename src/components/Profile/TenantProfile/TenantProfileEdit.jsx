@@ -265,37 +265,42 @@ function TenantProfileEdit() {
     console.log("FORM SUBMITTED");
     console.log(modifiedData);
 
-    profileFormData.append("tenant_documents", JSON.stringify(previouslyUploadedDocs));
-    const hasMissingType = !checkFileTypeSelected();
-    console.log("HAS MISSING TYPE", hasMissingType);
+    if (tenantFiles.length > 0 || deletedDocs.length > 0) {
+      profileFormData.append("tenant_documents", JSON.stringify(previouslyUploadedDocs));
 
-    if (hasMissingType) {
-      setShowMissingFileTypePrompt(true);
-      return;
-    }
+      // For Adding Files
+      if (tenantFiles.length > 0) {
+        console.log("---Adding tenantFiles----", tenantFiles);
 
-    if (tenantFiles.length) {
-      console.log("---tenantFiles----", tenantFiles);
-      // setIsEdited(true);
-      const documentsDetails = [];
-      [...tenantFiles].forEach((file, i) => {
-        profileFormData.append(`file-${i}`, file, file.name);
-        const fileType = tenantFileTypes[i] || "";
-        const documentObject = {
-          // file: file,
-          fileIndex: i, //may not need fileIndex - will files be appended in the same order?
-          fileName: file.name, //may not need filename
-          fileType: fileType,
-        };
-        documentsDetails.push(documentObject);
-        console.log("Document to be Appended: ", documentsDetails);
-      });
-      profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
-    }
+        const hasMissingType = !checkFileTypeSelected();
+        console.log("HAS MISSING TYPE", hasMissingType);
 
-    console.log("---deletedDocs----", deletedDocs);
-    if (deletedDocs.length > 0) {
-      profileFormData.append("deleted_documents", JSON.stringify(deletedDocs));
+        if (hasMissingType) {
+          setShowMissingFileTypePrompt(true);
+          return;
+        }
+
+        const documentsDetails = [];
+        [...tenantFiles].forEach((file, i) => {
+          profileFormData.append(`file-${i}`, file, file.name);
+          const fileType = tenantFileTypes[i] || "";
+          const documentObject = {
+            // file: file,
+            fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+            fileName: file.name, //may not need filename
+            fileType: fileType,
+          };
+          documentsDetails.push(documentObject);
+          console.log("Document to be Appended: ", documentsDetails);
+        });
+        profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
+      }
+
+      // For Deleting Files
+      if (deletedDocs.length > 0) {
+        console.log("---deletedDocs----", deletedDocs);
+        profileFormData.append("deleted_documents", JSON.stringify(deletedDocs));
+      }
     }
 
     for (const key in modifiedData) {
