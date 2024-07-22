@@ -164,7 +164,7 @@ function getTotalRevenueByMonthYear(data, month, year) {
         expected_rent: expectedMonthRent,
         rent: currentMonthRent,
   
-        monthYear: currentMonth.slice(0, 3) + " " + currentYear.slice(2, 4),
+        monthYear: currentMonth?.slice(0, 3) + " " + currentYear?.slice(2, 4),
         // "expected_revenue": expectedMonthRevenue,
         // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
       });
@@ -346,7 +346,7 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
           })
         }
       > */}
-      <Container sx={{ height: "90vh", backgroundColor: "#F2F2F2", borderRadius: "5px", marginTop: "2px" }}>
+      <Container sx={{  backgroundColor: "#F2F2F2", borderRadius: "5px", marginTop: "2px" }}>
         <Grid
           container
           rowSpacing={1}
@@ -560,7 +560,7 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   onClick={(e) => {
                     e.stopPropagation();
                     // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
-                    navigate("/payments");
+                    navigate("/payments", {state: {managerCashflowWidgetData : { profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, } }});
                   }}
                 >                                    
                   Pay Bills
