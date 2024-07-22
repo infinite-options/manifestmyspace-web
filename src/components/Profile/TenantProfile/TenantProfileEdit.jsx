@@ -276,7 +276,7 @@ function TenantProfileEdit() {
 
     if (tenantFiles.length) {
       console.log("---tenantFiles----", tenantFiles);
-      setIsEdited(true);
+      // setIsEdited(true);
       const documentsDetails = [];
       [...tenantFiles].forEach((file, i) => {
         profileFormData.append(`file-${i}`, file, file.name);
@@ -288,6 +288,7 @@ function TenantProfileEdit() {
           fileType: fileType,
         };
         documentsDetails.push(documentObject);
+        console.log("Document to be Appended: ", documentsDetails);
       });
       profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
     }
@@ -1111,7 +1112,9 @@ function TenantProfileEdit() {
                                 onChange={(e) => {
                                   const updatedTypes = [...tenantFileTypes];
                                   updatedTypes[i] = e.target.value;
+                                  console.log("File Type: ", e.target.value);
                                   setTenantFileTypes(updatedTypes);
+                                  setIsEdited(true);
                                 }}
                                 required
                                 sx={{
@@ -1194,7 +1197,11 @@ function TenantProfileEdit() {
                           type="file"
                           accept=".doc,.docx,.txt,.pdf"
                           hidden
-                          onChange={(e) => setTenantFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+                          onChange={(e) => {
+                            console.log("Document Added: ", e.target.files);
+                            setTenantFiles((prevFiles) => [...prevFiles, ...e.target.files]);
+                            setIsEdited(true);
+                          }}
                           multiple
                         />
                         <Box
