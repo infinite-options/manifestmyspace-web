@@ -179,7 +179,7 @@ export default function TenantApplication() {
   }
 
   function displaySSN() {
-    return `Last 4 digits: ${tenantProfile?.tenant_ssn.slice(-4)}`;
+    return `Last 4 digits: ${tenantProfile?.tenant_ssn?.slice(-4)}`;
   }
 
   function handleWithdrawLease() {

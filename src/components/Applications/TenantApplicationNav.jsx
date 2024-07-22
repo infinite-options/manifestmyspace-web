@@ -29,111 +29,91 @@ const TenantApplicationNav = () => {
   //     console.log("application - ", application);
   // }, [application]);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [vehicles, setVehicles] = useState(
-    JSON.parse(application?.tenant_vehicle_info || '["No Vehicle Information"]')
-  );
-  const [adultOccupants, setAdultOccupants] = useState(
-    JSON.parse(application?.tenant_adult_occupants || '["No Adult Occupants"]')
-  );
-  const [petOccupants, setPetOccupants] = useState(
-    JSON.parse(application?.tenant_pet_occupants || '["No Pet Occupants"]')
-  );
-  const [childOccupants, setChildOccupants] = useState(
-    JSON.parse(
-      application?.tenant_children_occupants || '["No Child Occupants"]'
-    )
-  );
+  const [vehicles, setVehicles] = useState(JSON.parse(application?.tenant_vehicle_info || '["No Vehicle Information"]'));
+  const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.tenant_adult_occupants || '["No Adult Occupants"]'));
+  const [petOccupants, setPetOccupants] = useState(JSON.parse(application?.tenant_pet_occupants || '["No Pet Occupants"]'));
+  const [childOccupants, setChildOccupants] = useState(JSON.parse(application?.tenant_children_occupants || '["No Child Occupants"]'));
   const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application.lease_documents));
   // useEffect(() => {
   //     console.log("applicationDocuments - ", applicationDocuments);
   // }, [applicationDocuments]);
   function formatDocumentType(type) {
-    switch(type){            
-      case "income_proof": return "Proof of Income";
-      case "bank_statement": return "Bank Statement";
-      case "id": return "ID";
-      case "renters_insurance_proof": return "Proof of Renter's Insurance";
-      case "ssn": return "SSN";
-      case "credit_report": return "Credit Report";
-      case "reference": return "Reference";
-      case "other": return "Other";
+    switch (type) {
+      case "income_proof":
+        return "Proof of Income";
+      case "bank_statement":
+        return "Bank Statement";
+      case "id":
+        return "ID";
+      case "renters_insurance_proof":
+        return "Proof of Renter's Insurance";
+      case "ssn":
+        return "SSN";
+      case "credit_report":
+        return "Credit Report";
+      case "reference":
+        return "Reference";
+      case "other":
+        return "Other";
 
-      default: return "";
+      default:
+        return "";
     }
   }
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % applications.length);
   };
   const handlePreviousCard = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + applications.length) % applications.length
-    );
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + applications.length) % applications.length);
   };
   const handleRejectLease = async () => {
-
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", application.lease_uid);
     leaseApplicationFormData.append("lease_status", "REJECTED");
 
     setShowSpinner(true);
-    await fetch(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
-      {
-        method: "PUT",
-        body: leaseApplicationFormData
-      }
-    );
+    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+      method: "PUT",
+      body: leaseApplicationFormData,
+    });
     setShowSpinner(false);
     navigate("/managerDashboard");
   };
   const handleCreateLease = () => {
     navigate("/tenantLease", { state: { page: "create_lease", application, property } });
-  }
+  };
 
   const handleEditLease = () => {
     navigate("/tenantLease", { state: { page: "edit_lease", application, property } });
-  }
+  };
 
   const handleWithdrawLease = async () => {
-
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", application.lease_uid);
     leaseApplicationFormData.append("lease_status", "RESCIND");
 
     setShowSpinner(true);
-    await fetch(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`,
-      {
-        method: "PUT",
-        body: leaseApplicationFormData
-      }
-    );
+    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+      method: "PUT",
+      body: leaseApplicationFormData,
+    });
     setShowSpinner(false);
     navigate("/managerDashboard");
   };
 
-
   useEffect(() => {
     const currApp = applications[currentIndex];
     setApplication(currApp);
-    setVehicles(
-      JSON.parse(currApp?.tenant_vehicle_info || '["No Vehicle Information"]')
-    );
-    setAdultOccupants(
-      JSON.parse(currApp?.tenant_adult_occupants || '["No Adult Occupants"]')
-    );
-    setPetOccupants(
-      JSON.parse(currApp?.tenant_pet_occupants || '["No Pet Occupants"]')
-    );
-    setChildOccupants(
-      JSON.parse(currApp?.tenant_children_occupants || '["No Child Occupants"]')
-    );
+    setVehicles(JSON.parse(currApp?.tenant_vehicle_info || '["No Vehicle Information"]'));
+    setAdultOccupants(JSON.parse(currApp?.tenant_adult_occupants || '["No Adult Occupants"]'));
+    setPetOccupants(JSON.parse(currApp?.tenant_pet_occupants || '["No Pet Occupants"]'));
+    setChildOccupants(JSON.parse(currApp?.tenant_children_occupants || '["No Child Occupants"]'));
   }, [currentIndex, applications]);
 
   const handleCloseButton = (e) => {
     e.preventDefault();
     if (isDesktop === true) {
-      navigate('/properties', { state: { index: propertyIndex } });
+      navigate("/properties", { state: { index: propertyIndex } });
     } else {
       navigate(-1);
     }
@@ -141,10 +121,7 @@ const TenantApplicationNav = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={showSpinner}
-      >
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <Box
@@ -203,15 +180,8 @@ const TenantApplicationNav = () => {
                         paddingTop: "10px",
                       }}
                     >
-                      <Stack
-                        direction="row"
-                        justifyContent="center"
-                        alignItems="center"
-                      >
-                        <Button
-                          onClick={handlePreviousCard}
-                          disabled={currentIndex === 0}
-                        >
+                      <Stack direction="row" justifyContent="center" alignItems="center">
+                        <Button onClick={handlePreviousCard} disabled={currentIndex === 0}>
                           {currentIndex === 0 ? (
                             <ArrowBackIcon
                               sx={{
@@ -231,30 +201,18 @@ const TenantApplicationNav = () => {
                             />
                           )}
                         </Button>
-                        <Stack
-                          direction="column"
-                          margin="0px"
-                          justifyContent="center"
-                          alignItems="center"
-                          spacing={2}
-                        >
+                        <Stack direction="column" margin="0px" justifyContent="center" alignItems="center" spacing={2}>
                           <Typography
                             sx={{
                               color: "#FFFFFF",
-                              fontWeight:
-                                theme.typography.propertyPage.fontWeight,
+                              fontWeight: theme.typography.propertyPage.fontWeight,
                               fontSize: "16px",
                             }}
                           >
-                            {`${currentIndex + 1} of ${
-                              applications.length
-                              } Applicants`}
+                            {`${currentIndex + 1} of ${applications.length} Applicants`}
                           </Typography>
                         </Stack>
-                        <Button
-                          onClick={handleNextCard}
-                          disabled={currentIndex === applications.length - 1}
-                        >
+                        <Button onClick={handleNextCard} disabled={currentIndex === applications.length - 1}>
                           {currentIndex === applications.length - 1 ? (
                             <ArrowForwardIcon
                               sx={{
@@ -276,7 +234,7 @@ const TenantApplicationNav = () => {
                         </Button>
                         <Box position="absolute" right={0}>
                           <Button onClick={(e) => handleCloseButton(e)}>
-                            <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px",color: "#FFFFFF" }} />
+                            <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px", color: "#FFFFFF" }} />
                           </Button>
                         </Box>
                       </Stack>
@@ -292,9 +250,7 @@ const TenantApplicationNav = () => {
                           marginBottom: "50px",
                         }}
                       >
-                        {application.tenant_first_name +
-                          " " +
-                          application.tenant_last_name}
+                        {application.tenant_first_name + " " + application.tenant_last_name}
                       </Typography>
                       <Avatar
                         src={application.tenant_photo_url}
@@ -361,14 +317,20 @@ const TenantApplicationNav = () => {
                           }}
                         >{`${application.tenant_address}, ${application.tenant_city}, ${application.tenant_state} ${application.tenant_zip}`}</Typography>
                       </Grid>
-                      <Grid item xs={12} sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-around',
-                      }}>
-                        <Stack sx={{
-                          marginLeft: '0px',
-                        }}>
+                      <Grid
+                        item
+                        xs={12}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-around",
+                        }}
+                      >
+                        <Stack
+                          sx={{
+                            marginLeft: "0px",
+                          }}
+                        >
                           <Typography
                             sx={{
                               fontSize: 13,
@@ -376,13 +338,7 @@ const TenantApplicationNav = () => {
                               color: "#160449",
                             }}
                           >
-                            {"***-**-" +
-                              AES.decrypt(
-                                application.tenant_ssn,
-                                process.env.REACT_APP_ENKEY
-                              )
-                                .toString()
-                                .slice(-4)}
+                            {application.tenant_ssn && "***-**-" + AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY).toString().slice(-4)}
                           </Typography>
                           <Typography
                             sx={{
@@ -393,9 +349,8 @@ const TenantApplicationNav = () => {
                           >
                             {"SSN"}
                           </Typography>
-
                         </Stack>
-                        <Stack sx={{marginRight: '40px',}}>                                                    
+                        <Stack sx={{ marginRight: "40px" }}>
                           <Typography
                             sx={{
                               fontSize: 13,
@@ -403,8 +358,8 @@ const TenantApplicationNav = () => {
                               color: "#160449",
                             }}
                           >
-                            {application.tenant_drivers_license_number? application.tenant_drivers_license_number : "<LICENSE_NUM>"}/
-                            {application.tenant_drivers_license_state? application.tenant_drivers_license_state : "<LICENSE/STATE>"}
+                            {application.tenant_drivers_license_number ? application.tenant_drivers_license_number : "<LICENSE_NUM>"}/
+                            {application.tenant_drivers_license_state ? application.tenant_drivers_license_state : "<LICENSE/STATE>"}
                           </Typography>
                           <Typography
                             sx={{
@@ -622,8 +577,7 @@ const TenantApplicationNav = () => {
                               color: "#160449",
                             }}
                           >
-                            {application.tenant_city}/{" "}
-                            {application.tenant_state}
+                            {application.tenant_city}/ {application.tenant_state}
                           </Typography>
                         </Stack>
                       </Grid>
@@ -669,8 +623,7 @@ const TenantApplicationNav = () => {
                               }}
                               key={index}
                             >
-                              {occupant.name} {occupant.last_name} |{" "}
-                              {occupant.relationship} | DOB: {occupant.dob}
+                              {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
                             </Typography>
                           ))}
                       </Grid>
@@ -694,8 +647,7 @@ const TenantApplicationNav = () => {
                               }}
                               key={index}
                             >
-                              {occupant.name} {occupant.last_name} |{" "}
-                              {occupant.relationship} | DOB: {occupant.dob}
+                              {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
                             </Typography>
                           ))}
                       </Grid>
@@ -719,8 +671,7 @@ const TenantApplicationNav = () => {
                               }}
                               key={index}
                             >
-                              {occupant.name} | {occupant.type} |{" "}
-                              {occupant.breed} | Weight: {occupant.weight}
+                              {occupant.name} | {occupant.type} | {occupant.breed} | Weight: {occupant.weight}
                             </Typography>
                           ))}
                       </Grid>
@@ -744,17 +695,20 @@ const TenantApplicationNav = () => {
                               }}
                               key={index}
                             >
-                              {vehicle.make} {vehicle.model} | {vehicle.year} |{" "}
-                              {vehicle.license} | {vehicle.state}
+                              {vehicle.make} {vehicle.model} | {vehicle.year} | {vehicle.license} | {vehicle.state}
                             </Typography>
                           ))}
                       </Grid>
-                      <Grid item xs={12} sx={{
-                        marginRight: '30px',
-                      }}>
+                      <Grid
+                        item
+                        xs={12}
+                        sx={{
+                          marginRight: "30px",
+                        }}
+                      >
                         <Typography
                           sx={{
-                            justifySelf: 'center',
+                            justifySelf: "center",
                             color: theme.typography.common.blue,
                             fontSize: 13,
                           }}
@@ -763,11 +717,11 @@ const TenantApplicationNav = () => {
                         </Typography>
                         <Box
                           sx={{
-                                    display:'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            paddingTop: '5px',
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            paddingTop: "5px",
                             color: theme.typography.common.blue,
                             fontSize: 13,
                           }}
@@ -775,44 +729,38 @@ const TenantApplicationNav = () => {
                           <Box>Filename</Box>
                           <Box>Type</Box>
                         </Box>
-                        {applicationDocuments && [...applicationDocuments].map((doc, i) => (
-                          <>
-                            <Box
-                              key={i}
-                              sx={{
-                                            display:'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                fontSize: 13
-                              }}
-                            >
-                              <a href={doc.link} target="_blank" rel="noopener noreferrer">
-                                <Box
-                                  sx={{
-                                    // height: '16px',
-                                    width: '100%',
-                                    cursor: 'pointer', // Change cursor to indicate clickability
-                                    color: "#160449",
-                                  }}
-                                >
-                                  {doc.filename}
-                                </Box>
-                              </a>
-                                        <Box sx={{color: "#160449",}}>
-                                {formatDocumentType(doc.type)}
+                        {applicationDocuments &&
+                          [...applicationDocuments].map((doc, i) => (
+                            <>
+                              <Box
+                                key={i}
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  fontSize: 13,
+                                }}
+                              >
+                                <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                                  <Box
+                                    sx={{
+                                      // height: '16px',
+                                      width: "100%",
+                                      cursor: "pointer", // Change cursor to indicate clickability
+                                      color: "#160449",
+                                    }}
+                                  >
+                                    {doc.filename}
+                                  </Box>
+                                </a>
+                                <Box sx={{ color: "#160449" }}>{formatDocumentType(doc.type)}</Box>
                               </Box>
-                            </Box>
-                          </>
-                        ))}
+                            </>
+                          ))}
                       </Grid>
                     </Grid>
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-around"
-                      sx={{ padding: "30px 0", paddingRight: "15px" }}
-                    >
+                    <Stack direction="row" alignItems="center" justifyContent="space-around" sx={{ padding: "30px 0", paddingRight: "15px" }}>
                       {application.lease_status === "NEW" && (
                         <Button
                           onClick={handleRejectLease}
@@ -862,7 +810,6 @@ const TenantApplicationNav = () => {
                           >
                             {"Edit Lease"}
                           </Button>
-
                         </div>
                       )}
                       {application.lease_status !== "PROCESSING" && (
