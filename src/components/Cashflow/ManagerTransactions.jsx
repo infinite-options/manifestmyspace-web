@@ -379,7 +379,10 @@ export default function ManagerTransactions() {
   if (transactionsByProperty && Object.keys(transactionsByProperty).length > 0) {
     Object.keys(transactionsByProperty)?.forEach(propertyUID => {
       const purchaseGroups = transactionsByProperty[propertyUID].purchaseGroups;
+
       const allFullyPaid = purchaseGroups.every(group => group.purchaseGroupStatus === "fully_paid");
+      const partiallyPaid = purchaseGroups.find( group => group.purchaseGroupStatus === "partially_paid")
+      const notPaid = purchaseGroups.find( group => group.purchaseGroupStatus === "not_paid")
 
       const totalExpected = transactionsByProperty[propertyUID].purchaseGroups?.reduce( (acc, item) => {
         return acc + parseFloat(item.pur_amount_due_total) || 0
@@ -389,7 +392,18 @@ export default function ManagerTransactions() {
         return acc + parseFloat(item.total_paid_total) || 0
       }, 0);
 
-      transactionsByProperty[propertyUID].propertyPurchaseStatus = allFullyPaid ? "fully_paid" : "not_paid";
+      if (allFullyPaid) {
+        transactionsByProperty[propertyUID].propertyPurchaseStatus = "fully_paid";
+      }
+      if( partiallyPaid !== undefined){
+        transactionsByProperty[propertyUID].propertyPurchaseStatus = "partially_paid"
+      }
+      if( notPaid !== undefined){
+        transactionsByProperty[propertyUID].propertyPurchaseStatus = "not_paid"
+      }
+
+
+      // transactionsByProperty[propertyUID].propertyPurchaseStatus = allFullyPaid ? "fully_paid" : "not_paid";
       transactionsByProperty[propertyUID].totalExpected = totalExpected;
       transactionsByProperty[propertyUID].totalActual = totalActual;
     });
@@ -420,7 +434,9 @@ export default function ManagerTransactions() {
     if(property.propertyPurchaseStatus === "fully_paid"){
         return "#76B148";
     } else if (property.propertyPurchaseStatus === "not_paid"){
-        return "#A52A2A";
+        return "#A52A2A";        
+    } else if (property.propertyPurchaseStatus === "partially_paid"){
+        return "#FFC614"; 
     } else {
         return "#000000";
     }
@@ -704,7 +720,7 @@ export default function ManagerTransactions() {
                                                         >
                                                         </Box>
                                                         <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                                                            {`Purchase Group - ${purGroup.pur_group}`}
+                                                            {`Purchase Group - ${purGroup.pur_group? purGroup.pur_group : "Maintenance"}`}
                                                         </Typography>                                               
                                                     </Box>
                                                 </AccordionSummary>
