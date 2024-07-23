@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Close } from '@mui/icons-material';
 import { makeStyles } from "@material-ui/core/styles";
+import { isValidDate } from "../../utils/dates";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -104,12 +105,9 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
 
     const handleAddNewFee = () => {
         console.log('add', currentFeeRow);
-        const newError = {};
-        if (!currentFeeRow.fee_name) newError.fee_name = "Fee Name is required";
-        if (!currentFeeRow.charge) newError.charge = "Charge is required";
-        if (!currentFeeRow.frequency) newError.frequency = "Frequency is required";
-        console.log('newError', newError);
-        if (Object.keys(newError).length === 0) {
+        const isAllFeildsPresent = checkRequiredFields();
+
+        if (isAllFeildsPresent === true) {
             if (isEditing === true) {
                 setLeaseFees(leaseFees.map(fee => (fee.leaseFees_uid === currentFeeRow.leaseFees_uid ? currentFeeRow : fee)));
             } else {
@@ -276,6 +274,24 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
         setOpenDeleteConfirmation(false);
     }
 
+    const checkRequiredFields = () => {
+        let retVal = true;
+        if (
+            currentFeeRow.fee_name === "" ||
+            currentFeeRow.fee_type === "" ||
+            currentFeeRow.charge === "" ||
+            currentFeeRow.frequency === "" ||
+            (currentFeeRow.due_by === null && (currentFeeRow.due_by_date === null || !isValidDate(currentFeeRow.due_by_date))) ||
+            currentFeeRow.late_by === null ||
+            currentFeeRow.late_fee === "" ||
+            currentFeeRow.available_topay === null ||
+            currentFeeRow.perDay_late_fee === ""
+        ) {
+            retVal = false;
+        }
+        return retVal;
+    };
+
     return (
         <>
             <Accordion sx={{ backgroundColor: color }}>
@@ -365,11 +381,6 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
 
                             }}
                         />
-                        <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
-                                {snackbarMessage}
-                            </Alert>
-                        </Snackbar>
                         <Dialog open={open} onClose={handleFeeModalClose} maxWidth="md">
                             <DialogTitle
                                 sx={{
@@ -390,11 +401,17 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                 </Button>
                             </DialogTitle>
                             <DialogContent>
+                                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                                    <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                                        {snackbarMessage}
+                                    </Alert>
+                                </Snackbar>
                                 <Grid container columnSpacing={8}>
                                     <Grid item md={2} sx={{ display: 'flex', alignItems: 'center', }}>
                                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                             Fee Name
                                         </Typography>
+                                        <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={10}>
                                         <TextField
@@ -402,7 +419,6 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                             margin="dense"
                                             label="Fee Name"
                                             fullWidth
-                                            required
                                             variant="outlined"
                                             value={currentFeeRow?.fee_name || ''}
                                             onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, fee_name: e.target.value })}
@@ -414,6 +430,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                             Fee Type
                                         </Typography>
+                                        <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={10}>
                                         <TextField
@@ -432,10 +449,12 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                             Fee Amount
                                         </Typography>
+                                        <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={4}>
                                         <TextField
                                             sx={{ backgroundColor: '#D6D5DA', }}
+                                            type="number"
                                             margin="dense"
                                             label="Amount"
                                             fullWidth
@@ -460,6 +479,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                                     Frequency
                                                 </Typography>
+                                                <span style={{ color: "red" }}>*</span>
                                             </Grid>
                                             <Grid item md={8}>
                                                 <FormControl sx={{ width: '300px', height: '70px' }}>
@@ -476,7 +496,6 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                                             height: '50px',
                                                             backgroundColor: '#D6D5DA',
                                                         }}
-                                                        required
                                                     >
                                                         <MenuItem value="One-time">One-time</MenuItem>
                                                         <MenuItem value="Weekly">Weekly</MenuItem>
@@ -496,10 +515,12 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                                     Due Date
                                                 </Typography>
+                                                <span style={{ color: "red" }}>*</span>
                                             </Grid>
                                             <Grid item md={6}>
                                                 {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "") && (
                                                     <TextField
+                                                        type="number"
                                                         margin="dense"
                                                         name="due_by"
                                                         value={currentFeeRow.due_by !== null && currentFeeRow.due_by !== "" ? currentFeeRow.due_by : ""}
@@ -585,11 +606,13 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                             Bills Post X Days in Advance
                                         </Typography>
+                                        <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={3}>
                                         {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "One-time" ||
                                             currentFeeRow.frequency === "Annually" || currentFeeRow.frequency === "") && (
                                                 <TextField
+                                                    type="number"
                                                     sx={{ backgroundColor: '#D6D5DA', }}
                                                     margin="dense"
                                                     label="# Days Before"
@@ -639,10 +662,12 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                             Late After X Days
                                         </Typography>
+                                        <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={4}>
                                         {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "One-time" || currentFeeRow.frequency === "Annually" || currentFeeRow.frequency === "") && (
                                             <TextField
+                                                type="number"
                                                 sx={{ backgroundColor: '#D6D5DA', }}
                                                 margin="dense"
                                                 label="# Days By"
@@ -691,9 +716,11 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                             One Time Late Fee
                                         </Typography>
+                                        <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={4}>
                                         <TextField
+                                            type="number"
                                             sx={{ backgroundColor: '#D6D5DA', }}
                                             margin="dense"
                                             label="Amount"
@@ -717,9 +744,11 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                             Per Day Late Fee
                                         </Typography>
+                                        <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={4}>
                                         <TextField
+                                            type="number"
                                             sx={{ backgroundColor: '#D6D5DA', }}
                                             margin="dense"
                                             label="Amount"

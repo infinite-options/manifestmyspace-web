@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    Accordion, AccordionSummary, AccordionDetails, Box, Typography, Button, Modal, TextField, Grid,
+    Accordion, AccordionSummary, AccordionDetails, Box, Typography, Button, Modal, TextField, Grid, Alert, Snackbar,
     MenuItem, FormControl, InputLabel, Select, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles }) => {
+const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLease, documentsRef, setDeletedFiles }) => {
     const [open, setOpen] = useState(false);
     const [currentRow, setcurrentRow] = useState(null);
     const color = theme.palette.form.main;
@@ -33,12 +33,44 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
     const classes = useStyles();
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
     const [filePreview, setFilePreview] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setFilePreview(null);
         setOpen(false)
     };
+
+    const checkRequiredFields = () => {
+        let retVal = true;
+        console.log('name', currentRow.filename);
+        console.log('type', currentRow.type);
+
+        if (!currentRow.filename) {
+            console.error('Filename is either empty, null, or undefined.');
+            return false;
+        }
+
+        if (!currentRow.type) {
+            console.error('Type is either empty, null, or undefined.');
+            return false;
+        }
+
+        //update setDocuments
+        if (isEditing === true) {
+            console.log('current row is', currentRow);
+            const updatedDocuments = documents.map(doc => (doc.id === currentRow.id ? currentRow : doc));
+            setDocuments(updatedDocuments);
+            const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest })=>rest);
+            documentsRef.current = updatedDocsWithoutId;
+        } else {
+            console.log('arr', newFiles);
+            setDocuments((prevFiles) => [...prevFiles, currentRow]);
+        }
+        return retVal;
+    }
 
     const handleFileUpload = (e) => {
         console.log('uploaded file', e.target.files);
@@ -48,10 +80,10 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
             setcurrentRow(curr);
         } else {
             const curr = { ...currentRow, filename: e.target.files[0].name, id: documents.length };
-            console.log(curr);
+            console.log('curr', curr);
             setcurrentRow(curr);
         }
-        // setDocs((prevFiles) => [...prevFiles, ...e.target.files]);
+
         const filesArray = Array.from(e.target.files).map(file => ({
             name: file.name,
             type: currentRow.type,
@@ -59,25 +91,30 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
         }));
         console.log('filesArray', filesArray);
         setNewFiles(filesArray);
+        setuploadedFiles(filesArray);
         // Create a URL for the file preview
         const file = e.target.files[0];
         setFilePreview(URL.createObjectURL(file));
     };
 
+    const showSnackbar = (message, severity) => {
+        console.log('Inside show snackbar');
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
     const handleSubmit = () => {
-        let newArr = [...newFiles]
-        newArr[0].type = currentRow.type;
-        setNewFiles(newArr);
-        setuploadedFiles((prevFiles => [...prevFiles, ...newArr]));
-        if (isEditing === true) {
-            console.log('current row is', currentRow);
-            setDocuments(documents.map(doc => (doc.id === currentRow.id ? currentRow : doc)))
+        const isValid = checkRequiredFields();
+        if (isValid === true) {
+            console.log('success occured');
+            editOrUpdateLease();
+            handleClose();
         } else {
-            console.log('arr', newFiles);
-            setDocuments((prevFiles) => [...prevFiles, currentRow]);
-            setNewFiles(null);
+            console.log('error occured');
+            showSnackbar("Kindly enter all the required fields", "error");
+            setSnackbarOpen(true);
         }
-        handleClose();
     };
 
     const handleEditClick = (row) => {
@@ -88,8 +125,15 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
         handleOpen();
     };
 
-    const handleDelete = () => {
-        setDocuments(documents.filter(doc => doc.id !== currentRow.id));
+    const handleDelete = async () => {
+        console.log("currentRow.id", currentRow.id);
+        const updatedDocuments = documents.filter(doc => doc.id !== currentRow.id);
+        setDocuments(updatedDocuments);
+        const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest })=>rest);
+        documentsRef.current = updatedDocsWithoutId;
+        setDeletedFiles((prevDocs) => [...prevDocs, currentRow.link]);
+        // console.log("currentRow.id", currentRow.id);
+        await editOrUpdateLease();
         handleClose();
     };
 
@@ -105,7 +149,9 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
         handleDelete();
         setOpenDeleteConfirmation(false);
     }
-
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
 
     const docsColumns = [
         {
@@ -223,6 +269,7 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                         columns={docsColumns}
                         hideFooter={true}
                         getRowId={(row) => row.id}
+                        autoHeight
                         sx={{
                             '& .MuiDataGrid-columnHeader': {
                                 justifyContent: 'center',
@@ -280,17 +327,22 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                             }} />
                         </Button>
                     </Box>
-
+                    <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                            {snackbarMessage}
+                        </Alert>
+                    </Snackbar>
                     <Grid container columnSpacing={8}>
                         <Grid item md={1} />
                         <Grid item md={5}>
-                            <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginTop: '10px' }}>
-                                Document Name
+                            <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginTop: '10px', }}>
+                                {"Document Name  "}
+                                <span style={{ color: "red" }}>*</span>
                             </Typography>
                             <TextField
                                 className={classes.textField}
                                 sx={{ marginTop: '5px' }}
-                                name="tenant_first_name"
+                                name="file_name"
                                 label="File Name"
                                 fullWidth
                                 margin="normal"
@@ -309,14 +361,26 @@ const Documents = ({ documents, setDocuments, uploadedFiles, setuploadedFiles })
                                 }}
                             />
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginTop: '10px' }}>
-                                Document Type
+                                {"Document Type  "}
+                                <span style={{ color: "red" }}>*</span>
                             </Typography>
+
 
                             <FormControl fullWidth sx={{ marginTop: "10px" }}>
                                 {/* <InputLabel sx={{ color: theme.palette.grey }}>Type</InputLabel> */}
                                 <Select
                                     value={currentRow && currentRow?.type || ''}
-                                    onChange={(e) => setcurrentRow({ ...currentRow, type: e.target.value })}
+                                    onChange={(e) => {
+                                        setcurrentRow({ ...currentRow, type: e.target.value })
+                                        if (newFiles) {
+                                            //update document type 
+                                            let newArr = [...newFiles]
+                                            newArr[0].type = currentRow.type;
+                                            setNewFiles(newArr);
+                                            setuploadedFiles((prevFiles => [...prevFiles, ...newArr]));
+                                        }
+                                    }
+                                    }
                                     size="small"
                                     fullWidth
                                     className={classes.select}
