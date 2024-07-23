@@ -477,85 +477,96 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
               </Grid>
 
             </Grid>
-            <Grid container direction="row" item xs={12} columnSpacing={3} sx={{backgroundColor: '#160449', borderRadius: '5px', marginTop: '5px', }}>
-              <Grid item xs={5} sx={{padding: '5px', display:'flex',}}>
+            <Grid
+              item xs={12}
+              onClick={(e) => {
+                // e.stopPropagation();
+                navigate("/managerCashflow");
+              }}
+              sx={{
+                cursor: 'pointer',
+              }}
+            >
+              <Grid container direction="row" item xs={12} columnSpacing={3} sx={{backgroundColor: '#160449', borderRadius: '5px', marginTop: '5px', }}>
+                <Grid item xs={5} sx={{padding: '5px', display:'flex',}}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                    {`Profit`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>                
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                    {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
+                    ${profits?.totalExpected ? parseFloat(profits?.totalExpected).toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={1}>
+
+                </Grid>
+                <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
                 <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                  {`Profit`}
+                  ${profits?.totalActual ? parseFloat(profits?.totalActual).toFixed(2) : "0.00"}
                 </Typography>
-              </Grid>
-              <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>                
-                <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                  {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
-                  ${profits?.totalExpected ? parseFloat(profits?.totalExpected).toFixed(2) : "0.00"}
-                </Typography>
-              </Grid>
-              <Grid item xs={1}>
+                </Grid>
 
               </Grid>
-              <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
-              <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                ${profits?.totalActual ? parseFloat(profits?.totalActual).toFixed(2) : "0.00"}
-              </Typography>
-              </Grid>
+              <Grid container direction="row" item xs={12} columnSpacing={3} sx={{backgroundColor: '#9EAED6', borderRadius: '5px', marginTop: '5px', }}>
+                <Grid item xs={5}  sx={{padding: '5px', display:'flex',}}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                    {`Rents`}
+                  </Typography>              </Grid>
+                <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center', }}>                
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                      ${rents?.totalExpected ? parseFloat(rents?.totalExpected).toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={1}>
 
-            </Grid>
-            <Grid container direction="row" item xs={12} columnSpacing={3} sx={{backgroundColor: '#9EAED6', borderRadius: '5px', marginTop: '5px', }}>
-              <Grid item xs={5}  sx={{padding: '5px', display:'flex',}}>
-                <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                  {`Rents`}
-                </Typography>              </Grid>
-              <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center', }}>                
-                <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                    ${rents?.totalExpected ? parseFloat(rents?.totalExpected).toFixed(2) : "0.00"}
-                </Typography>
-              </Grid>
-              <Grid item xs={1}>
-
-              </Grid>
-              <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
-                <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                    ${rents?.totalActual ? parseFloat(rents?.totalActual).toFixed(2) : "0.00"}
-                </Typography>
-              </Grid>
-
-            </Grid>
-            <Grid container direction="row" item xs={12} columnSpacing={3}  sx={{backgroundColor: '#979797', borderRadius: '5px', marginTop: '5px', }}>
-              <Grid item xs={5}  sx={{padding: '5px', display:'flex',}}>
-                <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                  {`Payouts`}
-                </Typography>
-              </Grid>
-              <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center', }}>                
-                <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                    ${payouts?.totalExpected ? parseFloat(payouts?.totalExpected).toFixed(2) : "0.00"}
-                </Typography>
-              </Grid>
-              <Grid item xs={1}>
+                </Grid>
+                <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                      ${rents?.totalActual ? parseFloat(rents?.totalActual).toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
 
               </Grid>
-              <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
-                <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                    ${payouts?.totalActual ? parseFloat(payouts?.totalActual).toFixed(2) : "0.00"}
-                </Typography>
-              </Grid>
+              <Grid container direction="row" item xs={12} columnSpacing={3}  sx={{backgroundColor: '#979797', borderRadius: '5px', marginTop: '5px', }}>
+                <Grid item xs={5}  sx={{padding: '5px', display:'flex',}}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                    {`Payouts`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={3}  sx={{padding: '5px', display:'flex', justifyContent: 'center', }}>                
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                      ${payouts?.totalExpected ? parseFloat(payouts?.totalExpected).toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={1}>
 
+                </Grid>
+                <Grid container item xs={3} justifyContent="center" sx={{padding: '5px', display:'flex', justifyContent: 'center',}}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                      ${payouts?.totalActual ? parseFloat(payouts?.totalActual).toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+
+              </Grid>
             </Grid>
           </Grid>
 
           <Grid item container xs={12} sx={{ marginBottom: "10px", marginTop: '10px', }}>
-              <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <Button
                   variant="outlined"
                   id="revenue"
                   // className={classes.button}
                   style={{
                     // height: "100%",
-                    // width: '80%',
+                    width: '60%',
                     backgroundColor: "#D0D0D0",
                     color: "#160449",
                     fontSize: "13px",
                     marginBottom: "10px",
-                    borderRadius: "5px",
+                    borderRadius: "5px",                    
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -567,19 +578,20 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                 </Button>
               </Grid>
 
-              <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <Button
                   variant="outlined"
                   id="revenue"
                   // className={classes.button}
                   style={{
                     // height: "100%",
-                    // width: '80%',
+                    width: '60%',
                     backgroundColor: "#D0D0D0",
                     color: "#160449",
                     fontSize: "13px",
                     marginBottom: "10px",
                     borderRadius: "5px",
+                    
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -590,7 +602,7 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                 </Button>
               </Grid>
 
-              <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              {/* <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <Button
                   variant="outlined"
                   id="profits"
@@ -613,7 +625,7 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                 >                                    
                   Profits
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
           
           <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>            

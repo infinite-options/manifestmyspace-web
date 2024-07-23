@@ -773,9 +773,10 @@ export default function ManagerTransactions() {
                                                     <Grid container justifyContent="flex-start" item xs={6.5} sx={{ paddingLeft: '30px',}}>
                                                         
                                                       <Typography>
-                                                          {purchase.pur_payer?.startsWith('350') && purchase.pur_receiver?.startsWith('600') ? "Tenant Payment" : ""}
-                                                          {purchase.pur_payer?.startsWith('600') && purchase.pur_receiver?.startsWith('110') ? "Owner Payment" : ""}
-                                                          {purchase.pur_payer?.startsWith('110') && purchase.pur_receiver?.startsWith('600') ? "Manager Payment" : ""}
+                                                          {purchase.pur_payer?.startsWith('350') && purchase.pur_receiver?.startsWith('600') ? "Tenant Payment " : ""}
+                                                          {purchase.pur_payer?.startsWith('600') && purchase.pur_receiver?.startsWith('110') ? "Owner Payment " : ""}
+                                                          {purchase.pur_payer?.startsWith('110') && purchase.pur_receiver?.startsWith('600') ? "Manager Payment " : ""}
+                                                          - {purchase.purchase_type ? purchase.purchase_type : ""} - {purchase.pur_description ? purchase.pur_description : ""}
                                                       </Typography>
                                                         
                                                     </Grid>                                    

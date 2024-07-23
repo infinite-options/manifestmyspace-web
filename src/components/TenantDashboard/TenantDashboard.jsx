@@ -276,7 +276,7 @@ function TenantDashboard(props) {
   }
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
@@ -310,7 +310,7 @@ function TenantDashboard(props) {
                 >
                   <Typography
                     sx={{
-                      fontSize: { xs: "22px", sm: "28px", md: "36px", lg: "40px" },
+                      fontSize: { xs: "22px", sm: "28px", md: "32px", lg: "32px" },
                       fontWeight: "600",
                     }}
                   >
@@ -390,7 +390,7 @@ function TenantDashboard(props) {
                                 <Typography
                                   sx={{
                                     color: "#160449",
-                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
                                     fontWeight: "bold",
                                   }}
                                 >
@@ -449,7 +449,7 @@ function TenantDashboard(props) {
                                 <Typography
                                   sx={{
                                     color: "#160449",
-                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
                                     fontWeight: "bold",
                                   }}
                                 >
@@ -480,7 +480,7 @@ function TenantDashboard(props) {
                               >
                                 <Typography
                                   sx={{
-                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" },
+                                    fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
                                     fontWeight: "bold",
                                   }}
                                 >
@@ -597,6 +597,7 @@ function DashboardTab(props) {
 
 export default TenantDashboard;
 
+
 const AccountBalanceWidget = ({
   selectedProperty,
   selectedLease,
@@ -690,7 +691,7 @@ const AccountBalanceWidget = ({
               alignItems: "center",
             }}
           >
-            <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Account Balance</Typography>
+            <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Account Balance</Typography>
             <Box
               sx={{
                 display: "flex",
@@ -821,7 +822,7 @@ const AccountBalanceWidget = ({
           paddingBottom: isMobile ? "5px" : "20px",
         }}
       >
-        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold" }}>Balance Details</Typography>
+        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold" }}>Balance Details</Typography>
 
         <Grid container>
           <Grid item xs={6} sx={{ color: "#3D5CAC", fontSize: "20px", fontWeight: 700 }}>
@@ -869,7 +870,7 @@ const AccountBalanceWidget = ({
           paddingBottom: isMobile ? "5px" : "20px",
         }}
       >
-        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "35px" }, fontWeight: "bold" }}>Lease Details</Typography>
+        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold" }}>Lease Details</Typography>
         <Grid container>
           <Grid item xs={6} sx={{ color: "#000000", fontSize: "20px", fontWeight: 500, opacity: "50%" }}>
             {" "}
@@ -926,6 +927,7 @@ const AccountBalanceWidget = ({
     </DashboardTab>
   );
 };
+
 
 function TenantPaymentHistoryTable(props) {
   const isMobile = props.isMobile;
