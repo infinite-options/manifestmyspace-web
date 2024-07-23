@@ -79,7 +79,7 @@ import {
 
 
 
-export default function ManagerTransactions({propsMonth, propsYear, setMonth, setYear, transactionsData, }) {
+export default function ManagerTransactions({propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setShowSelectPayment, setShowProfitability, setShowTransactions }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId } = useUser(); // Access the user object from UserContext
@@ -338,9 +338,14 @@ export default function ManagerTransactions({propsMonth, propsYear, setMonth, se
     
 
 
-    navigate("/selectPayment", {
-        state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
-    });
+    // navigate("/selectPayment", {
+    //     state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
+    // });
+
+    setSelectedPayment({ paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} });    
+    setShowProfitability(false);
+    setShowTransactions(false);
+    setShowSelectPayment(true);
 
   }
 

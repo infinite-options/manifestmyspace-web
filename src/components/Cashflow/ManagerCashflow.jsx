@@ -48,6 +48,7 @@ import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashf
 import ManagerProfitability from "./ManagerProfitability";
 import ManagerTransactions from "./ManagerTransactions";
 import PaymentsManager from "../Payments/PaymentsManager";
+import MakePayment from "./MakePayment";
 
 import axios from "axios";
 
@@ -118,6 +119,9 @@ export default function ManagerCashflow() {
   const [ showProfitability, setShowProfitability ] = useState(location.state?.showProfitability || false)
   const [ showTransactions,  setShowTransactions ]  = useState(location.state?.showTransactions || false)
   const [ showPayments,      setShowPayments ]      = useState(location.state?.showPayments || false);
+  const [ showSelectPayment, setShowSelectPayment ] = useState(false);
+
+  const [ selectedPayment, setSelectedPayment ] = useState(null);
 
   async function fetchCashflow(userProfileId, month, year) {
     try {
@@ -160,6 +164,19 @@ export default function ManagerCashflow() {
         console.error("Error fetching cashflow data:", error);
       });
   }, []);
+
+  const refreshCashflowData = () => {
+    fetchCashflow(profileId)
+      .then((data) => {
+        setCashflowData(data);
+        setProfitabilityData(data?.Profit);
+        setTransactionsData(data?.Transactions);
+        // let currentMonthYearRevenueExpected = get
+      })
+      .catch((error) => {
+        console.error("Error fetching cashflow data:", error);
+      });
+  }
 
   useEffect(() => {
     const profitDatacurrentMonth = cashflowData?.Profit?.result?.filter( item => item.cf_month === month && item.cf_year === year);    
@@ -322,9 +339,11 @@ export default function ManagerCashflow() {
               rentsTotal={rentsTotal}
               payoutsTotal={payoutsTotal}
               graphData={profitabilityData?.result}
+
               setShowProfitability={setShowProfitability}
               setShowTransactions={setShowTransactions}
               setShowPayments={setShowPayments}
+              setShowSelectPayment={setShowSelectPayment}
             />
           </Grid>
 
@@ -353,6 +372,12 @@ export default function ManagerCashflow() {
                   setMonth={setMonth}
                   setYear={setYear}
                   transactionsData={transactionsData}
+
+                  setShowProfitability={setShowProfitability}
+                  setShowTransactions={setShowTransactions}
+                  setShowSelectPayment={setShowSelectPayment}
+                  setSelectedPayment={setSelectedPayment}
+                  
                 />
               )
             }
@@ -360,7 +385,19 @@ export default function ManagerCashflow() {
               showPayments && (
                 <PaymentsManager />
               )
-            }                        
+            }  
+            {
+              showSelectPayment && (
+                <MakePayment 
+                  selectedPayment={selectedPayment}
+                  refreshCashflowData={refreshCashflowData}
+                  
+                  setShowProfitability={setShowProfitability}
+                  setShowTransactions={setShowTransactions}
+                  setShowSelectPayment={setShowSelectPayment}
+                  />
+              )
+            }                      
           </Grid>
 
           

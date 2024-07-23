@@ -197,7 +197,7 @@ function getTotalRevenueByMonthYear(data, month, year) {
 
 
 
-function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, setShowProfitability, setShowTransactions, setShowPayments, }) {
+function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, setShowProfitability, setShowTransactions, setShowPayments, setShowSelectPayment }) {
   console.log("In ManagerCashflow Widget ");
   console.log("ManagerCashflow widget - profitsTotal - ", profitsTotal);
   const navigate = useNavigate();
@@ -485,6 +485,7 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                 setShowProfitability(true);
                 setShowTransactions(false);
                 setShowPayments(false);
+                setShowSelectPayment(false);
               }}
               sx={{
                 cursor: 'pointer',
@@ -574,10 +575,11 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   onClick={(e) => {
                     e.stopPropagation();
                     // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
-                    // navigate("/payments", {state: {managerCashflowWidgetData : { profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, } }});
-                    setShowProfitability(false);
-                    setShowTransactions(false)
-                    setShowPayments(true);
+                    navigate("/payments", {state: {managerCashflowWidgetData : { profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, } }});
+
+                    // setShowProfitability(false);
+                    // setShowTransactions(false)
+                    // setShowPayments(true);
                   }}
                 >                                    
                   Pay Bills
@@ -604,6 +606,8 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                     // navigate("/managerTransactions");
                     setShowProfitability(false);
                     setShowTransactions(true);
+                    setShowPayments(false);
+                    setShowSelectPayment(false);
                   }}
                 >                                    
                   Transactions
