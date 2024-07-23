@@ -22,8 +22,9 @@ import theme from '../../theme/theme';
 import { useUser } from '../../contexts/UserContext';
 import ImageUploader from '../ImageUploader';
 import { getLatLongFromAddress } from "../../utils/geocode";
-
+import StaticMap from "./StaticMap"
 import APIConfig from "../../utils/APIConfig";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const useStyles = makeStyles({
 	card: {
@@ -128,12 +129,17 @@ const PropertyForm = () => {
   const [ownerList, setOwnerList] = useState([]);
   const [applianceList, setApplianceList] = useState([]);
   const [selectedAppliances, setSelectedAppliances] = useState([]);
+  const [coordinates, setCoordinates] = useState(null);
 
-	const handleAddressSelect = (address) => {
+	const handleAddressSelect = async (address) => {
 		setAddress(address.street ? address.street : '');
 		setCity(address.city ? address.city : '');
 		setState(address.state ? address.state : '');
 		setZip(address.zip ? address.zip : '');
+
+	const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.zip}`;
+    const coords = await getLatLongFromAddress(fullAddress);
+    setCoordinates(coords);
 	};
 
 	const handleUnitChange = (event) => {
@@ -403,26 +409,23 @@ const PropertyForm = () => {
 
 	return (
 		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px' }}>
+			
+			<Button onClick={() => navigate(-1)}>
+                <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
+              </Button>
+            
 			<Card sx={{ backgroundColor: '#D6D5DA', marginBottom: '18px', padding: '16px', borderRadius: '8px' }}>
 				<CardContent className={classes.cardContent}>
-					<Grid container spacing={2}>
+					<Grid container spacing={8}>
 						<Grid item xs={12} sm={4} className={classes.addPicturesButtonContainer}>
-							<Button
-								sx={{
-									height: '100%',
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									border: '1px dashed #ccc',
-									borderRadius: '8px',
-									color: '#160449',
-									textTransform: 'none', // Ensure text is not transformed to uppercase
-								}}
-								fullWidth
-								startIcon={<MapIcon />}
-							>
-								Show Google Map
-							</Button>
+						
+            <StaticMap
+              latitude={coordinates?.latitude}
+              longitude={coordinates?.longitude}
+              size="400x400"
+              zoom={15}
+			  defaultCenter={{ lat: 37.3382, lng: -121.8863 }}
+            />
 						</Grid>
 						<Grid item xs={12} sm={8}>
 							<Grid container spacing={3}>
@@ -732,8 +735,8 @@ const PropertyForm = () => {
 									</Typography>
 								</Grid>
 								<Grid item xs={10}>
-									<Typography>{cost / squareFootage}</Typography>
-								</Grid>
+        <Typography>{squareFootage ? Math.round(cost / squareFootage) : 0}</Typography>
+    </Grid>
 							</Grid>
 						</Grid>
                         <Grid item xs={12}>
