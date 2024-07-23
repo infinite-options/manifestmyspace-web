@@ -42,6 +42,8 @@ import documentIcon from "../../images/Subtract.png";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import NewCardSlider from "../Announcement/NewCardSlider";
 import PropertyInfo from "../Property/PropertyInfo";
+import TenantApplication from "../Applications/TenantApplication";
+import TenantProfileEdit from "../Profile/TenantProfile/TenantProfileEdit";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -247,7 +249,11 @@ function TenantDashboard(props) {
       case "listings":
         return <PropertyListings setRightPane={setRightPane} />;
       case "propertyInfo":
-        return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
+        return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />; 
+      case "tenantApplication":
+        return <TenantApplication {...rightPane.state} setRightPane={setRightPane} />;
+      case "tenantProfileEdit":
+        return <TenantProfileEdit {...rightPane.state} setRightPane={setRightPane} />
       default:
         return null;
     }
