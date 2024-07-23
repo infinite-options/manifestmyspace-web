@@ -99,8 +99,8 @@ function TenantProfileEdit() {
     setShowSpinner(true);
     console.log("Execute axios get");
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`).then((res) => {
-    console.log("res from tenanteditProfile ",res)  
-    let responseData = res.data.profile.result[0];
+      console.log("res from tenanteditProfile ", res);
+      let responseData = res.data.profile.result[0];
       parseJSONFields(responseData);
       console.log("responseData.tenant_ssn:", responseData.tenant_ssn);
       if (responseData.tenant_ssn) {
@@ -316,7 +316,6 @@ function TenantProfileEdit() {
       if (confirmed) {
         navigate(-1);
       }
-            
     }
   };
 

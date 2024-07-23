@@ -102,13 +102,18 @@ export default function AddProperty({}) {
             return;
           }
           const ownerdata = await response.json();
-          console.log(ownerdata);
+          console.log("Owner Data: ", ownerdata);
           let contactArray = ownerdata.management_contacts.owners;
+          console.log("Number of Contacts: ", contactArray.length);
           let ownerObjList = [];
+
+          // Need if statement to check if number of Contacts is  != 0.
+          // What do we do if contacts == 0?
           contactArray.forEach((contact) => {
+            console.log("Inside For Loop: ", contact);
             let obj = {
               owner_id: contact.contact_uid,
-              owner_name: contact.contact_first_name + " " + contact.contact_last_name,
+              owner_name: contact.owner_first_name + " " + contact.owner_last_name,
             };
             ownerObjList.push(obj);
           });
@@ -404,7 +409,7 @@ export default function AddProperty({}) {
     setActiveStep(0);
     setShowSpinner(false);
     if (selectedRole === "OWNER") {
-      navigate("/properties", {state:{isBack:true}});
+      navigate("/properties", { state: { isBack: true } });
     }
   };
 
