@@ -81,7 +81,7 @@ export default function PropertyNavigator({
   const [happinessData, setHappinessData] = useState([]);
   const [dataforhappiness, setdataforhappiness] = useState([]);
 
-//   console.log("lcation state rent status", allRentStatus);
+  console.log("ROHIT - PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
@@ -99,6 +99,14 @@ export default function PropertyNavigator({
   useEffect(() => {
     getDataFromAPI();
   }, []);
+
+  useEffect(() => {
+	console.log("ROHIT - PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
+  }, [propertyRentStatus]);
+
+  useEffect(() => {
+	console.log("ROHIT - PropertyNavigator - currentId - ", currentId);
+  }, [currentId]);
 
 
 
@@ -201,6 +209,8 @@ export default function PropertyNavigator({
 	}, [index, propertyList]);
 
 	useEffect(() => {
+		console.log("ROHIT - propertyId use Effect called ***************************************************");
+		console.log("ROHIT - setting propertyId - ", propertyData[currentIndex].property_uid);
 		setPropertyId(propertyData[currentIndex].property_uid);
 
 		const getContractsForOwner = async () => {
@@ -226,6 +236,7 @@ export default function PropertyNavigator({
 		};
 		getContractsForOwner();
 		const rentDetails = getRentStatus();
+		console.log("ROHIT - rentDetails - ", rentDetails);
 		setpropertyRentStatus(rentDetails);
 
 		if (property.leaseFees !== null) {
@@ -541,9 +552,11 @@ export default function PropertyNavigator({
 			);
 			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 			const formatData = (data) => {
-				return data.map((item) => {
+				return data.map((item, index) => {
+					console.log("ROHIT - item - ", item.rent_detail_index);
 					return {
 						...item,
+						// idx: index,
 						cf_monthName: monthNames[item.cf_month - 1],
 						total_paid_formatted: item.total_paid ? `$${item.total_paid}` : '-',
 						latest_date_formatted: item.latest_date || '-',
@@ -552,7 +565,10 @@ export default function PropertyNavigator({
 				});
 			};
 
+			console.log("ROHIT - getRentStatus - rentStatus - ", rentStatus);
+			console.log("ROHIT - getRentStatus - propertyRentStatus - ", propertyRentStatus);
 			const formattedData = propertyRentStatus ? formatData(rentStatus) : [];
+			console.log("ROHIT - getRentStatus - formattedData - ", formattedData);
 			return formattedData;
 		} catch (error) {
 			console.log(error);
@@ -571,12 +587,17 @@ export default function PropertyNavigator({
 		}
 	};
 
+	const getLateFeesColor = ( fee ) => {
+		if(fee.lf_purchase_status === "PAID") return "green"
+		else return "red"
+	}
+
 	const rentStatusColumns = [
 		{
 			field: 'cf_monthName',
 			headerName: 'Month',
 			sortable: isDesktop,
-			flex: 0.8,
+			// flex: 0.8,
 			renderCell: (params) => {
 				return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
 			},
@@ -585,16 +606,17 @@ export default function PropertyNavigator({
 			field: 'latest_date_formatted',
 			headerName: 'Paid',
 			sortable: isDesktop,
-			flex: 1,
+			// flex: 1,
 			renderCell: (params) => {
 				return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
 			},
 		},
 		{
-			field: 'total_paid_formatted',
+			// field: 'total_paid_formatted',\
+			field: 'pur_amount_due',
 			headerName: 'Amount',
 			sortable: isDesktop,
-			flex: 1,
+			// flex: 1,
 			renderCell: (params) => {
 				return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
 			},
@@ -604,7 +626,7 @@ export default function PropertyNavigator({
 			field: 'rent_status',
 			headerName: 'Rent Status',
 			sortable: isDesktop,
-			flex: 1,
+			// flex: 1,
 			renderCell: (params) => {
 				return (
 					<Box
@@ -626,13 +648,42 @@ export default function PropertyNavigator({
 		},
 		{
 			field: 'fees',
-			headerName: 'Fees',
+			headerName: 'Late Fees',
 			sortable: isDesktop,
-			flex: 0.5,
+			// flex: 0.5,
+			renderCell: (params) => {
+				// return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
+				// return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.row.lf_pur_amount_due}</Box>;				
+				return <Box sx={{ width: '100%', color: getLateFeesColor(params.row)}}>{params.row.lf_pur_amount_due}</Box>;				
+			},
+		},
+		{
+			field: 'pur_description',
+			headerName: 'pur_description',
+			sortable: isDesktop,
+			// flex: 3,
 			renderCell: (params) => {
 				return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
 			},
 		},
+		// {
+		// 	field: 'rent_detail_index',
+		// 	headerName: 'rent_detail_index',
+		// 	sortable: isDesktop,
+		// 	flex: 3,
+		// 	renderCell: (params) => {
+		// 		return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
+		// 	},
+		// },
+		// {
+		// 	field: 'property_uid',
+		// 	headerName: 'property_uid',
+		// 	sortable: isDesktop,
+		// 	// flex: 0.5,
+		// 	renderCell: (params) => {
+		// 		return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
+		// 	},
+		// },
 	];
 
 	const handleEditClick = (row) => {
@@ -772,7 +823,7 @@ export default function PropertyNavigator({
 							paddingBottom="10px"
 						>
 							{property.property_address} {property.property_unit}, {property.property_city}{' '}
-							{property.property_state} {property.property_zip}
+							{property.property_state} {property.property_zip} property_uid - {property.property_uid}
 						</Typography>
 						<Typography
 							sx={{
@@ -1882,7 +1933,7 @@ export default function PropertyNavigator({
 
 						{/* Rent history grid*/}
 						<Grid item xs={12} md={6}>
-							<Card sx={{ backgroundColor: color, height: '100%' }}>
+							<Card sx={{ backgroundColor: color, height: '100%', overflowX: 'scroll', }}>
 								<Typography
 									sx={{
 										color: theme.typography.primary.black,
@@ -1899,7 +1950,7 @@ export default function PropertyNavigator({
 										flexDirection: 'column',
 										alignItems: 'left',
 										justifyContent: 'left',
-										width: '90%',
+										width: '90%',										
 									}}
 								>
 									<DataGrid
@@ -1915,6 +1966,7 @@ export default function PropertyNavigator({
 											},
 										}}
 										getRowId={(row) => row.rent_detail_index}
+										// getRowId={(row) => row?.idx}
 										pageSizeOptions={[12]}
 										sx={{
 											'& .MuiDataGrid-cell': {
