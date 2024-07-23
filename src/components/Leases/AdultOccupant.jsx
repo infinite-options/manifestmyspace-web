@@ -14,6 +14,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { makeStyles } from '@material-ui/core/styles';
 import { Close } from '@mui/icons-material';
+import DataValidator from "../DataValidator";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -24,32 +25,6 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 4, 3),
     },
-    // textField: {
-    //     '& .MuiInputBase-root': {
-    //         backgroundColor: '#D6D5DA',
-    //     },
-    //     '& .MuiInputLabel-root': {
-    //         textAlign: 'center',
-    //         top: '50%',
-    //         left: '50%',
-    //         transform: 'translate(-50%, -50%)',
-    //         width: '100%',
-    //         pointerEvents: 'none',
-    //     },
-    //     '& .MuiInputLabel-shrink': {
-    //         top: 0,
-    //         left: 50,
-    //         transformOrigin: 'top center',
-    //         textAlign: 'left',
-    //         color: '#9F9F9F',
-    //     },
-    //     '& .MuiInputLabel-shrink.Mui-focused': {
-    //         color: '#9F9F9F',
-    //     },
-    //     '& .MuiInput-underline:before': {
-    //         borderBottom: 'none',
-    //     },
-    // },
     alert: {
         marginTop: theme.spacing(2),
     },
@@ -74,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
+const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdateLease, adultsRef }) => {
     console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
@@ -87,6 +62,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
     useEffect(() => {
         if (leaseAdults && leaseAdults.length > 0) {
             console.log('leaseAdults', leaseAdults, typeof (leaseAdults));
+            //Need Id for datagrid
             const adultsWithIds = leaseAdults.map((adult, index) => ({ ...adult, id: index }));
             setAdults(adultsWithIds);
         }
@@ -101,12 +77,19 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
 
     const handleSave = () => {
         if (isEditing) {
-            setAdults(adults.map(adult => (adult.id === currentRow.id ? currentRow : adult)));
-            setLeaseAdults(adults.map(adult => (adult.id === currentRow.id ? currentRow : adult)));
+            const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
+            setAdults(updatedRow);
+            //Save adults back in DB without ID field
+            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+            setLeaseAdults(rowWithoutId);
+            adultsRef.current = rowWithoutId;
         } else {
             setAdults([...adults, { ...currentRow, id: adults.length + 1 }]);
-            setLeaseAdults([...adults, { ...currentRow, id: adults.length + 1 }]);
+              //Save adults back in DB without ID field
+            setLeaseAdults([...leaseAdults, { ...currentRow}]);
+            adultsRef.current = [...leaseAdults, { ...currentRow}];
         }
+        editOrUpdateLease();
         handleClose();
     };
 
@@ -117,8 +100,12 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
     };
 
     const handleDelete = () => {
-        setAdults(adults.filter(adult => adult.id !== currentRow.id));
-        setLeaseAdults(adults.filter(adult => adult.id !== currentRow.id));
+        const filtered = adults.filter(adult => adult.id !== currentRow.id);
+        setAdults(filtered);
+        const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
+        setLeaseAdults(rowWithoutId);
+        adultsRef.current = rowWithoutId;
+        editOrUpdateLease();
         handleClose();
     };
 
@@ -157,7 +144,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Adults ({adults.length})</Typography>
+                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Adults ({leaseAdults.length})</Typography>
                 <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
@@ -172,7 +159,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                     }}
                     onClick={() => {
                         setCurrentRow({
-                            id: null, name: '', last_name: '', dob: '', email: '', phone_number: '',
+                            name: '', last_name: '', dob: '', email: '', phone_number: '',
                             relationship: '', tenant_drivers_license_number: "", tenant_ssn: ""
                         }); handleOpen();
                     }}>
@@ -240,6 +227,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                                 margin="dense"
                                 label="First Name"
                                 fullWidth
+                                required
                                 variant="outlined"
                                 value={currentRow?.name || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, name: e.target.value })}
@@ -253,6 +241,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                                 margin="dense"
                                 label="Last Name"
                                 fullWidth
+                                required
                                 variant="outlined"
                                 value={currentRow?.last_name || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, last_name: e.target.value })}
@@ -271,6 +260,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                                 margin="dense"
                                 label="Email"
                                 fullWidth
+                                required
                                 variant="outlined"
                                 value={currentRow?.email || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, email: e.target.value })}
@@ -283,6 +273,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                                 margin="dense"
                                 label="Phone Number"
                                 fullWidth
+                                required
                                 variant="outlined"
                                 value={currentRow?.phone_number || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, phone_number: e.target.value })}
@@ -343,7 +334,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
 
                         <Grid item md={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ height: "30px" }}>
-                                <InputLabel>
+                                <InputLabel required>
                                     Relationship
                                 </InputLabel>
                                 <Select

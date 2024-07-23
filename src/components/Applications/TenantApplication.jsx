@@ -13,14 +13,16 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function TenantApplication() {
+export default function TenantApplication(props) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId, roleName } = useUser();
 
-  const [property, setProperty] = useState(location.state.property);
-  const [status, setStatus] = useState(location.state.status);
-  const [lease, setLease] = useState(location.state.lease);
+  console.log("props in tenantApplication", props)
+
+  const [property, setProperty] = useState(props.property);
+  const [status, setStatus] = useState(props.status);
+  const [lease, setLease] = useState(props.lease);
   console.log("in tenant application status", status);
   // console.log("lease", lease)
   // console.log(property)
@@ -193,7 +195,8 @@ export default function TenantApplication() {
     });
 
     Promise.all([withdrawLeaseResponse]).then((values) => {
-      navigate("/listings"); // send success data back to the propertyInfo page
+      //navigate("/listings"); // send success data back to the propertyInfo page
+      props.setRightPane({ type: "listings" })
     });
   }
 
@@ -246,13 +249,15 @@ export default function TenantApplication() {
       });
 
       Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
-        navigate("/listings"); // send success data back to the propertyInfo page
+       // navigate("/listings"); // send success data back to the propertyInfo page
+        props.setRightPane({ type: "listings" })
       });
     } catch (error) {
       console.log("Error submitting application:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
-      navigate("/listings");
+     // navigate("/listings");
+     props.setRightPane({ type: "listings" })
     }
   }
 
@@ -299,7 +304,7 @@ export default function TenantApplication() {
         <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" sx={{ paddingBottom: "10px" }}>
           <Button
             // onClick={() => navigate("-1")}
-            onClick={() => navigate(-1)}
+            onClick={() => props.setRightPane({ type: "listings" })}
             sx={{
               textTransform: "none",
               padding: "10px 10px 0px 10px",
@@ -905,7 +910,7 @@ export default function TenantApplication() {
                   display: "flex",
                   width: "45%",
                 }}
-                onClick={() => navigate("/tenantProfileEdit")}
+                onClick={() => props.setRightPane({ type: "tenantProfileEdit" }) }
               >
                 <Typography
                   sx={{

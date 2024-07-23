@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PetsOccupant = ({ leasePets, setLeasePets }) => {
+const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, petsRef }) => {
     console.log('Inside Pets occupants', leasePets);
     const [pets, setPets] = useState([]);
     const [open, setOpen] = useState(false);
@@ -81,6 +81,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
     useEffect(() => {
         if (leasePets && leasePets.length > 0) {
             console.log('leasePets', leasePets, typeof (leasePets));
+            //Need Id for datagrid
             const petsWithIds = leasePets.map((pet, index) => ({ ...pet, id: index }));
             setPets(petsWithIds);
         }
@@ -95,12 +96,19 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
 
     const handleSave = () => {
         if (isEditing) {
-            setPets(pets.map(pet => (pet.id === currentRow.id ? currentRow : pet)));
-            setLeasePets(pets.map(pet => (pet.id === currentRow.id ? currentRow : pet)));
+            const updatedRow = pets.map(pet => (pet.id === currentRow.id ? currentRow : pet));
+            setPets(updatedRow);
+            //Save pets back in DB without ID field
+            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+            setLeasePets(rowWithoutId);
+            petsRef.current = rowWithoutId;
         } else {
             setPets([...pets, { ...currentRow, id: pets.length + 1 }]);
-            setLeasePets([...pets, { ...currentRow, id: pets.length + 1 }]);
+            //Save pets back in DB without ID field
+            setLeasePets([...pets, { ...currentRow }]);
+            petsRef.current = [...pets, { ...currentRow }];
         }
+        editOrUpdateLease();
         handleClose();
     };
 
@@ -111,8 +119,12 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
     };
 
     const handleDelete = (id) => {
-        setPets(pets.filter(pet => pet.id !== id));
-        setLeasePets(pets.filter(pet => pet.id !== id));
+        const filtered = pets.filter(pet => pet.id !== currentRow.id);
+        setPets(filtered);
+        const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
+        setLeasePets(rowWithoutId);
+        petsRef.current = rowWithoutId;
+        editOrUpdateLease();
         handleClose();
     };
 
@@ -152,7 +164,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Pets ({pets.length})</Typography>
+                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Pets ({leasePets.length})</Typography>
                 <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
@@ -197,7 +209,7 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
 
                     }}
                 />}
-            <Dialog open={open} onClose={handleClose}  maxWidth="md">
+            <Dialog open={open} onClose={handleClose} maxWidth="md">
                 <DialogTitle
                     sx={{
                         display: 'flex',
@@ -348,62 +360,62 @@ const PetsOccupant = ({ leasePets, setLeasePets }) => {
                         onClick={handleSave} color="primary">
                         Save
                     </Button>
-                    {isEditing && 
-                    <>
-                    <Button
-                        sx={{
-                            background: "#F87C7A",
-                            color: "#160449",
-                            cursor: "pointer",
-                            width: "100px",
-                            height: "31px",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            textTransform: 'none',
-                            '&:hover': {
-                                backgroundColor: '#f76462',
-                            },
-                        }}
-                        onClick={handleDeleteClick} color="secondary">
-                        Delete
-                    </Button>
-                    <Dialog
-                        open={openDeleteConfirmation}
-                        onClose={handleDeleteClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                    >
-                        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText id="alert-dialog-description">
-                                Are you sure you want to delete this Pet Details?
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleDeleteClose} color="primary" sx={{
-                                textTransform: "none", background: "#F87C7A",
-                                color: "#160449",
-                                cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont, '&:hover': {
-                                    backgroundColor: '#f76462',
-                                },
-                            }}>
-                                Cancel
+                    {isEditing &&
+                        <>
+                            <Button
+                                sx={{
+                                    background: "#F87C7A",
+                                    color: "#160449",
+                                    cursor: "pointer",
+                                    width: "100px",
+                                    height: "31px",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                    textTransform: 'none',
+                                    '&:hover': {
+                                        backgroundColor: '#f76462',
+                                    },
+                                }}
+                                onClick={handleDeleteClick} color="secondary">
+                                Delete
                             </Button>
-                            <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
-                                textTransform: "none", background: "#FFC614",
-                                color: "#160449",
-                                cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                '&:hover': {
-                                    backgroundColor: '#fabd00',
-                                },
-                            }}>
-                                Confirm
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                    </>}
+                            <Dialog
+                                open={openDeleteConfirmation}
+                                onClose={handleDeleteClose}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                            >
+                                <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                        Are you sure you want to delete this Pet Details?
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleDeleteClose} color="primary" sx={{
+                                        textTransform: "none", background: "#F87C7A",
+                                        color: "#160449",
+                                        cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont, '&:hover': {
+                                            backgroundColor: '#f76462',
+                                        },
+                                    }}>
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
+                                        textTransform: "none", background: "#FFC614",
+                                        color: "#160449",
+                                        cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        '&:hover': {
+                                            backgroundColor: '#fabd00',
+                                        },
+                                    }}>
+                                        Confirm
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </>}
                 </Box>
                 {/* </DialogActions> */}
             </Dialog>

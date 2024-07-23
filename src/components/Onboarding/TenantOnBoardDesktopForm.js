@@ -23,6 +23,9 @@ import {
     CircularProgress,
     Backdrop,
     Paper,
+    IconButton,
+    MenuItem,
+    Select,
 } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import PayPal from "../../images/PayPal.png";
@@ -31,6 +34,7 @@ import VenmoIcon from "../../images/Venmo.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
+import CloseIcon from '@mui/icons-material/Close';
 import { useCookies } from "react-cookie";
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
+const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const classes = useStyles();
     const [cookies, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookies["default_form_vals"];
@@ -53,7 +57,6 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
     const [showSpinner, setShowSpinner] = useState(false);
     const [addPhotoImg, setAddPhotoImg] = useState();
     const [nextStepDisabled, setNextStepDisabled] = useState(false);
-    // const [isSave, setIsSave] = useState(false);
     const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
     const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getProfileId } = useUser();
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
@@ -67,6 +70,11 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
         credit_card: { value: "", checked: false, uid: "" },
         bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
     });
+
+    const [adults, setAdults] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
+    const [children, setChildren] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
+    const [pets, setPets] = useState([{ id: 1, name: "", breed: "", type: "", weight: "" }]);
+    const [vehicles, setVehicles] = useState([{ id: 1, make: "", model: "", year: "", license: "", state: "" }]);
 
     useEffect(() => {
         console.log("calling useeffect")
@@ -127,7 +135,6 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
         fetchProfileData();
 
     }, []);
-    // getProfileId, setFirstName, setLastName, setEmail, setPhoneNumber, setPhoto, setSsn, setMask, setAddress, setUnit, setCity, setState, setZip]);
 
     const saveProfile = async (form) => {
         const profileApi = "/profile"
@@ -135,7 +142,6 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
         setIsSave(true)
         return data;
     };
-
 
     const handlePhotoChange = (e) => {
         const file = {
@@ -183,7 +189,6 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
     };
 
     const getPayload = () => {
-
         return {
             tenant_user_id: user.user_uid,
             tenant_uid: getProfileId(),
@@ -198,6 +203,10 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
             tenant_state: state,
             tenant_zip: zip,
             tenant_photo_url: photo,
+            tenant_adults: JSON.stringify(adults),
+            tenant_children: JSON.stringify(children),
+            tenant_pets: JSON.stringify(pets),
+            tenant_vehicles: JSON.stringify(vehicles),
         };
     };
 
@@ -233,133 +242,6 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
         reader.readAsDataURL(file.file);
     };
 
-    const handleChangeValue = (e) => {
-        const { name, value } = e.target;
-        if (name === "bank_account_account" || name === "bank_account_routing") {
-            setPaymentMethods((prevState) => ({
-                ...prevState,
-                bank_account: {
-                    ...prevState.bank_account,
-                    [name === "bank_account_account" ? "account_number" : "routing_number"]: value,
-                },
-            }));
-        } else {
-            setPaymentMethods((prevState) => ({
-                ...prevState,
-                [name]: { ...prevState[name], value },
-            }));
-        }
-    };
-
-    const encodeForm = (payload) => {
-        const form = new FormData();
-        for (let key in payload) {
-            if (photoFields.has(key)) {
-                if (payload[key] && payload[key].file instanceof File) {
-                    form.append(key, payload[key].file);
-                }
-            } else {
-                form.append(key, payload[key]);
-            }
-        }
-        return form;
-    };
-
-    const handleNextStep = async () => {
-
-        setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
-        if (firstName === "") {
-            alert("Please enter first name");
-            return;
-        }
-        if (lastName === "") {
-            alert("Please enter last name");
-            return;
-        }
-
-        if (!DataValidator.email_validate(email)) {
-            alert("Please enter a valid email");
-            return false;
-        }
-
-        if (!DataValidator.phone_validate(phoneNumber)) {
-            alert("Please enter a valid phone number");
-            return false;
-        }
-
-        if (!DataValidator.zipCode_validate(zip)) {
-            alert("Please enter a valid zip code");
-            return false;
-        }
-
-        if (!DataValidator.ssn_validate(ssn)) {
-            alert("Please enter a valid SSN");
-            return false;
-        }
-
-        const payload = getPayload();
-        const form = encodeForm(payload);
-        const data = await saveProfile(form);
-        const paymentSetup = await handlePaymentStep();
-        setShowSpinner(false);
-        // if (data.tenant_uid) {
-        //     updateProfileUid({ tenant_uid: data.tenant_uid });
-        //     let role_id = {};
-        //     role_id = { tenant_uid: data.tenant_uid };
-        //     setCookie("user", { ...user, ...role_id });
-           
-        //     console.log(paymentSetup);
-        //     setDashboardButtonEnabled(true)
-        // }
-
-        // setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
-
-        return;
-
-
-    };
-
-    const handleNavigation = (e) => {
-        selectRole('TENANT');
-        setLoggedIn(true);
-        navigate("/tenantDashboard")
-    }
-
-    const handleChangeChecked = (e) => {
-        const { name, checked } = e.target;
-        const map = { ...paymentMethods };
-        map[name].checked = checked;
-        if (name === "bank_account") {
-            if (!checked) {
-                map.bank_account.account_number = "";
-                map.bank_account.routing_number = "";
-            }
-        } else {
-            if (!checked) {
-                map[name].value = "";
-            }
-        }
-        setPaymentMethods(map);
-    };
-
-    useEffect(() => {
-        let disable_state = Object.keys(paymentMethods).some((key) => {
-            if (paymentMethods[key].checked && paymentMethods[key].value === "") {
-                return true;
-            }
-            if (
-                key === "bank_account" &&
-                paymentMethods[key].checked &&
-                (paymentMethods[key].account_number === "" || paymentMethods[key].routing_number === "")
-            ) {
-                return true;
-            }
-            return false;
-        });
-        setNextStepDisabled(disable_state);
-    }, [paymentMethods]);
-
-    
     const handlePaymentStep = async () => {
         setShowSpinner(true);
         const keys = Object.keys(paymentMethods);
@@ -488,17 +370,221 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
         ));
     };
 
+
+    const handleChangeValue = (e) => {
+        const { name, value } = e.target;
+        if (name === "bank_account_account" || name === "bank_account_routing") {
+            setPaymentMethods((prevState) => ({
+                ...prevState,
+                bank_account: {
+                    ...prevState.bank_account,
+                    [name === "bank_account_account" ? "account_number" : "routing_number"]: value,
+                },
+            }));
+        } else {
+            setPaymentMethods((prevState) => ({
+                ...prevState,
+                [name]: { ...prevState[name], value },
+            }));
+        }
+    };
+
+    const encodeForm = (payload) => {
+        const form = new FormData();
+        for (let key in payload) {
+            if (photoFields.has(key)) {
+                if (payload[key] && payload[key].file instanceof File) {
+                    form.append(key, payload[key].file);
+                }
+            } else {
+                form.append(key, payload[key]);
+            }
+        }
+        return form;
+    };
+
+    const handleNextStep = async () => {
+        setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
+        if (firstName === "") {
+            alert("Please enter first name");
+            return;
+        }
+        if (lastName === "") {
+            alert("Please enter last name");
+            return;
+        }
+
+        if (!DataValidator.email_validate(email)) {
+            alert("Please enter a valid email");
+            return false;
+        }
+
+        if (!DataValidator.phone_validate(phoneNumber)) {
+            alert("Please enter a valid phone number");
+            return false;
+        }
+
+        if (!DataValidator.zipCode_validate(zip)) {
+            alert("Please enter a valid zip code");
+            return false;
+        }
+
+        if (!DataValidator.ssn_validate(ssn)) {
+            alert("Please enter a valid SSN");
+            return false;
+        }
+
+        const payload = getPayload();
+        const form = encodeForm(payload);
+        const data = await saveProfile(form);
+        const paymentSetup = await handlePaymentStep();
+        setShowSpinner(false);
+        return;
+    };
+
+    const handleNavigation = (e) => {
+        selectRole('TENANT');
+        setLoggedIn(true);
+        navigate("/tenantDashboard")
+    }
+
+    const handleChangeChecked = (e) => {
+        const { name, checked } = e.target;
+        const map = { ...paymentMethods };
+        map[name].checked = checked;
+        if (name === "bank_account") {
+            if (!checked) {
+                map.bank_account.account_number = "";
+                map.bank_account.routing_number = "";
+            }
+        } else {
+            if (!checked) {
+                map[name].value = "";
+            }
+        }
+        setPaymentMethods(map);
+    };
+
+    useEffect(() => {
+        let disable_state = Object.keys(paymentMethods).some((key) => {
+            if (paymentMethods[key].checked && paymentMethods[key].value === "") {
+                return true;
+            }
+            if (
+                key === "bank_account" &&
+                paymentMethods[key].checked &&
+                (paymentMethods[key].account_number === "" || paymentMethods[key].routing_number === "")
+            ) {
+                return true;
+            }
+            return false;
+        });
+        setNextStepDisabled(disable_state);
+    }, [paymentMethods]);
+
+    const handleAddRow = (setRows) => {
+        setRows((prevRows) => [...prevRows, { id: prevRows.length + 1, name: "", lastName: "", relation: "", dob: "" }]);
+    };
+
+    const handleRemoveRow = (id, setRows) => {
+        setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+    };
+
+    const handleRowChange = (id, name, value, setRows) => {
+        setRows((prevRows) => prevRows.map((row) => (row.id === id ? { ...row, [name]: value } : row)));
+    };
+
+    const renderRows = (rows, setRows, fields) => {
+        return rows.map((row, index) => (
+            <div key={row.id} style={{ position: 'relative' }}>
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    {fields.map((field) => (
+                        <Grid item xs={field.width} key={field.name}>
+                            <Stack spacing={-2} m={2}>
+                                <Typography
+                                    sx={{
+                                        color: theme.typography.common.blue,
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                    }}
+                                >
+                                    {field.label}
+                                </Typography>
+                                <TextField
+                                    name={field.name}
+                                    value={row[field.name]}
+                                    variant="filled"
+                                    fullWidth
+                                    placeholder={field.placeholder}
+                                    className={classes.root}
+                                    onChange={(e) => handleRowChange(row.id, e.target.name, e.target.value, setRows)}
+                                />
+                            </Stack>
+                        </Grid>
+                    ))}
+                </Grid>
+                {index !== 0 && (
+                    <IconButton
+                        aria-label="delete"
+                        sx={{ position: 'absolute', top: 0, right: 0 }}
+                        onClick={() => handleRemoveRow(row.id, setRows)}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                )}
+                {row.id === rows.length && (
+                    <Stack direction="row" sx={{ display: "flex", justifyContent: "right" }}>
+                        <div onClick={() => handleAddRow(setRows)} style={{ cursor: "pointer" }}>
+                            <Typography
+                                sx={{
+                                    color: theme.typography.common.blue,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                }}
+                            >
+                                Add another row
+                            </Typography>
+                        </div>
+                    </Stack>
+                )}
+            </div>
+        ));
+    };
+
+    const adultFields = [
+        { name: "name", label: "Name", width: 2, placeholder: "Name" },
+        { name: "lastName", label: "Last Name", width: 2, placeholder: "Last Name" },
+        { name: "relation", label: "Relation", width: 2, placeholder: "Relation" },
+        { name: "dob", label: "DOB (MM-DD-YYYY)", width: 3, placeholder: "MM-DD-YYYY" },
+    ];
+
+    const childrenFields = [
+        { name: "name", label: "Name", width: 2, placeholder: "Name" },
+        { name: "lastName", label: "Last Name", width: 2, placeholder: "Last Name" },
+        { name: "relation", label: "Relation", width: 2, placeholder: "Relation" },
+        { name: "dob", label: "DOB (MM-DD-YYYY)", width: 3, placeholder: "MM-DD-YYYY" },
+    ];
+
+    const petFields = [
+        { name: "name", label: "Name", width: 2, placeholder: "Name" },
+        { name: "breed", label: "Breed", width: 2, placeholder: "Breed" },
+        { name: "type", label: "Type", width: 2, placeholder: "Type" },
+        { name: "weight", label: "Weight", width: 3, placeholder: "Weight" },
+    ];
+
+    const vehicleFields = [
+        { name: "make", label: "Make", width: 2, placeholder: "Make" },
+        { name: "model", label: "Model", width: 2, placeholder: "Model" },
+        { name: "year", label: "Year", width: 2, placeholder: "Year" },
+        { name: "license", label: "License", width: 3, placeholder: "License" },
+        { name: "state", label: "State", width: 3, placeholder: "State" },
+    ];
+
     return (
         <div>
             <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
                 Tenant Profile Info
             </Typography>
             <Box display="flex">
-                <Box
-                    width="20%"
-                    p={2}
-                >
-
+                <Box width="20%" p={2}>
                     <Stack direction="row" justifyContent="center">
                         {photo && photo.image ? (
                             <img
@@ -528,7 +614,7 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                             component="label"
                             variant="contained"
                             sx={{
-                                backgroundColor:  "#3D5CAC",
+                                backgroundColor: "#3D5CAC",
                                 width: "193px",
                                 height: "35px",
                                 
@@ -613,13 +699,10 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                         </Typography>
                     </Stack>
                     <Stack spacing={2} direction="row">
-                        {/* <TextField name="PersonalAddress" value={"Personal Address"} variant="filled" sx={{ width: '50%' }} placeholder="Personal Address" className={classes.root} /> */}
                         <Box sx={{ width: '50%' }}>
                             <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address} />
                         </Box>
                         <TextField value={unit} onChange={handleUnitChange} variant="filled" sx={{ width: '10%' }} placeholder="3" className={classes.root}></TextField>
-
-                        {/* <TextField name="Unit" value={"Unit"} variant="filled" sx={{ width: '10%' }} placeholder="Unit" className={classes.root} /> */}
                         <TextField name="City" value={city} onChange={handleCityChange} variant="filled" sx={{ width: '20%' }} placeholder="City" className={classes.root} />
                         <TextField name="State" value={state} onChange={handleStateChange} variant="filled" sx={{ width: '10%' }} placeholder="State" className={classes.root} />
                         <TextField name="Zip" value={zip} variant="filled" sx={{ width: '10%' }} placeholder="Zip" className={classes.root} />
@@ -674,7 +757,38 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                     </Stack>
                 </Box>
             </Box>
+
             <hr />
+
+            <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
+                Who plans to live in the house
+            </Typography>
+            <Box p={3}>
+                <Paper elevation={3} sx={{ padding: 3, mb: 3 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
+                        Adults
+                    </Typography>
+                    {renderRows(adults, setAdults, adultFields)}
+
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1f1f1f', mt: 3 }}>
+                        Children
+                    </Typography>
+                    {renderRows(children, setChildren, childrenFields)}
+
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1f1f1f', mt: 3 }}>
+                        Pets
+                    </Typography>
+                    {renderRows(pets, setPets, petFields)}
+
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1f1f1f', mt: 3 }}>
+                        Vehicles
+                    </Typography>
+                    {renderRows(vehicles, setVehicles, vehicleFields)}
+                </Paper>
+            </Box>
+
+            <hr />
+
             <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
                 Payment Methods
             </Typography>
@@ -685,14 +799,9 @@ const TenantOnBoardDesktopForm = ({profileData, setIsSave}) => {
                 >
                     <CircularProgress color="inherit" />
                 </Backdrop>
-
-                {/* <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
-Payment Methods
-</Typography> */}
                 <Paper elevation={3} sx={{ padding: 3, mb: 3 }}>
                     {renderPaymentMethods()}
                 </Paper>
-
             </Box>
             <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" p={5}>
                 <Button
@@ -700,7 +809,7 @@ Payment Methods
                     color="primary"
                     onClick={handleNextStep}
                     disabled={nextStepDisabled}
-                    sx={{ mb: 2 , backgroundColor:  "#3D5CAC",}}
+                    sx={{ mb: 2, backgroundColor: "#3D5CAC" }}
                 >
                     Save
                 </Button>
@@ -708,7 +817,6 @@ Payment Methods
                     variant="contained"
                     color="secondary"
                     onClick={handleNavigation}
-
                     disabled={!dashboardButtonEnabled}
                 >
                     Go to Dashboard

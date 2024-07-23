@@ -125,18 +125,30 @@ console.log("props in info",props)
 
   function navigateToCorrectPage() {
     if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
-      navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
+      //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
+      props.setRightPane({
+        type: "tenantApplication",
+        state:{ property: property, status: status, lease: lease }
+      });
     } else if(status === "REJECTED"){
       setshowRejectApplicationDialog(true);
     }else if (status === "TENANT APPROVED" || status === "PROCESSING") {
-      navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
+      //navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
+      props.setRightPane({
+        type: "tenantApplication",
+        state:{ property: property, status: status, lease: lease }
+      });
     } else {
       return null;
     }
   }
 
   function navigateToRejectPage() {
-      navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
+      //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
+     props.setRightPane({
+        type: "tenantApplication",
+        state:{ property: property, status: status, lease: lease }
+      });
   }
 
   function formatAddress() {
@@ -226,6 +238,14 @@ console.log("props in info",props)
               }}
             >
               {property.property_city + ", " + property.property_state + " " + property.property_zip}
+            </Typography>
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontSize: "18px",
+              }}
+            >
+              {property.property_uid}
             </Typography>
           </Stack>
           <Stack alignItems="center" justifyContent="center" spacing={5} sx={{ padding: "20px" }}>

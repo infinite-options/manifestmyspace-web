@@ -37,6 +37,8 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
     const handleAddButton = () => {
         setNewStartDate(startDate);
         setNewEndDate(endDate);
+        setEndDate(null);
+        setStartDate(null);
         handleCloseDialog();
     }
 
