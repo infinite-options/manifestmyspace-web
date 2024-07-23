@@ -661,7 +661,7 @@ export default function PropertyList({ }) {
                         right={0}
                         sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }}
                         onClick={() =>
-                          navigate("/addProperty", {
+                          navigate("/newPropertyForm", {
                             state: {
                               property_endpoint_resp: rawPropertyData,
                             },
