@@ -25,32 +25,6 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 4, 3),
     },
-    // textField: {
-    //     '& .MuiInputBase-root': {
-    //         backgroundColor: '#D6D5DA',
-    //     },
-    //     '& .MuiInputLabel-root': {
-    //         textAlign: 'center',
-    //         top: '50%',
-    //         left: '50%',
-    //         transform: 'translate(-50%, -50%)',
-    //         width: '100%',
-    //         pointerEvents: 'none',
-    //     },
-    //     '& .MuiInputLabel-shrink': {
-    //         top: 0,
-    //         left: 50,
-    //         transformOrigin: 'top center',
-    //         textAlign: 'left',
-    //         color: '#9F9F9F',
-    //     },
-    //     '& .MuiInputLabel-shrink.Mui-focused': {
-    //         color: '#9F9F9F',
-    //     },
-    //     '& .MuiInput-underline:before': {
-    //         borderBottom: 'none',
-    //     },
-    // },
     alert: {
         marginTop: theme.spacing(2),
     },
@@ -75,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
+const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdateLease, adultsRef }) => {
     console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
@@ -88,6 +62,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
     useEffect(() => {
         if (leaseAdults && leaseAdults.length > 0) {
             console.log('leaseAdults', leaseAdults, typeof (leaseAdults));
+            //Need Id for datagrid
             const adultsWithIds = leaseAdults.map((adult, index) => ({ ...adult, id: index }));
             setAdults(adultsWithIds);
         }
@@ -102,18 +77,21 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
 
     const handleSave = () => {
         if (isEditing) {
-            setAdults(adults.map(adult => (adult.id === currentRow.id ? currentRow : adult)));
-            setLeaseAdults(adults.map(adult => (adult.id === currentRow.id ? currentRow : adult)));
+            const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
+            setAdults(updatedRow);
+            //Save adults back in DB without ID field
+            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+            setLeaseAdults(rowWithoutId);
+            adultsRef.current = rowWithoutId;
         } else {
             setAdults([...adults, { ...currentRow, id: adults.length + 1 }]);
-            setLeaseAdults([...adults, { ...currentRow, id: adults.length + 1 }]);
+              //Save adults back in DB without ID field
+            setLeaseAdults([...leaseAdults, { ...currentRow}]);
+            adultsRef.current = [...leaseAdults, { ...currentRow}];
         }
+        editOrUpdateLease();
         handleClose();
     };
-
-    const validateData = () => {
-
-    }
 
     const handleEditClick = (row) => {
         setCurrentRow(row);
@@ -122,8 +100,12 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
     };
 
     const handleDelete = () => {
-        setAdults(adults.filter(adult => adult.id !== currentRow.id));
-        setLeaseAdults(adults.filter(adult => adult.id !== currentRow.id));
+        const filtered = adults.filter(adult => adult.id !== currentRow.id);
+        setAdults(filtered);
+        const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
+        setLeaseAdults(rowWithoutId);
+        adultsRef.current = rowWithoutId;
+        editOrUpdateLease();
         handleClose();
     };
 
@@ -177,7 +159,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships }) => {
                     }}
                     onClick={() => {
                         setCurrentRow({
-                            id: null, name: '', last_name: '', dob: '', email: '', phone_number: '',
+                            name: '', last_name: '', dob: '', email: '', phone_number: '',
                             relationship: '', tenant_drivers_license_number: "", tenant_ssn: ""
                         }); handleOpen();
                     }}>

@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) => {
+const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, editOrUpdateLease, childrenRef }) => {
     console.log('Inside Children occupants', leaseChildren);
     const [children, setChildren] = useState([]);
     const [open, setOpen] = useState(false);
@@ -87,6 +87,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
     useEffect(() => {
         if (leaseChildren && leaseChildren.length > 0) {
             console.log('leaseChildren', leaseChildren, typeof (leaseChildren));
+            //Need Id for datagrid
             const childrenWithIds = leaseChildren.map((child, index) => ({ ...child, id: index }));
             setChildren(childrenWithIds);
         }
@@ -101,12 +102,19 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
 
     const handleSave = () => {
         if (isEditing) {
-            setChildren(children.map(child => (child.id === currentRow.id ? currentRow : child)));
-            setLeaseChildren(children.map(child => (child.id === currentRow.id ? currentRow : child)));
+            const updatedRow = children.map(child => (child.id === currentRow.id ? currentRow : child));
+            setChildren(updatedRow);
+            //Save children back in DB without ID field
+            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+            setLeaseChildren(rowWithoutId);
+            childrenRef.current = rowWithoutId;
         } else {
             setChildren([...children, { ...currentRow, id: children.length + 1 }]);
-            setLeaseChildren([...children, { ...currentRow, id: children.length + 1 }]);
+            //Save children back in DB without ID field
+            setLeaseChildren([...children, { ...currentRow}]);
+            childrenRef.current = [...children, { ...currentRow}];
         }
+        editOrUpdateLease();
         handleClose();
     };
 
@@ -117,8 +125,12 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships }) =>
     };
 
     const handleDelete = (id) => {
-        setChildren(children.filter(child => child.id !== currentRow.id));
-        setLeaseChildren(children.filter(child => child.id !== currentRow.id));
+        const filtered = children.filter(child => child.id !== currentRow.id);
+        setChildren(filtered);
+        const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
+        setLeaseChildren(rowWithoutId);
+        childrenRef.current = rowWithoutId;
+        editOrUpdateLease();
         handleClose();
     };
 
