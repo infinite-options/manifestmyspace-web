@@ -53,7 +53,7 @@ export default function LeasesDashboard() {
                     </Grid>
                     {selectedLeaseId != null && isEndClicked === false && (
                         <Grid item xs={12} md={8}>
-                            <RenewLease leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} />
+                            <RenewLease leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} handleUpdate={handleUpdate}/>
                         </Grid>)}
                     {selectedLeaseId != null && isEndClicked === true && (<Grid item xs={12} md={8}>
                         <EndLeaseButton theme={theme} leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} handleUpdate={handleUpdate}/>
