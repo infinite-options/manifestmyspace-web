@@ -253,7 +253,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                             // file: file,
                             fileIndex: i,
                             fileName: file.name,
-                            fileType: fileType, //lease or other type
+                            fileType: file.type, //lease or other type
                             type: file.type,
                         };
                         documentsDetails.push(documentObject);
@@ -315,7 +315,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                         // file: file,
                         fileIndex: i,
                         fileName: file.name,
-                        fileType: fileType,
+                        fileType: file.type,
                         type: file.type,
                     };
                     documentsDetails.push(documentObject);
