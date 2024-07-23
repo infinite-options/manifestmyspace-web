@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import {
-    Typography, Box, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button
+    Typography, Box, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button, Snackbar, Alert, AlertTitle
 } from "@mui/material";
 import dayjs from "dayjs";
 import { makeStyles } from "@material-ui/core/styles";
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked }) {
+export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate }) {
     const classes = useStyles();
     const [currentLease, setCurrentLease] = useState("");
     const [tenantWithId, setTenantWithId] = useState([]);
@@ -52,7 +52,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const [newFreq, setNewFreq] = useState(null);
     const [newStartDate, setNewStartDate] = useState(null);
     const [newEndDate, setNewEndDate] = useState(null);
-    const [moveoutDate, setMoveoutDate] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
@@ -63,11 +62,14 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const color = theme.palette.form.main;
     const [relationships, setRelationships] = useState([]);
     const [states, setStates] = useState([]);
-    const [endLeaseStatus, setEndLeaseStatus] = useState("");
-    const [isRenewNeeded, setIsRenewNeeded] = useState(false);
-    const alertRef = useRef(null);
     const [uploadedFiles, setuploadedFiles] = useState([]);
+    const [deletedFiles, setDeletedFiles] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+    const documentsRef = useRef([]);
+    const adultsRef = useRef(leaseAdults);
+    const childrenRef = useRef(leaseChildren);
+    const petsRef = useRef(leasePets);
+    const vehiclesRef = useRef(leaseVehicles);
 
 
     useEffect(() => {
@@ -117,19 +119,23 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
         setRemainingUtils(missingUtilitiesMap);
         console.log('missing', typeof (missingUtilitiesMap), missingUtilitiesMap);
-        const docs = JSON.parse(filtered.lease_documents).map((doc, index) => ({
+
+        const parsedDocs = JSON.parse(filtered.lease_documents);
+        const docs = parsedDocs.map((doc, index) => ({
             ...doc,
             id: index
         }));
-
         console.log('initial docs', docs);
         setDocuments(docs);
-        const leaseDoc = docs.find(doc => doc.type && doc.type === "Lease Contract");
+        documentsRef.current = parsedDocs;
+
+        //lease link
+        const leaseDoc = docs.find(doc => doc.type && doc.type === "Lease Agreement");
         console.log('leaselink', leaseDoc);
         setSignedLease(leaseDoc);
 
         // Set all new contract values
-        setMoveoutDate(dayjs(filtered.lease_end));
+        // setMoveoutDate(dayjs(filtered.lease_end));
         setNewStartDate(dayjs(filtered.lease_end).add(1, 'day'));
         setNewEndDate(dayjs(filtered.lease_end).add(1, 'year'));
         setNewRent(rentFee.charge);
@@ -142,16 +148,14 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         setLeaseChildren(children);
         setLeasePets(pets);
         setLeaseVehicles(vehicles);
+        adultsRef.current = adults;
+        childrenRef.current = children;
+        petsRef.current = pets;
+        vehiclesRef.current = vehicles;
         getListDetails();
 
         setShowSpinner(false);
     }, [leaseDetails, selectedLeaseId])
-
-    useEffect(() => {
-        if (snackbarOpen && alertRef.current) {
-            alertRef.current.focus();
-        }
-    }, [snackbarOpen]);
 
     const utilitiesMap = new Map([
         ["050-000001", "electricity"],
@@ -173,10 +177,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
     };
 
-    const handleDeleteFeeClick = (id) => {
-        setLeaseFees(leaseFees.filter(fee => fee.leaseFees_uid !== id));
-    };
-
     const handleNewUtilityChange = (e, newUtility, utilityIndex) => {
         console.log('change', utilityIndex, newUtility);
         const { value } = e.target;
@@ -187,8 +187,12 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
             console.log('updated util', updatedUtilities);
             return updatedUtilities;
         });
-        setIsRenewNeeded(true);
     };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
 
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -199,46 +203,11 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         return `${month}-${day}-${year}`;
     }
 
-    const handleEndLease = () => {
-        const headers = {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Credentials": "*",
-        };
-
-        const leaseApplicationFormData = new FormData();
-        const formattedMoveOutDate = formatDate(moveoutDate);;
-        leaseApplicationFormData.append("lease_uid", currentLease.lease_uid);
-        leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);
-        leaseApplicationFormData.append("lease_status", endLeaseStatus);
-        if (endLeaseStatus === "EARLY TERMINATION") {
-            const currentDate = new Date();
-            const currentDateFormatted = dayjs(currentDate).format("MM-DD-YYYY");
-            leaseApplicationFormData.append("lease_early_end_date", currentDateFormatted);
-        }
-
-        console.log('formattedMoveOutDate', formattedMoveOutDate, typeof (formattedMoveOutDate))
-        console.log('end form', leaseApplicationFormData);
-        axios
-            .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
-            .then((response) => {
-                console.log("Data updated successfully", response);
-                showSnackbar(`Your lease has been moved to ${endLeaseStatus} status.`, "success");
-            })
-            .catch((error) => {
-                if (error.response) {
-                    showSnackbar("Cannot End the lease. Please Try Again", "error");
-                    console.log(error.response.data);
-                }
-            });
-    }
-
-    const handleRenewLease = async () => {
+    const handleRenewLease = () => {
         try {
+            setShowSpinner(true);
             //Renew the lease by creating a new lease row in DB with lease status - "PROCESSING" if requested by Manager 
             //or "NEW" if requested by tenant
-            console.log(uploadedFiles);
             const headers = {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "*",
@@ -246,17 +215,14 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                 "Access-Control-Allow-Credentials": "*",
             };
             console.log('tenantWithId', tenantWithId, typeof (tenantWithId));
-            // Renew for all tenants in tenants list
+            const leaseApplicationFormData = new FormData();
+            let date = new Date()
             for (let i = 0; i < tenantWithId.length; i++) {
-                const leaseApplicationFormData = new FormData();
-                let date = new Date()
-
                 leaseApplicationFormData.append('lease_property_id', currentLease.property_uid);
                 leaseApplicationFormData.append("lease_start", formatDate(newStartDate));
                 leaseApplicationFormData.append("lease_end", formatDate(newEndDate));
                 leaseApplicationFormData.append("lease_end_notice_period", currentLease.lease_end_notice_period);
                 leaseApplicationFormData.append('lease_assigned_contacts', currentLease.lease_assigned_contacts);
-                //leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
                 leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
                 leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
                 leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
@@ -277,31 +243,36 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                 }
 
                 if (uploadedFiles.length) {
+                    console.log('count', uploadedFiles.length);
                     const documentsDetails = [];
                     [...uploadedFiles].forEach((file, i) => {
-                        leaseApplicationFormData.append(`file-${i}`, file, file.name);
-                        // const fileType = contractFileTypes[i] || '';
-                        const fileType = 'pdf';
+                        console.log('file', file, typeof (file));
+                        leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
+                        const fileType = file.name.split('.').pop();
                         const documentObject = {
                             // file: file,
                             fileIndex: i,
                             fileName: file.name,
-                            fileType: fileType,
+                            fileType: file.type, //lease or other type
                             type: file.type,
                         };
                         documentsDetails.push(documentObject);
                     });
                     leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
+                    console.log("docs", documentsDetails);
                 }
 
                 console.log("leaseApplicationFormData", leaseApplicationFormData);
 
                 axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
+                        setuploadedFiles([]);
+                        setShowSpinner(false);
                         console.log('Data updated successfully');
-                        showSnackbar("Successfully Renewed the lease.", "success");
+                        showSnackbar("Your lease has been renewed successfully.", "success");
                     })
                     .catch((error) => {
+                        setShowSpinner(false);
                         if (error.response) {
                             console.log(error.response.data);
                             showSnackbar("Cannot Renew the lease. Please Try Again", "error");
@@ -309,12 +280,14 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     });
             }
         } catch (error) {
-            console.log("Cannot Renew the lease");
+            console.log("Cannot Renew the lease", error);
         }
     }
 
-    const updateLease = async () => {
+    const editOrUpdateLease = async () => {
+        console.log('inside edit')
         try {
+            setShowSpinner(true);
             const headers = {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "*",
@@ -322,49 +295,68 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                 "Access-Control-Allow-Credentials": "*",
             };
 
-            for (let i = 0; i < tenantWithId.length; i++) {
-                const leaseApplicationFormData = new FormData();
+            const leaseApplicationFormData = new FormData();
 
-                // leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
-                const feesJSON = JSON.stringify(leaseFees)
-                leaseApplicationFormData.append("lease_fees", feesJSON);
-                leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(leaseAdults) : null);
-                leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(leaseChildren) : null);
-                leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(leasePets) : null);
-                leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(leaseVehicles) : null);
-                if (uploadedFiles.length) {
-                    const documentsDetails = [];
-                    [...uploadedFiles].forEach((file, i) => {
-                        leaseApplicationFormData.append(`file-${i}`, file, file.name);
-                        // const fileType = contractFileTypes[i] || '';
-                        const fileType = 'pdf';
-                        const documentObject = {
-                            // file: file,
-                            fileIndex: i,
-                            fileName: file.name,
-                            fileType: fileType,
-                            type: file.type,
-                        };
-                        documentsDetails.push(documentObject);
-                    });
-                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
-                }
-
-                axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                    .then((response) => {
-                        console.log('Data updated successfully', response);
-                        showSnackbar("Successfully Updated the lease.", "success");
-                    })
-                    .catch((error) => {
-                        if (error.response) {
-                            console.log(error.response.data);
-                            showSnackbar("Cannot Update the lease. Please Try Again", "error");
-                        }
-                    });
-
+            // leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
+            // const feesJSON = JSON.stringify(leaseFees)
+            // leaseApplicationFormData.append("lease_fees", feesJSON);
+            leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+            leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(childrenRef.current) : null);
+            leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(petsRef.current) : null);
+            leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(vehiclesRef.current) : null);
+            leaseApplicationFormData.append('lease_uid', currentLease.lease_uid);
+            console.log('uploadedFiles', uploadedFiles);
+            if (uploadedFiles.length) {
+                const documentsDetails = [];
+                [...uploadedFiles].forEach((file, i) => {
+                    leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
+                    const fileType = 'pdf';
+                    const documentObject = {
+                        // file: file,
+                        fileIndex: i,
+                        fileName: file.name,
+                        fileType: file.type,
+                        type: file.type,
+                    };
+                    documentsDetails.push(documentObject);
+                });
+                leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
+                console.log('lease_documents', documentsRef.current)
+                setuploadedFiles([]);
+            } else {
+                console.log('latest docs', documentsRef.current);
+                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
             }
+
+            if (deletedFiles.length > 0){
+                console.log('lease_documents', documentsRef.current)
+                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
+                leaseApplicationFormData.append("deleted_documents", JSON.stringify(deletedFiles));
+                console.log("deleted_documents", deletedFiles);
+                setDeletedFiles([]);
+            }
+
+            console.log('latestadult', adultsRef.current);
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                .then((response) => {
+                    setShowSpinner(false);
+                    console.log('Data updated successfully', response);
+                    showSnackbar("Your lease has been successfully updated.", "success");
+                    handleUpdate();
+                })
+                .catch((error) => {
+                    setShowSpinner(false);
+                    showSnackbar("Cannot update the lease. Please try again", "error");
+                    if (error.response) {
+                        console.log(error.response.data);
+                    }
+                });
+            setShowSpinner(false);
+
         } catch (error) {
-            console.log("Cannot Update the lease");
+            showSnackbar("Cannot update the lease. Please try again", "error");
+            console.log("Cannot Update the lease", error);
         }
     }
 
@@ -457,6 +449,30 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                 <img src={LeaseIcon} />
                             </Button>}
                         </Box>
+                        <Box sx={{ display: "block" }}>
+                            <Typography
+                                sx={{
+                                    color: "#160449",
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.largeFont,
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {currentLease.lease_property_id}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ display: "block" }}>
+                            <Typography
+                                sx={{
+                                    color: "#160449",
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.largeFont,
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {currentLease.lease_uid}
+                            </Typography>
+                        </Box>
                     </Grid>
                     {/* Start */}
                     <Grid item xs={12} md={12}>
@@ -512,16 +528,16 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     {leaseAdults &&
-                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} relationships={relationships} />
+                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} adultsRef={adultsRef}/>
                                     }
                                     {leaseChildren &&
-                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} relationships={relationships} />
+                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} childrenRef={childrenRef}/>
                                     }
                                     {leasePets &&
-                                        <PetsOccupant leasePets={leasePets} setLeasePets={setLeasePets} />
+                                        <PetsOccupant leasePets={leasePets} setLeasePets={setLeasePets} editOrUpdateLease={editOrUpdateLease} petsRef={petsRef}/>
                                     }
                                     {leaseVehicles &&
-                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} states={states} />
+                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} vehiclesRef={vehiclesRef}/>
                                     }
                                 </AccordionDetails>
                             </Accordion>
@@ -530,7 +546,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Documents documents={documents} setDocuments={setDocuments}
-                                uploadedFiles={uploadedFiles} setuploadedFiles={setuploadedFiles} />
+                                setuploadedFiles={setuploadedFiles} editOrUpdateLease={editOrUpdateLease} documentsRef={documentsRef} setDeletedFiles={setDeletedFiles}/>
                         </Paper>
                     </Grid>
 
@@ -542,6 +558,13 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                 setNewUtilities={setNewUtilities} />
                         </Paper>
                     </Grid>
+
+                    <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+                            {snackbarMessage}
+                        </Alert>
+                    </Snackbar>
 
                     <Grid item xs={12} md={12}>
                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
@@ -563,7 +586,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                         },
                                     }}
                                     size="small"
-                                // onClick={handlePageToggle}
+                                    onClick={editOrUpdateLease}
                                 >
                                     <Typography sx={{
                                         textTransform: "none",
@@ -595,8 +618,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                             background: '#ffc04d',
                                         },
                                     }}
+                                    onClick={handleRenewLease}
                                     size="small"
-                                // onClick={handlePageToggle}
                                 >
                                     <Typography sx={{
                                         textTransform: "none",
@@ -612,8 +635,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                             </Grid>
 
                             <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                {/* <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
-                                        moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} /> */}
                                 <Button
                                     variant="outlined"
                                     sx={{
@@ -645,57 +666,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                     </Typography>
                                 </Button>
                             </Grid>
-
-                            {/* <Grid item md={3} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                <EndLeaseButton theme={theme} handleEndLease={handleEndLease}
-                                    moveoutDate={moveoutDate} leaseData={currentLease} setEndLeaseStatus={setEndLeaseStatus} isTerminate={true} />
-                            </Grid> */}
                         </Grid>
                     </Grid>
-
-                    {/* {isPageUpdateOrRenew === true &&
-                        <Grid item xs={12} md={12}>
-                            <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                                <Grid item xs={6} md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                    <Button
-                                        variant="outlined"
-                                        sx={{
-                                            background: "#D4736D",
-                                            color: theme.palette.background.default,
-                                            cursor: "pointer",
-                                            textTransform: "none",
-                                            minWidth: "150px",
-                                            minHeight: "35px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            '&:hover': {
-                                                background: '#DEA19C',
-                                            },
-                                        }}
-                                        size="small"
-                                    // onClick={handleUpdateLease}
-                                    >
-                                        <Typography sx={{
-                                            textTransform: "none",
-                                            color: theme.typography.primary.black,
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.smallFont,
-                                            whiteSpace: "nowrap",
-                                            marginLeft: "1%",
-                                        }}>
-                                            {"Update Lease (No Signature Required)"}
-                                        </Typography>
-                                    </Button>
-                                </Grid>
-
-                                <Grid item xs={6} md={6} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                    <RenewLeaseButton theme={theme} handleRenewLease={handleRenewLease}
-                                        leaseData={currentLease} setIsPageUpdateOrRenew={setIsPageUpdateOrRenew} />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    } */}
                 </Grid>
             </Paper>
         </Box >

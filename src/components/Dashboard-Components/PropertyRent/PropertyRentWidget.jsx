@@ -42,17 +42,16 @@ export default function PropertyRentWidget(props) {
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [allRentStatus, setAllRentStatus] = useState([]);
 
-
-  const propertyRentDetails = async () => {
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
-      const rentResponse = await response.json();
-      return rentResponse.RentStatus.result;
-    } catch (error) {
-      console.error("Failed to fetch rent details:", error);
-    }
-  };
+  // const propertyRentDetails = async () => {
+  //   try {
+  //     const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
+  //     //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+  //     const rentResponse = await response.json();
+  //     return rentResponse.RentStatus.result;
+  //   } catch (error) {
+  //     console.error("Failed to fetch rent details:", error);
+  //   }
+  // };
 
   useEffect(() => {
     const propertyRentDetails = async () => {
@@ -132,8 +131,6 @@ export default function PropertyRentWidget(props) {
       </span>
     );
   };
-
-  
 
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
@@ -296,8 +293,8 @@ export default function PropertyRentWidget(props) {
                 <MenuItem
                   key={property.property_uid}
                   onClick={() => {
-                    console.log("navigating to propertyDetail - i, propertiesList - ",index, propertyList)
-                    navigate(`/propertyDetail`, { state: { index, propertyList, allRentStatus, rawPropertyData} });
+                    console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
+                    navigate(`/propertyDetail`, { state: { index, propertyList, allRentStatus, rawPropertyData } });
                   }}
                 >
                   {property.property_address}
@@ -469,14 +466,13 @@ const CustomLegend = ({ data, navigate }) => {
         paddingBottom: "10px",
       }}
       onClick={() => {
-        if (isMobile){
-        navigate("/pmRent");
-      }else{
-        sessionStorage.setItem('isrent', 'true');
-        navigate("/properties")
-      }
-      }
-      }
+        if (isMobile) {
+          navigate("/pmRent");
+        } else {
+          sessionStorage.setItem("isrent", "true");
+          navigate("/properties");
+        }
+      }}
     >
       {/* <h2 className="mt-widget-title">Maintenance</h2> */}
       <Box
