@@ -425,10 +425,11 @@ export default function SelectPayment(props) {
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={6} alignItems="center">
+                    <Grid container item xs={6} justifyContent="flex-end">
                       <Typography
                         sx={{
-                          justifySelf: "center",
+                          justifySelf: "flex-end",
+                          // width: '100px',
                           color: "#160449",
                           fontWeight: theme.typography.light.fontWeight,
                           fontSize: theme.typography.smallFont,
@@ -451,7 +452,7 @@ export default function SelectPayment(props) {
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={6} alignItems="center">
+                    <Grid container item xs={6} justifyContent="flex-end">
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -476,7 +477,7 @@ export default function SelectPayment(props) {
                         Total
                       </Typography>
                     </Grid>
-                    <Grid item xs={6} alignItems="center">
+                    <Grid container item xs={6} justifyContent="flex-end">
                       <Typography
                         sx={{
                           justifySelf: "center",
