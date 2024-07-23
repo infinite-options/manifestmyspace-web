@@ -343,6 +343,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     setShowSpinner(false);
                     console.log('Data updated successfully', response);
                     showSnackbar("Your lease has been successfully updated.", "success");
+                    handleUpdate();
                 })
                 .catch((error) => {
                     setShowSpinner(false);

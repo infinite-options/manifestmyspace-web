@@ -36,6 +36,20 @@ export default function LeasesDashboard() {
         })
     }, [isUpdate])
 
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+          // Clear session storage when leaving the page
+          sessionStorage.clear();
+        };
+    
+        window.addEventListener('beforeunload', handleBeforeUnload);
+    
+        return () => {
+            sessionStorage.clear();
+          window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+      }, []);
+
     const handleUpdate = () => {
         setIsUpdate(!isUpdate);
     }

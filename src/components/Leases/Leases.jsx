@@ -215,7 +215,14 @@ export default function Leases(props) {
     setLeaseDate(leases);
     const firstEntry = [...leases.entries()][0];
     const firstLeaseUid = firstEntry ? firstEntry[1][0].lease_uid : null;
-    props.setSelectedLeaseId(firstLeaseUid);
+    const prevSelectedLeaseId = sessionStorage.getItem('selectedLeaseId');
+    console.log('prevSelectedLeaseId', prevSelectedLeaseId);
+    if(prevSelectedLeaseId){
+      props.setSelectedLeaseId(prevSelectedLeaseId);
+    } else {
+      props.setSelectedLeaseId(firstLeaseUid);
+      sessionStorage.setItem("selectedLeaseId", firstLeaseUid);
+    }
     // console.log('after sort', firstLeaseUid); 
     setMoveoutCount(moveoutNum);
     setOriginalLeaseDate(leases); // Save original lease dates
@@ -627,6 +634,7 @@ function LeaseComponent(props) {
           console.log('click event', props.setSelectedLeaseId);
 
           props.setSelectedLeaseId(leaseData.lease_uid);
+          sessionStorage.setItem("selectedLeaseId", leaseData.lease_uid);
         }}
       >
         <Box
