@@ -45,6 +45,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
+import ManagerProfitability from "./ManagerProfitability";
+import ManagerTransactions from "./ManagerTransactions";
+import PaymentsManager from "../Payments/PaymentsManager";
 
 import axios from "axios";
 
@@ -97,10 +100,9 @@ export default function ManagerCashflow() {
   const [year, setYear] = useState(location.state?.year || "2024");
   const cashflowWidgetData = location.state?.cashflowWidgetData
 
-  const [showSelectMonth, setShowSelectMonth] = useState(false);
-  const [openSelectProperty, setOpenSelectProperty] = useState(false);
+  
 
-  const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API  
+  const [ cashflowData, setCashflowData ] = useState(null); // Cashflow data from API  
 
   const [ rentsByProperty, setRentsByProperty ] = useState([]);
   const [ profits, setProfits ] = useState([]);
@@ -109,6 +111,13 @@ export default function ManagerCashflow() {
   const [ profitsTotal, setProfitsTotal ] = useState({});
   const [ rentsTotal, setRentsTotal ] = useState({});
   const [ payoutsTotal, setPayoutsTotal ] = useState({});
+
+  const [ profitabilityData, setProfitabilityData ] = useState([]);
+  const [ transactionsData, setTransactionsData ] = useState([]);
+
+  const [ showProfitability, setShowProfitability ] = useState(location.state?.showProfitability || false)
+  const [ showTransactions,  setShowTransactions ]  = useState(location.state?.showTransactions || false)
+  const [ showPayments,      setShowPayments ]      = useState(location.state?.showPayments || false);
 
   async function fetchCashflow(userProfileId, month, year) {
     try {
@@ -124,9 +133,9 @@ export default function ManagerCashflow() {
     }
   }
 
-//   useEffect(() => {
-//     console.log("cashflowData - ", cashflowData);
-//   }, [cashflowData]);
+  useEffect(() => {
+    console.log("ROHIT - cashflowData - ", cashflowData);
+  }, [cashflowData]);
 
 //   useEffect(() => {
 //     console.log("rentsByProperty - ", rentsByProperty);
@@ -143,6 +152,8 @@ export default function ManagerCashflow() {
     fetchCashflow(profileId)
       .then((data) => {
         setCashflowData(data);
+        setProfitabilityData(data?.Profit);
+        setTransactionsData(data?.Transactions);
         // let currentMonthYearRevenueExpected = get
       })
       .catch((error) => {
@@ -151,41 +162,6 @@ export default function ManagerCashflow() {
   }, []);
 
   useEffect(() => {
-    // if (cashflowData2 !== null  && cashflowData2 !== undefined) {
-    //   let currentMonthYearTotalRevenue = getTotalRevenueByMonthYear(cashflowData2, month, year);
-    //   let currentMonthYearTotalExpense = getTotalExpenseByMonthYear(cashflowData2, month, year);
-    //   let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(cashflowData2, month, year);
-    //   let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(cashflowData2, month, year);
-    //   setTotalRevenueByMonth(currentMonthYearTotalRevenue); // currently using sum(total_paid)
-    //   setTotalExpenseByMonth(currentMonthYearTotalExpense); // currently using sum(total_paid)
-    //   setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
-    //   setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
-    //   setRevenueList(getRevenueList(cashflowData2));
-    //   setExpenseList(getExpenseList(cashflowData2));
-    //   // console.log("--debug-- expenseList", revenueList)
-    //   // console.log("--debug-- expenseList", expenseList)
-
-    //   let revenueMapping = getTotalRevenueByType(cashflowData2, month, year, false);
-    //   let expenseMapping = getTotalExpenseByType(cashflowData2, month, year, false);
-    //   // console.log("revenueMapping", revenueMapping)
-    //   // console.log("expenseMapping", expenseMapping)
-    //   setRevenueByType(revenueMapping);
-    //   setExpenseByType(expenseMapping);
-
-    //   let expectedRevenueByType = getTotalRevenueByType(cashflowData2, month, year, true);
-    //   let expectedExpenseByType = getTotalExpenseByType(cashflowData2, month, year, true);
-    //   // console.log("expectedRevenueByType", expectedRevenueByType)
-    //   // console.log("expectedExpenseByType", expectedExpenseByType)
-    //   setExpectedRevenueByType(expectedRevenueByType);
-    //   setExpectedExpenseByType(expectedExpenseByType);
-
-    //   let last12months = getPast12MonthsCashflow(cashflowData2, month, year);
-    //   let next12Months = getNext12MonthsCashflow(cashflowData2, month, year);
-
-    //   setLast12Months(last12months);
-    //   setNext12Months(next12Months);
-    // }
-
     const profitDatacurrentMonth = cashflowData?.Profit?.result?.filter( item => item.cf_month === month && item.cf_year === year);    
 
     const rentDataCurrentMonth = profitDatacurrentMonth?.filter(item => ((item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "revenue"));
@@ -339,433 +315,58 @@ export default function ManagerCashflow() {
       <Container maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
         <Grid container spacing={6} sx={{height: '90%'}}>          
           <Grid item xs={12} md={4}>
-            <ManagerCashflowWidget propsMonth={month} propsYear={year} profitsTotal={profitsTotal} rentsTotal={rentsTotal} payoutsTotal={payoutsTotal} graphData={cashflowData?.Profit?.result}/>
+            <ManagerCashflowWidget 
+              propsMonth={month}
+              propsYear={year}
+              profitsTotal={profitsTotal}
+              rentsTotal={rentsTotal}
+              payoutsTotal={payoutsTotal}
+              graphData={profitabilityData?.result}
+              setShowProfitability={setShowProfitability}
+              setShowTransactions={setShowTransactions}
+              setShowPayments={setShowPayments}
+            />
           </Grid>
 
           <Grid container item xs={12} md={8} columnSpacing={6}>
-            <Box
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "flex-start",
-                width: "100%", // Take up full screen width
-              }}
-            >
-              <Paper
-                style={{
-                  // marginTop: "30px",
-                  padding: theme.spacing(2),
-                  backgroundColor: activeButton === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
-                  width: "95%", // Occupy full width with 25px margins on each side
-                  // [theme.breakpoints.down("sm")]: {
-                  //   width: "80%",
-                  // },
-                  // [theme.breakpoints.up("sm")]: {
-                  //   width: "50%",
-                  // },
-                }}
-              >
-                <Stack direction="row" justifyContent="center">
-                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                    {month} {year} Cashflow
-                  </Typography>
-                </Stack>
-
-                <Box component="span" m={2} display="flex" justifyContent="space-between" alignItems="center">
-                  <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
-                    <CalendarTodayIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} />
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Select Month / Year</Typography>
-                  </Button>
-                  <SelectMonthComponentTest
-                    selectedMonth={month}
-                    selectedYear={year}
-                    setMonth={setMonth}
-                    setYear={setYear}
-                    showSelectMonth={showSelectMonth}
-                    setShowSelectMonth={setShowSelectMonth}
-                  />
-                  {selectedRole === "MANAGER" && (
-                    <Button sx={{ textTransform: "capitalize" }} onClick={() => {}}>
-                      <img src={AllOwnerIcon} alt="All Owners" style={{ width: "10px", height: "10px" }} />
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
-                    </Button>
-                  )}
-
-                  
-                </Box>
-                <Box
-                  component="span"
-                  m={3}
-                  padding={3}
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  // onClick={() => setActiveButton('ExpectedCashflow')}
-                  // style={{
-                  //   backgroundColor: theme.palette.custom.blue,
-                  //   borderRadius: "5px",
-                  // }}
-                >
-                  <Box sx={{
-                    width: '140px',
-                  }}>
-
-                  </Box>
-                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
-                    Expected
-                  </Typography>
-                  <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
-                    Actual
-                  </Typography>
-
-                </Box>
-                                
-                <Accordion
-                  sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    boxShadow: "none",
-                  }}
-                  expanded={true}
-                >
-                  {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
-                  <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                          Profit
-                        </Typography>
-                      </AccordionSummary>
-                    </Box>
-                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                        $                        
-                        {
-                            (profitsTotal && profitsTotal?.totalExpected) ? profitsTotal?.totalExpected : "0.00"
-                        }
-                      </Typography>
-                    </Box>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                      $
-                      { (profitsTotal && profitsTotal?.totalActual) ? profitsTotal?.totalActual : "0.00" }
-                    </Typography>
-                  </Box>
-
-                  <AccordionDetails>
-                  {
-                        profits && Object.keys(profits)?.map( (propertyUID, index) => {                            
-                            const property = profits[propertyUID]                                                        
-                            return (
-                                <>                                   
-                                    <Accordion
-                                        sx={{
-                                            backgroundColor: theme.palette.primary.main,
-                                            boxShadow: "none",
-                                        }}
-                                        key={index}
-                                        >
-                                        {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
-                                        <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                                            <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                    {`${property?.propertyInfo?.property_address},`}
-                                                    {' '}
-                                                    {property?.propertyInfo?.property_unit && 'Unit - '}
-                                                    {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
-                                                </Typography>
-                                            </AccordionSummary>
-                                            </Box>                                            
-                                            <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                    $                        
-                                                    {
-                                                        (property?.totalExpected) ? property?.totalExpected : "0.00"
-                                                    }
-                                                </Typography>
-                                            </Box>
-                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                            $
-                                            { (property?.totalActual) ? property?.totalActual : "0.00" }
-                                            </Typography>
-                                        </Box>
-
-                                        <AccordionDetails>
-                                            <Grid container item xs={12}>
-                                                {
-                                                    
-                                                    property?.profitItems?.map( (item, index) => {
-                                                        return (
-                                                            <Grid item container xs={12} key={index}>
-                                                                <Grid item xs={6}>{item.purchase_type}</Grid>
-                                                                <Grid item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
-                                                                <Grid item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
-                                                                <Grid item xs={2}>{item.pur_cf_type}</Grid>
-                                                            </Grid>
-
-                                                        );
-                                                    })
-                                                }
-                                            </Grid>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                </>
-                            );
-                        })
-                    }
-                  </AccordionDetails>
-                </Accordion>
-
-                <Accordion
-                  sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    boxShadow: "none",
-                  }}
-                >                  
-                  <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                          Rents
-                        </Typography>
-                      </AccordionSummary>
-                    </Box>
-                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                        $                        
-                        {
-                            (rentsTotal && rentsTotal?.totalExpected) ? rentsTotal?.totalExpected : "0.00"
-                        }
-                      </Typography>
-                    </Box>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                      $
-                      { (rentsTotal && rentsTotal?.totalActual) ? rentsTotal?.totalActual : "0.00" }
-                    </Typography>
-                  </Box>
-
-                  <AccordionDetails>
-                    {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
-                    {/* <StatementTable
-                      categoryTotalMapping={revenueByType}
-                      allItems={revenueList}
-                      activeView={"ExpectedCashflow"}
-                      tableType="Revenue"
-                      categoryExpectedTotalMapping={expectedRevenueByType}
-                      month={month}
-                      year={year}
-                    /> */}
-                    {
-                        rentsByProperty && Object.keys(rentsByProperty)?.map( (propertyUID, index) => {                            
-                            const property = rentsByProperty[propertyUID]                                                        
-                            return (
-                                <>                                   
-                                    <Accordion
-                                        sx={{
-                                            backgroundColor: theme.palette.primary.main,
-                                            boxShadow: "none",
-                                        }}
-                                        >
-                                        {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
-                                        <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                                            <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                    {`${property?.propertyInfo?.property_address},`}
-                                                    {' '}
-                                                    {property?.propertyInfo?.property_unit && 'Unit - '}
-                                                    {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
-                                                </Typography>
-                                            </AccordionSummary>
-                                            </Box>
-                                            <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                    $                        
-                                                    {
-                                                        (property?.totalExpected) ? property?.totalExpected : "0.00"
-                                                    }
-                                                </Typography>
-                                            </Box>
-                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                            $
-                                            { (property?.totalActual) ? property?.totalActual : "0.00" }
-                                            </Typography>                                            
-                                        </Box>
-
-                                        <AccordionDetails>
-                                            <Grid container item xs={12}>
-                                                {
-                                                    
-                                                    property?.rentItems?.map( (item, index) => {
-                                                        return (
-                                                            <Grid item container xs={12} key={index}>
-                                                                <Grid item xs={6}>{item.purchase_type}</Grid>
-                                                                <Grid item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
-                                                                <Grid item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
-                                                                <Grid item xs={2}>{item.pur_cf_type}</Grid>
-                                                            </Grid>
-
-                                                        );
-                                                    })
-                                                }
-                                            </Grid>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                </>
-                            );
-                        })
-                    }
-                  </AccordionDetails>
-                </Accordion>
-
-                <Accordion
-                  sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    boxShadow: "none",
-                  }}
-                >                  
-                  <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                          Payouts
-                        </Typography>
-                      </AccordionSummary>
-                    </Box>
-                    <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                        $                        
-                        {
-                            (payoutsTotal && payoutsTotal?.totalExpected) ? payoutsTotal?.totalExpected : "0.00"
-                        }
-                      </Typography>
-                    </Box>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                      $
-                      { (payoutsTotal && payoutsTotal?.totalActual) ? payoutsTotal?.totalActual : "0.00" }
-                    </Typography>
-                  </Box>
-
-                  <AccordionDetails>
-                  {
-                        payouts && Object.keys(payouts)?.map( (propertyUID, index) => {                            
-                            const property = payouts[propertyUID]                                                        
-                            return (
-                                <>                                   
-                                    <Accordion
-                                        sx={{
-                                            backgroundColor: theme.palette.primary.main,
-                                            boxShadow: "none",
-                                        }}
-                                        key={index}                                        
-                                        >                                        
-                                        <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                                            <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                    {`${property?.propertyInfo?.property_address},`}
-                                                    {' '}
-                                                    {property?.propertyInfo?.property_unit && 'Unit - '}
-                                                    {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
-                                                </Typography>
-                                            </AccordionSummary>
-                                            </Box>
-                                            <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
-                                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                    $                        
-                                                    {
-                                                        (property?.totalExpected) ? property?.totalExpected : "0.00"
-                                                    }
-                                                </Typography>
-                                            </Box>
-                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                            $
-                                            { (property?.totalActual) ? property?.totalActual : "0.00" }
-                                            </Typography>                                            
-                                        </Box>
-
-                                        <AccordionDetails>
-                                            <Grid container item xs={12}>
-                                                {
-                                                    
-                                                    property?.payoutItems?.map( (item, index) => {
-                                                        return (
-                                                            <Grid item container xs={12} key={index}>
-                                                                <Grid item xs={6}>{item.purchase_type}</Grid>
-                                                                <Grid item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
-                                                                <Grid item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
-                                                                <Grid item xs={2}>{item.pur_cf_type}</Grid>
-                                                            </Grid>
-
-                                                        );
-                                                    })
-                                                }
-                                            </Grid>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                </>
-                            );
-                        })
-                    }
-                  </AccordionDetails>
-                </Accordion>
-                
-                
-              </Paper>              
-            </Box>                                
+            {
+              showProfitability && (
+                <ManagerProfitability 
+                  propsMonth={month}
+                  propsYear={year}
+                  profitsTotal={profitsTotal}
+                  profits={profits}
+                  rentsTotal={rentsTotal}
+                  rentsByProperty={rentsByProperty}
+                  payoutsTotal={payoutsTotal}
+                  payouts={payouts}
+                  setMonth={setMonth}
+                  setYear={setYear}
+                />                     
+              )
+            }
+            {
+              showTransactions && (
+                <ManagerTransactions
+                  propsMonth={month}
+                  propsYear={year}
+                  setMonth={setMonth}
+                  setYear={setYear}
+                  transactionsData={transactionsData}
+                />
+              )
+            }
+            {
+              showPayments && (
+                <PaymentsManager />
+              )
+            }                        
           </Grid>
+
+          
         </Grid>
       </Container>      
     </ThemeProvider>
-  );
-}
-
-function SelectMonthComponentTest(props) {
-  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-  const lastYear = new Date().getFullYear() - 1;
-  const currentYear = new Date().getFullYear();
-  const nextYear = new Date().getFullYear() + 1;
-
-  return (
-    <Dialog open={props.showSelectMonth} onClose={() => props.setShowSelectMonth(false)} maxWidth="lg">
-      <DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={() => props.setShowSelectMonth(false)}
-          sx={{
-            position: "absolute",
-            right: 1,
-            top: 1,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent>
-        <Box>
-          {monthNames.map((month, index) => {
-            return (
-              <Typography className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth(month)}>
-                {month}
-              </Typography>
-            );
-          })}
-        </Box>
-        <Box>
-          <Typography className={props.selectedYear === lastYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(lastYear.toString())}>
-            {lastYear}
-          </Typography>
-          <Typography className={props.selectedYear === currentYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(currentYear.toString())}>
-            {currentYear}
-          </Typography>
-          <Typography className={props.selectedYear === nextYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(nextYear.toString())}>
-            {nextYear}
-          </Typography>
-        </Box>
-      </DialogContent>
-    </Dialog>
   );
 }
 
