@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
+const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, vehiclesRef }) => {
     console.log('Inside vehicles occupants', leaseVehicles);
     const [vehicles, setVehicles] = useState([]);
     const [open, setOpen] = useState(false);
@@ -86,6 +86,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
 
     useEffect(() => {
         if (leaseVehicles && leaseVehicles.length > 0) {
+            //Need Id for datagrid
             const vehWithIds = leaseVehicles.map((veh, index) => ({ ...veh, id: index }));
             setVehicles(vehWithIds);
         }
@@ -100,12 +101,19 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
 
     const handleSave = () => {
         if (isEditing) {
-            setVehicles(vehicles.map(veh => (veh.id === currentRow.id ? currentRow : veh)));
-            setLeaseVehicles(vehicles.map(veh => (veh.id === currentRow.id ? currentRow : veh)));
+            const updatedRow = vehicles.map(veh => (veh.id === currentRow.id ? currentRow : veh));
+            setVehicles(updatedRow);
+            //Save vehicles back in DB without ID field
+            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+            setLeaseVehicles(rowWithoutId);
+            vehiclesRef.current = rowWithoutId;
         } else {
             setVehicles([...vehicles, { ...currentRow, id: vehicles.length + 1 }]);
-            setLeaseVehicles([...vehicles, { ...currentRow, id: vehicles.length + 1 }]);
+            //Save vehicles back in DB without ID field
+            setLeaseVehicles([...vehicles, { ...currentRow}]);
+            vehiclesRef.current = [...vehicles, { ...currentRow}];
         }
+        editOrUpdateLease();
         handleClose();
     };
 
@@ -116,8 +124,12 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
     };
 
     const handleDelete = (id) => {
-        setVehicles(vehicles.filter(veh => veh.id !== currentRow.id));
-        setLeaseVehicles(vehicles.filter(veh => veh.id !== currentRow.id));
+        const filtered = vehicles.filter(veh => veh.id !== currentRow.id);
+        setVehicles(filtered);
+        const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
+        setLeaseVehicles(rowWithoutId);
+        vehiclesRef.current = rowWithoutId;
+        editOrUpdateLease();
         handleClose();
     };
 
@@ -133,7 +145,6 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states }) => {
         handleDelete();
         setOpenDeleteConfirmation(false);
     }
-
 
     const columns = [
         { field: 'year', headerName: 'Year', flex: 1, editable: true },
