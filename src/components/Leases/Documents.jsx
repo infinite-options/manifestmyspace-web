@@ -45,10 +45,10 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
 
     const checkRequiredFields = () => {
         let retVal = true;
-        console.log('name', currentRow.filename);
+        console.log('name', currentRow.filename, currentRow.name);
         console.log('type', currentRow.type);
 
-        if (!currentRow.filename) {
+        if (!currentRow.filename && !currentRow.name) {
             console.error('Filename is either empty, null, or undefined.');
             return false;
         }
@@ -162,6 +162,10 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
         {
             field: "filename",
             headerName: "Name",
+            valueGetter: (params) => {
+                const { filename, name } = params.row;
+                return `${filename || ''} ${name || ''}`.trim();
+            },
             flex: 1,
         },
         {
@@ -340,13 +344,12 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
                                 <span style={{ color: "red" }}>*</span>
                             </Typography>
                             <TextField
-                                className={classes.textField}
                                 sx={{ marginTop: '5px' }}
                                 name="file_name"
                                 label="File Name"
                                 fullWidth
                                 margin="normal"
-                                value={currentRow && currentRow.filename}
+                                value={currentRow && (currentRow.filename || currentRow.name)}
                                 disabled={true}
                                 InputProps={{
                                     style: {
@@ -354,6 +357,7 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
                                     },
                                 }}
                                 InputLabelProps={{
+                                    shrink: true,
                                     style: {
                                         fontSize: '10px',
                                         textAlign: 'center',
