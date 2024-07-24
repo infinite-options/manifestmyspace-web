@@ -194,6 +194,7 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         }
     };
 
+
     const getPayload = () => {
         return {
             tenant_user_id: user.user_uid,
@@ -209,14 +210,35 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
             tenant_state: state,
             tenant_zip: zip,
             tenant_photo_url: photo,
-            tenant_adults: JSON.stringify(adults),
-            tenant_children: JSON.stringify(children),
-            tenant_pets: JSON.stringify(pets),
-            tenant_vehicles: JSON.stringify(vehicles),
+            tenant_adult_occupants: JSON.stringify(adults.map(adult => ({
+                name: adult.name,
+                last_name: adult.lastName,
+                relationship: adult.relation,
+                dob: adult.dob
+            }))),
+            tenant_children_occupants: JSON.stringify(children.map(child => ({
+                name: child.name,
+                last_name: child.lastName,
+                relationship: child.relation,
+                dob: child.dob
+            }))),
+            tenant_pet_occupants: JSON.stringify(pets.map(pet => ({
+                name: pet.name,
+                breed: pet.breed,
+                type: pet.type,
+                weight: pet.weight
+            }))),
+            tenant_vehicle_info: JSON.stringify(vehicles.map(vehicle => ({
+                make: vehicle.make,
+                model: vehicle.model,
+                year: vehicle.year,
+                license: vehicle.license,
+                state: vehicle.state
+            }))),
             tenant_current_salary: currentSalary,
             tenant_salary_frequency: salaryFrequency,
             tenant_current_job_title: jobTitle,
-            tenant_current_job_company: companyName,
+            tenant_current_job_company: companyName
         };
     };
 
@@ -503,11 +525,13 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     };
 
     const renderRows = (rows, setRows, fields) => {
+        const columnWidth = fields.length === 5 ? 2.4 : 3; // Adjust width based on the number of fields
+
         return rows.map((row, index) => (
             <div key={row.id} style={{ position: 'relative' }}>
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     {fields.map((field) => (
-                        <Grid item xs={field.width} key={field.name}>
+                        <Grid item xs={columnWidth} key={field.name}>
                             <Stack spacing={-2} m={2}>
                                 <Typography
                                     sx={{
@@ -558,32 +582,32 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     };
 
     const adultFields = [
-        { name: "name", label: "Name", width: 2, placeholder: "Name" },
-        { name: "lastName", label: "Last Name", width: 2, placeholder: "Last Name" },
-        { name: "relation", label: "Relation", width: 2, placeholder: "Relation" },
+        { name: "name", label: "Name", width: 3, placeholder: "Name" },
+        { name: "lastName", label: "Last Name", width: 3, placeholder: "Last Name" },
+        { name: "relation", label: "Relation", width: 3, placeholder: "Relation" },
         { name: "dob", label: "DOB (MM-DD-YYYY)", width: 3, placeholder: "MM-DD-YYYY" },
     ];
 
     const childrenFields = [
-        { name: "name", label: "Name", width: 2, placeholder: "Name" },
-        { name: "lastName", label: "Last Name", width: 2, placeholder: "Last Name" },
-        { name: "relation", label: "Relation", width: 2, placeholder: "Relation" },
+        { name: "name", label: "Name", width: 3, placeholder: "Name" },
+        { name: "lastName", label: "Last Name", width: 3, placeholder: "Last Name" },
+        { name: "relation", label: "Relation", width: 3, placeholder: "Relation" },
         { name: "dob", label: "DOB (MM-DD-YYYY)", width: 3, placeholder: "MM-DD-YYYY" },
     ];
 
     const petFields = [
-        { name: "name", label: "Name", width: 2, placeholder: "Name" },
-        { name: "breed", label: "Breed", width: 2, placeholder: "Breed" },
-        { name: "type", label: "Type", width: 2, placeholder: "Type" },
+        { name: "name", label: "Name", width: 3, placeholder: "Name" },
+        { name: "breed", label: "Breed", width: 3, placeholder: "Breed" },
+        { name: "type", label: "Type", width: 3, placeholder: "Type" },
         { name: "weight", label: "Weight", width: 3, placeholder: "Weight" },
     ];
 
     const vehicleFields = [
-        { name: "make", label: "Make", width: 2, placeholder: "Make" },
-        { name: "model", label: "Model", width: 2, placeholder: "Model" },
-        { name: "year", label: "Year", width: 2, placeholder: "Year" },
-        { name: "license", label: "License", width: 3, placeholder: "License" },
-        { name: "state", label: "State", width: 3, placeholder: "State" },
+        { name: "make", label: "Make", width: 2.4, placeholder: "Make" },
+        { name: "model", label: "Model", width: 2.4, placeholder: "Model" },
+        { name: "year", label: "Year", width: 2.4, placeholder: "Year" },
+        { name: "license", label: "License", width: 2.4, placeholder: "License" },
+        { name: "state", label: "State", width: 2.4, placeholder: "State" },
     ];
 
     return (
