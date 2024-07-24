@@ -923,11 +923,13 @@ const AccountBalanceWidget = ({
   }
 
   return (
-    <DashboardTab fullHeight={!isMobile ? true : false}>
+    // <DashboardTab fullHeight={!isMobile ? true : false}>
+    <DashboardTab height="100%">
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
+          // height: "100%",
           justifyContent: "space-between",
           padding: "10px",
           paddingRight: "0px",
@@ -1313,8 +1315,8 @@ function TenantPaymentHistoryTable(props) {
     );
   } else {
     return (
-      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "331px" }}>
-        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Payment History Available</Typography>
+      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "200px" }}>
+        <Typography sx={{ fontSize: { xs: "16px", sm: "16px", md: "16px", lg: "16px" } }}>No Payment History Available</Typography>
       </Box>
     );
   }
@@ -1524,8 +1526,8 @@ function TenantMaintenanceRequestsTable(props) {
     );
   } else {
     return (
-      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "331px" }}>
-        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Maintenance Requests Available</Typography>
+      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "200px" }}>
+        <Typography sx={{ fontSize: { xs: "16px", sm: "16px", md: "16px", lg: "16px" } }}>No Maintenance Requests Available</Typography>
       </Box>
     );
   }
