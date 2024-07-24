@@ -42,17 +42,6 @@ export default function PropertyRentWidget(props) {
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [allRentStatus, setAllRentStatus] = useState([]);
 
-  // const propertyRentDetails = async () => {
-  //   try {
-  //     const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-  //     //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
-  //     const rentResponse = await response.json();
-  //     return rentResponse.RentStatus.result;
-  //   } catch (error) {
-  //     console.error("Failed to fetch rent details:", error);
-  //   }
-  // };
-
   useEffect(() => {
     const propertyRentDetails = async () => {
       try {
@@ -74,11 +63,10 @@ export default function PropertyRentWidget(props) {
   console.log("Is it in mobile", isMobile);
   // console.log(selectedRole);
   console.log("props for rentData", props.rentData);
-
   // console.log("Role: ", user);
   // console.log("Selected Role: ", selectedRole);
-
   console.log("PropertyRentWidget - props - ", props);
+
   let rentStatusData = props.rentData;
   const property_endpoint_resp = props.propertyEndpointResp;
   // console.log("PropertyRentWidget - property_endpoint_resp - ", property_endpoint_resp);

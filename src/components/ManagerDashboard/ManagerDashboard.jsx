@@ -1,4 +1,4 @@
-import { Button, Box, ThemeProvider, Grid, Typography, Container } from "@mui/material";
+import { Box, Container, Grid, Paper, ThemeProvider, Typography } from "@mui/material";
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import RevenueWidget from "../Dashboard-Components/Revenue/RevenueWidget";
 import "../../css/maintenance.css";
@@ -6,29 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 import theme from "../../theme/theme";
-import Dollar from "../../images/Dollar.png";
-import File_dock_fill from "../../images/File_dock_fill.png";
-import User_fill_dark from "../../images/User_fill_dark.png";
 import { useUser } from "../../contexts/UserContext";
 import PropertyRentWidget from "../Dashboard-Components/PropertyRent/PropertyRentWidget";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
-import AddRevenueIcon from "../../images/AddRevenueIcon.png";
 import LeaseWidget from "../Dashboard-Components/Lease/LeaseWidget";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import OwnerList from "./OwnerList";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import HappinessMatrixWidget from "../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget";
-import { Paper } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
-
-import PropertyNavigator from "../Property/PropertyNavigator";
 
 const useStyles = makeStyles({
   button: {
@@ -51,21 +36,16 @@ const useStyles = makeStyles({
 
 function ManagerDashboard() {
   // console.log("In Manager Dashboard function");
-  const classes = useStyles();
   const { getProfileId, user, selectedRole } = useUser();
   let dashboard_id = getProfileId();
   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
   const navigate = useNavigate();
-  const chartWidth = 400;	  // const chartWidth = 400;
-  const chartHeight = 350;
-  let date = new Date();
   // const [loading, setLoading] = useState(true);
 
   const [rentStatus, setRentStatus] = useState([]);
   const [leaseStatus, setLeaseStatus] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(true);
-  const [currentMonth, setCurrentMonth] = useState(date.getMonth() + 1);
   const [contractRequests, setContractRequests] = useState([]);
   const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
@@ -84,24 +64,13 @@ function ManagerDashboard() {
     console.log("Contract requests - ", contractRequests);
   }, [contractRequests]);
 
-  const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
-  const rentData = [
-    ["Properties", "Rent status"],
-    ["not paid", 18],
-    ["paid partially", 6],
-    ["paid late", 3],
-    ["vacant", 3],
-    ["paid on time", 36],
-  ];
-
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
 
   let [matrixData, setMatrixData] = useState([]);
-  let [p_owner, p_owner_setter] = useState();
 
   const setting_matrix_data = (happiness_response) => {
     // console.log("In Setting Happiness Matrix", happiness_response);
@@ -135,15 +104,6 @@ function ManagerDashboard() {
       let quarter;
       let vacancy_perc = parseFloat(vacancyItem.vacancy_perc);
       let delta_cf_perc = -1 * parseFloat(percent_delta_cashflow);
-      // if (percent_delta_cashflow < -0.5 && vacancyItem.vacancy_perc < -50) {
-      //   quarter = 1;
-      // } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc < -50) {
-      //   quarter = 2;
-      // } else if (percent_delta_cashflow < -50 && vacancyItem.vacancy_perc > -50) {
-      //   quarter = 3;
-      // } else if (percent_delta_cashflow > -50 && vacancyItem.vacancy_perc > -50) {
-      //   quarter = 4;
-      // }
 
       if (delta_cf_perc > -0.5 && vacancy_perc > -50) {
         quarter = 1;
@@ -159,22 +119,6 @@ function ManagerDashboard() {
       // console.log("quarter - ", fullName, quarter);
 
       let borderColor;
-      // switch (quarter) {
-      //   case 1:
-      //     borderColor = "#A52A2A"; // Red color
-      //     break;
-      //   case 2:
-      //     borderColor = "#FF8A00"; // Orange color
-      //     break;
-      //   case 3:
-      //     borderColor = "#FFC85C"; // Yellow color
-      //     break;
-      //   case 4:
-      //     borderColor = "#3D5CAC"; // Blue color
-      //     break;
-      //   default:
-      //     borderColor = "#000000"; // Black color
-      // }
 
       switch (quarter) {
         case 1:
@@ -209,26 +153,13 @@ function ManagerDashboard() {
         total_properties: vacancyItem.total_properties || 0,
       };
     });
-    // // Sorting transformedData based on the color
-    // const sortedData = transformedData.sort((a, b) => {
-    //   const colorOrder = {
-    //     "#A52A2A": 1,
-    //     "#FF8A00": 2,
-    //     "#FFC85C": 3,
-    //     "#3D5CAC": 4,
-    //     "#000000": 5,
-    //   };
-    //   return colorOrder[a.color] - colorOrder[b.color];
-    // });
 
-    // setMatrixData(sortedData);
     setMatrixData(transformedData);
   };
 
   // console.log("In Manager Dashboard Step 3");
 
   // Employee Verification useEffect
-
   useEffect(() => {
     setShowSpinner(true);
     if (selectedRole === "PM_EMPLOYEE") {
@@ -272,7 +203,6 @@ function ManagerDashboard() {
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`);
       // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
 
-      // const propertiesResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`);
       try {
         const jsonData = await response.json();
         // console.log("Manager Dashboard jsonData: ", jsonData);
@@ -297,21 +227,7 @@ function ManagerDashboard() {
         // REVENUE DATA
         setRevenueData(jsonData.Profitability);
 
-        // //CASHFLOW DETAILS
-        // setCashflowData(jsonData?.HappinessMatrix?.delta_cashflow.result);
-
-        // //CASHFLOW DETAILS
-        // setCashflowDetails(jsonData?.HappinessMatrix?.delta_cashflow_details?.result);
-
-        // //CASHFLOW DETAILS
-        // setCashflowDetailsByProperty(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property?.result);
-
-        // //CASHFLOW DETAILS
-        // setCashflowDetailsByPropertyByMonth(jsonData?.HappinessMatrix?.delta_cashflow_details_by_property_by_month?.result);
-
         // NEW PM REQUESTS
-        // set_property_endpoint_resp(propertiesResponseJSON);
-        // setContractRequests(propertiesResponseJSON.NewPMRequests.result);
         set_property_endpoint_resp(jsonData);
         setContractRequests(jsonData.NewPMRequests.result);
       } catch (error) {
@@ -322,6 +238,7 @@ function ManagerDashboard() {
     };
     fetchData();
   }, []);
+
   if (showSpinner) {
     return (
       <>
@@ -382,9 +299,6 @@ function ManagerDashboard() {
               </Grid>
             </Grid>
           </Grid>
-          {/* <Grid item xs={12} md={6}>
-            <PropertyNavigator happinessData={happinessData} />
-          </Grid> */}
         </Grid>
       </Container>
     </ThemeProvider>
