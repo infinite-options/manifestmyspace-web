@@ -15,7 +15,7 @@ export default function RevenueWidget({ revenueData }) {
   return (
     <>
       <Grid 
-        onClick={() => navigate("/managerCashflow")}
+        onClick={() => navigate("/managerCashflow", { state: { showProfitability: true}})}
         container 
         sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: 'pointer' }}
       >
@@ -109,7 +109,8 @@ export default function RevenueWidget({ revenueData }) {
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate("/payments")
+                // navigate("/payments")
+                navigate("/managerCashflow", { state: { showPayments: true}});
               }}
             >
               Pay Bills
@@ -119,7 +120,7 @@ export default function RevenueWidget({ revenueData }) {
             <Button
               onClick={(e) => {
                 e.stopPropagation();
-                navigate("/managerTransactions");
+                navigate("/managerCashflow", { state: { showTransactions: true}});
               }}
               variant="contained"
               sx={{

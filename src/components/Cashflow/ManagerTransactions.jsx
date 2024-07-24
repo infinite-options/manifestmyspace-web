@@ -79,7 +79,7 @@ import {
 
 
 
-export default function ManagerTransactions() {
+export default function ManagerTransactions({propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setShowSelectPayment, setShowProfitability, setShowTransactions }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId } = useUser(); // Access the user object from UserContext
@@ -93,22 +93,14 @@ export default function ManagerTransactions() {
 
   const [showChart, setShowChart] = useState("Current");
 
-  const [month, setMonth] = useState(location.state?.month || "July"); //fix
-  const [year, setYear] = useState(location.state?.year || "2024");
+  const month = propsMonth || "July"; //fix
+  const year = propsYear || "2024";
+  
   const cashflowWidgetData = location.state?.cashflowWidgetData
+
 
   const [showSelectMonth, setShowSelectMonth] = useState(false);
   const [openSelectProperty, setOpenSelectProperty] = useState(false);
-
-  const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API  
-
-  const [ rentsByProperty, setRentsByProperty ] = useState([]);
-  const [ profits, setProfits ] = useState([]);
-  const [ payouts, setPayouts ] = useState([]);
-
-  const [ profitsTotal, setProfitsTotal ] = useState({});
-  const [ rentsTotal, setRentsTotal ] = useState({});
-  const [ payoutsTotal, setPayoutsTotal ] = useState({});
 
   const [ transactions, setTransactions ] = useState([]);
 
@@ -139,10 +131,6 @@ export default function ManagerTransactions() {
   }
 
 //   useEffect(() => {
-//     console.log("cashflowData - ", cashflowData);
-//   }, [cashflowData]);
-
-//   useEffect(() => {
 //     console.log("rentsByProperty - ", rentsByProperty);
 //   }, [rentsByProperty]);
 
@@ -162,157 +150,9 @@ export default function ManagerTransactions() {
     console.log("ROHIT - transactionsNew - ", transactionsNew);
   }, [transactionsNew]);
 
-  useEffect(() => {
-    fetchCashflow(profileId)
-      .then((data) => {
-        setCashflowData(data);
-        // let currentMonthYearRevenueExpected = get
-      })
-      .catch((error) => {
-        console.error("Error fetching cashflow data:", error);
-      });
-  }, []);
-
-  useEffect(() => {   
-    
-    
-    //PROFIT
-    const profitDatacurrentMonth = cashflowData?.Profit?.result?.filter( item => item.cf_month === month && item.cf_year === year);    
-
-    const rentDataCurrentMonth = profitDatacurrentMonth?.filter(item => ((item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "revenue"));
-    
-
-    const payoutsCurrentMonth = profitDatacurrentMonth?.filter(item => ((item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "expense"));
-    const payoutsByProperty = payoutsCurrentMonth?.reduce((acc, item) => {
-        const propertyUID = item.property_id;
-        const propertyInfo = {
-            property_id: item.property_id,
-            property_address: item.property_address,
-            property_unit: item.property_unit,
-        }
-
-        const totalExpected = parseFloat(item.pur_amount_due_total) || 0;
-        const totalActual = parseFloat(item.total_paid_total) || 0
-
-        if (!acc[propertyUID]) {
-            // acc[propertyUID] = [];
-            acc[propertyUID] = {
-                propertyInfo: propertyInfo,
-                payoutItems: [],
-                totalExpected: 0,
-                totalActual: 0,
-            };
-        }
-        
-        acc[propertyUID].payoutItems.push(item);
-        acc[propertyUID].totalExpected += totalExpected;
-        acc[propertyUID].totalActual += totalActual;
-        return acc;
-    }, {})  
-    setPayouts(payoutsByProperty);
-    const totalPayouts = payoutsByProperty ? Object.values(payoutsByProperty).reduce(
-        (acc, property) => {
-            acc.totalExpected += property.totalExpected;
-            acc.totalActual += property.totalActual;
-            return acc;
-        },
-        { totalExpected: 0, totalActual: 0 }
-    ) : { totalExpected: 0, totalActual: 0 };
-    // console.log("totalPayouts - ", totalPayouts);
-    setPayoutsTotal(totalPayouts);
-
-    // const profitsCurrentMonth = profitDatacurrentMonth?.filter(item => item.purchase_type === "Management" || item.purchase_type === "Management - Late Fees");
-    // const profitsCurrentMonth = profitDatacurrentMonth?.filter(item => item.purchase_type === "Management" || item.purchase_type === "Management - Late Fees");
-    const profitsCurrentMonth = profitDatacurrentMonth?.filter(item => item.pur_payer?.startsWith('110') && item.pur_receiver?.startsWith('600'));
-    
-    const profitsByProperty = profitsCurrentMonth?.reduce((acc, item) => {
-        const propertyUID = item.property_id;
-        const propertyInfo = {
-            property_id: item.property_id,
-            property_address: item.property_address,
-            property_unit: item.property_unit,
-        }
-
-        const totalExpected = parseFloat(item.pur_amount_due_total) || 0;
-        const totalActual = parseFloat(item.total_paid_total) || 0
-
-        if (!acc[propertyUID]) {
-            // acc[propertyUID] = [];
-            acc[propertyUID] = {
-                propertyInfo: propertyInfo,
-                profitItems: [],
-                totalExpected: 0,
-                totalActual: 0,
-            };
-        }
-
-        
-        
-        acc[propertyUID].profitItems.push(item);
-        acc[propertyUID].totalExpected += totalExpected;
-        acc[propertyUID].totalActual += totalActual;
-        return acc;
-    }, {})    
-    
-    // console.log("profitsByProperty - ", profitsByProperty);
-    setProfits(profitsByProperty);
-    const totalProfits = profitsByProperty ? Object.values(profitsByProperty).reduce(
-        (acc, property) => {
-            acc.totalExpected += property.totalExpected;
-            acc.totalActual += property.totalActual;
-            return acc;
-        },
-        { totalExpected: 0, totalActual: 0 }
-    ) : { totalExpected: 0, totalActual: 0 };
-    // console.log("totalProfits - ", totalProfits);
-    setProfitsTotal(totalProfits);        
-    
-
-    const rentsDataByProperty = rentDataCurrentMonth?.reduce((acc, item) => {
-        const propertyUID = item.property_id;
-        const propertyInfo = {
-            property_id: item.property_id,
-            property_address: item.property_address,
-            property_unit: item.property_unit,
-        }
-
-        const totalExpected = parseFloat(item.pur_amount_due_total) || 0;
-        const totalActual = parseFloat(item.total_paid_total) || 0
-
-        if (!acc[propertyUID]) {
-            // acc[propertyUID] = [];
-            acc[propertyUID] = {
-                propertyInfo: propertyInfo,
-                rentItems: [],
-                totalExpected: 0,
-                totalActual: 0,
-            };
-        }
-        
-        acc[propertyUID].rentItems.push(item);
-        acc[propertyUID].totalExpected += totalExpected;
-        acc[propertyUID].totalActual += totalActual;
-        return acc;
-    }, {})    
-    
-    setRentsByProperty(rentsDataByProperty);
-    console.log("rentsDataByProperty - ", rentsDataByProperty);
-    const totalRents = rentsDataByProperty ? Object.values(rentsDataByProperty).reduce(
-        (acc, property) => {
-            acc.totalExpected += property.totalExpected;
-            acc.totalActual += property.totalActual;
-            return acc;
-        },
-        { totalExpected: 0, totalActual: 0 }
-    ) : { totalExpected: 0, totalActual: 0 };
-    console.log("totalRents - ", totalRents);
-    setRentsTotal(totalRents);
-
-
-
-
+  useEffect(() => {             
     //TRANSACTIONS
-    const transactionsCurrentMonth = cashflowData?.Transactions?.result?.filter( item => item.cf_month === month && item.cf_year === year);  
+    const transactionsCurrentMonth = transactionsData?.result?.filter( item => item.cf_month === month && item.cf_year === year);  
     
     const getSortOrder = (transaction) => {
         const { pur_payer, pur_receiver } = transaction;
@@ -327,7 +167,7 @@ export default function ManagerTransactions() {
             return 4; // Default sort order for unspecified conditions
         }
     };
-    const transactionsData = transactionsCurrentMonth?.map(transaction => {        
+    const sortedTransactions = transactionsCurrentMonth?.map(transaction => {        
         return (
             {
                 ...transaction,
@@ -338,11 +178,9 @@ export default function ManagerTransactions() {
         )
     })
 
-    // console.log("transactionsCurrentMonth - ", transactionsData)
+    setTransactions(sortedTransactions);
 
-    setTransactions(transactionsData);
-
-    const transactionsByProperty = transactionsData?.reduce((acc, item) => {
+    const transactionsByProperty = sortedTransactions?.reduce((acc, item) => {
       const propertyUID = item.property_id;
       const propertyInfo = {
           property_id: item.property_id,
@@ -413,7 +251,7 @@ export default function ManagerTransactions() {
 
   setTransactionsNew(transactionsByProperty);
     
-  }, [month, year, cashflowData]);
+  }, [month, year, transactionsData]);
 
   // useEffect(() => {
   //     console.log("revenueByType", revenueByType)
@@ -500,9 +338,14 @@ export default function ManagerTransactions() {
     
 
 
-    navigate("/selectPayment", {
-        state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
-    });
+    // navigate("/selectPayment", {
+    //     state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
+    // });
+
+    setSelectedPayment({ paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} });    
+    setShowProfitability(false);
+    setShowTransactions(false);
+    setShowSelectPayment(true);
 
   }
 
@@ -512,13 +355,9 @@ export default function ManagerTransactions() {
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <Container maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
-        <Grid container spacing={6} sx={{height: '90%'}}>          
-          <Grid item xs={12} md={4}>
-            <ManagerCashflowWidget propsMonth={month} propsYear={year} profitsTotal={profitsTotal} rentsTotal={rentsTotal} payoutsTotal={payoutsTotal} graphData={cashflowData?.Profit?.result}/>
-          </Grid>
-
-          <Grid container item xs={12} md={8} columnSpacing={6}>
+      <Container maxWidth="lg" sx={{ height: '90vh', }}>
+        <Grid container spacing={6} sx={{height: '90%'}}>                  
+          <Grid container item xs={12} columnSpacing={6}>
             <Box
               style={{
                 display: "flex",
@@ -569,37 +408,7 @@ export default function ManagerTransactions() {
                   )}
 
                   
-                </Box>
-                {/* <Box
-                  component="span"
-                //   m={3}
-                //   padding={3}
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  // onClick={() => setActiveButton('ExpectedCashflow')}
-                  // style={{
-                  //   backgroundColor: theme.palette.custom.blue,
-                  //   borderRadius: "5px",
-                  // }}
-                >
-                  <Box sx={{
-                    width: '180px',
-                  }}>
-
-                  </Box>
-                  <Box sx={{ backgroundColor: '#FFE3AD', padding: '5px', borderRadius: '5px', width: '100px', display: 'flex', justifyContent: 'center', }}>                    
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
-                        Expected
-                    </Typography>
-                  </Box>
-                  <Box sx={{ backgroundColor: '#8696BE', padding: '5px', borderRadius: '5px', width: '100px', display: 'flex', justifyContent: 'center',}}>                    
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
-                        Actual
-                    </Typography>
-                  </Box>
-
-                </Box> */}
+                </Box>                
 
                 <Grid container item xs={12}>
                     <Grid item xs={6.5}>                        
@@ -667,13 +476,13 @@ export default function ManagerTransactions() {
                           </Grid>                                    
                           <Grid container justifyContent="flex-end" alignItems="center" item xs={3}>
                               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>                                    
-                                  ${property?.totalExpected ? property?.totalExpected : "0.00"}
+                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
                               </Typography>                                    
                           </Grid>
 
                           <Grid container justifyContent="flex-end" alignItems="center" item xs={2}>
                               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                  ${property?.totalActual ? property?.totalActual : "0.00"}                                
+                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}                                
                               </Typography>
 
                           </Grid>
@@ -782,13 +591,13 @@ export default function ManagerTransactions() {
                                                     </Grid>                                    
                                                     <Grid container justifyContent="flex-end" item xs={3}>
                                                         <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>                                    
-                                                            ${purchase?.pur_amount_due ? purchase?.pur_amount_due : "0"}
+                                                            ${purchase?.pur_amount_due ? purchase?.pur_amount_due?.toFixed(2) : "0"}
                                                         </Typography>                                    
                                                     </Grid>
 
                                                     <Grid container justifyContent="flex-end" item xs={2}>
                                                         <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>
-                                                            ${purchase?.total_paid ? purchase?.total_paid : "0"}                                
+                                                            ${purchase?.total_paid ? purchase?.total_paid?.toFixed(2) : "0"}                                
                                                         </Typography>
 
                                                     </Grid>
@@ -827,6 +636,7 @@ export default function ManagerTransactions() {
 }
 
 function SelectMonthComponentTest(props) {
+  console.log("ROHIT - SelectMonthComponentTest - props - ",  props);
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   const lastYear = new Date().getFullYear() - 1;

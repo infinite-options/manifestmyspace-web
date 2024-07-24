@@ -8,30 +8,6 @@ import { months } from "moment";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-// import {
-//   fetchCashflow,
-//   // getTotalRevenueByMonthYear,
-//   // getTotalExpenseByMonthYear,
-//   getPast12MonthsCashflow,
-//   // getPast12MonthsExpectedCashflow,
-//   // getTotalExpectedRevenueByMonthYear,
-//   // getTotalExpectedExpenseByMonthYear,
-// } from "../../Cashflow/CashflowFetchData";
-
-// import {
-//   // getTotalRevenueByType,
-//   // getTotalExpenseByType,  
-//   getTotalExpenseByMonthYear,
-//   getTotalRevenueByMonthYear,
-//   getTotalExpectedRevenueByMonthYear,
-//   getTotalExpectedExpenseByMonthYear,
-//   getPast12MonthsExpectedCashflow,
-//   // getPast12MonthsCashflow,
-//   // getNext12MonthsCashflow,
-//   // getRevenueList,
-//   // getExpenseList,
-// } from "../../Cashflow/CashflowFetchData2";
-
 
 
 import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
@@ -197,7 +173,7 @@ function getTotalRevenueByMonthYear(data, month, year) {
 
 
 
-function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, }) {
+function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, setShowProfitability, setShowTransactions, setShowPayments, setShowSelectPayment }) {
   console.log("In ManagerCashflow Widget ");
   console.log("ManagerCashflow widget - profitsTotal - ", profitsTotal);
   const navigate = useNavigate();
@@ -328,6 +304,13 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
         // setRevenueData(revenue);
       
   }, [ profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData ]);
+
+  const graphDataKeys = [
+    { name: 'Expected Rent', color: '#A52A2A'},
+    { name: 'Actual Rent', color: '#000000'},
+    { name: 'Expected Profit', color: '#FF8A0059'},
+    { name: 'Actual Profit', color: '#3D5CAC'}
+  ]
 
 
   return (
@@ -481,7 +464,11 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
               item xs={12}
               onClick={(e) => {
                 // e.stopPropagation();
-                navigate("/managerCashflow");
+                // navigate("/managerCashflow", { state: { showProfitability: true}});
+                setShowProfitability(true);
+                setShowTransactions(false);
+                setShowPayments(false);
+                setShowSelectPayment(false);
               }}
               sx={{
                 cursor: 'pointer',
@@ -572,6 +559,10 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                     e.stopPropagation();
                     // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
                     navigate("/payments", {state: {managerCashflowWidgetData : { profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, } }});
+
+                    // setShowProfitability(false);
+                    // setShowTransactions(false)
+                    // setShowPayments(true);
                   }}
                 >                                    
                   Pay Bills
@@ -595,7 +586,11 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate("/managerTransactions");
+                    // navigate("/managerTransactions");
+                    setShowProfitability(false);
+                    setShowTransactions(true);
+                    setShowPayments(false);
+                    setShowSelectPayment(false);
                   }}
                 >                                    
                   Transactions
@@ -637,6 +632,40 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
           <Grid item xs={12} sx={{ height: "350px" }}>
             <DashboardChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
           </Grid>
+          {/* <Grid container item xs={12}>
+            {
+              graphDataKeys.map( (dataKey, index) => {
+                const color = dataKey?.color;
+                return (
+                  <Grid container direction='row' alignContent='center' justifyContent='center' item xs={6} key={index}>
+                    <Box                      
+                      sx={{
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '15px',
+                        backgroundColor: color,
+                        marginRight: '10px',
+                      }}
+                    >
+
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignContent: 'center',
+                      }}                    
+                    >
+                      <Typography sx={{color: color,}}>
+                        {dataKey.name}
+                      </Typography>
+                    </Box>
+                  </Grid> 
+                );
+              })
+
+            }
+          </Grid> */}
         </Grid>
       </Container>
       {/* </div> */}
