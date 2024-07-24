@@ -76,6 +76,12 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const [pets, setPets] = useState([{ id: 1, name: "", breed: "", type: "", weight: "" }]);
     const [vehicles, setVehicles] = useState([{ id: 1, make: "", model: "", year: "", license: "", state: "" }]);
 
+    // New state for job details
+    const [currentSalary, setCurrentSalary] = useState("");
+    const [salaryFrequency, setSalaryFrequency] = useState("");
+    const [jobTitle, setJobTitle] = useState("");
+    const [companyName, setCompanyName] = useState("");
+
     useEffect(() => {
         console.log("calling useeffect")
         setIsSave(false)
@@ -207,6 +213,10 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
             tenant_children: JSON.stringify(children),
             tenant_pets: JSON.stringify(pets),
             tenant_vehicles: JSON.stringify(vehicles),
+            tenant_current_salary: currentSalary,
+            tenant_salary_frequency: salaryFrequency,
+            tenant_current_job_title: jobTitle,
+            tenant_current_job_company: companyName,
         };
     };
 
@@ -310,7 +320,6 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         return paymentMethodsArray.map((method, index) => (
             <Grid
                 container
-
                 rowSpacing={1}
                 columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                 key={index}
@@ -369,7 +378,6 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
             </Grid>
         ));
     };
-
 
     const handleChangeValue = (e) => {
         const { name, value } = e.target;
@@ -756,6 +764,90 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
                         <TextField value={mask} onChange={handleSsnChange} variant="filled" sx={{ width: '50%' }} placeholder="Enter SSN" className={classes.root}></TextField>
                     </Stack>
                 </Box>
+            </Box>
+
+            <hr />
+
+            {/* New section for Current Job Details */}
+            <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1f1f1f' }}>
+                Current Job Details
+            </Typography>
+            <Box p={3}>
+                <Paper elevation={3} sx={{ padding: 3, mb: 3 }}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid item xs={3}>
+                            <Stack spacing={-2} m={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                                    Current Salary
+                                </Typography>
+                                <TextField
+                                    name="currentSalary"
+                                    value={currentSalary}
+                                    onChange={(e) => setCurrentSalary(e.target.value)}
+                                    variant="filled"
+                                    fullWidth
+                                    placeholder="100000"
+                                    className={classes.root}
+                                />
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Stack spacing={-2} m={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                                    Salary Frequency
+                                </Typography>
+                                <Select
+                                    name="salaryFrequency"
+                                    value={salaryFrequency}
+                                    onChange={(e) => setSalaryFrequency(e.target.value)}
+                                    variant="filled"
+                                    fullWidth
+                                    className={classes.root}
+                                >
+                                    <MenuItem value="Bi-weekly">Bi-weekly</MenuItem>
+                                    <MenuItem value="Semi-monthly">Semi-monthly</MenuItem>
+                                    <MenuItem value="Hourly">Hourly</MenuItem>
+                                    <MenuItem value="Daily">Daily</MenuItem>
+                                    <MenuItem value="Weekly">Weekly</MenuItem>
+                                    <MenuItem value="Monthly">Monthly</MenuItem>
+                                    <MenuItem value="Yearly">Yearly</MenuItem>
+                                </Select>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Stack spacing={-2} m={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                                    Job Title
+                                </Typography>
+                                <TextField
+                                    name="jobTitle"
+                                    value={jobTitle}
+                                    onChange={(e) => setJobTitle(e.target.value)}
+                                    variant="filled"
+                                    fullWidth
+                                    placeholder="SDE"
+                                    className={classes.root}
+                                />
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Stack spacing={-2} m={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                                    Company Name
+                                </Typography>
+                                <TextField
+                                    name="companyName"
+                                    value={companyName}
+                                    onChange={(e) => setCompanyName(e.target.value)}
+                                    variant="filled"
+                                    fullWidth
+                                    placeholder="ABC"
+                                    className={classes.root}
+                                />
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                </Paper>
             </Box>
 
             <hr />
