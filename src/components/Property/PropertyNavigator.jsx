@@ -1575,7 +1575,7 @@ export default function PropertyNavigator({
 							>
 							<Grid container spacing={2}>
 							{selectedRole === 'OWNER' && (
-									<>
+								<Grid container item spacing={2}>
 									<Grid item xs={6}>
 										<Typography
 										sx={{
@@ -1583,6 +1583,7 @@ export default function PropertyNavigator({
 											color: theme.typography.primary.black,
 											fontWeight: theme.typography.secondary.fontWeight,
 											fontSize: theme.typography.smallFont,
+											paddingRight: '15px',
 										}}
 										>
 										Property Manager:
@@ -1617,10 +1618,10 @@ export default function PropertyNavigator({
 										/>
 										</Box>
 									</Grid>
-									</>
+								</Grid>
 								)}
 							{selectedRole === 'MANAGER' && (
-									<>
+									<Grid container item spacing={2}>
 									<Grid item xs={6}>
 										<Typography
 										sx={{
@@ -1671,9 +1672,10 @@ export default function PropertyNavigator({
 										/>
 										</Box>
 									</Grid>
-									</>
+									</Grid>
 								)}
-								<Grid item xs={12} md={12}>
+
+								<Grid container item spacing={2}>
 								<Box sx={{ display: 'flex', alignItems: 'center' }}>
 									<Typography
 									sx={{
@@ -1681,7 +1683,7 @@ export default function PropertyNavigator({
 										color: theme.typography.primary.black,
 										fontWeight: theme.typography.secondary.fontWeight,
 										fontSize: theme.typography.smallFont,
-										paddingRight: '15px',
+										paddingRight: '50px',
 									}}
 									>
 									Open Maintenance Tickets:
@@ -1735,7 +1737,7 @@ export default function PropertyNavigator({
 											color: theme.typography.primary.black,
 											fontWeight: theme.typography.secondary.fontWeight,
 											fontSize: theme.typography.smallFont,
-											paddingRight: '15px', // here padding
+											paddingRight: '85px', // here padding
 										}}
 										>
 										PM Quotes Requested:
@@ -1791,7 +1793,7 @@ export default function PropertyNavigator({
 											color: theme.typography.primary.black,
 											fontWeight: theme.typography.secondary.fontWeight,
 											fontSize: theme.typography.smallFont,
-											paddingRight: '15px',
+											paddingRight: '100px',
 										}}
 										>
 										Applications:
@@ -1814,7 +1816,7 @@ export default function PropertyNavigator({
 											}
 											showZero
 											sx={{
-											paddingRight: '10px',
+											paddingRight: '50px',
 											}}
 										/>
 										</Box>
