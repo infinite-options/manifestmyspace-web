@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import {
     Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField, Typography,
-    FormControl, InputLabel, Select, MenuItem, Grid
+    FormControl, InputLabel, Select, MenuItem, Grid, Snackbar, Alert, AlertTitle
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, vehiclesRef }) => {
+const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData }) => {
     console.log('Inside vehicles occupants', leaseVehicles);
     const [vehicles, setVehicles] = useState([]);
     const [open, setOpen] = useState(false);
@@ -83,6 +83,19 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     const color = theme.palette.form.main;
     const classes = useStyles();
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [isUpdated, setIsUpdated] = useState(false);
+
+
+    useEffect(() => {
+        console.log('inside mod vehicles', modifiedData);
+        if (modifiedData && modifiedData.length > 0) {
+            editOrUpdateLease();
+            handleClose();
+        }
+    }, [isUpdated]);
 
     useEffect(() => {
         if (leaseVehicles && leaseVehicles.length > 0) {
@@ -97,24 +110,40 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
         setOpen(false);
         setCurrentRow(null);
         setIsEditing(false);
+        setIsUpdated(false);
+    };
+
+    const isRowModified = (originalRow, currentRow) => {
+        return JSON.stringify(originalRow) !== JSON.stringify(currentRow);
+    };
+
+    const showSnackbar = (message, severity) => {
+        console.log('Inside show snackbar');
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     const handleSave = () => {
         if (isEditing) {
-            const updatedRow = vehicles.map(veh => (veh.id === currentRow.id ? currentRow : veh));
-            setVehicles(updatedRow);
-            //Save vehicles back in DB without ID field
-            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-            setLeaseVehicles(rowWithoutId);
-            vehiclesRef.current = rowWithoutId;
+            if (isRowModified(vehicles[currentRow['id']], currentRow) === true) {
+                const updatedRow = vehicles.map(veh => (veh.id === currentRow.id ? currentRow : veh));
+                //Save pets back in DB without ID field
+                const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+                setModifiedData((prev) => [...prev, { key: 'lease_vehicles', value: rowWithoutId }]);
+                setIsUpdated(true);
+            } else {
+                showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+            }
+
         } else {
-            setVehicles([...vehicles, { ...currentRow, id: vehicles.length + 1 }]);
-            //Save vehicles back in DB without ID field
-            setLeaseVehicles([...vehicles, { ...currentRow}]);
-            vehiclesRef.current = [...vehicles, { ...currentRow}];
+            setModifiedData((prev) => [...prev, { key: 'lease_vehicles', value: [...leaseVehicles, { ...currentRow }] }])
+            setIsUpdated(true);
         }
-        editOrUpdateLease();
-        handleClose();
     };
 
     const handleEditClick = (row) => {
@@ -125,12 +154,9 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
 
     const handleDelete = (id) => {
         const filtered = vehicles.filter(veh => veh.id !== currentRow.id);
-        setVehicles(filtered);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setLeaseVehicles(rowWithoutId);
-        vehiclesRef.current = rowWithoutId;
-        editOrUpdateLease();
-        handleClose();
+        setModifiedData((prev) => [...prev, { key: 'lease_vehicles', value: rowWithoutId }]);
+        setIsUpdated(true);
     };
 
     const handleDeleteClick = () => {
@@ -233,6 +259,12 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                         }} />
                     </Button>
                 </DialogTitle>
+                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                        <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
                         <Grid item md={6}>

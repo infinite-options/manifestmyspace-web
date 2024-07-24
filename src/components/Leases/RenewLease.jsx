@@ -66,10 +66,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const [deletedFiles, setDeletedFiles] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
     const documentsRef = useRef([]);
-    const adultsRef = useRef(leaseAdults);
-    const childrenRef = useRef(leaseChildren);
-    const petsRef = useRef(leasePets);
-    const vehiclesRef = useRef(leaseVehicles);
+
+    const [modifiedData, setModifiedData] = useState([]);
 
 
     useEffect(() => {
@@ -79,6 +77,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         console.log('In Renew Lease', leaseDetails, selectedLeaseId, filtered);
         const tenantsRow = JSON.parse(filtered.tenants);
         setTenantWithId(tenantsRow);
+        // console.log('tenantRow', tenantsRow);
 
         //Set utilities details
         const utils = JSON.parse(filtered.property_utilities);
@@ -148,10 +147,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         setLeaseChildren(children);
         setLeasePets(pets);
         setLeaseVehicles(vehicles);
-        adultsRef.current = adults;
-        childrenRef.current = children;
-        petsRef.current = pets;
-        vehiclesRef.current = vehicles;
         getListDetails();
 
         setShowSpinner(false);
@@ -285,78 +280,83 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     }
 
     const editOrUpdateLease = async () => {
-        console.log('inside edit')
+        console.log('inside edit', modifiedData);
         try {
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
+            if (modifiedData.length > 0) {
+                setShowSpinner(true);
+                const headers = {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Credentials": "*",
+                };
 
-            const leaseApplicationFormData = new FormData();
+                const leaseApplicationFormData = new FormData();
 
-            // leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
-            // const feesJSON = JSON.stringify(leaseFees)
-            // leaseApplicationFormData.append("lease_fees", feesJSON);
-            leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-            leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(childrenRef.current) : null);
-            leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(petsRef.current) : null);
-            leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(vehiclesRef.current) : null);
-            leaseApplicationFormData.append('lease_uid', currentLease.lease_uid);
-            console.log('uploadedFiles', uploadedFiles);
-            if (uploadedFiles.length) {
-                const documentsDetails = [];
-                [...uploadedFiles].forEach((file, i) => {
-                    leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
-                    const fileType = 'pdf';
-                    const documentObject = {
-                        // file: file,
-                        fileIndex: i,
-                        fileName: file.name,
-                        fileType: file.type,
-                        type: file.type,
-                    };
-                    documentsDetails.push(documentObject);
+                // leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
+                // const feesJSON = JSON.stringify(leaseFees)
+                // leaseApplicationFormData.append("lease_fees", feesJSON);
+                // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+                modifiedData.forEach(item => {
+                    console.log(`Key: ${item.key}`);
+                    leaseApplicationFormData.append(item.key, JSON.stringify(item.value));
                 });
-                leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
-                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
-                console.log('lease_documents', documentsRef.current)
-                setuploadedFiles([]);
+                leaseApplicationFormData.append('lease_uid', currentLease.lease_uid);
+                console.log('uploadedFiles', uploadedFiles);
+                if (uploadedFiles.length) {
+                    const documentsDetails = [];
+                    [...uploadedFiles].forEach((file, i) => {
+                        leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
+                        const fileType = 'pdf';
+                        const documentObject = {
+                            // file: file,
+                            fileIndex: i,
+                            fileName: file.name,
+                            fileType: file.type,
+                            type: file.type,
+                        };
+                        documentsDetails.push(documentObject);
+                    });
+                    leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
+                    console.log('lease_documents', documentsRef.current)
+                    setuploadedFiles([]);
+                } else {
+                    console.log('latest docs', documentsRef.current);
+                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
+                }
+
+                if (deletedFiles.length > 0) {
+                    console.log('lease_documents', documentsRef.current)
+                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
+                    leaseApplicationFormData.append("deleted_documents", JSON.stringify(deletedFiles));
+                    console.log("deleted_documents", deletedFiles);
+                    setDeletedFiles([]);
+                }
+
+                axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                    .then((response) => {
+                        console.log('Data updated successfully', response);
+                        showSnackbar("Your lease has been successfully updated.", "success");
+                        handleUpdate();
+                        setShowSpinner(false);
+                    })
+                    .catch((error) => {
+                        setShowSpinner(false);
+                        showSnackbar("Cannot update the lease. Please try again", "error");
+                        if (error.response) {
+                            console.log(error.response.data);
+                        }
+                    });
+                setShowSpinner(false);
+                setModifiedData([]);
             } else {
-                console.log('latest docs', documentsRef.current);
-                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
+                showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
-
-            if (deletedFiles.length > 0){
-                console.log('lease_documents', documentsRef.current)
-                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
-                leaseApplicationFormData.append("deleted_documents", JSON.stringify(deletedFiles));
-                console.log("deleted_documents", deletedFiles);
-                setDeletedFiles([]);
-            }
-
-            console.log('latestadult', adultsRef.current);
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
-                .then((response) => {
-                    setShowSpinner(false);
-                    console.log('Data updated successfully', response);
-                    showSnackbar("Your lease has been successfully updated.", "success");
-                    handleUpdate();
-                })
-                .catch((error) => {
-                    setShowSpinner(false);
-                    showSnackbar("Cannot update the lease. Please try again", "error");
-                    if (error.response) {
-                        console.log(error.response.data);
-                    }
-                });
-            setShowSpinner(false);
-
         } catch (error) {
             showSnackbar("Cannot update the lease. Please try again", "error");
             console.log("Cannot Update the lease", error);
+            setShowSpinner(false);
         }
     }
 
@@ -528,16 +528,16 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     {leaseAdults &&
-                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} adultsRef={adultsRef}/>
+                                        <AdultOccupant leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
                                     }
                                     {leaseChildren &&
-                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} childrenRef={childrenRef}/>
+                                        <ChildrenOccupant leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}/>
                                     }
                                     {leasePets &&
-                                        <PetsOccupant leasePets={leasePets} setLeasePets={setLeasePets} editOrUpdateLease={editOrUpdateLease} petsRef={petsRef}/>
+                                        <PetsOccupant leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}/>
                                     }
                                     {leaseVehicles &&
-                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} vehiclesRef={vehiclesRef}/>
+                                        <VehiclesOccupant leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}/>
                                     }
                                 </AccordionDetails>
                             </Accordion>
@@ -546,7 +546,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                             <Documents documents={documents} setDocuments={setDocuments}
-                                setuploadedFiles={setuploadedFiles} editOrUpdateLease={editOrUpdateLease} documentsRef={documentsRef} setDeletedFiles={setDeletedFiles}/>
+                                setuploadedFiles={setuploadedFiles} editOrUpdateLease={editOrUpdateLease} documentsRef={documentsRef} setDeletedFiles={setDeletedFiles} />
                         </Paper>
                     </Grid>
 
