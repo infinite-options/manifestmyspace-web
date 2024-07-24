@@ -52,6 +52,7 @@ import APIConfig from "../../utils/APIConfig";
 import PropertyDetail from "./PropertyDetail";
 import PropertyDetail2 from "./PropertyDetail2";
 import PMRent from "../Rent/PMRent/PMRent";
+import PropertyForm from "../Property/PropertyForm";
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -214,6 +215,7 @@ export default function PropertyList({ }) {
   const [isFromRentWidget, setFromRentWidget] = useState(false);
   const { selectedRole } = useUser();
   // console.log("getProfileId information", getProfileId());
+  const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
 
   function numberOfMaintenanceItems(maintenanceItems) {
     console.log(maintenanceItems);
@@ -609,7 +611,24 @@ export default function PropertyList({ }) {
       top: params.isFirstVisible ? 0 : 3,
       bottom: params.isLastVisible ? 0 : 3,
     };
+    
   });
+
+  const handleFormSubmit = () => {
+    // Logic to fetch the property list again, if needed
+    setShowPropertyForm(false);
+    window.location.reload();
+    // reload or refresh the property list here if necessary
+  };
+
+  const handleFormBack = () => {
+    if (propertyList.length > 0){
+      setShowPropertyForm(false);
+    } else {
+      navigate(-1);
+    }
+
+  }
 
 
   return (
@@ -625,7 +644,7 @@ export default function PropertyList({ }) {
               <Grid item xs={12} md={4}>
                 <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} />
               </Grid>) : (
-              <Grid item xs={12} md={propertyList.length > 0 && isDesktop ? 4 : 12}>
+              <Grid item xs={12} md={propertyList.length >= 0 && isDesktop ? 4 : 12}>
                 <Box
                   sx={{
                     display: "flex",
@@ -660,13 +679,7 @@ export default function PropertyList({ }) {
                         position="absolute"
                         right={0}
                         sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }}
-                        onClick={() =>
-                          navigate("/newPropertyForm", {
-                            state: {
-                              property_endpoint_resp: rawPropertyData,
-                            },
-                          })
-                        }
+                        onClick={() => setShowPropertyForm(true)}
                       >
                         <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
                       </Button>
@@ -772,10 +785,15 @@ export default function PropertyList({ }) {
                 </Box>
               </Grid>
             )}
-            {propertyList.length > 0 && allRentStatus.length > 0 && isDesktop === true &&
+            {propertyList.length >= 0 && allRentStatus.length >= 0 && isDesktop === true &&
               <Grid item xs={12} md={8}>
+              {showPropertyForm ? (
+                <PropertyForm onBack={handleFormBack} onSubmit={handleFormSubmit}  />
+              ) : (
                 <PropertyDetail2 index={propertyIndex} propertyList={displayedItems} allRentStatus={allRentStatus} isDesktop={isDesktop} />
-              </Grid>
+              )}
+            </Grid>
+              
             }
           </Grid>)}
       </Container>

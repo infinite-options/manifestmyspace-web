@@ -97,7 +97,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = () => {
+const PropertyForm = ({ onBack, onSubmit }) => {
 	const classes = useStyles();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
@@ -357,7 +357,7 @@ const PropertyForm = () => {
         setActiveStep(0);
         setShowSpinner(false);
         if (selectedRole === "OWNER") {
-          navigate("/properties", {state:{isBack:true}});
+			onSubmit(); // Call the parent's submit handler
         }
       };
 
@@ -410,7 +410,7 @@ const PropertyForm = () => {
 	return (
 		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px' }}>
 			
-			<Button onClick={() => navigate(-1)}>
+			<Button onClick={onBack}>
                 <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
               </Button>
             
