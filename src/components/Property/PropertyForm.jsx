@@ -12,6 +12,7 @@ import {
 	CardContent,
 	Container,
 	Box,
+	ThemeProvider,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import MapIcon from '@mui/icons-material/Map';
@@ -408,7 +409,8 @@ const PropertyForm = ({ onBack, onSubmit }) => {
     }, []);
 
 	return (
-		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px' }}>
+		<ThemeProvider theme={theme}>
+		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', marginTop: theme.spacing(4)  }}>
 			
 			<Button onClick={onBack}>
                 <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
@@ -873,7 +875,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 				</Grid>
 			</Grid>
 		</Container>
-	);
+		</ThemeProvider>);
 };
 
 export default PropertyForm;
