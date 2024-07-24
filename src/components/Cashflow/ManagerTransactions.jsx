@@ -408,37 +408,7 @@ export default function ManagerTransactions({propsMonth, propsYear, setMonth, se
                   )}
 
                   
-                </Box>
-                {/* <Box
-                  component="span"
-                //   m={3}
-                //   padding={3}
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  // onClick={() => setActiveButton('ExpectedCashflow')}
-                  // style={{
-                  //   backgroundColor: theme.palette.custom.blue,
-                  //   borderRadius: "5px",
-                  // }}
-                >
-                  <Box sx={{
-                    width: '180px',
-                  }}>
-
-                  </Box>
-                  <Box sx={{ backgroundColor: '#FFE3AD', padding: '5px', borderRadius: '5px', width: '100px', display: 'flex', justifyContent: 'center', }}>                    
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
-                        Expected
-                    </Typography>
-                  </Box>
-                  <Box sx={{ backgroundColor: '#8696BE', padding: '5px', borderRadius: '5px', width: '100px', display: 'flex', justifyContent: 'center',}}>                    
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
-                        Actual
-                    </Typography>
-                  </Box>
-
-                </Box> */}
+                </Box>                
 
                 <Grid container item xs={12}>
                     <Grid item xs={6.5}>                        
@@ -506,13 +476,13 @@ export default function ManagerTransactions({propsMonth, propsYear, setMonth, se
                           </Grid>                                    
                           <Grid container justifyContent="flex-end" alignItems="center" item xs={3}>
                               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>                                    
-                                  ${property?.totalExpected ? property?.totalExpected : "0.00"}
+                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
                               </Typography>                                    
                           </Grid>
 
                           <Grid container justifyContent="flex-end" alignItems="center" item xs={2}>
                               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                  ${property?.totalActual ? property?.totalActual : "0.00"}                                
+                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}                                
                               </Typography>
 
                           </Grid>
@@ -621,13 +591,13 @@ export default function ManagerTransactions({propsMonth, propsYear, setMonth, se
                                                     </Grid>                                    
                                                     <Grid container justifyContent="flex-end" item xs={3}>
                                                         <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>                                    
-                                                            ${purchase?.pur_amount_due ? purchase?.pur_amount_due : "0"}
+                                                            ${purchase?.pur_amount_due ? purchase?.pur_amount_due?.toFixed(2) : "0"}
                                                         </Typography>                                    
                                                     </Grid>
 
                                                     <Grid container justifyContent="flex-end" item xs={2}>
                                                         <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>
-                                                            ${purchase?.total_paid ? purchase?.total_paid : "0"}                                
+                                                            ${purchase?.total_paid ? purchase?.total_paid?.toFixed(2) : "0"}                                
                                                         </Typography>
 
                                                     </Grid>
