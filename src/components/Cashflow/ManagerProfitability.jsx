@@ -111,33 +111,27 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
   
               
             </Box>
-            <Box
-              component="span"
-              m={3}
-              padding={3}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              // onClick={() => setActiveButton('ExpectedCashflow')}
-              // style={{
-              //   backgroundColor: theme.palette.custom.blue,
-              //   borderRadius: "5px",
-              // }}
-            >
-              <Box sx={{
-                width: '140px',
-              }}>
-  
-              </Box>
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
-                Expected
-              </Typography>
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
-                Actual
-              </Typography>
-  
-            </Box>
-                            
+            <Grid container item xs={12}>
+                <Grid item xs={8}>                        
+                </Grid>                                    
+                <Grid container justifyContent="flex-end" item xs={2}>
+                    <Box sx={{ backgroundColor: '#FFE3AD', padding: '5px', borderRadius: '5px', width: '80px', display: 'flex', justifyContent: 'center', }}>                    
+                        <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
+                            Expected
+                        </Typography>
+                    </Box>
+                </Grid>
+
+                <Grid container justifyContent="flex-end" item xs={2}>
+                    <Box sx={{ backgroundColor: '#8696BE', padding: '5px', borderRadius: '5px', width: '80px', display: 'flex', justifyContent: 'center',}}>                    
+                        <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: '15px', }}>
+                            Actual
+                        </Typography>
+                    </Box>
+
+                </Grid>
+            </Grid>   
+                                    
             <Accordion
               sx={{
                 backgroundColor: theme.palette.primary.main,
@@ -149,27 +143,36 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
               }}
             >
               {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
-              <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      Profit
-                    </Typography>
-                  </AccordionSummary>
-                </Box>
-                <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+              <Grid container item xs={12}>
+                <Grid container justifyContent="flex-start" item xs={8}>
+                    <Grid container direction="row" alignContent='center' sx={{ height: '35px',}}>
+                        
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                                Profit
+                                </Typography>
+                            </AccordionSummary>
+                        
+                    </Grid>
+                </Grid>
+                {/* <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}> */}
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                     $                        
                     {
-                        (profitsTotal && profitsTotal?.totalExpected) ? profitsTotal?.totalExpected : "0.00"
+                        (profitsTotal && profitsTotal?.totalExpected) ? profitsTotal?.totalExpected?.toFixed(2) : "0.00"
                     }
                   </Typography>
-                </Box>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  $
-                  { (profitsTotal && profitsTotal?.totalActual) ? profitsTotal?.totalActual : "0.00" }
-                </Typography>
-              </Box>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    $
+                    { (profitsTotal && profitsTotal?.totalActual) ? profitsTotal?.totalActual?.toFixed(2) : "0.00" }
+                    </Typography>
+                </Grid>
+              </Grid>
+                
+              
   
               <AccordionDetails>
               {
@@ -184,31 +187,35 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                     }}
                                     key={index}
                                     >
-                                    {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
-                                    <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                                        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                {`${property?.propertyInfo?.property_address},`}
-                                                {' '}
-                                                {property?.propertyInfo?.property_unit && 'Unit - '}
-                                                {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
-                                            </Typography>
-                                        </AccordionSummary>
-                                        </Box>                                            
-                                        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+                                    <Grid container item xs={12}>
+                                        <Grid container justifyContent="flex-start" item xs={8}>
+                                            <Grid container direction="row" alignContent='center' sx={{ height: '35px',}}>
+                                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                                        {`${property?.propertyInfo?.property_address},`}
+                                                        {' '}
+                                                        {property?.propertyInfo?.property_unit && 'Unit - '}
+                                                        {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                                    </Typography>
+                                                </AccordionSummary>
+                                            </Grid>                                            
+                                        </Grid>
+                                        <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                        
                                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                                                 $                        
                                                 {
-                                                    (property?.totalExpected) ? property?.totalExpected : "0.00"
+                                                    (property?.totalExpected) ? property?.totalExpected?.toFixed(2) : "0.00"
                                                 }
                                             </Typography>
-                                        </Box>
-                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                        $
-                                        { (property?.totalActual) ? property?.totalActual : "0.00" }
-                                        </Typography>
-                                    </Box>
+                                        </Grid>
+                                        <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                            $
+                                            { (property?.totalActual) ? property?.totalActual?.toFixed(2) : "0.00" }
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
   
                                     <AccordionDetails>
                                         <Grid container item xs={12}>
@@ -217,10 +224,10 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.profitItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={6}>{item.purchase_type}</Grid>
-                                                            <Grid item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
-                                                            <Grid item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
-                                                            <Grid item xs={2}>{item.pur_cf_type}</Grid>
+                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
+                                                            <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                                            <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                                            {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
                                                         </Grid>
   
                                                     );
@@ -242,27 +249,31 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                 boxShadow: "none",
               }}
             >                  
-              <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      Rents
-                    </Typography>
-                  </AccordionSummary>
-                </Box>
-                <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+              <Grid container item xs={12}>
+                <Grid container justifyContent="flex-start" item xs={8}>
+                    <Grid container direction="row" alignContent='center' sx={{ height: '35px',}}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                            Rents
+                            </Typography>
+                        </AccordionSummary>
+                    </Grid>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                     $                        
                     {
-                        (rentsTotal && rentsTotal?.totalExpected) ? rentsTotal?.totalExpected : "0.00"
+                        (rentsTotal && rentsTotal?.totalExpected) ? rentsTotal?.totalExpected?.toFixed(2) : "0.00"
                     }
                   </Typography>
-                </Box>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  $
-                  { (rentsTotal && rentsTotal?.totalActual) ? rentsTotal?.totalActual : "0.00" }
-                </Typography>
-              </Box>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    $
+                    { (rentsTotal && rentsTotal?.totalActual) ? rentsTotal?.totalActual?.toFixed(2) : "0.00" }
+                    </Typography>
+                </Grid>
+              </Grid>
   
               <AccordionDetails>
                 {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
@@ -286,31 +297,36 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                         boxShadow: "none",
                                     }}
                                     >
-                                    {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
-                                    <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                                        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                {`${property?.propertyInfo?.property_address},`}
-                                                {' '}
-                                                {property?.propertyInfo?.property_unit && 'Unit - '}
-                                                {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
-                                            </Typography>
-                                        </AccordionSummary>
-                                        </Box>
-                                        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+                                    
+                                    <Grid container item xs={12}>
+                                        <Grid container justifyContent="flex-start" item xs={8}>
+                                            <Grid container direction="row" alignContent='center' sx={{ height: '35px',}}>
+                                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                                        {`${property?.propertyInfo?.property_address},`}
+                                                        {' '}
+                                                        {property?.propertyInfo?.property_unit && 'Unit - '}
+                                                        {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                                    </Typography>
+                                                </AccordionSummary>
+                                            </Grid>
+                                        </Grid>
+                                        
+                                        <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
                                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                                                 $                        
                                                 {
-                                                    (property?.totalExpected) ? property?.totalExpected : "0.00"
+                                                    (property?.totalExpected) ? property?.totalExpected?.toFixed(2) : "0.00"
                                                 }
                                             </Typography>
-                                        </Box>
-                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                        $
-                                        { (property?.totalActual) ? property?.totalActual : "0.00" }
-                                        </Typography>                                            
-                                    </Box>
+                                        </Grid>
+                                        <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                            $
+                                            { (property?.totalActual) ? property?.totalActual?.toFixed(2) : "0.00" }
+                                            </Typography>                                            
+                                        </Grid>
+                                    </Grid>
   
                                     <AccordionDetails>
                                         <Grid container item xs={12}>
@@ -319,10 +335,10 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.rentItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={6}>{item.purchase_type}</Grid>
-                                                            <Grid item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
-                                                            <Grid item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
-                                                            <Grid item xs={2}>{item.pur_cf_type}</Grid>
+                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
+                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
+                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
+                                                            {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
                                                         </Grid>
   
                                                     );
@@ -344,27 +360,31 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                 boxShadow: "none",
               }}
             >                  
-              <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      Payouts
-                    </Typography>
-                  </AccordionSummary>
-                </Box>
-                <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+              <Grid container item xs={12}>
+                <Grid container justifyContent="flex-start" item xs={8}>
+                    <Grid container direction="row" alignContent='center' sx={{ height: '35px',}}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                            Payouts
+                            </Typography>
+                        </AccordionSummary>
+                    </Grid>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                     $                        
                     {
-                        (payoutsTotal && payoutsTotal?.totalExpected) ? payoutsTotal?.totalExpected : "0.00"
+                        (payoutsTotal && payoutsTotal?.totalExpected) ? payoutsTotal?.totalExpected?.toFixed(2) : "0.00"
                     }
                   </Typography>
-                </Box>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                  $
-                  { (payoutsTotal && payoutsTotal?.totalActual) ? payoutsTotal?.totalActual : "0.00" }
-                </Typography>
-              </Box>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    $
+                    { (payoutsTotal && payoutsTotal?.totalActual) ? payoutsTotal?.totalActual?.toFixed(2) : "0.00" }
+                    </Typography>
+                </Grid>
+              </Grid>
   
               <AccordionDetails>
               {
@@ -379,30 +399,34 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                     }}
                                     key={index}                                        
                                     >                                        
-                                    <Box component="span" m={3} display="flex" justifyContent="space-between" alignItems="center">
-                                        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '270px',}}>
-                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                                {`${property?.propertyInfo?.property_address},`}
-                                                {' '}
-                                                {property?.propertyInfo?.property_unit && 'Unit - '}
-                                                {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
-                                            </Typography>
-                                        </AccordionSummary>
-                                        </Box>
-                                        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}>
+                                    <Grid container item xs={12}>
+                                        <Grid container justifyContent="flex-start" item xs={8}>
+                                            <Grid container direction="row" alignContent='center' sx={{ height: '35px',}}>
+                                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                                        {`${property?.propertyInfo?.property_address},`}
+                                                        {' '}
+                                                        {property?.propertyInfo?.property_unit && 'Unit - '}
+                                                        {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                                    </Typography>
+                                                </AccordionSummary>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
                                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                                                 $                        
                                                 {
-                                                    (property?.totalExpected) ? property?.totalExpected : "0.00"
+                                                    (property?.totalExpected) ? property?.totalExpected?.toFixed(2) : "0.00"
                                                 }
                                             </Typography>
-                                        </Box>
-                                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                        $
-                                        { (property?.totalActual) ? property?.totalActual : "0.00" }
-                                        </Typography>                                            
-                                    </Box>
+                                        </Grid>
+                                        <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                            $
+                                            { (property?.totalActual) ? property?.totalActual?.toFixed(2) : "0.00" }
+                                            </Typography>                                            
+                                        </Grid>
+                                    </Grid>
   
                                     <AccordionDetails>
                                         <Grid container item xs={12}>
@@ -411,10 +435,10 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.payoutItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={6}>{item.purchase_type}</Grid>
-                                                            <Grid item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
-                                                            <Grid item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
-                                                            <Grid item xs={2}>{item.pur_cf_type}</Grid>
+                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
+                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
+                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
+                                                            {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
                                                         </Grid>
   
                                                     );
