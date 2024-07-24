@@ -101,6 +101,33 @@ export default function MakePayment({ selectedPayment, setShowProfitability, set
   const [applePay, setApplePay] = useState(false);
   const [paymentConfirm, setPaymentConfirm] = useState(false);
 
+  const [activePaymentMethods, setActivePaymentMethods ] = useState([]);
+
+  async function fetchPaymentMethods() {
+    try {      
+      const methods = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
+      console.log("Manager Payment Method Data: ", methods.data);
+      return methods.data;
+    } catch (error) {
+      console.error("Error fetching payment methods:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchPaymentMethods()
+    .then((data) => {
+      setActivePaymentMethods(data?.result?.filter(method => method.paymentMethod_status === 'Active'));      
+    })
+    .catch((error) => {
+      console.error("Error fetching payment methods:", error);
+    });
+
+  }, []);
+
+  useEffect(() => {        
+    console.log("ROHIT - activePaymentMethods - ", activePaymentMethods);    
+  }, [activePaymentMethods]);
+
 
   
   useEffect(() => {
