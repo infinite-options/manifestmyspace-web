@@ -197,11 +197,11 @@ console.log("props in info",props)
       >
         <Paper
           style={{
-            margin: "15px 30px 30px",
-            padding: "15px",
+            // margin: "15px 30px 30px",
+            // padding: "15px",
             paddingTop: "0px",
             backgroundColor: theme.palette.primary.main,
-            width: "85%", // Occupy full width with 25px margins on each side
+            width: "100%", // Occupy full width with 25px margins on each side
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },
