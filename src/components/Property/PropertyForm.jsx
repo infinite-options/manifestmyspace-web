@@ -12,6 +12,7 @@ import {
 	CardContent,
 	Container,
 	Box,
+	ThemeProvider,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import MapIcon from '@mui/icons-material/Map';
@@ -97,7 +98,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = () => {
+const PropertyForm = ({ onBack, onSubmit }) => {
 	const classes = useStyles();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
@@ -357,7 +358,7 @@ const PropertyForm = () => {
         setActiveStep(0);
         setShowSpinner(false);
         if (selectedRole === "OWNER") {
-          navigate("/properties", {state:{isBack:true}});
+			onSubmit(); // Call the parent's submit handler
         }
       };
 
@@ -408,9 +409,10 @@ const PropertyForm = () => {
     }, []);
 
 	return (
-		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px' }}>
+		<ThemeProvider theme={theme}>
+		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', marginTop: theme.spacing(4)  }}>
 			
-			<Button onClick={() => navigate(-1)}>
+			<Button onClick={onBack}>
                 <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
               </Button>
             
@@ -873,7 +875,7 @@ const PropertyForm = () => {
 				</Grid>
 			</Grid>
 		</Container>
-	);
+		</ThemeProvider>);
 };
 
 export default PropertyForm;
