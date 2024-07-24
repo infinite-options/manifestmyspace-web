@@ -83,6 +83,8 @@ import OwnerContactDetailsHappinessMatrix from "./Contacts/ContactDetails/OwnerC
 import OwnerContactTest from "./Contacts/ContactDetails/OwnerContactTest";
 
 import PropertyList from "./Property/PropertyList";
+import ForPropertyList from "./Property/ForPropertyList";
+import Peanut from "./Property/Peanut.jsx"
 // import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard/OwnerDashboard";
 import ManagerOnBoardDesktopForm from "./Onboarding/ManagerOnBoardDesktopForm";
@@ -342,6 +344,8 @@ function Main() {
             <Route path="addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
             <Route path="myProperty" element={<TenantProperty />} />
             <Route path="properties" element={<PropertyList />} />
+            <Route path="ForPropertyList" element={<ForPropertyList />} />
+            <Route path="peanut" element={<Peanut />} />
             {/* <Route path="PMProperties" element={<PMProperties />} /> */}
             <Route path="tenantMaintenanceItemDetail" element={<TenantMaintenanceItemDetail />} />
 

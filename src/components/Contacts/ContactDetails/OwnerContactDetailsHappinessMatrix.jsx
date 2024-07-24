@@ -137,7 +137,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   }, []);
 
   useEffect(() => {
-    if (contactDetails) {
+    if (contactDetails && cashflowData) {
     setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     setFilteredCashflowDetailsByPropertyByMonth(
