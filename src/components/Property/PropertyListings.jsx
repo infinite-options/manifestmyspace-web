@@ -329,6 +329,7 @@ const PropertyListings = ({ setRightPane }) => {
   }
 
   return (
+    <div>
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
@@ -345,17 +346,17 @@ const PropertyListings = ({ setRightPane }) => {
       >
         <Paper
           style={{
-            margin: "30px",
+            // margin: "30px",
             padding: theme.spacing(2),
             backgroundColor: theme.palette.primary.main,
-            width: "85%",
+            width: "100%",
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },
             [theme.breakpoints.up("sm")]: {
               width: "50%",
             },
-            paddingTop: "10px",
+            // paddingTop: "10px",
           }}
         >
           <Stack direction="row" justifyContent="center" alignItems="center" position="relative" sx={{ paddingBottom: "25px", paddingTop: "15px" }}>
@@ -453,6 +454,7 @@ const PropertyListings = ({ setRightPane }) => {
         </Paper>
       </Box>
     </ThemeProvider>
+    </div>
   );
 };
 
@@ -753,6 +755,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
   };
 
   return (
+    <div>
     <Card sx={{ margin: 5 }}>
       <ReactImageGallery items={images} showFullscreenButton={false} showPlayButton={false} showThumbnails={false} />
 
@@ -986,6 +989,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         </Stack>
       </CardActions>
     </Card>
+    </div>
   );
 }
 
