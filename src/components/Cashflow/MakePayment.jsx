@@ -8,11 +8,14 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "@material-ui/core/styles";
 import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider, Container, ThemeProvider, } from "@mui/material";
 
-// Stripe Imports
-import StripeFeesDialog from "./StripeFeesDialog";
-import StripePayment from "./StripePayment";
+
+
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+
+// Stripe Imports
+import StripeFeesDialog from "../Settings/StripeFeesDialog"
+import StripePayment from "../Settings/StripePayment";
 
 // Program Imports
 import theme from "../../theme/theme";
@@ -52,28 +55,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SelectPayment(props) {
-  const location = useLocation();
+export default function MakePayment({ selectedPayment, setShowProfitability, setShowTransactions, setShowSelectPayment, refreshCashflowData }) {
+//   const location = useLocation();
   const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole, } = useUser();
-  console.log("--DEBUG-- props", props);
-  console.log("--DEBUG-- location.state", location.state);
-
-  const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
-  const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  console.log("ROHIT - SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
-  console.log("ROHIT - selectedRole - ", selectedRole);
+  console.log("ROHIT - MakePayment -  props - ", selectedPayment);
+//   console.log("--DEBUG-- location.state", location.state);  
 
   const classes = useStyles();
   const navigate = useNavigate();  
   const [showSpinner, setShowSpinner] = useState(false);
   // const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
-  const [paymentData, setPaymentData] = useState(location.state.paymentData);
-  const [paymentMethodInfo, setPaymentMethodInfo] = useState(location.state.paymentMethodInfo || {});
+  const [paymentData, setPaymentData] = useState(selectedPayment?.paymentData);
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState(selectedPayment?.paymentMethodInfo || {});
   console.log("--DEBUG-- paymentData", paymentData);
-  const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
-  const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
-  const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
-  const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
+  const [balance, setBalance] = useState(parseFloat(selectedPayment?.paymentData?.balance));
+  const [purchaseUID, setPurchaseUID] = useState(selectedPayment?.paymentData.purchase_uids[0]?.purchase_uid);
+  const [purchaseUIDs, setPurchaseUIDs] = useState(selectedPayment?.paymentData.purchase_uids);
+  const [selectedItems, setSelectedItems] = useState(selectedPayment?.selectedItems);
   const [convenience_fee, setFee] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
   const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
@@ -85,7 +83,7 @@ export default function SelectPayment(props) {
   //   console.log("DEBUG BALANCE IN SELECT PAYMENT", balance);
   console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
   console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
-  console.log("--debug-- location.state", location.state);
+//   console.log("--debug-- location.state", location.state);
   console.log("---debug--- convenience_fee", convenience_fee);
 
 
@@ -208,9 +206,15 @@ export default function SelectPayment(props) {
 
     // let routingString = paymentRoutingBasedOnSelectedRole();
     // navigate(routingString);
-
     // navigate("/payments")
-    navigate(-1);
+
+    
+    // navigate("/managerCashflow", { state: { showTransactions: true }});
+    setShowProfitability(false)
+    setShowTransactions(true)
+    setShowSelectPayment(false)
+    refreshCashflowData();
+
 
     setShowSpinner(false);
   };
@@ -271,6 +275,12 @@ export default function SelectPayment(props) {
     
     update_fee(event);
   
+  };
+
+  const radioSx = {
+    '&.Mui-checked': {
+      color: 'blue',
+    },
   };
 
   const handleSubmit = async (e) => {
@@ -334,21 +344,7 @@ export default function SelectPayment(props) {
 
         <Container  disableGutters maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
           <Grid container spacing={6} sx={{height: '90%'}}>          
-            <Grid item xs={12} md={4}>
-              {
-                selectedRole === "MANAGER" && (
-                  <ManagerCashflowWidget propsMonth={managerCashflowWidgetData?.propsMonth} propsYear={managerCashflowWidgetData?.propsYear} profitsTotal={managerCashflowWidgetData?.profitsTotal} rentsTotal={managerCashflowWidgetData?.rentsTotal} payoutsTotal={managerCashflowWidgetData?.payoutsTotal} graphData={managerCashflowWidgetData?.graphData}/>
-                )
-              }
-
-              {
-                selectedRole === "TENANT" && (
-                  <AccountBalanceWidget selectedProperty={accountBalanceWidgetData?.selectedProperty} selectedLease={accountBalanceWidgetData?.selectedLease} propertyAddr={accountBalanceWidgetData?.propertyAddr} propertyData={accountBalanceWidgetData?.propertyData} total={accountBalanceWidgetData?.total} rentFees={accountBalanceWidgetData?.rentFees} lateFees={accountBalanceWidgetData?.lateFees} utilityFees={accountBalanceWidgetData?.utilityFees} />
-                )
-              }            
-            </Grid>
-
-            <Grid container item xs={12} md={8} columnSpacing={6}>
+            <Grid container item xs={12} columnSpacing={6}>
               <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
               {/* <Stack direction="row" > */}
@@ -569,7 +565,7 @@ export default function SelectPayment(props) {
                     />
                     <FormControlLabel
                       value="Apple Pay"
-                      control={<Radio />}
+                      control={<Radio sx={radioSx} />}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
@@ -579,7 +575,7 @@ export default function SelectPayment(props) {
                     />
                     <FormControlLabel
                       value="Zelle"
-                      control={<Radio />}
+                      control={<Radio sx={radioSx}/>}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
@@ -590,7 +586,19 @@ export default function SelectPayment(props) {
                             variant="outlined"
                             size="small"
                             value={confirmationNumber}
-                            sx={{ marginLeft: "10px" }} // Add some spacing between the image and the textfield
+                            sx={{ 
+                                marginLeft: "10px", 
+                                '& .MuiOutlinedInput-root': {
+                                    '&.Mui-focused fieldset': {
+                                      borderColor: 'black',
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    '&.Mui-focused': {
+                                      color: '#3D5CAC',
+                                    },
+                                },                                                        
+                            }} // Add some spacing between the image and the textfield
                             disabled={selectedMethod!=='Zelle'}
                             onChange={(e) => setConfirmationNumber(e.target.value)}
                           />
@@ -600,7 +608,7 @@ export default function SelectPayment(props) {
 
                     <FormControlLabel
                       value="Venmo"
-                      control={<Radio />}
+                      control={<Radio sx={radioSx} />}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <img src={Venmo} alt="Venmo" style={{ marginRight: "8px", height: "24px" }} />
@@ -611,7 +619,7 @@ export default function SelectPayment(props) {
 
                     <FormControlLabel
                       value="Stripe"
-                      control={<Radio />}
+                      control={<Radio sx={radioSx} />}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <img src={Stripe} alt="Stripe" style={{ marginRight: "8px", height: "24px" }} />

@@ -247,6 +247,8 @@ export default function AddProperty({}) {
       formData.append("property_longitude", coordinates.longitude);
     }
 
+    console.log("Setting property_owner_id to: ", selectedOwner, ownerId);
+
     formData.append("property_owner_id", selectedOwner ? selectedOwner : ownerId);
     formData.append("property_available_to_rent", isListed ? 1 : 0);
     formData.append("property_active_date", formattedDate);
