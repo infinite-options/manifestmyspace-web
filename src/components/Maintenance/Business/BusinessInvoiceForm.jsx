@@ -456,7 +456,8 @@ export default function BusinessInvoiceForm() {
     const getMaintenanceProfileInfo = async () => {
       setShowSpinner(true);
       try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${getProfileId()}`, {
+        // const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${getProfileId()}`, {
+        const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile`, {
           method: "GET",
         });
         const responseData = await response.json();

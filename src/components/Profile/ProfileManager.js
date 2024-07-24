@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Switch, Link, Button, Paper, Stack } from '@mui/material';
-import { makeStyles } from '@material-ui/core/styles';
-import theme from '../../theme/theme';
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Switch, Link, Button, Paper, Stack } from "@mui/material";
+import { makeStyles } from "@material-ui/core/styles";
+import theme from "../../theme/theme";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useCookies } from 'react-cookie';
-import { useUser } from '../../contexts/UserContext';
-import ManagerOnBoardDesktopForm from '../Onboarding/ManagerOnBoardDesktopForm';
-import TenantOnBoardDesktopForm from '../Onboarding/TenantOnBoardDesktopForm';
-import OwnerOnBoardDeskTopForm from '../Onboarding/OwnerOnBoardDesktopForm';
-import OwnerProfile from './OwnerProfile/OwnerProfile';
-import MaintenanceOnBoardDesktopForm from '../Onboarding/MaintenanceOnBoardDesktopForm';
-import PMEmpOnBoardDesktopForm from '../Onboarding/PMEmpOnBoardDesktopForm';
-import MaintEmpOnBoardDesktopForm from '../Onboarding/MaintEmpOnBoardDesktopForm';
+import { useCookies } from "react-cookie";
+import { useUser } from "../../contexts/UserContext";
+import ManagerOnBoardDesktopForm from "../Onboarding/ManagerOnBoardDesktopForm";
+import TenantOnBoardDesktopForm from "../Onboarding/TenantOnBoardDesktopForm";
+import OwnerOnBoardDeskTopForm from "../Onboarding/OwnerOnBoardDesktopForm";
+import OwnerProfile from "./OwnerProfile/OwnerProfile";
+import MaintenanceOnBoardDesktopForm from "../Onboarding/MaintenanceOnBoardDesktopForm";
+import PMEmpOnBoardDesktopForm from "../Onboarding/PMEmpOnBoardDesktopForm";
+import MaintEmpOnBoardDesktopForm from "../Onboarding/MaintEmpOnBoardDesktopForm";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -48,11 +48,11 @@ const useStyles = makeStyles((theme) => ({
 const ProfileManager = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [cookies, setCookie] = useCookies(['user']);
-  const { user, logout, selectedRole, isLoggedIn, getProfileId, getRoleId } = useUser();  
+  const [cookies, setCookie] = useCookies(["user"]);
+  const { user, logout, selectedRole, isLoggedIn, getProfileId, getRoleId } = useUser();
   const [isSave, setIsSave] = useState(false);
-  const [activeForm, setActiveForm] = useState('');
-  const [newRole, setNewRole] = useState('');
+  const [activeForm, setActiveForm] = useState("");
+  const [newRole, setNewRole] = useState("");
   const [showRoleDropdown, setShowRoleDropdown] = useState(false); // State for showing the role dropdown
   const [profileData, setProfileData] = useState(null);
   const [notifications, setNotifications] = useState(false);
@@ -60,14 +60,16 @@ const ProfileManager = () => {
   const [allowCookies, setAllowCookies] = useState(true);
   const [settingsChanged, setSettingsChanged] = useState(false);
 
-  
   useEffect(() => {
-    if(user.dark_mode)
-  {setDarkMode(user.dark_mode=='true')} 
-  if(user.notifications)
-  {setNotifications(user.notifications=='true')} 
-  if(user.allowCookies)
-  {setAllowCookies(user.allowCookies=='true')} 
+    if (user.dark_mode) {
+      setDarkMode(user.dark_mode == "true");
+    }
+    if (user.notifications) {
+      setNotifications(user.notifications == "true");
+    }
+    if (user.allowCookies) {
+      setAllowCookies(user.allowCookies == "true");
+    }
 
     setActiveForm(selectedRole);
     fetchProfileData();
@@ -77,31 +79,31 @@ const ProfileManager = () => {
     if (settingsChanged) {
       const updateUserInfo = async () => {
         try {
-          const response = await axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo', {
+          const response = await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo", {
             notifications: notifications.toString(),
             dark_mode: darkMode.toString(),
             cookies: allowCookies.toString(),
-            user_uid: user.user_uid
+            user_uid: user.user_uid,
           });
-          console.log('User info updated:', response.data);
+          console.log("User info updated:", response.data);
         } catch (error) {
-          console.error('Error updating user info:', error);
+          console.error("Error updating user info:", error);
         }
       };
       updateUserInfo();
     }
   }, [notifications, darkMode, allowCookies]);
 
-  console.log("user data is", user)
+  console.log("user data is", user);
 
   const fetchProfileData = async () => {
     try {
-        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getRoleId()}`;
-        const profileResponse = await axios.get(url);
-        const profileData = profileResponse.data.profile.result[0];
-        setProfileData(profileData);
+      const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getRoleId()}`;
+      const profileResponse = await axios.get(url);
+      const profileData = profileResponse.data.profile.result[0];
+      setProfileData(profileData);
     } catch (error) {
-        console.error("Error fetching profile data:", error);
+      console.error("Error fetching profile data:", error);
     }
   };
 
@@ -124,59 +126,59 @@ const ProfileManager = () => {
   const handleAddRole = async () => {
     try {
       console.log("cookies.user", cookies.user);
-  
+
       // Check if newRole is available
       if (newRole) {
         // Initialize existingRoles from cookies
         const existingRoles = cookies.user.role ? cookies.user.role.split(",") : [];
-  
+
         // Check if the new role already exists
         if (existingRoles.includes(newRole)) {
           alert(`You already have the role: ${newRole}`);
           return;
         }
-  
+
         // Add the new role
         existingRoles.push(newRole);
         const updatedRole = existingRoles.join(",");
-  
+
         // Send the update request to the server
-        const response = await axios.put(
-          "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE",
-          { user_uid: cookies.user.user_uid, role: updatedRole }
-        );
-  
+        const response = await axios.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+          user_uid: cookies.user.user_uid,
+          role: updatedRole,
+        });
+
         // Check if the response is successful
         if (response.status === 200) {
-          setCookie('user', { ...cookies.user, role: updatedRole }, { path: '/' });
-          alert('Role updated successfully');
-          navigate('/addNewRole', { state: { user_uid: cookies.user.user_uid, newRole } });
+          setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
+          alert("Role updated successfully");
+          navigate("/addNewRole", { state: { user_uid: cookies.user.user_uid, newRole } });
         } else {
-          alert('An error occurred while updating the role.');
+          alert("An error occurred while updating the role.");
         }
       } else {
-        alert('Please select a role to add.');
+        alert("Please select a role to add.");
       }
     } catch (error) {
       console.error("Error updating role:", error);
-      alert('An error occurred while updating the role.');
+      alert("An error occurred while updating the role.");
     }
   };
 
   const renderForm = () => {
-    if(profileData) {
+    if (profileData) {
       switch (activeForm) {
-        case 'MANAGER':
+        case "MANAGER":
           return <ManagerOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
-        case 'PM_EMPLOYEE':
+        case "PM_EMPLOYEE":
           return <PMEmpOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
-        case 'OWNER':
+        case "OWNER":
           return <OwnerOnBoardDeskTopForm profileData={profileData} setIsSave={setIsSave} />;
-        case 'TENANT':
+        case "TENANT":
           return <TenantOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
-        case 'MAINTENANCE':
+        case "MAINTENANCE":
           return <MaintenanceOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
-        case 'MAINT_EMPLOYEE':
+        case "MAINT_EMPLOYEE":
           return <MaintEmpOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
         default:
           return (
@@ -192,16 +194,16 @@ const ProfileManager = () => {
     event.preventDefault();
     if (profileData) {
       if (selectedRole === "OWNER") {
-        navigate('/changePasswordSettings', { state: { owner_data: profileData } });
+        navigate("/changePasswordSettings", { state: { owner_data: profileData } });
       } else if (selectedRole === "MANAGER") {
-        navigate('/ChangePasswordSettingsManager', { state: { manager_data: profileData } });
+        navigate("/ChangePasswordSettingsManager", { state: { manager_data: profileData } });
       } else if (selectedRole === "TENANT") {
-        navigate('/changePasswordSettingsTenant', { state: { tenant_data: profileData } });
+        navigate("/changePasswordSettingsTenant", { state: { tenant_data: profileData } });
       } else {
-        navigate('/ChangePasswordSettingsMaintenance', { state: { maintenance_data: profileData } });
+        navigate("/ChangePasswordSettingsMaintenance", { state: { maintenance_data: profileData } });
       }
     } else {
-      console.log('Profile data is not loaded yet');
+      console.log("Profile data is not loaded yet");
     }
   };
 
@@ -212,28 +214,43 @@ const ProfileManager = () => {
         <Stack spacing={2} mt={5}>
           <Box className={classes.settingsItem}>
             <Typography>Allow notifications</Typography>
-            <Switch checked={notifications} onChange={(e) => {
-              setNotifications(e.target.checked);
-              setSettingsChanged(true);
-            }} />
+            <Switch
+              checked={notifications}
+              onChange={(e) => {
+                setNotifications(e.target.checked);
+                setSettingsChanged(true);
+              }}
+            />
           </Box>
           <Box className={classes.settingsItem}>
             <Typography>Dark mode</Typography>
-            <Switch checked={darkMode} onChange={(e) => {
-              setDarkMode(e.target.checked);
-              setSettingsChanged(true);
-            }} />
+            <Switch
+              checked={darkMode}
+              onChange={(e) => {
+                setDarkMode(e.target.checked);
+                setSettingsChanged(true);
+              }}
+            />
           </Box>
           <Box className={classes.settingsItem}>
             <Typography>Allow Cookies</Typography>
-            <Switch checked={allowCookies} onChange={(e) => {
-              setAllowCookies(e.target.checked);
-              setSettingsChanged(true);
-            }} />
+            <Switch
+              checked={allowCookies}
+              onChange={(e) => {
+                setAllowCookies(e.target.checked);
+                setSettingsChanged(true);
+              }}
+            />
           </Box>
-          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>Privacy policy</Link>
-          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>Terms and conditions</Link>
-          <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC" }}>Add Role</Link>
+          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>
+            Privacy policy
+          </Link>
+          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>
+            Terms and conditions
+          </Link>
+          <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC" }}>
+            Add Role
+          </Link>
           {showRoleDropdown && (
             <Box className={classes.settingsItem}>
               <select value={newRole} onChange={handleRoleSelect}>
@@ -247,10 +264,17 @@ const ProfileManager = () => {
               </select>
             </Box>
           )}
-          <Link href="#" underline="hover" onClick={handleChangePasswordClick} sx={{ color: "#3D5CAC" }}>Change password</Link>
-          <Button variant="contained" onClick={() => {
+          <Link href="#" underline="hover" onClick={handleChangePasswordClick} sx={{ color: "#3D5CAC" }}>
+            Change password
+          </Link>
+          <Button
+            variant="contained"
+            onClick={() => {
               logout();
-            }} sx={{ mt: 2, backgroundColor: "#3D5CAC" }} className={classes.signOutButton}>
+            }}
+            sx={{ mt: 2, backgroundColor: "#3D5CAC" }}
+            className={classes.signOutButton}
+          >
             Sign Out
           </Button>
         </Stack>

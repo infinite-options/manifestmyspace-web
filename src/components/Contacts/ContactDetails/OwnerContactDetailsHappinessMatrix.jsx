@@ -70,6 +70,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   const ownerUID = location.state.ownerUID;
 
   const cashflowData = location.state?.cashflowData;
+  console.log("In the beginning: ", cashflowData);
   const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
   const cashflowDetails = happinessData?.delta_cashflow_details?.result;
   const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
@@ -108,7 +109,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
       // const url = `http://localhost:4000/contacts/${getProfileId()}`;
       console.log("Calling contacts endpoint");
       const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
-  
+
       await axios
         .get(url)
         .then((resp) => {
@@ -137,20 +138,20 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   }, []);
 
   useEffect(() => {
-    if (contactDetails) {
-    setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
-    setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
-    setFilteredCashflowDetailsByPropertyByMonth(
-      contactDetails != null ? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []
-    );
-    setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
-  }
+    if (contactDetails && cashflowData) {
+      setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+      setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+      setFilteredCashflowDetailsByPropertyByMonth(
+        contactDetails != null ? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []
+      );
+      setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+    }
   }, [index]);
 
   const setting_matrix_data = (happiness_response) => {
     console.log("setting_matrix_data - happiness_response - ", happiness_response);
     console.log("NAVIGATING FROM", navigatingFrom);
-    
+
     return happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
       const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
       let fullName = "";
@@ -242,7 +243,13 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
                       width: "100%",
                     }}
                   >
-                    <HappinessMatrixWidget page={"OwnerContactDetails"} data={happinessMatrixData} happinessData={happinessData} setIndex={setIndex} contactDetails={contactDetails} />
+                    <HappinessMatrixWidget
+                      page={"OwnerContactDetails"}
+                      data={happinessMatrixData}
+                      happinessData={happinessData}
+                      setIndex={setIndex}
+                      contactDetails={contactDetails}
+                    />
                   </Paper>
                 </Grid>
                 <Grid item xs={12}>
@@ -655,7 +662,6 @@ const OwnerInformation = ({ contactDetails, index }) => {
 };
 
 const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
-
   const activeProperties = propertiesData?.Property?.result.filter((property) => property.owner_uid === ownerUID);
   const activePropertyUIDs = activeProperties?.map((property) => property.property_uid);
 
@@ -979,7 +985,6 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
       width: 100,
     },
   ];
-
 
   const handleSelectTab = (tabName) => {
     console.log("tabName - ", tabName);
