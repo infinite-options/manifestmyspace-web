@@ -53,6 +53,7 @@ import PropertyDetail from "./PropertyDetail";
 import PropertyDetail2 from "./PropertyDetail2";
 import PMRent from "../Rent/PMRent/PMRent";
 import PropertyForm from "../Property/PropertyForm";
+//import SearchManager from "./Property/SearchManager";
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
