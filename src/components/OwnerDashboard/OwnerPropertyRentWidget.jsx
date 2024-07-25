@@ -172,7 +172,7 @@ export default function OwnerPropertyRentWidget(props) {
                 fill: "#160449",
                 fontWeight: "800",
               }}
-              onClick={() => navigate('/newPropertyForm')}
+              onClick={() => navigate('/properties', { state: { showPropertyForm: true } })}
             >
               Add your first
               <tspan x={120} y={125}>

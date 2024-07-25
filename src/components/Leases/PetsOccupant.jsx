@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField, Typography, Grid } from '@mui/material';
+import {
+    Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField, Typography,
+    Grid, Snackbar, Alert, AlertTitle
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -68,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, petsRef }) => {
+const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedData }) => {
     console.log('Inside Pets occupants', leasePets);
     const [pets, setPets] = useState([]);
     const [open, setOpen] = useState(false);
@@ -77,6 +80,18 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, petsRef }) =
     const color = theme.palette.form.main;
     const classes = useStyles();
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [isUpdated, setIsUpdated] = useState(false);
+
+    useEffect(() => {
+        console.log('inside mod', modifiedData);
+        if (modifiedData && modifiedData.length > 0) {
+            editOrUpdateLease();
+            handleClose();
+        }
+    }, [isUpdated]);
 
     useEffect(() => {
         if (leasePets && leasePets.length > 0) {
@@ -92,24 +107,40 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, petsRef }) =
         setOpen(false);
         setCurrentRow(null);
         setIsEditing(false);
+        setIsUpdated(false);
+    };
+
+    const isRowModified = (originalRow, currentRow) => {
+        return JSON.stringify(originalRow) !== JSON.stringify(currentRow);
+    };
+
+    const showSnackbar = (message, severity) => {
+        console.log('Inside show snackbar');
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     const handleSave = () => {
         if (isEditing) {
-            const updatedRow = pets.map(pet => (pet.id === currentRow.id ? currentRow : pet));
-            setPets(updatedRow);
-            //Save pets back in DB without ID field
-            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-            setLeasePets(rowWithoutId);
-            petsRef.current = rowWithoutId;
+            if (isRowModified(pets[currentRow['id']], currentRow) === true) {
+                const updatedRow = pets.map(pet => (pet.id === currentRow.id ? currentRow : pet));
+                //Save pets back in DB without ID field
+                const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+                setModifiedData((prev) => [...prev, { key: 'lease_pets', value: rowWithoutId }]);
+                setIsUpdated(true);
+            } else {
+                showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+            }
+
         } else {
-            setPets([...pets, { ...currentRow, id: pets.length + 1 }]);
-            //Save pets back in DB without ID field
-            setLeasePets([...pets, { ...currentRow }]);
-            petsRef.current = [...pets, { ...currentRow }];
+            setModifiedData((prev) => [...prev, { key: 'lease_pets', value: [...leasePets, { ...currentRow }] }])
+            setIsUpdated(true);
         }
-        editOrUpdateLease();
-        handleClose();
     };
 
     const handleEditClick = (row) => {
@@ -120,12 +151,9 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, petsRef }) =
 
     const handleDelete = (id) => {
         const filtered = pets.filter(pet => pet.id !== currentRow.id);
-        setPets(filtered);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setLeasePets(rowWithoutId);
-        petsRef.current = rowWithoutId;
-        editOrUpdateLease();
-        handleClose();
+        setModifiedData((prev) => [...prev, { key: 'lease_pets', value: rowWithoutId }]);
+        setIsUpdated(true);
     };
 
     const handleDeleteClick = () => {
@@ -228,6 +256,12 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, petsRef }) =
                         }} />
                     </Button>
                 </DialogTitle>
+                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                        <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
                         <Grid item md={6}>
