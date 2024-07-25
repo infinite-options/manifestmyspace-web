@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Accordion, AccordionSummary, AccordionDetails, Box, Typography, Button, Modal, TextField, Grid, Alert, Snackbar,
     MenuItem, FormControl, InputLabel, Select, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText,
@@ -24,11 +24,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLease, documentsRef, setDeletedFiles }) => {
+const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData }) => {
     const [open, setOpen] = useState(false);
     const [currentRow, setcurrentRow] = useState(null);
     const color = theme.palette.form.main;
     const [isEditing, setIsEditing] = useState(false);
+    const [uploadedFiles, setuploadedFiles] = useState([]);
     const [newFiles, setNewFiles] = useState(null);
     const classes = useStyles();
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
@@ -36,6 +37,18 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [isUpdated, setIsUpdated] = useState(false);
+
+
+    useEffect(() => {
+        console.log('inside documents mod', modifiedData);
+        if (modifiedData && modifiedData.length > 0) {
+            editOrUpdateLease();
+            handleClose();
+            setIsUpdated(false);
+            setuploadedFiles([]);
+        }
+    }, [isUpdated]);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -45,10 +58,10 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
 
     const checkRequiredFields = () => {
         let retVal = true;
-        console.log('name', currentRow.filename);
+        console.log('name', currentRow.filename, currentRow.name);
         console.log('type', currentRow.type);
 
-        if (!currentRow.filename) {
+        if (!currentRow.filename && !currentRow.name) {
             console.error('Filename is either empty, null, or undefined.');
             return false;
         }
@@ -62,12 +75,14 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
         if (isEditing === true) {
             console.log('current row is', currentRow);
             const updatedDocuments = documents.map(doc => (doc.id === currentRow.id ? currentRow : doc));
-            setDocuments(updatedDocuments);
             const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest })=>rest);
-            documentsRef.current = updatedDocsWithoutId;
+            setModifiedData((prev) => [...prev, { key: 'lease_documents', value: updatedDocsWithoutId }]);
+            setIsUpdated(true);
         } else {
             console.log('arr', newFiles);
-            setDocuments((prevFiles) => [...prevFiles, currentRow]);
+            setModifiedData((prev) => [...prev, { key: 'lease_documents', value: documents }]);
+            setModifiedData((prev) => [...prev, { key: 'uploadedFiles', value: uploadedFiles }]);
+            setIsUpdated(true);
         }
         return retVal;
     }
@@ -108,8 +123,6 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
         const isValid = checkRequiredFields();
         if (isValid === true) {
             console.log('success occured');
-            editOrUpdateLease();
-            handleClose();
         } else {
             console.log('error occured');
             showSnackbar("Kindly enter all the required fields", "error");
@@ -128,13 +141,10 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
     const handleDelete = async () => {
         console.log("currentRow.id", currentRow.id);
         const updatedDocuments = documents.filter(doc => doc.id !== currentRow.id);
-        setDocuments(updatedDocuments);
         const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest })=>rest);
-        documentsRef.current = updatedDocsWithoutId;
-        setDeletedFiles((prevDocs) => [...prevDocs, currentRow.link]);
-        // console.log("currentRow.id", currentRow.id);
-        await editOrUpdateLease();
-        handleClose();
+        setModifiedData((prev) => [...prev, { key: 'lease_documents', value: updatedDocsWithoutId }]);
+        setModifiedData((prev) => [...prev, { key: 'deleted_documents', value: [currentRow.link] }]);
+        setIsUpdated(true);
     };
 
     const handleDeleteClick = () => {
@@ -162,6 +172,10 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
         {
             field: "filename",
             headerName: "Name",
+            valueGetter: (params) => {
+                const { filename, name } = params.row;
+                return `${filename || ''} ${name || ''}`.trim();
+            },
             flex: 1,
         },
         {
@@ -340,13 +354,12 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
                                 <span style={{ color: "red" }}>*</span>
                             </Typography>
                             <TextField
-                                className={classes.textField}
                                 sx={{ marginTop: '5px' }}
                                 name="file_name"
                                 label="File Name"
                                 fullWidth
                                 margin="normal"
-                                value={currentRow && currentRow.filename}
+                                value={currentRow && (currentRow.filename || currentRow.name)}
                                 disabled={true}
                                 InputProps={{
                                     style: {
@@ -354,6 +367,7 @@ const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLeas
                                     },
                                 }}
                                 InputLabelProps={{
+                                    shrink: true,
                                     style: {
                                         fontSize: '10px',
                                         textAlign: 'center',
