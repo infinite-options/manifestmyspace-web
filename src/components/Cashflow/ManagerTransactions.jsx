@@ -79,7 +79,7 @@ import {
 
 
 
-export default function ManagerTransactions({propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setShowSelectPayment, setShowProfitability, setShowTransactions }) {
+export default function ManagerTransactions({propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setCurrentWindow, selectedProperty }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId } = useUser(); // Access the user object from UserContext
@@ -152,7 +152,18 @@ export default function ManagerTransactions({propsMonth, propsYear, setMonth, se
 
   useEffect(() => {             
     //TRANSACTIONS
-    const transactionsCurrentMonth = transactionsData?.result?.filter( item => item.cf_month === month && item.cf_year === year);  
+    const allTransactionsData = transactionsData?.result;
+    console.log("ROHIT - allTransactionsData - ", allTransactionsData);
+    console.log("ROHIT - allTransactionsData - selectedProperty", selectedProperty);
+    let filteredTransactionsData = []
+    if(selectedProperty === "ALL"){
+      filteredTransactionsData = allTransactionsData;
+      console.log("ROHIT - filteredTransactionsData - ", filteredTransactionsData);
+    } else {
+      filteredTransactionsData = allTransactionsData?.filter( item => item.property_id === selectedProperty)
+      console.log("ROHIT - filteredTransactionsData - ", filteredTransactionsData);
+    }
+    const transactionsCurrentMonth = filteredTransactionsData?.filter( item => item.cf_month === month && item.cf_year === year);  
     
     const getSortOrder = (transaction) => {
         const { pur_payer, pur_receiver } = transaction;
@@ -251,7 +262,7 @@ export default function ManagerTransactions({propsMonth, propsYear, setMonth, se
 
   setTransactionsNew(transactionsByProperty);
     
-  }, [month, year, transactionsData]);
+  }, [month, year, transactionsData, selectedProperty]);
 
   // useEffect(() => {
   //     console.log("revenueByType", revenueByType)
@@ -343,9 +354,8 @@ export default function ManagerTransactions({propsMonth, propsYear, setMonth, se
     // });
 
     setSelectedPayment({ paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} });    
-    setShowProfitability(false);
-    setShowTransactions(false);
-    setShowSelectPayment(true);
+    
+    setCurrentWindow("MAKE_PAYMENT")
 
   }
 
