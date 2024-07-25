@@ -324,7 +324,7 @@ function TenantDashboard(props) {
           </Grid>
           {/* </Grid> */}
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <AccountBalanceWidget
               selectedProperty={selectedProperty}
               selectedLease={selectedLease}
@@ -342,7 +342,7 @@ function TenantDashboard(props) {
             />
           </Grid>
 
-          <Grid item xs={12} md={9}>
+          <Grid item xs={12} md={8}>
             {rightPane !== "" ? (
               renderRightPane()
             ) : (

@@ -8,7 +8,8 @@ import OwnerOnBoardDeskTopForm from "./Onboarding/OwnerOnBoardDesktopForm";
 import MaintenanceOnBoardDesktopForm from "./Onboarding/MaintenanceOnBoardDesktopForm";
 import PMEmpOnBoardDesktopForm from "./Onboarding/PMEmpOnBoardDesktopForm";
 import MaintEmpOnBoardDesktopForm from "./Onboarding/MaintEmpOnBoardDesktopForm";
-import ProfileManager from "./Profile/ProfileManager"
+import ProfileManager from "./Profile/ProfileManager";
+import ProfileEditor from "./Profile/ProfileEditor";
 import AddNewRole from "./Onboarding/AddNewRole";
 
 import SelectMonthComponent from "./SelectMonthComponent";
@@ -50,7 +51,6 @@ import PMUploadDocuments from "./Documents/PMDocuments/PMUploadDocuments";
 // import OwnerRentDetail from "./Rent/OwnerRent/OwnerRentDetail";
 import PMRent from "./Rent/PMRent/PMRent";
 import PMRentDetail from "./Rent/PMRent/PMRentDetail";
-
 
 import MaintenanceProfile from "./Profile/MaintenanceProfile/MaintenanceProfile";
 
@@ -208,8 +208,8 @@ function Main() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
-            <Route path="newUser" element={<NewUser2 />} />            
-            <Route path="createProfile" element={<CreateProfile />} /> 
+            <Route path="newUser" element={<NewUser2 />} />
+            <Route path="createProfile" element={<CreateProfile />} />
             <Route path="register" element={<Register />} />
             <Route path="returningUser" element={<ReturningUser />} />
             <Route path="userLogin" element={<UserLogin />} />
@@ -228,12 +228,13 @@ function Main() {
 
           {/* Private Routes */}
           <Route path="/" element={<PrivateRoutes />}>
-          <Route path="tt" element={<ProfileManager />} /> 
-          <Route path="addNewRole" element={<AddNewRole />} /> 
+            <Route path="tt" element={<ProfileManager />} />
+            <Route path="pe" element={<ProfileEditor />} />
+            <Route path="addNewRole" element={<AddNewRole />} />
             <Route path="dashboard" element={<MaintenanceWidget />} />
             <Route path="cashflow" element={<Cashflow />} />
             <Route path="managerCashflow" element={<ManagerCashflow />} />
-            <Route path="managerTransactions" element={<ManagerTransactions />} />            
+            <Route path="managerTransactions" element={<ManagerTransactions />} />
             <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
             <Route path="addExpense" element={<AddExpense />} />
             <Route path="addRevenue" element={<AddRevenue />} />
@@ -321,7 +322,7 @@ function Main() {
             <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
             <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
             <Route path="ownerContactDetailsHappinessMatrix" element={<OwnerContactDetailsHappinessMatrix />} />
-            <Route path="ownerContactTest" element={<OwnerContactTest/>} />
+            <Route path="ownerContactTest" element={<OwnerContactTest />} />
 
             <Route path="managerMaintenance" element={<MaintenanceManager />} />
             <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
@@ -384,7 +385,6 @@ function Main() {
 
             <Route path="referUser" element={<ReferUser />} />
             <Route path="employeeAccess" element={<EmployeeAccess />} />
-
 
             <Route path="newPropertyForm" element={<OwnerFirstProperty />} />
           </Route>
