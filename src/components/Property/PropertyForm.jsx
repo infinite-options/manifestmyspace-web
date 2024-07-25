@@ -856,7 +856,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 			</Card>
 
 			<Grid container spacing={2}>
-				<Grid item xs={12} sm={6}>
+				<Grid item xs={12} sm={12}>
 					<Button
 						variant="contained"
 						fullWidth
@@ -872,23 +872,6 @@ const PropertyForm = ({ onBack, onSubmit }) => {
                         onClick={handleSubmit}
 					>
 						Save Property
-					</Button>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<Button
-						variant="contained"
-						fullWidth
-						sx={{
-							backgroundColor: '#D29494',
-							'&:hover': {
-								backgroundColor: '#D29494',
-							},
-							color: '#160449',
-							fontWeight: 'bold',
-							textTransform: 'none',
-						}}
-					>
-						Save Property & Select Property Manager
 					</Button>
 				</Grid>
 			</Grid>
