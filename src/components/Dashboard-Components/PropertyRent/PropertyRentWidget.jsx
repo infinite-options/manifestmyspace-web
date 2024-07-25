@@ -199,6 +199,16 @@ export default function PropertyRentWidget(props) {
     });
   }
 
+  const defaultData = [{ rent_status: "no properties", number: 1, fill: "#3D5CAC" }];
+
+  const renderDefaultLegendText = (value, entry) => {
+    return (
+      <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>
+        No properties
+      </span>
+    );
+  };
+
   return (
     <Box
       style={{
@@ -306,53 +316,101 @@ export default function PropertyRentWidget(props) {
           justifyContent: "center",
           marginBottom: "10px",
         }}
-      >
+      >{totalPropertiesCount > 0 ? (
         <PieChart width={250} height={250}>
-          {/* <Legend
-            height={36}
-            iconType="circle"
-            layout="vertical"
-            verticalAlign="bottom"
-            iconSize={15}
-            padding={5}
-            formatter={renderColorfulLegendText}
-            onClick={() => navigate("/pmRent")}
-          /> */}
-          <Pie
-            data={data}
-            cx={125}
-            cy={125}
-            innerRadius={60}
-            outerRadius={90}
-            paddingAngle={0}
-            dataKey="number"
-            filter="url(#shadow)"
-            onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
-            ))}
-          </Pie>
-          <text
-            x={130}
-            y={125}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            cursor="pointer"
-            style={{
-              fontFamily: "Source Sans Pro",
-              fontSize: "20px",
-              fill: "#160449",
-              fontWeight: "bold",
-            }}
-            onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-          >
-            View all {totalPropertiesCount}
-            <tspan x={130} y={145}>
-              Properties
-            </tspan>
-          </text>
-        </PieChart>
+        {/* <Legend
+          height={36}
+          iconType="circle"
+          layout="vertical"
+          verticalAlign="bottom"
+          iconSize={15}
+          padding={5}
+          formatter={renderColorfulLegendText}
+          onClick={() => navigate("/pmRent")}
+        /> */}
+        <Pie
+          data={data}
+          cx={125}
+          cy={125}
+          innerRadius={60}
+          outerRadius={90}
+          paddingAngle={0}
+          dataKey="number"
+          filter="url(#shadow)"
+          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
+          ))}
+        </Pie>
+        <text
+          x={130}
+          y={125}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          cursor="pointer"
+          style={{
+            fontFamily: "Source Sans Pro",
+            fontSize: "20px",
+            fill: "#160449",
+            fontWeight: "bold",
+          }}
+          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+        >
+          View all {totalPropertiesCount}
+          <tspan x={130} y={145}>
+            Properties
+          </tspan>
+        </text>
+      </PieChart>
+      ) : (
+        <PieChart width={250} height={250}>
+        {/* <Legend
+          height={36}
+          iconType="circle"
+          layout="vertical"
+          verticalAlign="bottom"
+          iconSize={15}
+          padding={5}
+          formatter={renderColorfulLegendText}
+          onClick={() => navigate("/pmRent")}
+        /> */}
+        <Pie
+          data={defaultData}
+          cx={125}
+          cy={125}
+          innerRadius={60}
+          outerRadius={90}
+          paddingAngle={0}
+          dataKey="number"
+          filter="url(#shadow)"
+          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+        >
+          {defaultData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
+          ))}
+        </Pie>
+        <text
+          x={130}
+          y={125}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          cursor="pointer"
+          style={{
+            fontFamily: "Source Sans Pro",
+            fontSize: "15px",
+            fill: "#160449",
+            fontWeight: "bold",
+          }}
+          onClick={() => navigate('/properties', { state: { showPropertyForm: true } })}
+        >
+          Add your first
+          <tspan x={130} y={145}>
+            propertie here
+          </tspan>
+        </text>
+      </PieChart>
+      )}
         <CustomLegend navigate={navigate} data={data} />
         <Button
           variant="outlined"

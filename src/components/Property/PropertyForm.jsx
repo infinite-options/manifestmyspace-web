@@ -357,9 +357,8 @@ const PropertyForm = ({ onBack, onSubmit }) => {
         setSelectedImageList([]);
         setActiveStep(0);
         setShowSpinner(false);
-        if (selectedRole === "OWNER") {
 			onSubmit(); // Call the parent's submit handler
-        }
+        
       };
 
       useEffect(() => {
@@ -473,6 +472,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 										size="small"
 										fullWidth
                                         onChange={handleUnitChange}
+										placeholder="Optional"
 									/>
 								</Grid>
 								<Grid item xs={2}>
