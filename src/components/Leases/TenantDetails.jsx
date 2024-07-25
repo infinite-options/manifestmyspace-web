@@ -32,9 +32,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
-    console.log('tenantwithid', tenantWithId);
     const classes = useStyles();
-    const [rows, setRows] = useState(tenantWithId);
+    const [rows, setRows] = useState([]);
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -45,9 +44,11 @@ const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
     const color = theme.palette.form.main;
 
     useEffect(() => {
+        console.log('tenantwithid', tenantWithId);
+        setRows(tenantWithId);
         const total = calculateTotalResponsibility();
         setTotalResponsibility(total);
-    }, [])
+    }, [tenantWithId])
 
     const tenantColumns = [
         {
