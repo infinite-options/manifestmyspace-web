@@ -427,8 +427,10 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 		<ThemeProvider theme={theme}>
 		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', marginTop: theme.spacing(4)  }}>
 			
-			<Button onClick={onBack}>
-                <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
+			<Button onClick={onBack} sx={{ '&:hover': {
+          backgroundColor: 'white',
+        }}}>
+                <ArrowBackIcon sx={{  color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
               </Button>
             
 			<Card sx={{ backgroundColor: '#D6D5DA', marginBottom: '18px', padding: '16px', borderRadius: '8px' }}>
