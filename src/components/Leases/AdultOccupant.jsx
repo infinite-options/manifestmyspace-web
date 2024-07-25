@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import {
     Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField,
-    Typography, FormControl, InputLabel, Select, MenuItem, Grid,
+    Typography, FormControl, InputLabel, Select, MenuItem, Grid, Snackbar, Alert, AlertTitle
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdateLease, adultsRef }) => {
+const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData }) => {
     console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
@@ -58,6 +58,19 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
     const color = theme.palette.form.main;
     const classes = useStyles();
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [isUpdated, setIsUpdated] = useState(false);
+
+    useEffect(() => {
+        console.log('inside mod', modifiedData);
+        if (modifiedData && modifiedData.length > 0) {
+            console.log('hap1', modifiedData);
+            editOrUpdateLease();
+            handleClose();
+        }
+    }, [isUpdated]);
 
     useEffect(() => {
         if (leaseAdults && leaseAdults.length > 0) {
@@ -73,24 +86,40 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
         setOpen(false);
         setCurrentRow(null);
         setIsEditing(false);
+        setIsUpdated(false);
+    };
+
+    const isRowModified = (originalRow, currentRow) => {
+        return JSON.stringify(originalRow) !== JSON.stringify(currentRow);
+    };
+
+    const showSnackbar = (message, severity) => {
+        console.log('Inside show snackbar');
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     const handleSave = () => {
         if (isEditing) {
-            const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
-            setAdults(updatedRow);
-            //Save adults back in DB without ID field
-            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-            setLeaseAdults(rowWithoutId);
-            adultsRef.current = rowWithoutId;
+            if (isRowModified(adults[currentRow['id']], currentRow)===true){
+                const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
+                //Save adults back in DB without ID field
+                const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+                setModifiedData((prev) => [...prev, {key:'lease_adults', value:rowWithoutId}]);
+                setIsUpdated(true);
+            } else {
+                showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+            }
+            
         } else {
-            setAdults([...adults, { ...currentRow, id: adults.length + 1 }]);
-              //Save adults back in DB without ID field
-            setLeaseAdults([...leaseAdults, { ...currentRow}]);
-            adultsRef.current = [...leaseAdults, { ...currentRow}];
+            setModifiedData((prev) => [...prev, {key:'lease_adults', value:[...leaseAdults, { ...currentRow}]}])
+            setIsUpdated(true);
         }
-        editOrUpdateLease();
-        handleClose();
     };
 
     const handleEditClick = (row) => {
@@ -101,12 +130,9 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
 
     const handleDelete = () => {
         const filtered = adults.filter(adult => adult.id !== currentRow.id);
-        setAdults(filtered);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setLeaseAdults(rowWithoutId);
-        adultsRef.current = rowWithoutId;
-        editOrUpdateLease();
-        handleClose();
+        setModifiedData((prev) => [...prev, {key:'lease_adults', value:rowWithoutId}]);
+        setIsUpdated(true);
     };
 
     const handleDeleteClick = () => {
@@ -213,7 +239,12 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                         }} />
                     </Button>
                 </DialogTitle>
-
+                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+                            {snackbarMessage}
+                        </Alert>
+                    </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
                         <Grid item md={12} sx={{ marginTop: '20px' }}>
