@@ -102,7 +102,10 @@ export default function PropertyRentWidget(props) {
     { rent_status: "paid late", number: paidLateCount, fill: "#FFC85C" },
     { rent_status: "paid on time", number: paidCount, fill: "#3D5CAC" },
     { rent_status: "vacant", number: vacantCount, fill: "#160449" },
+    // { rent_status: 'Empty', number: totalPropertiesCount == 0 ? 1 : 0, fill: "#3D5CAC"}
   ];
+
+  const defaultData = [{ rent_status: "no properties", number: 3, fill: "#3D5CAC" }];
 
   // Add object conditionally only if selectedRole is "OWNER"
   if (selectedRole === "OWNER") {
@@ -307,7 +310,55 @@ export default function PropertyRentWidget(props) {
           marginBottom: "10px",
         }}
       >
-        <PieChart width={250} height={250}>
+        {totalPropertiesCount > 0 ? (
+          <PieChart width={250} height={250}>
+            {/* <Legend
+              height={36}
+              iconType="circle"
+              layout="vertical"
+              verticalAlign="bottom"
+              iconSize={15}
+              padding={5}
+              formatter={renderColorfulLegendText}
+              onClick={() => navigate("/pmRent")}
+            /> */}
+            <Pie
+              data={data}
+              cx={125}
+              cy={125}
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={0}
+              dataKey="number"
+              filter="url(#shadow)"
+              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
+              ))}
+            </Pie>
+            <text
+              x={130}
+              y={125}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              cursor="pointer"
+              style={{
+                fontFamily: "Source Sans Pro",
+                fontSize: "20px",
+                fill: "#160449",
+                fontWeight: "bold",
+              }}
+              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              View all {totalPropertiesCount}
+              <tspan x={130} y={145}>
+                Properties
+              </tspan>
+            </text>
+          </PieChart>
+        ):(
+          <PieChart width={250} height={250}>
           {/* <Legend
             height={36}
             iconType="circle"
@@ -319,7 +370,7 @@ export default function PropertyRentWidget(props) {
             onClick={() => navigate("/pmRent")}
           /> */}
           <Pie
-            data={data}
+            data={defaultData}
             cx={125}
             cy={125}
             innerRadius={60}
@@ -327,9 +378,9 @@ export default function PropertyRentWidget(props) {
             paddingAngle={0}
             dataKey="number"
             filter="url(#shadow)"
-            onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
           >
-            {data.map((entry, index) => (
+            {defaultData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
             ))}
           </Pie>
@@ -341,18 +392,20 @@ export default function PropertyRentWidget(props) {
             cursor="pointer"
             style={{
               fontFamily: "Source Sans Pro",
-              fontSize: "20px",
+              fontSize: "15px",
               fill: "#160449",
               fontWeight: "bold",
             }}
-            onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            onClick={() => navigate('/properties', { state: { showPropertyForm: true } })}
           >
-            View all {totalPropertiesCount}
+            {/* View all {totalPropertiesCount} */}
+            Add your first
             <tspan x={130} y={145}>
-              Properties
+              property here
             </tspan>
           </text>
         </PieChart>
+        )}
         <CustomLegend navigate={navigate} data={data} />
         <Button
           variant="outlined"

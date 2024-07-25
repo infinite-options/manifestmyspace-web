@@ -7,7 +7,7 @@ import { Chart } from "react-google-charts";
 // import { Box } from '@mui/material';
 import Status from "../../Templates/Status.jsx";
 import theme from "../../../theme/theme.js";
-import { Button, Box, ThemeProvider, Typography, Grid, Container } from "@mui/material";
+import { Button, Box, ThemeProvider, Typography, Grid, Container, Snackbar, Alert } from "@mui/material";
 import { nextMonday } from "date-fns";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -68,6 +68,17 @@ export default function LeaseWidget(props) {
   // console.log("Lease Status March: ", leaseStatus[3]);
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const hasTenants = leaseStatusData.length > 0;
+  const [forLeaseBar, setforLeaseBar] = useState(false);
+
+  const handleLeaseBar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setforLeaseBar(false);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Grid
@@ -88,7 +99,15 @@ export default function LeaseWidget(props) {
             padding: "15px",
             cursor: "pointer",
           }}
-          onClick={() => navigate("/Leases")}
+          onClick={() => 
+            {
+              if (hasTenants) {
+                navigate("/Leases");
+              }
+              else {
+                setforLeaseBar(true);
+              }
+            }}
           xs={12}
           rowSpacing={6}
         >
@@ -199,6 +218,9 @@ export default function LeaseWidget(props) {
           </Grid>
         </Grid>
       </Grid>
+      <Snackbar open={forLeaseBar} autoHideDuration={3000} onClose={handleLeaseBar}>
+        <Alert onClose={handleLeaseBar} severity="info" sx={{width: '100%'}}>No Leases Available</Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }
