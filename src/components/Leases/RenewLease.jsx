@@ -63,13 +63,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const [relationships, setRelationships] = useState([]);
     const [states, setStates] = useState([]);
     const [uploadedFiles, setuploadedFiles] = useState([]);
-    const [deletedFiles, setDeletedFiles] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
-    const documentsRef = useRef([]);
-    const adultsRef = useRef(leaseAdults);
-    const childrenRef = useRef(leaseChildren);
-    const petsRef = useRef(leasePets);
-    const vehiclesRef = useRef(leaseVehicles);
+
+    const [modifiedData, setModifiedData] = useState([]);
 
 
     useEffect(() => {
@@ -79,6 +75,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         console.log('In Renew Lease', leaseDetails, selectedLeaseId, filtered);
         const tenantsRow = JSON.parse(filtered.tenants);
         setTenantWithId(tenantsRow);
+        // console.log('tenantRow', tenantsRow);
 
         //Set utilities details
         const utils = JSON.parse(filtered.property_utilities);
@@ -127,7 +124,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         }));
         console.log('initial docs', docs);
         setDocuments(docs);
-        documentsRef.current = parsedDocs;
 
         //lease link
         const leaseDoc = docs.find(doc => doc.type && doc.type === "Lease Agreement");
@@ -148,10 +144,6 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         setLeaseChildren(children);
         setLeasePets(pets);
         setLeaseVehicles(vehicles);
-        adultsRef.current = adults;
-        childrenRef.current = children;
-        petsRef.current = pets;
-        vehiclesRef.current = vehicles;
         getListDetails();
 
         setShowSpinner(false);
@@ -285,65 +277,54 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     }
 
     const editOrUpdateLease = async () => {
-        console.log('inside edit')
+        console.log('inside edit', modifiedData);
         try {
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
+            if (modifiedData.length > 0) {
+                setShowSpinner(true);
+                const headers = {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Credentials": "*",
+                };
 
-            const leaseApplicationFormData = new FormData();
+                const leaseApplicationFormData = new FormData();
 
-            // leaseApplicationFormData.append('lease_documents', documents ? JSON.stringify(documents) : null);
-            // const feesJSON = JSON.stringify(leaseFees)
-            // leaseApplicationFormData.append("lease_fees", feesJSON);
-            leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-            leaseApplicationFormData.append('lease_children', leaseChildren ? JSON.stringify(childrenRef.current) : null);
-            leaseApplicationFormData.append('lease_pets', leasePets ? JSON.stringify(petsRef.current) : null);
-            leaseApplicationFormData.append('lease_vehicles', leaseVehicles ? JSON.stringify(vehiclesRef.current) : null);
-            leaseApplicationFormData.append('lease_uid', currentLease.lease_uid);
-            console.log('uploadedFiles', uploadedFiles);
-            if (uploadedFiles.length) {
-                const documentsDetails = [];
-                [...uploadedFiles].forEach((file, i) => {
-                    leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
-                    const fileType = 'pdf';
-                    const documentObject = {
-                        // file: file,
-                        fileIndex: i,
-                        fileName: file.name,
-                        fileType: file.type,
-                        type: file.type,
-                    };
-                    documentsDetails.push(documentObject);
+                // const feesJSON = JSON.stringify(leaseFees)
+                // leaseApplicationFormData.append("lease_fees", feesJSON);
+                // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+                modifiedData.forEach(item => {
+                    console.log(`Key: ${item.key}`);
+                    if (item.key === "uploadedFiles") {
+                        console.log('uploadedFiles', item.value);
+                        if (item.value.length) {
+                            const documentsDetails = [];
+                            [...item.value].forEach((file, i) => {
+                                leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
+                                const fileType = 'pdf';
+                                const documentObject = {
+                                    // file: file,
+                                    fileIndex: i,
+                                    fileName: file.name,
+                                    fileType: file.type,
+                                    type: file.type,
+                                };
+                                documentsDetails.push(documentObject);
+                            });
+                            leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+                        }
+                    } else {
+                        leaseApplicationFormData.append(item.key, JSON.stringify(item.value));
+                    }
                 });
-                leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
-                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
-                console.log('lease_documents', documentsRef.current)
-                setuploadedFiles([]);
-            } else {
-                console.log('latest docs', documentsRef.current);
-                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
-            }
-
-            if (deletedFiles.length > 0){
-                console.log('lease_documents', documentsRef.current)
-                leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsRef.current));
-                leaseApplicationFormData.append("deleted_documents", JSON.stringify(deletedFiles));
-                console.log("deleted_documents", deletedFiles);
-                setDeletedFiles([]);
-            }
-
-            console.log('latestadult', adultsRef.current);
+                leaseApplicationFormData.append('lease_uid', currentLease.lease_uid);
+                
             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                 .then((response) => {
-                    setShowSpinner(false);
                     console.log('Data updated successfully', response);
                     showSnackbar("Your lease has been successfully updated.", "success");
                     handleUpdate();
+                    setShowSpinner(false);
                 })
                 .catch((error) => {
                     setShowSpinner(false);
@@ -353,324 +334,327 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     }
                 });
             setShowSpinner(false);
-
-        } catch (error) {
-            showSnackbar("Cannot update the lease. Please try again", "error");
-            console.log("Cannot Update the lease", error);
+            setModifiedData([]);
+        } else {
+            showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
         }
+    } catch (error) {
+        showSnackbar("Cannot update the lease. Please try again", "error");
+        console.log("Cannot Update the lease", error);
+        setShowSpinner(false);
     }
+}
 
-    const showSnackbar = (message, severity) => {
-        console.log('Inside show snackbar');
-        setSnackbarMessage(message);
-        setSnackbarSeverity(severity);
-        setSnackbarOpen(true);
-    };
+const showSnackbar = (message, severity) => {
+    console.log('Inside show snackbar');
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+};
 
-    const getListDetails = async () => {
-        try {
-            const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-            if (!response.ok) {
-                console.log("Error fetching lists data");
-            }
-            const responseJson = await response.json();
-            const relationships = responseJson.result.filter(res => res.list_category === "relationships");
-            const states = responseJson.result.filter(res => res.list_category === "states");
-            setRelationships(relationships);
-            setStates(states);
-        } catch (error) {
-            console.log(error);
+const getListDetails = async () => {
+    try {
+        const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+        if (!response.ok) {
+            console.log("Error fetching lists data");
         }
+        const responseJson = await response.json();
+        const relationships = responseJson.result.filter(res => res.list_category === "relationships");
+        const states = responseJson.result.filter(res => res.list_category === "states");
+        setRelationships(relationships);
+        setStates(states);
+    } catch (error) {
+        console.log(error);
     }
+}
 
-    const getDateAdornmentString = (d) => {
-        if (d === null || d === 0) return "";
-        if (d > 3 && d < 21) return "th";
-        switch (d % 10) {
-            case 1:
-                return "st";
-            case 2:
-                return "nd";
-            case 3:
-                return "rd";
-            default:
-                return "th";
-        }
-    };
-
-    const handleDeleteButtonClick = () => {
-        setIsEndClicked(true);
+const getDateAdornmentString = (d) => {
+    if (d === null || d === 0) return "";
+    if (d > 3 && d < 21) return "th";
+    switch (d % 10) {
+        case 1:
+            return "st";
+        case 2:
+            return "nd";
+        case 3:
+            return "rd";
+        default:
+            return "th";
     }
+};
 
-    return (
-        <Box
+const handleDeleteButtonClick = () => {
+    setIsEndClicked(true);
+}
+
+return (
+    <Box
+        style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+            height: "100%",
+        }}
+    >
+        <Paper
             style={{
-                display: "flex",
-                justifyContent: "center",
-                width: "100%",
-                height: "100%",
+                marginTop: "10px",
+                backgroundColor: theme.palette.primary.main,
+                width: "100%", // Occupy full width with 25px margins on each side
             }}
         >
-            <Paper
-                style={{
-                    marginTop: "10px",
-                    backgroundColor: theme.palette.primary.main,
-                    width: "100%", // Occupy full width with 25px margins on each side
-                }}
-            >
-                <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-                    <CircularProgress color="inherit" />
-                </Backdrop>
-                <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
+            <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
+                <Grid item xs={12} md={12}>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
+                        <Typography
+                            sx={{
+                                color: "#160449",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: theme.typography.largeFont,
+                                textAlign: 'center'
+                            }}
+                        >
+                            {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
+                        </Typography>
+                        {signedLease && <Button
+                            sx={{
+                                padding: "0px",
+                                '&:hover': {
+                                    backgroundColor: theme.palette.form.main,
+                                },
+                            }}
+                            className=".MuiButton-icon"
+                            onClick={() =>
+                                window.open(signedLease.link, "_blank", "rel=noopener noreferrer")
+                            }
+                        >
+                            <img src={LeaseIcon} />
+                        </Button>}
+                    </Box>
+                    <Box sx={{ display: "block" }}>
+                        <Typography
+                            sx={{
+                                color: "#160449",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: theme.typography.largeFont,
+                                textAlign: 'center'
+                            }}
+                        >
+                            {currentLease.lease_property_id}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: "block" }}>
+                        <Typography
+                            sx={{
+                                color: "#160449",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: theme.typography.largeFont,
+                                textAlign: 'center'
+                            }}
+                        >
+                            {currentLease.lease_uid}
+                        </Typography>
+                    </Box>
+                </Grid>
+                {/* Start */}
+                <Grid item xs={12} md={12}>
+                    <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
+                        newStartDate={newStartDate} newEndDate={newEndDate} />
+                </Grid>
+                {/* End */}
+
+                {tenantWithId && tenantWithId.length > 0 && (
                     <Grid item xs={12} md={12}>
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
-                            <Typography
-                                sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight,
-                                    fontSize: theme.typography.largeFont,
-                                    textAlign: 'center'
-                                }}
+                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                            <TenantDetails tenantWithId={tenantWithId} setTenantWithId={setTenantWithId} />
+                        </Paper>
+                    </Grid>
+                )}
+                <Grid item xs={12} md={12}>
+                    <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                        {leaseFees &&
+                            <FeesDetails getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
+                        }
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} md={12}>
+                    <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                        <Accordion sx={{ backgroundColor: color }}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="occupants-content"
+                                id="occupants-header"
                             >
-                                {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
-                            </Typography>
-                            {signedLease && <Button
+                                <Grid container>
+                                    <Grid item md={11.2}>
+                                        <Typography
+                                            sx={{
+                                                color: "#160449",
+                                                fontWeight: theme.typography.primary.fontWeight,
+                                                fontSize: theme.typography.small,
+                                                textAlign: 'center',
+                                                paddingBottom: "10px",
+                                                paddingTop: "5px",
+                                                flexGrow: 1,
+                                                paddingLeft: "50px",
+                                            }}
+                                            paddingTop="5px"
+                                            paddingBottom="10px"
+                                        >
+                                            Occupants Details
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item md={0.5} />
+                                </Grid>
+
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {leaseAdults &&
+                                    <AdultOccupant leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                                }
+                                {leaseChildren &&
+                                    <ChildrenOccupant leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                                }
+                                {leasePets &&
+                                    <PetsOccupant leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                                }
+                                {leaseVehicles &&
+                                    <VehiclesOccupant leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                                }
+                            </AccordionDetails>
+                        </Accordion>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} md={12}>
+                    <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                        <Documents documents={documents} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                    </Paper>
+                </Grid>
+
+                <Grid item xs={12} md={12}>
+                    <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                        <UtilitiesManager newUtilities={newUtilities} utils={utilities}
+                            utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
+                            remainingUtils={remainingUtils} setRemainingUtils={setRemainingUtils}
+                            setNewUtilities={setNewUtilities} />
+                    </Paper>
+                </Grid>
+
+                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                        <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
+
+                <Grid item xs={12} md={12}>
+                    <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
+                        <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            <Button
+                                variant="outlined"
                                 sx={{
-                                    padding: "0px",
+                                    background: "#6788B3",
+                                    color: theme.palette.background.default,
+                                    cursor: "pointer",
+                                    textTransform: "none",
+                                    minWidth: "150px",
+                                    minHeight: "35px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                     '&:hover': {
-                                        backgroundColor: theme.palette.form.main,
+                                        background: '#9ab0cd',
                                     },
                                 }}
-                                className=".MuiButton-icon"
-                                onClick={() =>
-                                    window.open(signedLease.link, "_blank", "rel=noopener noreferrer")
-                                }
+                                size="small"
+                                onClick={editOrUpdateLease}
                             >
-                                <img src={LeaseIcon} />
-                            </Button>}
-                        </Box>
-                        <Box sx={{ display: "block" }}>
-                            <Typography
-                                sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight,
-                                    fontSize: theme.typography.largeFont,
-                                    textAlign: 'center'
-                                }}
-                            >
-                                {currentLease.lease_property_id}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ display: "block" }}>
-                            <Typography
-                                sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight,
-                                    fontSize: theme.typography.largeFont,
-                                    textAlign: 'center'
-                                }}
-                            >
-                                {currentLease.lease_uid}
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    {/* Start */}
-                    <Grid item xs={12} md={12}>
-                        <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
-                            newStartDate={newStartDate} newEndDate={newEndDate} />
-                    </Grid>
-                    {/* End */}
-
-                    {tenantWithId && tenantWithId.length > 0 && (
-                        <Grid item xs={12} md={12}>
-                            <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                                <TenantDetails tenantWithId={tenantWithId} setTenantWithId={setTenantWithId} />
-                            </Paper>
+                                <Typography sx={{
+                                    textTransform: "none",
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                    whiteSpace: "nowrap",
+                                    marginLeft: "1%",
+                                }}>
+                                    {"Edit/Update"}
+                                </Typography>
+                            </Button>
                         </Grid>
-                    )}
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            {leaseFees &&
-                                <FeesDetails getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
-                            }
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <Accordion sx={{ backgroundColor: color }}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="occupants-content"
-                                    id="occupants-header"
-                                >
-                                    <Grid container>
-                                        <Grid item md={11.2}>
-                                            <Typography
-                                                sx={{
-                                                    color: "#160449",
-                                                    fontWeight: theme.typography.primary.fontWeight,
-                                                    fontSize: theme.typography.small,
-                                                    textAlign: 'center',
-                                                    paddingBottom: "10px",
-                                                    paddingTop: "5px",
-                                                    flexGrow: 1,
-                                                    paddingLeft: "50px",
-                                                }}
-                                                paddingTop="5px"
-                                                paddingBottom="10px"
-                                            >
-                                                Occupants Details
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item md={0.5} />
-                                    </Grid>
 
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    {leaseAdults &&
-                                        <AdultOccupant leaseAdults={leaseAdults} setLeaseAdults={setLeaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} adultsRef={adultsRef}/>
-                                    }
-                                    {leaseChildren &&
-                                        <ChildrenOccupant leaseChildren={leaseChildren} setLeaseChildren={setLeaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} childrenRef={childrenRef}/>
-                                    }
-                                    {leasePets &&
-                                        <PetsOccupant leasePets={leasePets} setLeasePets={setLeasePets} editOrUpdateLease={editOrUpdateLease} petsRef={petsRef}/>
-                                    }
-                                    {leaseVehicles &&
-                                        <VehiclesOccupant leaseVehicles={leaseVehicles} setLeaseVehicles={setLeaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} vehiclesRef={vehiclesRef}/>
-                                    }
-                                </AccordionDetails>
-                            </Accordion>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <Documents documents={documents} setDocuments={setDocuments}
-                                setuploadedFiles={setuploadedFiles} editOrUpdateLease={editOrUpdateLease} documentsRef={documentsRef} setDeletedFiles={setDeletedFiles}/>
-                        </Paper>
-                    </Grid>
+                        <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                    background: "#ffa500",
+                                    color: theme.palette.background.default,
+                                    cursor: "pointer",
+                                    textTransform: "none",
+                                    minWidth: "150px",
+                                    minHeight: "35px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    '&:hover': {
+                                        background: '#ffc04d',
+                                    },
+                                }}
+                                onClick={handleRenewLease}
+                                size="small"
+                            >
+                                <Typography sx={{
+                                    textTransform: "none",
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                    whiteSpace: "nowrap",
+                                    marginLeft: "1%",
+                                }}>
+                                    {"Renew"}
+                                </Typography>
+                            </Button>
+                        </Grid>
 
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <UtilitiesManager newUtilities={newUtilities} utils={utilities}
-                                utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
-                                remainingUtils={remainingUtils} setRemainingUtils={setRemainingUtils}
-                                setNewUtilities={setNewUtilities} />
-                        </Paper>
-                    </Grid>
-
-                    <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
-                            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
-                            {snackbarMessage}
-                        </Alert>
-                    </Snackbar>
-
-                    <Grid item xs={12} md={12}>
-                        <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                            <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                <Button
-                                    variant="outlined"
-                                    sx={{
-                                        background: "#6788B3",
-                                        color: theme.palette.background.default,
-                                        cursor: "pointer",
-                                        textTransform: "none",
-                                        minWidth: "150px",
-                                        minHeight: "35px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        '&:hover': {
-                                            background: '#9ab0cd',
-                                        },
-                                    }}
-                                    size="small"
-                                    onClick={editOrUpdateLease}
-                                >
-                                    <Typography sx={{
-                                        textTransform: "none",
-                                        color: theme.typography.primary.black,
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                        whiteSpace: "nowrap",
-                                        marginLeft: "1%",
-                                    }}>
-                                        {"Edit/Update"}
-                                    </Typography>
-                                </Button>
-                            </Grid>
-
-                            <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                <Button
-                                    variant="outlined"
-                                    sx={{
-                                        background: "#ffa500",
-                                        color: theme.palette.background.default,
-                                        cursor: "pointer",
-                                        textTransform: "none",
-                                        minWidth: "150px",
-                                        minHeight: "35px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        '&:hover': {
-                                            background: '#ffc04d',
-                                        },
-                                    }}
-                                    onClick={handleRenewLease}
-                                    size="small"
-                                >
-                                    <Typography sx={{
-                                        textTransform: "none",
-                                        color: theme.typography.primary.black,
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                        whiteSpace: "nowrap",
-                                        marginLeft: "1%",
-                                    }}>
-                                        {"Renew"}
-                                    </Typography>
-                                </Button>
-                            </Grid>
-
-                            <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                <Button
-                                    variant="outlined"
-                                    sx={{
-                                        background: "#D4736D",
-                                        color: theme.palette.background.default,
-                                        cursor: "pointer",
-                                        textTransform: "none",
-                                        minWidth: "150px",
-                                        minHeight: "35px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        '&:hover': {
-                                            background: '#DEA19C',
-                                        },
-                                    }}
-                                    size="small"
-                                    onClick={handleDeleteButtonClick}
-                                >
-                                    <Typography sx={{
-                                        textTransform: "none",
-                                        color: theme.typography.primary.black,
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                        whiteSpace: "nowrap",
-                                        marginLeft: "1%",
-                                    }}>
-                                        End
-                                    </Typography>
-                                </Button>
-                            </Grid>
+                        <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                    background: "#D4736D",
+                                    color: theme.palette.background.default,
+                                    cursor: "pointer",
+                                    textTransform: "none",
+                                    minWidth: "150px",
+                                    minHeight: "35px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    '&:hover': {
+                                        background: '#DEA19C',
+                                    },
+                                }}
+                                size="small"
+                                onClick={handleDeleteButtonClick}
+                            >
+                                <Typography sx={{
+                                    textTransform: "none",
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                    whiteSpace: "nowrap",
+                                    marginLeft: "1%",
+                                }}>
+                                    End
+                                </Typography>
+                            </Button>
                         </Grid>
                     </Grid>
                 </Grid>
-            </Paper>
-        </Box >
+            </Grid>
+        </Paper>
+    </Box >
 
-    );
+);
 }
