@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import {
     Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField, Typography,
-    FormControl, InputLabel, Select, MenuItem, Grid
+    FormControl, InputLabel, Select, MenuItem, Grid, Snackbar, Alert, AlertTitle
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, editOrUpdateLease, childrenRef }) => {
+const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, setModifiedData, modifiedData }) => {
     console.log('Inside Children occupants', leaseChildren);
     const [children, setChildren] = useState([]);
     const [open, setOpen] = useState(false);
@@ -83,6 +83,20 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
     const color = theme.palette.form.main;
     const classes = useStyles();
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [isUpdated, setIsUpdated] = useState(false);
+
+
+    useEffect(() => {
+        console.log('inside children mod', modifiedData);
+        if (modifiedData && modifiedData.length > 0) {
+            console.log('hap')
+            editOrUpdateLease();
+            handleClose();
+        }
+    }, [isUpdated]);
 
     useEffect(() => {
         if (leaseChildren && leaseChildren.length > 0) {
@@ -98,24 +112,40 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
         setOpen(false);
         setCurrentRow(null);
         setIsEditing(false);
+        setIsUpdated(false);
+    };
+
+    const isRowModified = (originalRow, currentRow) => {
+        return JSON.stringify(originalRow) !== JSON.stringify(currentRow);
+    };
+
+    const showSnackbar = (message, severity) => {
+        console.log('Inside show snackbar');
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     const handleSave = () => {
         if (isEditing) {
-            const updatedRow = children.map(child => (child.id === currentRow.id ? currentRow : child));
-            setChildren(updatedRow);
-            //Save children back in DB without ID field
-            const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-            setLeaseChildren(rowWithoutId);
-            childrenRef.current = rowWithoutId;
+            if (isRowModified(children[currentRow['id']], currentRow) === true) {
+                const updatedRow = children.map(child => (child.id === currentRow.id ? currentRow : child));
+                //Save children back in DB without ID field
+                const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+                setModifiedData((prev) => [...prev, { key: 'lease_children', value: rowWithoutId }]);
+                setIsUpdated(true);
+            } else {
+                showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+            }
+
         } else {
-            setChildren([...children, { ...currentRow, id: children.length + 1 }]);
-            //Save children back in DB without ID field
-            setLeaseChildren([...children, { ...currentRow}]);
-            childrenRef.current = [...children, { ...currentRow}];
+            setModifiedData((prev) => [...prev, { key: 'lease_children', value: [...leaseChildren, { ...currentRow }] }]);
+            setIsUpdated(true);
         }
-        editOrUpdateLease();
-        handleClose();
     };
 
     const handleEditClick = (row) => {
@@ -126,12 +156,9 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
 
     const handleDelete = (id) => {
         const filtered = children.filter(child => child.id !== currentRow.id);
-        setChildren(filtered);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setLeaseChildren(rowWithoutId);
-        childrenRef.current = rowWithoutId;
-        editOrUpdateLease();
-        handleClose();
+        setModifiedData((prev) => [...prev, { key: 'lease_children', value: rowWithoutId }]);
+        setIsUpdated(true);
     };
 
     const handleDeleteClick = () => {
@@ -221,7 +248,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
 
                     }}
                 />}
-            <Dialog open={open} onClose={handleClose}  maxWidth="md">
+            <Dialog open={open} onClose={handleClose} maxWidth="md">
                 <DialogTitle
                     sx={{
                         display: 'flex',
@@ -240,6 +267,12 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                         }} />
                     </Button>
                 </DialogTitle>
+                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                        <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
                         <Grid item md={12} sx={{ marginTop: '20px' }}>
@@ -352,11 +385,11 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                                     }
                                     sx={{ marginTop: "10px", backgroundColor: '#D6D5DA', width: '450px' }}
                                     fullWidth
-                                    // InputLabelProps={{
-                                    //     sx: {
-                                    //         fontSize: '10px',
-                                    //     },
-                                    // }}
+                                // InputLabelProps={{
+                                //     sx: {
+                                //         fontSize: '10px',
+                                //     },
+                                // }}
                                 />
                             </LocalizationProvider>
                         </Grid>
@@ -392,81 +425,81 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                 </DialogContent>
                 {/* <DialogActions> */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
-                        <Button
-                            sx={{
-                                marginRight: '5px', background: "#FFC614",
-                                color: "#160449",
-                                cursor: "pointer",
-                                width: "100px",
-                                height: "31px",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                textTransform: 'none',
-                                '&:hover': {
-                                    backgroundColor: '#fabd00',
-                                },
-                            }}
-                            onClick={handleSave} color="primary">
-                            Save
-                        </Button>
-                        {isEditing && 
-                         <>
-                        <Button
-                            sx={{
-                                background: "#F87C7A",
-                                color: "#160449",
-                                cursor: "pointer",
-                                width: "100px",
-                                height: "31px",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                textTransform: 'none',
-                                '&:hover': {
-                                    backgroundColor: '#f76462',
-                                },
-                            }}
-                            onClick={handleDeleteClick} color="secondary">
-                            Delete
-                        </Button>
-                        <Dialog
-                            open={openDeleteConfirmation}
-                            onClose={handleDeleteClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                        >
-                            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                    Are you sure you want to delete this Occupant?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleDeleteClose} color="primary" sx={{
-                                    textTransform: "none", background: "#F87C7A",
+                    <Button
+                        sx={{
+                            marginRight: '5px', background: "#FFC614",
+                            color: "#160449",
+                            cursor: "pointer",
+                            width: "100px",
+                            height: "31px",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            textTransform: 'none',
+                            '&:hover': {
+                                backgroundColor: '#fabd00',
+                            },
+                        }}
+                        onClick={handleSave} color="primary">
+                        Save
+                    </Button>
+                    {isEditing &&
+                        <>
+                            <Button
+                                sx={{
+                                    background: "#F87C7A",
                                     color: "#160449",
-                                    cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont, '&:hover': {
+                                    cursor: "pointer",
+                                    width: "100px",
+                                    height: "31px",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                    textTransform: 'none',
+                                    '&:hover': {
                                         backgroundColor: '#f76462',
                                     },
-                                }}>
-                                    Cancel
-                                </Button>
-                                <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
-                                    textTransform: "none", background: "#FFC614",
-                                    color: "#160449",
-                                    cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont,
-                                    '&:hover': {
-                                        backgroundColor: '#fabd00',
-                                    },
-                                }}>
-                                    Confirm
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-                       </>
-                        }
-                    </Box>
+                                }}
+                                onClick={handleDeleteClick} color="secondary">
+                                Delete
+                            </Button>
+                            <Dialog
+                                open={openDeleteConfirmation}
+                                onClose={handleDeleteClose}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                            >
+                                <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                        Are you sure you want to delete this Occupant?
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleDeleteClose} color="primary" sx={{
+                                        textTransform: "none", background: "#F87C7A",
+                                        color: "#160449",
+                                        cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont, '&:hover': {
+                                            backgroundColor: '#f76462',
+                                        },
+                                    }}>
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleDeleteConfirm} color="primary" autoFocus sx={{
+                                        textTransform: "none", background: "#FFC614",
+                                        color: "#160449",
+                                        cursor: "pointer", fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        '&:hover': {
+                                            backgroundColor: '#fabd00',
+                                        },
+                                    }}>
+                                        Confirm
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </>
+                    }
+                </Box>
                 {/* </DialogActions> */}
             </Dialog>
         </Box>
