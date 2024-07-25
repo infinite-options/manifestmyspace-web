@@ -195,7 +195,11 @@ function ManagerDashboard() {
     // const dataObject = {};
     // console.log("In UseEffect");
     // console.log(getProfileId());
-    if (!getProfileId()) navigate("/PrivateprofileName");
+
+    console.log("user.user_uid is ", user)
+    if (!getProfileId()) 
+    { let newRole="MANAGER"
+      navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });}
     // console.log("In UseEffect after if");
     const fetchData = async () => {
       setShowSpinner(true);

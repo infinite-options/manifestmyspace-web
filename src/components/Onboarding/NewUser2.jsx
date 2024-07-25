@@ -163,7 +163,10 @@ const NewUser = () => {
                           });
                           // Check if the response is successful
                           if (response.status === 200) {
-                            setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
+                            let updatedUser=result
+                            updatedUser.user.role=updatedRole
+                            setAuthData(updatedUser)
+                            //setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
                             alert("Role updated successfully");
                             navigate("/addNewRole", { state: { user_uid: result.user.user_uid, newRole } });
                             return ;

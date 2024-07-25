@@ -71,7 +71,8 @@ function TenantDashboard(props) {
     console.log("Tenant ID: ", tenantId, "   Property ID: ", propertyId ? propertyId : "Not Selected");
     setAddMaintenance(false);
 
-    if (!getProfileId()) navigate("/PrivateprofileName");
+    if (!getProfileId())  { let newRole="TENANT"
+    navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });}
     const getTenantData = async () => {
       setShowSpinner(true);
       try {

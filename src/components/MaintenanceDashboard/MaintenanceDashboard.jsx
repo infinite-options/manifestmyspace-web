@@ -125,7 +125,8 @@ export default function MaintenanceDashboard(){
 
     useEffect(() => {
         if (!getProfileId())
-            navigate('/PrivateprofileName')
+        { let newRole="MAINTENANCE"
+        navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });}
 
         const getMaintenanceWorkerDashboardData = async () => {
             setShowSpinner(true);

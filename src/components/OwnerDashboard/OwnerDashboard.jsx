@@ -86,7 +86,8 @@ export default function OwnerDashboard() {
         return;
       }
       console.log("getProfileId*", getProfileId());
-      if (!getProfileId()) navigate("/PrivateprofileName");
+      if (!getProfileId())  { let newRole="OWNER"
+      navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });}
       setShowSpinner(true);
       console.log("getProfileId()", getProfileId());     
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
