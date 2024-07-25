@@ -231,9 +231,9 @@ export default function OwnerDashboard() {
               </Grid>
               <Grid item xs={12} md={8}>
                 <Box sx={{ display: 'flex', alignItems: 'center', paddingTop: '10px' }}>
-                  {/* <IconButton onClick={() => setView('dashboard')} sx={{ marginRight: '10px' }}>
+                  <IconButton onClick={() => setView('dashboard')} sx={{ marginRight: '10px' }}>
                     <ArrowBackIcon />
-                  </IconButton> */}
+                  </IconButton>
                 </Box>
                 <Box sx={{ paddingTop: '10px' }}>
                   <Announcements />
