@@ -32,13 +32,13 @@ const AddExpense = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { getProfileId } = useUser();
+  const { getProfileId, selectedRole } = useUser();
   const [category, setCategory] = useState("Insurance");
   const [frequency, setFrequency] = useState("Monthly"); // TODO: Monthly and Yearly fees need to be added to the lease in lease_fees
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
-  const [propertyList, setPropertyList] = useState([]);
+  const [propertyList, setPropertyList] = useState(props.propertyList);
   const [payable, setPayable] = useState("Property Manager");
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
@@ -47,6 +47,11 @@ const AddExpense = (props) => {
   const [isCheckedTwo, setIsCheckedTwo] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [partialAmount, setPartialAmount] = useState(null);
+  const setCurrentWindow = props.setCurrentWindow;
+
+  useEffect(() => {
+    setPropertyList(props.propertyList);
+  }, [props.propertyList]);
 
   const handleCheckboxChange = (option) => {
     console.log(option)
@@ -63,9 +68,9 @@ const AddExpense = (props) => {
 
   const [notes, setNotes] = useState("");
 
-  const [edit, setEdit] = useState(location?.state.edit || false);
+  const [edit, setEdit] = useState(location?.state?.edit || false);
 
-  const [itemToEdit, setItemToEdit] = useState(location?.state.itemToEdit || null);
+  const [itemToEdit, setItemToEdit] = useState(location?.state?.itemToEdit || null);
 
   useEffect(() => {
     if (edit && itemToEdit){
@@ -189,7 +194,13 @@ const AddExpense = (props) => {
     let currentMonth = currentDate.toLocaleString("default", { month: "long" });
     let currentYear = currentDate.getFullYear().toString();
     
-    navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
+    if(selectedRole === "OWNER"){
+      // navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
+      setCurrentWindow("CASHFLOW_DETAILS");
+    } else if (selectedRole === "MANAGER"){
+      // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+      setCurrentWindow("PROFITABILITY");
+    }
   };
   return (
     
@@ -200,19 +211,19 @@ const AddExpense = (props) => {
         >
             <CircularProgress color="inherit" />
         </Backdrop>
-        <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}/>
+        {/* <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}/> */}
         <Box
           style={{
             display: "flex",
             justifyContent: "center",
             width: "100%", // Take up full screen width
             minHeight: "100vh", // Set the Box height to full height
-            marginTop: theme.spacing(2), // Set the margin to 20px
+            // marginTop: theme.spacing(2), // Set the margin to 20px
           }}
         >
           <Paper
             style={{
-              margin: "30px",
+              // margin: "30px",
               padding: 20,
               // backgroundColor: theme.palette.primary.main,
               backgroundColor: theme.palette.primary.pink,

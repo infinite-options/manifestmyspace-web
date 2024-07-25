@@ -167,7 +167,7 @@ export default function MaintenanceRequestDetailNew({ maintenance_request_index,
 
   
   useEffect(() => {
-    var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_uid);
+    var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex]?.maintenance_request_uid);
  
     quotesFilteredById.sort((a, b) => {
       if (a.quote_status === "SENT") {
