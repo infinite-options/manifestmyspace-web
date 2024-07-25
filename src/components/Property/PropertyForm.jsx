@@ -13,6 +13,7 @@ import {
 	Container,
 	Box,
 	ThemeProvider,
+	Modal,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import MapIcon from '@mui/icons-material/Map';
@@ -131,6 +132,10 @@ const PropertyForm = ({ onBack, onSubmit }) => {
   const [applianceList, setApplianceList] = useState([]);
   const [selectedAppliances, setSelectedAppliances] = useState([]);
   const [coordinates, setCoordinates] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
 	const handleAddressSelect = async (address) => {
 		setAddress(address.street ? address.street : '');
@@ -183,7 +188,11 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 		navigate(-1); };
 
     const handleOwnerChange = (event) => {
+		if (event.target.value === 'referOwner') {
+			setIsModalOpen(true);
+		  } else {
             setSelectedOwner(event.target.value);
+		  }
          
 	};
 
@@ -374,13 +383,13 @@ const PropertyForm = ({ onBack, onSubmit }) => {
                 return;
               }
               const ownerdata = await response.json();
-              console.log(ownerdata);
+              console.log("----ownerdata---", ownerdata);
               let contactArray = ownerdata.management_contacts.owners;
               let ownerObjList = [];
               contactArray.forEach((contact) => {
                 let obj = {
-                  owner_id: contact.contact_uid,
-                  owner_name: contact.contact_first_name + " " + contact.contact_last_name,
+                  owner_id: contact.owner_uid,
+                  owner_name: contact.owner_first_name + " " + contact.owner_last_name,
                 };
                 ownerObjList.push(obj);
               });
@@ -762,12 +771,14 @@ const PropertyForm = ({ onBack, onSubmit }) => {
                         <MenuItem value="" disabled>
                           Select Owner
                         </MenuItem>
+						<MenuItem value="referOwner">Refer Owner</MenuItem>
                         {ownerList.map((option, index) => (
                           <MenuItem key={index} value={option.owner_id}>
                             {option.owner_name}
                           </MenuItem>
                         ))}
                       </Select>
+
                     </div>
                   ) : (
                     <div></div>
