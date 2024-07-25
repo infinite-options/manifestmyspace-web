@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import {
 	TextField,
 	Button,
@@ -17,7 +18,6 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import MapIcon from '@mui/icons-material/Map';
-import { useLocation, useNavigate } from "react-router-dom";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import AddressAutocompleteInput from './AddressAutocompleteInput';
 import theme from '../../theme/theme';
@@ -27,6 +27,7 @@ import { getLatLongFromAddress } from "../../utils/geocode";
 import StaticMap from "./StaticMap"
 import APIConfig from "../../utils/APIConfig";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ReferUser from '../../components/Referral/ReferUser';
 
 const useStyles = makeStyles({
 	card: {
@@ -133,6 +134,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
   const [selectedAppliances, setSelectedAppliances] = useState([]);
   const [coordinates, setCoordinates] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -195,6 +197,11 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 		  }
          
 	};
+
+	const handleSetSelectedOwner = (userId) => {
+		setSelectedOwner(userId);
+		setIsModalOpen(false);
+	  };
 
     const handleListedChange = (event) => {
         setListed(event.target.checked);
@@ -885,6 +892,11 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 					</Button>
 				</Grid>
 			</Grid>
+			<Modal open={isModalOpen} onClose={handleCloseModal}>
+  <Box>
+    <ReferUser onClose={handleCloseModal} onReferralSuccess={handleSetSelectedOwner} />
+  </Box>
+</Modal>
 		</Container>
 		</ThemeProvider>);
 };

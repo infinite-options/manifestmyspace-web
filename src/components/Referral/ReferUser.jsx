@@ -68,7 +68,7 @@ const CustomTextField = withStyles({
 })(TextField);
 
 // Variable Declaration
-export default function ReferUser({}) {
+export default function ReferUser({ onClose, onReferralSuccess}) {
   console.log("In ReferUser.jsx");
   const location = useLocation();
 //   const { property_endpoint_resp } = location.state;
@@ -145,6 +145,7 @@ export default function ReferUser({}) {
 
         if(emailResponse.status === 200){
           setShowEmailSentDialog(true);
+          onReferralSuccess(userUID); 
         }
 
         setShowSpinner(false);
@@ -197,7 +198,7 @@ export default function ReferUser({}) {
               </Typography>
             </Box>
             <Box position="absolute" right={0}>
-              <Button onClick={() => handleBackButton()}>
+              <Button onClick={onClose}>
                 <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>
