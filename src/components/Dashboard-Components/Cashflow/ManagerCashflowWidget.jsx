@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Grid, Box, Stack, ThemeProvider, Button, Container } from "@mui/material";
+import { Typography, Grid, Box, Stack, ThemeProvider, Button, Container, Select, Menu, MenuItem, FormControl, } from "@mui/material";
+import { makeStyles } from "@material-ui/core";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import "../../../css/cashflow.css";
 import { useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
@@ -16,6 +18,24 @@ import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 
 // "../../images/AddRevenueIcon.png"
 
+const useStyles = makeStyles({
+  button: {
+    width: "100%",
+    fontSize: "13px",
+    marginBottom: "10px", // Adjust the spacing between buttons as needed
+  },
+  container: {
+    width: "90%",
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  row: {
+    marginBottom: "20px", // Adjust the spacing between rows
+  },
+});
 
 
 
@@ -173,10 +193,13 @@ function getTotalRevenueByMonthYear(data, month, year) {
 
 
 
-function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, setShowProfitability, setShowTransactions, setShowPayments, setShowSelectPayment }) {
+function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData, setCurrentWindow, propertyList, selectedProperty, setSelectedProperty,  }) {
   console.log("In ManagerCashflow Widget ");
-  console.log("ManagerCashflow widget - profitsTotal - ", profitsTotal);
+  console.log("ManagerCashflow widget - propertyList - ", propertyList);
   const navigate = useNavigate();
+  const classes = useStyles();
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 //   let date = new Date();
 //   let currentMonth = date.toLocaleString("default", { month: "long" });
@@ -225,6 +248,8 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
   const [revenueData, setRevenueData] = useState(null);
 
   const [last12Months, setLast12Months] = useState([]);
+
+  const [anchorEl, setAnchorEl] = useState(null);
 
   
 
@@ -297,7 +322,15 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
         setPayouts(payoutsTotal);
         setMonth(propsMonth);
         setYear(propsYear);
-        let cashflowLast12Months = getCashflowData(graphData);
+        let filteredGraphdata = []
+        if(selectedProperty === "ALL"){
+          filteredGraphdata = graphData
+          console.log("ROHIT - filteredGraphdata - ", filteredGraphdata);
+        } else {
+          filteredGraphdata = graphData?.filter( item => item.property_id === selectedProperty)
+          console.log("ROHIT - filteredGraphdata - ", filteredGraphdata);
+        }
+        let cashflowLast12Months = getCashflowData(filteredGraphdata);
         setLast12Months(cashflowLast12Months);
         // let revenue = getRevenueData(graphData);
         // setCashflowData(cashflow);
@@ -305,13 +338,24 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
       
   }, [ profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData ]);
 
-  const graphDataKeys = [
-    { name: 'Expected Rent', color: '#A52A2A'},
-    { name: 'Actual Rent', color: '#000000'},
-    { name: 'Expected Profit', color: '#FF8A0059'},
-    { name: 'Actual Profit', color: '#3D5CAC'}
-  ]
+  
+  const handlePropertyChange = (propertyUID) => {
+    console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
+    setSelectedProperty(propertyUID);
+    setAnchorEl(null);
+  };
 
+  const handleSelectAllProperties = () => {
+    setSelectedProperty("ALL");
+  }
+
+  const viewProperties = async (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -373,11 +417,54 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: "4px" }} />
                   Last 30 days
                 </Button>
-              </Grid>
+              </Grid>              
               <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-start" }}>
                 <Button
                   variant="outlined"
                   id="revenue"
+                  className={classes.button}
+                  style={{
+                    // height: "100%",
+                    // width: '80%',
+                    // backgroundColor: '#160449',
+                    color: "#3D5CAC",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                  }}
+                  onClick={viewProperties}
+                >
+                  <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: "4px" }} />
+                  {!isMobile && "Select Property"}
+                </Button>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  // onChange={handlePropertyChange}
+                  onClose={handleClose}                  
+                >
+                {/* <Select value={selectedProperty} onChange={handlePropertyChange} variant="filled" displayEmpty> */}
+                  {propertyList.map((property, index) => {
+                    return (
+                      <MenuItem
+                        key={property.property_uid}
+                        value={property}
+                        onClick={() => {
+                          handlePropertyChange(property.property_uid)
+                        }}
+                      >
+                        {property.property_address}{property.property_unit ? `, Unit - ${property.property_unit}` : ''}
+                      </MenuItem>
+                    );
+                  })}                  
+                {/* </Select> */}
+                </Menu>
+
+              </Grid>
+              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-start" }}>
+              <Button
+                  variant="outlined"
+                  id="all_properties"
                   // className={classes.button}
                   style={{
                     // height: "100%",
@@ -388,10 +475,12 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                     marginBottom: "10px",
                     borderRadius: "5px",
                   }}
-                  // onClick={handleSelectPropertyClick}
+                  onClick={() => {
+                    handleSelectAllProperties();
+                  }}
                 >
-                  <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: "4px" }} />
-                  Select Property
+                  {/* <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: "4px" }} /> */}
+                  All Properties
                 </Button>
               </Grid>
             </Grid>
@@ -412,7 +501,8 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                    // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                    setCurrentWindow("ADD_REVENUE")
                   }}
                 >
                   {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
@@ -437,7 +527,8 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
+                    // navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
+                    setCurrentWindow("ADD_EXPENSE");
                   }}
                 >
                   {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
@@ -463,12 +554,8 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
             <Grid
               item xs={12}
               onClick={(e) => {
-                // e.stopPropagation();
-                // navigate("/managerCashflow", { state: { showProfitability: true}});
-                setShowProfitability(true);
-                setShowTransactions(false);
-                setShowPayments(false);
-                setShowSelectPayment(false);
+                // e.stopPropagation();                
+                setCurrentWindow("PROFITABILITY")
               }}
               sx={{
                 cursor: 'pointer',
@@ -586,11 +673,8 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    // navigate("/managerTransactions");
-                    setShowProfitability(false);
-                    setShowTransactions(true);
-                    setShowPayments(false);
-                    setShowSelectPayment(false);
+                    // navigate("/managerTransactions");                    
+                    setCurrentWindow("TRANSACTIONS");
                   }}
                 >                                    
                   Transactions

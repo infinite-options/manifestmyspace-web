@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MakePayment({ selectedPayment, setShowProfitability, setShowTransactions, setShowSelectPayment, refreshCashflowData }) {
+export default function MakePayment({ selectedPayment, refreshCashflowData, setCurrentWindow, }) {
 //   const location = useLocation();
   const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole, } = useUser();
   console.log("ROHIT - MakePayment -  props - ", selectedPayment);
@@ -132,7 +132,8 @@ export default function MakePayment({ selectedPayment, setShowProfitability, set
   
   useEffect(() => {
     // Check if selectedMethod is not empty and confirmationNumber is not empty for Zelle and method for payment is selected
-    if ((selectedMethod === "Zelle" && confirmationNumber === "") || !selectedMethod ) {
+    // if ((selectedMethod === "Zelle" && confirmationNumber === "") || !selectedMethod ) {
+    if ((confirmationNumber === "") || !selectedMethod ) {
       setIsMakePaymentDisabled(true); // Disable button if conditions not met
     } else {
       setIsMakePaymentDisabled(false); // Enable button if conditions met
@@ -235,11 +236,8 @@ export default function MakePayment({ selectedPayment, setShowProfitability, set
     // navigate(routingString);
     // navigate("/payments")
 
-    
-    // navigate("/managerCashflow", { state: { showTransactions: true }});
-    setShowProfitability(false)
-    setShowTransactions(true)
-    setShowSelectPayment(false)
+        
+    setCurrentWindow("TRANSACTIONS")
     refreshCashflowData();
 
 
@@ -360,6 +358,62 @@ export default function MakePayment({ selectedPayment, setShowProfitability, set
     // console.log("--DEBUG-- stripePromise", stripePromise);
     setShowSpinner(false);
   };
+
+  const getPaymentMethodName = (type) =>{
+    switch(type){
+        case "zelle":
+            return "Zelle";
+            break;
+
+        case "apple_pay":
+            return "Apple Pay";
+            break;
+
+        case "stripe":
+            return "Stripe";
+            break;
+
+        case "paypal":
+            return "Paypal";
+            break;
+        
+        case "venmo":
+            return "Venmo";
+            break;
+
+        default:
+            return "<PAYMENT_METHOD_NAME>"
+            break;
+    }
+  }
+
+  const getPMImage = (type) => {
+    switch(type){
+        case "zelle":
+            return Zelle;
+            break;
+
+        case "apple_pay":
+            return ApplePay;
+            break;
+
+        case "stripe":
+            return Stripe;
+            break;
+
+        case "paypal":
+            return PayPal;
+            break;
+        
+        case "venmo":
+            return Venmo;
+            break;
+
+        default:
+            return null
+            break;
+    }
+  }
 
   return (
     // <div style={{ padding: "30px" }}>
@@ -569,16 +623,16 @@ export default function MakePayment({ selectedPayment, setShowProfitability, set
                   </RadioGroup>
                 </FormControl>
 
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont, marginTop: '20px', }}>
                   Other Payment Methods
                 </Typography>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
-                  Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle, please include the transaction confirmation number.
+                  Payment Instructions for Paypal, Apple Pay, Zelle, and Venmo: Please make payment via 3rd party app and record the transaction confirmation number here.
                 </Typography>
 
                 <Divider light />
 
-                <FormControl component="fieldset">
+                {/* <FormControl component="fieldset">
                   <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
                     <FormControlLabel
                       value="PayPal"
@@ -654,6 +708,74 @@ export default function MakePayment({ selectedPayment, setShowProfitability, set
                         </div>
                       }
                     />
+                  </RadioGroup>
+                </FormControl> */}
+
+                <FormControl component="fieldset" sx={{marginTop: '20px',}}>
+                  <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>                    
+                    <Grid container item xs={12}>
+                        { activePaymentMethods?.map((method, index) => {
+                            const methodName = getPaymentMethodName(method.paymentMethod_type)
+                            return (
+                                // <Grid container item xs={12} key={method.paymentMethod_uid}>
+                                    <FormControlLabel
+                                        value={methodName}
+                                        control={<Radio sx={radioSx}/>}
+                                        disableTypography={true}
+                                        label={
+                                            <Grid container alignItems='center' item xs={12} sx={{width: '100%',}}>
+                                                <Grid item xs={1}>
+                                                    <img src={getPMImage(method.paymentMethod_type)} alt={methodName} style={{ marginRight: "8px", height: "24px" }} />
+                                                </Grid>
+                                                {/* {methodName} {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"} */}
+                                                <Grid item xs={1.5}>
+                                                    {methodName}
+                                                </Grid>
+                                                <Grid item xs={6.5}>
+                                                    {method.paymentMethod_name ? method.paymentMethod_name : "No Payment Info"}
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                {
+                                                    selectedMethod === methodName && (
+                                                        
+                                                            <TextField
+                                                                id="confirmation-number"
+                                                                label="Confirmation Number"
+                                                                variant="outlined"
+                                                                size="small"
+                                                                value={confirmationNumber}
+                                                                sx={{ 
+                                                                    // marginLeft: "10px", 
+                                                                    '& .MuiOutlinedInput-root': {
+                                                                        '&.Mui-focused fieldset': {
+                                                                        borderColor: 'black',
+                                                                        },
+                                                                    },
+                                                                    '& .MuiInputLabel-root': {
+                                                                        '&.Mui-focused': {
+                                                                        color: '#3D5CAC',
+                                                                        },
+                                                                    },                                                        
+                                                                }} // Add some spacing between the image and the textfield
+                                                                // disabled={selectedMethod!== methodName}
+                                                                onChange={(e) => setConfirmationNumber(e.target.value)}
+                                                            />
+                                                        
+                                                    )
+                                                }
+                                                </Grid>
+                                                
+                                            </Grid>
+                                        }
+                                        sx={{
+                                            width: '100%',
+                                            margin: '0px',
+                                        }}
+                                    />
+                                // </Grid>
+                            );
+                        })}
+                    </Grid>                                                            
                   </RadioGroup>
                 </FormControl>
                 

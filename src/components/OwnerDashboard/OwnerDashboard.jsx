@@ -152,7 +152,7 @@ export default function OwnerDashboard() {
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CashflowWidget data={cashflowStatusData} />
+            <CashflowWidget data={cashflowStatusData} page="OwnerDashboard"/>
           </Grid>
 
           <Grid container item xs={12} md={8} columnSpacing={6}>
