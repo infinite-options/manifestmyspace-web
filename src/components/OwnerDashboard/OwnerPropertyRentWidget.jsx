@@ -1,14 +1,16 @@
 import { PieChart, Pie, Legend, Cell } from "recharts";
 import { Chart } from "react-google-charts";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, List, ListItem, Typography } from "@mui/material";
 import { useUser } from "../../contexts/UserContext.jsx";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function OwnerPropertyRentWidget(props) {
   console.log("In Owner Property Rent Widget ");
   const navigate = useNavigate();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
-  // console.log(selectedRole);
+  console.log("In OwnerPropertyRentWidget Selected Role: ", selectedRole);
+  console.log("In OwnerPropertyRentWidget: Routing Based on Role", propertyRoutingBasedOnSelectedRole);
   // console.log(props.rentData);
 
   // console.log("Role: ", user);
@@ -71,18 +73,14 @@ export default function OwnerPropertyRentWidget(props) {
   const defaultData = [{ rent_status: "no properties", number: 1, fill: "#3D5CAC" }];
 
   const renderDefaultLegendText = (value, entry) => {
-    return (
-      <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>
-        No properties
-      </span>
-    );
+    return <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>No properties</span>;
   };
 
   return (
     <Grid container style={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%" }}>
       <Grid item xs={12} style={{ display: "flex", justifyContent: "center" }}>
         <Typography variant="h5" sx={{ fontWeight: "bold", paddingTop: "15px", color: "#160449" }}>
-          Property Rent
+          Property Rent 589
         </Typography>
       </Grid>
       <Grid item xs={12}>
@@ -97,12 +95,14 @@ export default function OwnerPropertyRentWidget(props) {
               paddingAngle={0}
               dataKey="number"
               filter="url(#shadow)"
-              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+              // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+              onClick={() => navigate("/properties", { state: { showPropertyForm: true } })}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
               ))}
             </Pie>
+
             <Legend
               height={36}
               iconType="circle"
@@ -112,8 +112,11 @@ export default function OwnerPropertyRentWidget(props) {
               iconSize={15}
               padding={5}
               formatter={renderColorfulLegendText}
-              onClick={() => navigate("/pmRent")}
+              // onClick={() => navigate("/pmRent")}
+              onClick={() => navigate("/properties")}
+              // onClick={() => navigate("/properties", { state: { showRentForm: true } })}
             />
+
             <text
               x={120}
               y={113}
@@ -130,36 +133,18 @@ export default function OwnerPropertyRentWidget(props) {
             >
               View all {totalPropertiesCount}
               <tspan x={120} y={125}>
-                properties
+                properties 98
               </tspan>
             </text>
           </PieChart>
         ) : (
           <PieChart width={400} height={250} margin={{ top: 40, right: 30, left: 50, bottom: 40 }}>
-            <Pie
-              data={defaultData}
-              cx={70}
-              cy={78}
-              innerRadius={55}
-              outerRadius={80}
-              paddingAngle={0}
-              dataKey="number"
-              filter="url(#shadow)"
-            >
+            <Pie data={defaultData} cx={70} cy={78} innerRadius={55} outerRadius={80} paddingAngle={0} dataKey="number" filter="url(#shadow)">
               {defaultData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
               ))}
             </Pie>
-            <Legend
-              height={36}
-              iconType="circle"
-              layout="vertical"
-              align="right"
-              verticalAlign="top"
-              iconSize={15}
-              padding={5}
-              formatter={renderDefaultLegendText}
-            />
+            <Legend height={36} iconType="circle" layout="vertical" align="right" verticalAlign="top" iconSize={15} padding={5} formatter={renderDefaultLegendText} />
             <text
               x={120}
               y={113}
@@ -172,7 +157,7 @@ export default function OwnerPropertyRentWidget(props) {
                 fill: "#160449",
                 fontWeight: "800",
               }}
-              onClick={() => navigate('/properties', { state: { showPropertyForm: true } })}
+              onClick={() => navigate("/properties", { state: { showPropertyForm: true } })}
             >
               Add your first
               <tspan x={120} y={125}>
@@ -184,5 +169,4 @@ export default function OwnerPropertyRentWidget(props) {
       </Grid>
     </Grid>
   );
-  
 }

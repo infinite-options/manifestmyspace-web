@@ -7,7 +7,7 @@ import { Chart } from "react-google-charts";
 // import { Box } from '@mui/material';
 import Status from "../../Templates/Status.jsx";
 import theme from "../../../theme/theme.js";
-import { Button, Box, ThemeProvider, Typography, Grid, Container, Snackbar, Alert } from "@mui/material";
+import { Button, Box, ThemeProvider, Typography, Grid, Container, Snackbar, Alert, AlertTitle } from "@mui/material";
 import { nextMonday } from "date-fns";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -73,7 +73,7 @@ export default function LeaseWidget(props) {
   const [forLeaseBar, setforLeaseBar] = useState(false);
 
   const handleLeaseBar = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
     setforLeaseBar(false);
@@ -99,15 +99,13 @@ export default function LeaseWidget(props) {
             padding: "15px",
             cursor: "pointer",
           }}
-          onClick={() => 
-            {
-              if (hasTenants) {
-                navigate("/Leases");
-              }
-              else {
-                setforLeaseBar(true);
-              }
-            }}
+          onClick={() => {
+            if (hasTenants) {
+              navigate("/Leases");
+            } else {
+              setforLeaseBar(true);
+            }
+          }}
           xs={12}
           rowSpacing={6}
         >
@@ -218,8 +216,11 @@ export default function LeaseWidget(props) {
           </Grid>
         </Grid>
       </Grid>
-      <Snackbar open={forLeaseBar} autoHideDuration={3000} onClose={handleLeaseBar}>
-        <Alert onClose={handleLeaseBar} severity="info" sx={{width: '100%'}}>No Leases Available</Alert>
+      <Snackbar open={forLeaseBar} onClose={handleLeaseBar} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert onClose={handleLeaseBar} severity="info" sx={{ width: "100%", height: "100%" }}>
+          <AlertTitle>No Leases Found</AlertTitle>
+          No Leases Available
+        </Alert>
       </Snackbar>
     </ThemeProvider>
   );

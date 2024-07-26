@@ -33,6 +33,7 @@ const useStyles = makeStyles({
 
 export default function PropertyRentWidget(props) {
   console.log("In Property Rent Widget ");
+
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId } = useUser();
   const classes = useStyles();
@@ -41,6 +42,9 @@ export default function PropertyRentWidget(props) {
   const [propertyList, setPropertyList] = useState([]);
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [allRentStatus, setAllRentStatus] = useState([]);
+
+  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole);
+  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
 
   useEffect(() => {
     const propertyRentDetails = async () => {
@@ -357,9 +361,9 @@ export default function PropertyRentWidget(props) {
               </tspan>
             </text>
           </PieChart>
-        ):(
+        ) : (
           <PieChart width={250} height={250}>
-          {/* <Legend
+            {/* <Legend
             height={36}
             iconType="circle"
             layout="vertical"
@@ -369,44 +373,46 @@ export default function PropertyRentWidget(props) {
             formatter={renderColorfulLegendText}
             onClick={() => navigate("/pmRent")}
           /> */}
-          <Pie
-            data={defaultData}
-            cx={125}
-            cy={125}
-            innerRadius={60}
-            outerRadius={90}
-            paddingAngle={0}
-            dataKey="number"
-            filter="url(#shadow)"
-            // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-          >
-            {defaultData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
-            ))}
-          </Pie>
-          <text
-            x={130}
-            y={125}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            cursor="pointer"
-            style={{
-              fontFamily: "Source Sans Pro",
-              fontSize: "15px",
-              fill: "#160449",
-              fontWeight: "bold",
-            }}
-            onClick={() => navigate('/properties', { state: { showPropertyForm: true } })}
-          >
-            {/* View all {totalPropertiesCount} */}
-            Add your first
-            <tspan x={130} y={145}>
-              property here
-            </tspan>
-          </text>
-        </PieChart>
+            <Pie
+              data={defaultData}
+              cx={125}
+              cy={125}
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={0}
+              dataKey="number"
+              filter="url(#shadow)"
+              // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              {defaultData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
+              ))}
+            </Pie>
+            <text
+              x={130}
+              y={125}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              cursor="pointer"
+              style={{
+                fontFamily: "Source Sans Pro",
+                fontSize: "15px",
+                fill: "#160449",
+                fontWeight: "bold",
+              }}
+              onClick={() => navigate("/properties", { state: { showPropertyForm: true } })}
+            >
+              {/* View all {totalPropertiesCount} */}
+              Add your first
+              <tspan x={130} y={145}>
+                property here
+              </tspan>
+            </text>
+          </PieChart>
         )}
+
         <CustomLegend navigate={navigate} data={data} />
+
         <Button
           variant="outlined"
           id="revenue"
@@ -425,24 +431,6 @@ export default function PropertyRentWidget(props) {
             navigate(propertyRoutingBasedOnSelectedRole());
           }}
         >
-          {/* <Box
-                sx={{
-                    width: 7,
-                    height: 7,
-                    backgroundColor: '#160449',
-                    borderRadius: "50%",
-                    display: "flex",
-                    flexDirection: 'row',
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#FFFFFF",
-                    fontSize: "20px",
-                    paddingRight: "20px",
-                }}
-            >            
-                View {contractRequests?.length}
-            </Box>
-                Property Listings */}
           View {vacantCount} Property Listings
         </Button>
         <Button

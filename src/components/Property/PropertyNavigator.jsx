@@ -764,6 +764,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   ];
 
   return (
+    // Right Hand Side
     <Paper
       style={{
         marginTop: "10px",
@@ -774,6 +775,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
+
+      {/* Property Information */}
       <Box
         sx={{
           flexDirection: "column", // Added this to stack children vertically
@@ -783,6 +786,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
         }}
       >
         <Grid container sx={{ marginTop: "15px", alignItems: "center", justifyContent: "center" }}>
+          {/* Property Header Left & Right Arrows */}
           <Grid item md={1} xs={2} sx={{ display: "flex", justifyContent: "center" }}>
             <Button onClick={handlePreviousCard} disabled={currentIndex == 0}>
               {currentIndex === 0 ? (
@@ -792,6 +796,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
               )}
             </Button>
           </Grid>
+
+          {/* Property Header: Address and Index */}
           <Grid
             item
             md={8}
@@ -825,6 +831,8 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
               {currentIndex + 1} of {propertyData.length} Properties
             </Typography>
           </Grid>
+
+          {/* Image Left & Right Arrows */}
           <Grid item md={1} xs={2} sx={{ display: "flex", justifyContent: "center" }}>
             <Button onClick={handleNextCard} disabled={currentIndex == propertyData.length - 1}>
               {currentIndex == propertyData.length - 1 ? (
@@ -843,7 +851,9 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
             margin: "10px",
           }}
         >
+          {/* Property Details grid */}
           <Grid container rowSpacing={4} columnSpacing={4} justify="space-between" alignItems="stretch">
+            {/* Property Details grid */}
             <Grid item xs={12} md={12}>
               <Card
                 sx={{
@@ -853,7 +863,9 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                   padding: "16px",
                 }}
               >
+                {/* Properties Section broken into 4 columns */}
                 <Grid container spacing={2}>
+                  {/* Property Image */}
                   <Grid item xs={12} md={3}>
                     <Card
                       sx={{
@@ -930,6 +942,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                     </Card>
                   </Grid>
                   <Grid item xs={0} md={0.5} />
+                  {/* Properties Details - Each row is split 6-6 to display field - value*/}
                   <Grid item xs={12} md={5}>
                     <Grid container spacing={2} sx={{ height: "100%" }}>
                       <Grid item xs={6}>
@@ -1086,6 +1099,7 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                       </Grid>
                     </Grid>
                   </Grid>
+                  {/* Listed, Not Listed, Edit Property Buttons */}
                   <Grid item xs={12} md={3.5}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
@@ -1294,922 +1308,698 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
               </Card>
             </Grid>
 
-            {/* Lease Detais grid */}
-            {/* Left component */}
-            <Grid item xs={12} md={6}>
-              <Card sx={{ backgroundColor: color, height: "100%" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: "10px",
-                  }}
-                >
-                  <Typography
+            {/* Lease Details and Management Details grid */}
+            <>
+              {/* Left component - Lease Details */}
+              <Grid item xs={12} md={6}>
+                <Card sx={{ backgroundColor: color, height: "100%" }}>
+                  <Box
                     sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: theme.typography.largeFont,
-                      textAlign: "center",
-                    }}
-                  >
-                    Lease Details
-                  </Typography>
-                  {property?.lease_uid && (
-                    <Button
-                      sx={{
-                        padding: "0px",
-                        "&:hover": {
-                          backgroundColor: theme.palette.form.main,
-                        },
-                      }}
-                      className=".MuiButton-icon"
-                      onClick={() =>
-                        navigate("/viewLease", {
-                          state: {
-                            lease_id: property.lease_uid,
-                            index: currentIndex,
-                            isDesktop: isDesktop,
-                          },
-                        })
-                      }
-                    >
-                      <img src={LeaseIcon} />
-                    </Button>
-                  )}
-                </Box>
-                <CardContent
-                  sx={{
-                    flexDirection: "column",
-                    alignItems: "left",
-                    justifyContent: "left",
-                  }}
-                >
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Rent:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {property.property_listed_rent ? "$" + property.property_listed_rent : "No Rent Listed"}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Available To Pay:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {rentFee ? rentFee.available_topay + " days in advance" : "-"}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Frequency:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {rentFee ? rentFee.frequency : "-"}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Lease Expires:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {property.lease_end ? property.lease_end : "No Lease"}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Tenant:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {tenant_detail}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Due:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {rentFee ? rentFee.due_by : "No Due Date Listed"}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Late Fee:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {rentFee ? rentFee.late_fee : "-"}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Late Fee Per Day:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {rentFee ? rentFee.perDay_late_fee : "-"}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Right component */}
-            <Grid item xs={12} md={6}>
-              <Card sx={{ backgroundColor: color, height: "100%" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: "10px",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: theme.typography.largeFont,
-                      textAlign: "center",
-                    }}
-                  >
-                    Management Details
-                  </Typography>
-                  {property?.lease_uid && (
-                    <Button
-                      sx={{
-                        padding: "0px",
-                        "&:hover": {
-                          backgroundColor: theme.palette.form.main,
-                        },
-                      }}
-                      className=".MuiButton-icon"
-                      onClick={() =>
-                        navigate("/viewLease", {
-                          state: {
-                            lease_id: property.lease_uid,
-                            index: currentIndex,
-                            isDesktop: isDesktop,
-                          },
-                        })
-                      }
-                    >
-                      <img src={LeaseIcon} />
-                    </Button>
-                  )}
-                </Box>
-                <CardContent
-                  sx={{
-                    flexDirection: "column",
-                    alignItems: "left",
-                    justifyContent: "left",
-                  }}
-                >
-                  <Grid container spacing={2}>
-                    {selectedRole === "OWNER" && (
-                      <Grid container item spacing={2}>
-                        <Grid item xs={6}>
-                          <Typography
-                            sx={{
-                              textTransform: "none",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.secondary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                              paddingRight: "15px",
-                            }}
-                          >
-                            Property Manager:
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                textTransform: "none",
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                              }}
-                            >
-                              {property.business_uid ? `${property.business_name}` : "No Manager Selected"}
-                            </Typography>
-                            <KeyboardArrowRightIcon
-                              sx={{
-                                color: theme.typography.common.blue,
-                                cursor: "pointer",
-                              }}
-                              onClick={() => handleManagerChange(currentIndex)}
-                            />
-                          </Box>
-                        </Grid>
-                      </Grid>
-                    )}
-                    {selectedRole === "MANAGER" && (
-                      <Grid container item spacing={2}>
-                        <Grid item xs={6}>
-                          <Typography
-                            sx={{
-                              textTransform: "none",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.secondary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                            Owner:
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              cursor: "pointer",
-                            }}
-                            onClick={() =>
-                              navigate("/ownerContactDetailsHappinessMatrix", {
-                                state: {
-                                  ownerUID: property.owner_uid,
-                                  navigatingFrom: "PropertyNavigator",
-                                  index: index,
-                                  happinessData: happinessData,
-                                  happinessMatrixData: dataforhappiness,
-                                },
-                              })
-                            }
-                          >
-                            <Typography
-                              sx={{
-                                textTransform: "none",
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                              }}
-                            >
-                              {`${property.owner_first_name}  ${property.owner_last_name}`}
-                            </Typography>
-                            <KeyboardArrowRightIcon
-                              sx={{
-                                color: theme.typography.common.blue,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </Box>
-                        </Grid>
-                      </Grid>
-                    )}
-
-                    <Grid container item spacing={2}>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Typography
-                          sx={{
-                            textTransform: "none",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            paddingRight: "50px",
-                            paddingLeft: "4px",
-                          }}
-                        >
-                          Open Maintenance Tickets:
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            if (property.maintenanceCount > 0) {
-                              if (selectedRole === "OWNER") {
-                                navigate("/ownerMaintenance", {
-                                  state: {
-                                    propertyId: propertyId,
-                                    fromProperty: true,
-                                    index: currentIndex,
-                                  },
-                                });
-                              } else {
-                                navigate("/managerMaintenance", {
-                                  state: {
-                                    propertyId: propertyId,
-                                    fromProperty: true,
-                                    index: currentIndex,
-                                  },
-                                });
-                              }
-                            }
-                          }}
-                        >
-                          <Badge
-                            badgeContent={property.maintenanceCount}
-                            showZero
-                            color="error"
-                            sx={{
-                              paddingRight: "10px",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                    </Grid>
-                    {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
-                      <>
-                        <Grid item xs={10.7} md={10.7}>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Typography
-                              sx={{
-                                textTransform: "none",
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                paddingRight: "88px", // here padding
-                              }}
-                            >
-                              PM Quotes Requested:
-                            </Typography>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <Badge color="success" badgeContent={contractsNewSent} showZero />
-                            </Box>
-                          </Box>
-                        </Grid>
-                        <Grid item xs={1.3} md={1.3}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              padding: "0px 0px 0px 8px",
-                            }}
-                          >
-                            <KeyboardArrowRightIcon
-                              sx={{ color: arrowButton1_color, cursor: "pointer" }}
-                              onClick={() => {
-                                navigate("/pmQuotesRequested", {
-                                  state: {
-                                    index: currentIndex,
-                                    propertyData: propertyData,
-                                    contracts: contractsData,
-                                    isDesktop: isDesktop,
-                                  },
-                                });
-                              }}
-                            />
-                          </Box>
-                        </Grid>
-                      </>
-                    ) : null}
-                    {property.applications.length > 0 && (
-                      <>
-                        <Grid item xs={12} md={12}>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Typography
-                              sx={{
-                                textTransform: "none",
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                paddingRight: "103px",
-                              }}
-                            >
-                              Applications:
-                            </Typography>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <Badge
-                                color="success"
-                                badgeContent={property.applications.filter((app) => app.lease_status === "NEW" || app.lease_status === "PROCESSING").length}
-                                showZero
-                                sx={{
-                                  paddingRight: "50px",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                        </Grid>
-                        <Grid item xs={12} md={12}>
-                          <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: "-5px" }}>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1-content" id="panel1-header">
-                              <Typography
-                                sx={{
-                                  textTransform: "none",
-                                  color: theme.typography.primary.black,
-                                  fontWeight: theme.typography.secondary.fontWeight,
-                                  fontSize: theme.typography.smallFont,
-                                }}
-                              >
-                                View All Applications
-                              </Typography>
-                            </AccordionSummary>
-                            <AccordionDetails
-                              sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                padding: "0px 5px 5px 5px",
-                              }}
-                            >
-                              {property.applications.map((app, index) => (
-                                <Button
-                                  key={index}
-                                  onClick={() => handleAppClick(index)}
-                                  sx={{
-                                    backgroundColor: getAppColor(app),
-                                    color: "#FFFFFF",
-                                    textTransform: "none",
-                                    width: "100%",
-                                    height: "70px",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginBottom: 2,
-                                    "&:hover, &:focus, &:active": {
-                                      backgroundColor: getAppColor(app),
-                                    },
-                                  }}
-                                >
-                                  <Box sx={{ display: "flex" }}>
-                                    <Typography
-                                      sx={{
-                                        fontSize: theme.typography.smallFont,
-                                        mr: 1,
-                                      }}
-                                    >
-                                      {app.tenant_first_name + " " + app.tenant_last_name + " "}
-                                    </Typography>
-                                    <Typography
-                                      sx={{
-                                        fontWeight: "bold",
-                                        fontSize: theme.typography.smallFont,
-                                        mr: 1,
-                                      }}
-                                    >
-                                      {app.lease_status + " "}
-                                    </Typography>
-                                    <Typography
-                                      sx={{
-                                        fontWeight: "bold",
-                                        fontSize: theme.typography.smallFont,
-                                      }}
-                                    >
-                                      {app.lease_application_date}
-                                    </Typography>
-                                  </Box>
-                                </Button>
-                              ))}
-                            </AccordionDetails>
-                          </Accordion>
-                        </Grid>
-                      </>
-                    )}
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-
-          {/* Rent history grid */}
-          <Grid item xs={12} sx={{ pt: "10px" }}>
-            <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
-                  textAlign: "center",
-                  marginTop: "10px",
-                }}
-              >
-                Rent History
-              </Typography>
-              <CardContent
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                  width: "100%",
-                }}
-              >
-                <DataGrid
-                  rows={propertyRentStatus}
-                  columns={rentStatusColumns}
-                  disableColumnMenu={!isDesktop}
-                  autoHeight
-                  initialState={{
-                    pagination: {
-                      paginationModel: {
-                        pageSize: 12,
-                      },
-                    },
-                  }}
-                  getRowId={(row) => row.rent_detail_index}
-                  pageSizeOptions={[12]}
-                  sx={{
-                    "& .MuiDataGrid-cell": {
+                      display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                    },
-                    "& .MuiDataGrid-columnHeader": {
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "#3D5CAC",
-                      textAlign: "center",
-                    },
-                    "& .MuiDataGrid-columnHeaderTitle": {
-                      textAlign: "center",
-                      font: "bold",
-                      width: "100%",
-                    },
-                    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                    "@media (max-width: 600px)": {
-                      "& .MuiDataGrid-columnHeaderTitle": {
-                        width: "100%",
-                        margin: "0px",
-                        padding: "0px",
-                      },
-                    },
-                  }}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
-            <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Box sx={{ width: "100%" }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0px 15px 0px 10px" }}>
-                  <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+                      marginTop: "10px",
+                    }}
+                  >
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
                         fontWeight: theme.typography.primary.fontWeight,
                         fontSize: theme.typography.largeFont,
                         textAlign: "center",
-                        marginTop: "10px",
                       }}
                     >
-                      Appliances
+                      Lease Details
                     </Typography>
+                    {property?.lease_uid && (
+                      <Button
+                        sx={{
+                          padding: "0px",
+                          "&:hover": {
+                            backgroundColor: theme.palette.form.main,
+                          },
+                        }}
+                        className=".MuiButton-icon"
+                        onClick={() =>
+                          navigate("/viewLease", {
+                            state: {
+                              lease_id: property.lease_uid,
+                              index: currentIndex,
+                              isDesktop: isDesktop,
+                            },
+                          })
+                        }
+                      >
+                        <img src={LeaseIcon} alt="Lease" style={{ marginRight: "8px", height: "24px" }} />
+                      </Button>
+                    )}
                   </Box>
-                  <Button
-                    variant="outlined"
+                  <CardContent
                     sx={{
-                      background: "#3D5CAC",
-                      color: theme.palette.background.default,
-                      cursor: "pointer",
-                      textTransform: "none",
-                      minWidth: "30px",
-                      minHeight: "30px",
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                    size="small"
-                    onClick={() => {
-                      setcurrentApplRow({
-                        appliance_uid: "",
-                        appliance_url: "",
-                        appliance_type: "",
-                        appliance_desc: "",
-                        appliance_images: "",
-                        appliance_available: 0,
-                        appliance_installed: null,
-                        appliance_model_num: "",
-                        appliance_purchased: null,
-                        appliance_serial_num: "",
-                        appliance_property_id: { propertyId },
-                        appliance_manufacturer: "",
-                        appliance_warranty_info: "",
-                        appliance_warranty_till: null,
-                        appliance_purchase_order: "",
-                        appliance_purchased_from: "",
-                      });
-                      setIsEditing(false);
-                      handleOpen();
+                      flexDirection: "column",
+                      alignItems: "left",
+                      justifyContent: "left",
                     }}
                   >
-                    <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
-                  </Button>
-                </Box>
-                <DataGrid
-                  rows={appliances}
-                  columns={applnColumns}
-                  pageSize={5}
-                  getRowId={(row) => row.appliance_uid}
-                  autoHeight
-                  sx={{
-                    fontSize: "10px",
-                    "& .wrap-text": {
-                      whiteSpace: "normal !important",
-                      wordWrap: "break-word !important",
-                      overflow: "visible !important",
-                    },
-                  }}
-                />
-                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-                  <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
-                    Please fill in all required fields.
-                  </Alert>
-                </Snackbar>
-                <Dialog open={open} onClose={handleClose}>
-                  <DialogTitle>{isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
-                  <DialogContent>
-                    <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
-                      <InputLabel required>Appliance Type</InputLabel>
-                      <Select
-                        margin="dense"
-                        label="Appliance Type"
-                        fullWidth
-                        required
-                        variant="outlined"
-                        value={currentApplRow?.appliance_type || ""}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_type: e.target.value })}
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Rent:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {property.property_listed_rent ? "$" + property.property_listed_rent : "No Rent Listed"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Available To Pay:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {rentFee ? rentFee.available_topay + " days in advance" : "-"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Frequency:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {rentFee ? rentFee.frequency : "-"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Lease Expires:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {property.lease_end ? property.lease_end : "No Lease"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Tenant:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {tenant_detail}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Due:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {rentFee ? rentFee.due_by : "No Due Date Listed"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Late Fee:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {rentFee ? rentFee.late_fee : "-"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Late Fee Per Day:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {rentFee ? rentFee.perDay_late_fee : "-"}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Right component - Management Details */}
+              <Grid item xs={12} md={6}>
+                <Card sx={{ backgroundColor: color, height: "100%" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: "10px",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.largeFont,
+                        textAlign: "center",
+                      }}
+                    >
+                      Management Details 3
+                    </Typography>
+                    {property?.lease_uid && (
+                      <Button
+                        sx={{
+                          padding: "0px",
+                          "&:hover": {
+                            backgroundColor: theme.palette.form.main,
+                          },
+                        }}
+                        className=".MuiButton-icon"
+                        onClick={() =>
+                          navigate("/viewLease", {
+                            state: {
+                              lease_id: property.lease_uid,
+                              index: currentIndex,
+                              isDesktop: isDesktop,
+                            },
+                          })
+                        }
                       >
-                        {applianceCategories &&
-                          applianceCategories.map((appln) => (
-                            <MenuItem key={appln.list_uid} value={appln.list_item}>
-                              {appln.list_item}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      margin="dense"
-                      label="Description"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_desc || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
-                    />
-                    <TextField
-                      margin="dense"
-                      label="Manufacturer Name"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_manufacturer || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_manufacturer: e.target.value })}
-                    />
-                    <TextField
-                      margin="dense"
-                      label="Purchased From"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_purchased_from || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased_from: e.target.value })}
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        label="Purchased On"
-                        value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased: e.target.value })}
-                        textField={(params) => (
-                          <TextField
-                            {...params}
-                            margin="dense"
-                            fullWidth
-                            size="small"
-                            variant="outlined"
-                            sx={{
-                              "& .MuiInputBase-root": {
-                                fontSize: "14px",
-                              },
-                              "& .MuiSvgIcon-root": {
-                                fontSize: "20px",
-                              },
-                            }}
-                          />
-                        )}
-                        sx={{ marginTop: "10px", width: "535px" }}
-                      />
-                    </LocalizationProvider>
-                    <TextField
-                      margin="dense"
-                      label="Purchase Order Number"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_purchase_order || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchase_order: e.target.value })}
-                    />
+                        <img src={LeaseIcon} />
+                      </Button>
+                    )}
+                  </Box>
+                  <CardContent
+                    sx={{
+                      flexDirection: "column",
+                      alignItems: "left",
+                      justifyContent: "left",
+                    }}
+                  >
+                    <Grid container spacing={2}>
+                      {selectedRole === "OWNER" && (
+                        <Grid container item spacing={2}>
+                          <Grid item xs={6}>
+                            <Typography
+                              sx={{
+                                textTransform: "none",
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                paddingRight: "15px",
+                              }}
+                            >
+                              Property Manager:
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.light.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                {property.business_uid ? `${property.business_name}` : "No Manager Selected"}
+                              </Typography>
+                              <KeyboardArrowRightIcon
+                                sx={{
+                                  color: theme.typography.common.blue,
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => handleManagerChange(currentIndex)}
+                              />
+                            </Box>
+                          </Grid>
+                        </Grid>
+                      )}
+                      {selectedRole === "MANAGER" && (
+                        <Grid container item spacing={2}>
+                          <Grid item xs={6}>
+                            <Typography
+                              sx={{
+                                textTransform: "none",
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >
+                              Owner:
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                navigate("/ownerContactDetailsHappinessMatrix", {
+                                  state: {
+                                    ownerUID: property.owner_uid,
+                                    navigatingFrom: "PropertyNavigator",
+                                    index: index,
+                                    happinessData: happinessData,
+                                    happinessMatrixData: dataforhappiness,
+                                  },
+                                })
+                              }
+                            >
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.light.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                {`${property.owner_first_name}  ${property.owner_last_name}`}
+                              </Typography>
+                              <KeyboardArrowRightIcon
+                                sx={{
+                                  color: theme.typography.common.blue,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </Box>
+                          </Grid>
+                        </Grid>
+                      )}
 
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        label="Installed On"
-                        value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_installed: e.target.value })}
-                        textField={(params) => (
-                          <TextField
-                            {...params}
-                            size="small"
+                      <Grid container item spacing={2}>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Typography
                             sx={{
-                              "& .MuiInputBase-root": {
-                                fontSize: "14px",
-                              },
-                              "& .MuiSvgIcon-root": {
-                                fontSize: "20px",
-                              },
+                              textTransform: "none",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                              paddingRight: "50px",
+                              paddingLeft: "4px",
                             }}
-                          />
-                        )}
-                        sx={{ marginTop: "10px", width: "535px" }}
-                      />
-                    </LocalizationProvider>
+                          >
+                            Open Maintenance Tickets:
+                          </Typography>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              if (property.maintenanceCount > 0) {
+                                if (selectedRole === "OWNER") {
+                                  navigate("/ownerMaintenance", {
+                                    state: {
+                                      propertyId: propertyId,
+                                      fromProperty: true,
+                                      index: currentIndex,
+                                    },
+                                  });
+                                } else {
+                                  navigate("/managerMaintenance", {
+                                    state: {
+                                      propertyId: propertyId,
+                                      fromProperty: true,
+                                      index: currentIndex,
+                                    },
+                                  });
+                                }
+                              }
+                            }}
+                          >
+                            <Badge
+                              badgeContent={property.maintenanceCount}
+                              showZero
+                              color="error"
+                              sx={{
+                                paddingRight: "10px",
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      </Grid>
+                      {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
+                        <>
+                          <Grid item xs={10.7} md={10.7}>
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  paddingRight: "88px", // here padding
+                                }}
+                              >
+                                PM Quotes Requested:
+                              </Typography>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <Badge color="success" badgeContent={contractsNewSent} showZero />
+                              </Box>
+                            </Box>
+                          </Grid>
+                          <Grid item xs={1.3} md={1.3}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "0px 0px 0px 8px",
+                              }}
+                            >
+                              <KeyboardArrowRightIcon
+                                sx={{ color: arrowButton1_color, cursor: "pointer" }}
+                                onClick={() => {
+                                  navigate("/pmQuotesRequested", {
+                                    state: {
+                                      index: currentIndex,
+                                      propertyData: propertyData,
+                                      contracts: contractsData,
+                                      isDesktop: isDesktop,
+                                    },
+                                  });
+                                }}
+                              />
+                            </Box>
+                          </Grid>
+                        </>
+                      ) : null}
+                      {property.applications.length > 0 && (
+                        <>
+                          <Grid item xs={12} md={12}>
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  paddingRight: "103px",
+                                }}
+                              >
+                                Applications:
+                              </Typography>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <Badge
+                                  color="success"
+                                  badgeContent={property.applications.filter((app) => app.lease_status === "NEW" || app.lease_status === "PROCESSING").length}
+                                  showZero
+                                  sx={{
+                                    paddingRight: "50px",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                          </Grid>
+                          <Grid item xs={12} md={12}>
+                            <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: "-5px" }}>
+                              <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1-content" id="panel1-header">
+                                <Typography
+                                  sx={{
+                                    textTransform: "none",
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
+                                  View All Applications
+                                </Typography>
+                              </AccordionSummary>
+                              <AccordionDetails
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  padding: "0px 5px 5px 5px",
+                                }}
+                              >
+                                {property.applications.map((app, index) => (
+                                  <Button
+                                    key={index}
+                                    onClick={() => handleAppClick(index)}
+                                    sx={{
+                                      backgroundColor: getAppColor(app),
+                                      color: "#FFFFFF",
+                                      textTransform: "none",
+                                      width: "100%",
+                                      height: "70px",
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      marginBottom: 2,
+                                      "&:hover, &:focus, &:active": {
+                                        backgroundColor: getAppColor(app),
+                                      },
+                                    }}
+                                  >
+                                    <Box sx={{ display: "flex" }}>
+                                      <Typography
+                                        sx={{
+                                          fontSize: theme.typography.smallFont,
+                                          mr: 1,
+                                        }}
+                                      >
+                                        {app.tenant_first_name + " " + app.tenant_last_name + " "}
+                                      </Typography>
+                                      <Typography
+                                        sx={{
+                                          fontWeight: "bold",
+                                          fontSize: theme.typography.smallFont,
+                                          mr: 1,
+                                        }}
+                                      >
+                                        {app.lease_status + " "}
+                                      </Typography>
+                                      <Typography
+                                        sx={{
+                                          fontWeight: "bold",
+                                          fontSize: theme.typography.smallFont,
+                                        }}
+                                      >
+                                        {app.lease_application_date}
+                                      </Typography>
+                                    </Box>
+                                  </Button>
+                                ))}
+                              </AccordionDetails>
+                            </Accordion>
+                          </Grid>
+                        </>
+                      )}
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </>
 
-                    <TextField
-                      margin="dense"
-                      label="Serial Number"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_serial_num || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_serial_num: e.target.value })}
-                    />
-                    <TextField
-                      margin="dense"
-                      label="Model Number"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_model_num || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_model_num: e.target.value })}
-                    />
-                    <TextField
-                      margin="dense"
-                      label="Warranty Info"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_warranty_info || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_info: e.target.value })}
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        label="Warranty Till"
-                        value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_till: e.target.value })}
-                        textField={(params) => (
-                          <TextField
-                            {...params}
-                            size="small"
-                            sx={{
-                              "& .MuiInputBase-root": {
-                                fontSize: "14px",
-                              },
-                              "& .MuiSvgIcon-root": {
-                                fontSize: "20px",
-                              },
-                            }}
-                          />
-                        )}
-                        sx={{ marginTop: "10px", width: "535px" }}
-                      />
-                    </LocalizationProvider>
-                    <TextField
-                      margin="dense"
-                      label="URLs"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_url || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
-                    />
-                    <TextField
-                      margin="dense"
-                      label="Images"
-                      fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_images || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_images: e.target.value })}
-                    />
-                  </DialogContent>
-                  <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
+            {/* Rent history grid */}
+            <Grid item xs={12} sx={{ pt: "10px" }}>
+              <Card sx={{ backgroundColor: color, height: "100%" }}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                    textAlign: "center",
+                    marginTop: "10px",
+                  }}
+                >
+                  Rent History
+                </Typography>
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    width: "100%",
+                  }}
+                >
+                  <DataGrid
+                    rows={propertyRentStatus}
+                    columns={rentStatusColumns}
+                    disableColumnMenu={!isDesktop}
+                    autoHeight
+                    initialState={{
+                      pagination: {
+                        paginationModel: {
+                          pageSize: 12,
+                        },
+                      },
+                    }}
+                    getRowId={(row) => row.rent_detail_index}
+                    pageSizeOptions={[12]}
+                    sx={{
+                      "& .MuiDataGrid-cell": {
+                        justifyContent: "center",
+                        alignItems: "center",
+                      },
+                      "& .MuiDataGrid-columnHeader": {
+                        justifyContent: "center",
+                        alignItems: "center",
+                        color: "#3D5CAC",
+                        textAlign: "center",
+                      },
+                      "& .MuiDataGrid-columnHeaderTitle": {
+                        textAlign: "center",
+                        font: "bold",
+                        width: "100%",
+                      },
+                      "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                      "@media (max-width: 600px)": {
+                        "& .MuiDataGrid-columnHeaderTitle": {
+                          width: "100%",
+                          margin: "0px",
+                          padding: "0px",
+                        },
+                      },
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Appliance grid */}
+            <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
+              <Card sx={{ backgroundColor: color, height: "100%" }}>
+                <Box sx={{ width: "100%" }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0px 15px 0px 10px" }}>
+                    <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: theme.typography.largeFont,
+                          textAlign: "center",
+                          marginTop: "10px",
+                        }}
+                      >
+                        Appliances
+                      </Typography>
+                    </Box>
                     <Button
                       variant="outlined"
                       sx={{
@@ -2217,35 +2007,262 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
                         color: theme.palette.background.default,
                         cursor: "pointer",
                         textTransform: "none",
-                        width: "30%",
+                        minWidth: "30px",
+                        minHeight: "30px",
                         fontWeight: theme.typography.secondary.fontWeight,
                         fontSize: theme.typography.smallFont,
                       }}
                       size="small"
-                      onClick={handleClose}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        textTransform: "none",
-                        width: "30%",
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
+                      onClick={() => {
+                        setcurrentApplRow({
+                          appliance_uid: "",
+                          appliance_url: "",
+                          appliance_type: "",
+                          appliance_desc: "",
+                          appliance_images: "",
+                          appliance_available: 0,
+                          appliance_installed: null,
+                          appliance_model_num: "",
+                          appliance_purchased: null,
+                          appliance_serial_num: "",
+                          appliance_property_id: { propertyId },
+                          appliance_manufacturer: "",
+                          appliance_warranty_info: "",
+                          appliance_warranty_till: null,
+                          appliance_purchase_order: "",
+                          appliance_purchased_from: "",
+                        });
+                        setIsEditing(false);
+                        handleOpen();
                       }}
-                      size="small"
-                      onClick={handleAddAppln}
                     >
-                      Save
+                      <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                     </Button>
-                  </DialogActions>
-                </Dialog>
-              </Box>
-            </Card>
+                  </Box>
+                  <DataGrid
+                    rows={appliances}
+                    columns={applnColumns}
+                    pageSize={5}
+                    getRowId={(row) => row.appliance_uid}
+                    autoHeight
+                    sx={{
+                      fontSize: "10px",
+                      "& .wrap-text": {
+                        whiteSpace: "normal !important",
+                        wordWrap: "break-word !important",
+                        overflow: "visible !important",
+                      },
+                    }}
+                  />
+                  <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                    <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+                      Please fill in all required fields.
+                    </Alert>
+                  </Snackbar>
+                  <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>{isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
+                    <DialogContent>
+                      <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
+                        <InputLabel required>Appliance Type</InputLabel>
+                        <Select
+                          margin="dense"
+                          label="Appliance Type"
+                          fullWidth
+                          required
+                          variant="outlined"
+                          value={currentApplRow?.appliance_type || ""}
+                          onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_type: e.target.value })}
+                        >
+                          {applianceCategories &&
+                            applianceCategories.map((appln) => (
+                              <MenuItem key={appln.list_uid} value={appln.list_item}>
+                                {appln.list_item}
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
+                      <TextField
+                        margin="dense"
+                        label="Description"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_desc || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Manufacturer Name"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_manufacturer || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_manufacturer: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Purchased From"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_purchased_from || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased_from: e.target.value })}
+                      />
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="Purchased On"
+                          value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
+                          onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased: e.target.value })}
+                          textField={(params) => (
+                            <TextField
+                              {...params}
+                              margin="dense"
+                              fullWidth
+                              size="small"
+                              variant="outlined"
+                              sx={{
+                                "& .MuiInputBase-root": {
+                                  fontSize: "14px",
+                                },
+                                "& .MuiSvgIcon-root": {
+                                  fontSize: "20px",
+                                },
+                              }}
+                            />
+                          )}
+                          sx={{ marginTop: "10px", width: "535px" }}
+                        />
+                      </LocalizationProvider>
+                      <TextField
+                        margin="dense"
+                        label="Purchase Order Number"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_purchase_order || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchase_order: e.target.value })}
+                      />
+
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="Installed On"
+                          value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
+                          onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_installed: e.target.value })}
+                          textField={(params) => (
+                            <TextField
+                              {...params}
+                              size="small"
+                              sx={{
+                                "& .MuiInputBase-root": {
+                                  fontSize: "14px",
+                                },
+                                "& .MuiSvgIcon-root": {
+                                  fontSize: "20px",
+                                },
+                              }}
+                            />
+                          )}
+                          sx={{ marginTop: "10px", width: "535px" }}
+                        />
+                      </LocalizationProvider>
+
+                      <TextField
+                        margin="dense"
+                        label="Serial Number"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_serial_num || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_serial_num: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Model Number"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_model_num || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_model_num: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Warranty Info"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_warranty_info || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_info: e.target.value })}
+                      />
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="Warranty Till"
+                          value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
+                          onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_till: e.target.value })}
+                          textField={(params) => (
+                            <TextField
+                              {...params}
+                              size="small"
+                              sx={{
+                                "& .MuiInputBase-root": {
+                                  fontSize: "14px",
+                                },
+                                "& .MuiSvgIcon-root": {
+                                  fontSize: "20px",
+                                },
+                              }}
+                            />
+                          )}
+                          sx={{ marginTop: "10px", width: "535px" }}
+                        />
+                      </LocalizationProvider>
+                      <TextField
+                        margin="dense"
+                        label="URLs"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_url || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
+                      />
+                      <TextField
+                        margin="dense"
+                        label="Images"
+                        fullWidth
+                        variant="outlined"
+                        value={currentApplRow?.appliance_images || ""}
+                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_images: e.target.value })}
+                      />
+                    </DialogContent>
+                    <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          textTransform: "none",
+                          width: "30%",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                        size="small"
+                        onClick={handleClose}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          textTransform: "none",
+                          width: "30%",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                        size="small"
+                        onClick={handleAddAppln}
+                      >
+                        Save
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </Box>
+              </Card>
+            </Grid>
           </Grid>
         </Box>
       </Box>
@@ -2253,19 +2270,19 @@ export default function PropertyNavigator({ index, propertyList, allRentStatus, 
   );
 }
 
-function Contract(props) {
-  const textStyle = {
-    textTransform: "none",
-    color: theme.typography.propertyPage.color,
-    fontWeight: theme.typography.light.fontWeight,
-    fontSize: theme.typography.smallFont,
-  };
+// function Contract(props) {
+//   const textStyle = {
+//     textTransform: "none",
+//     color: theme.typography.propertyPage.color,
+//     fontWeight: theme.typography.light.fontWeight,
+//     fontSize: theme.typography.smallFont,
+//   };
 
-  let contract = props.contract;
+//   let contract = props.contract;
 
-  return (
-    <Typography sx={textStyle}>
-      {contract.contract_business_id} {contract.business_name} {contract.contract_uid}{" "}
-    </Typography>
-  );
-}
+//   return (
+//     <Typography sx={textStyle}>
+//       {contract.contract_business_id} {contract.business_name} {contract.contract_uid}{" "}
+//     </Typography>
+//   );
+// }
