@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Grid, Box, Stack, ThemeProvider, Button, Container } from "@mui/material";
+import { Typography, Grid, Box, Stack, ThemeProvider, Button, Container, Menu, MenuItem, } from "@mui/material";
 import "../../../css/cashflow.css";
 import { useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
@@ -40,7 +40,7 @@ import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 
 // "../../images/AddRevenueIcon.png"
 
-function CashflowWidget({ data }) {
+function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedProperty, setSelectedProperty, }) {
   console.log("In Cashflow Widget ");
   console.log("Cashflow Widget - data - ", data);
   const navigate = useNavigate();
@@ -71,6 +71,8 @@ function CashflowWidget({ data }) {
 
   console.log("expenseCurrentMonth - ", expenseCurrentMonth);
   console.log("revenueCurrentMonth - ", revenueCurrentMonth);
+
+  const [anchorEl, setAnchorEl] = useState(null);
 
   // useEffect(() => {
   //   fetchCashflow(profileId)
@@ -119,90 +121,25 @@ function CashflowWidget({ data }) {
       
   }, [data]);
 
-  // Confirm data has been received.  Comment out before publishing
-  // console.log("TotalRevenueByMonth: ", totalRevenueByMonth);
-  // console.log("TotalExpenseByMonth: ", totalExpenseByMonth);
-  // console.log("ExpectedTotalRevenueByMonth: ", expectedRevenueByMonth);
-  // console.log("ExpectedTotalExpenseByMonth: ", expectedExpenseByMonth);
-  // console.log("Last12Months: ", last12Months);
+  const handlePropertyChange = (propertyUID) => {
+    console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
+    setSelectedProperty(propertyUID);
+    setAnchorEl(null);
+  };
 
-  //   return (
-  //     <ThemeProvider theme={theme}>
-  //       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-  //         <CircularProgress color="inherit" />
-  //       </Backdrop>
-  //       <div
-  //         className="cf-widget-main"
-  //         onClick={() =>
-  //           navigate("/cashflow", {
-  //             state: {
-  //               month,
-  //               year,
-  //             },
-  //           })
-  //         }
-  //       >
-  //         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-  //           <Grid item xs={6}>
-  //             <Stack direction="row" justifyContent="center">
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-  //                 {month} {year}
-  //               </Typography>
-  //             </Stack>
-  //             <Box
-  //               component="span"
-  //               m={1}
-  //               padding={2}
-  //               display="flex"
-  //               justifyContent="space-between"
-  //               alignItems="center"
-  //               style={{
-  //                 backgroundColor: theme.palette.custom.blue,
-  //                 borderRadius: "5px",
-  //               }}
-  //             >
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Cashflow</Typography>
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-  //                 ${totalRevenueByMonth ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2) : "0.00"}
-  //               </Typography>
-  //             </Box>
-  //             <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center">
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, ml: 4 }}> Revenue</Typography>
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-  //                 ${totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00"}
-  //               </Typography>
-  //             </Box>
-  //             <Box component="span" m={1} padding={2} display="flex" justifyContent="space-between" alignItems="center">
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, ml: 4 }}> Expenses</Typography>
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-  //                 ${totalExpenseByMonth ? totalExpenseByMonth.toFixed(2) : "0.00"}
-  //               </Typography>
-  //             </Box>
-  //             <Box
-  //               component="span"
-  //               m={1}
-  //               padding={2}
-  //               display="flex"
-  //               justifyContent="space-between"
-  //               alignItems="center"
-  //               style={{
-  //                 backgroundColor: theme.palette.custom.yellow,
-  //                 borderRadius: "5px",
-  //               }}
-  //             >
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>Expected Cashflow</Typography>
-  //               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-  //                 ${expectedRevenueByMonth ? (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2) : "0.00"}
-  //               </Typography>
-  //             </Box>
-  //           </Grid>
-  //           <Grid item xs={6}>
-  //             <DashboardChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
-  //           </Grid>
-  //         </Grid>
-  //       </div>
-  //     </ThemeProvider>
-  //   );
+  const handleSelectAllProperties = () => {
+    setSelectedProperty("ALL");
+  }
+
+  const viewProperties = async (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -233,6 +170,9 @@ function CashflowWidget({ data }) {
               },
             })
           }
+          sx={{
+            cursor: 'pointer',
+          }}
         >
           <Grid container item xs={12} rowSpacing={0} sx={{ marginTop: "15px" }}>
             <Stack direction="row" justifyContent="center" width="100%" sx={{ marginBottom: "0px" }}>
@@ -278,13 +218,57 @@ function CashflowWidget({ data }) {
                     marginBottom: "10px",
                     borderRadius: "5px",
                   }}
-                  // onClick={handleSelectPropertyClick}
+                  onClick={viewProperties}
                 >
                   <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: "4px" }} />
                   Select Property
                 </Button>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  // onChange={handlePropertyChange}
+                  onClose={handleClose}                  
+                >
+                {/* <Select value={selectedProperty} onChange={handlePropertyChange} variant="filled" displayEmpty> */}
+                  {propertyList?.map((property, index) => {
+                    return (
+                      <MenuItem
+                        key={property.property_uid}
+                        value={property}
+                        onClick={() => {
+                          handlePropertyChange(property.property_uid)
+                        }}
+                      >
+                        {property.property_address}{property.property_unit ? `, Unit - ${property.property_unit}` : ''}
+                      </MenuItem>
+                    );
+                  })}                  
+                {/* </Select> */}
+                </Menu>
               </Grid>
             </Grid>
+            <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-start" }}>
+              <Button
+                  variant="outlined"
+                  id="all_properties"
+                  // className={classes.button}
+                  style={{
+                    // height: "100%",
+                    // width: '80%',
+                    // backgroundColor: '#160449',
+                    color: "#3D5CAC",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                  }}
+                  onClick={() => {
+                    handleSelectAllProperties();
+                  }}
+                >
+                  {/* <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: "4px" }} /> */}
+                  All Properties
+                </Button>
+              </Grid>
             <Grid item container xs={12} sx={{ marginBottom: "10px" }}>
               <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <Button
@@ -302,7 +286,13 @@ function CashflowWidget({ data }) {
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                    // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                    if(page === "OwnerCashflow")
+                    {
+                      setCurrentWindow("ADD_REVENUE")
+                    } else if (page === "OwnerDashboard"){
+                      navigate("/cashflow", {state: { currentWindow: "ADD_REVENUE",  month, year, cashflowWidgetData: data,}})
+                    }
                   }}
                 >
                   {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
@@ -327,7 +317,13 @@ function CashflowWidget({ data }) {
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
+                    // navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
+                    if(page === "OwnerCashflow")
+                    {
+                      setCurrentWindow("ADD_EXPENSE")
+                    } else if (page === "OwnerDashboard"){
+                      navigate("/cashflow", {state: { currentWindow: "ADD_EXPENSE",  month, year, cashflowWidgetData: data,}})
+                    }
                   }}
                 >
                   {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}

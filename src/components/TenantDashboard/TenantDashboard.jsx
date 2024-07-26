@@ -20,6 +20,8 @@ import PropertyInfo from "../Property/PropertyInfo";
 import TenantApplication from "../Applications/TenantApplication";
 import TenantProfileEdit from "../Profile/TenantProfile/TenantProfileEdit";
 import AccountBalanceWidget from "../Payments/AccountBalanceWidget";
+import Announcements from "../Announcement/Announcements";
+import { Announcement } from "@mui/icons-material";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -249,6 +251,8 @@ function TenantDashboard(props) {
         return <TenantApplication {...rightPane.state} setRightPane={setRightPane} />;
       case "tenantProfileEdit":
         return <TenantProfileEdit {...rightPane.state} setRightPane={setRightPane} />;
+      case "announcements":
+        return <Announcements setRightPane={setRightPane} />
       default:
         return null;
     }
@@ -402,7 +406,7 @@ function TenantDashboard(props) {
                               fontWeight: "bold",
                             }}
                             onClick={() => {
-                              navigate("/announcements", { state: { announcementsData, propertyAddr } });
+                              setRightPane({ type: "announcements" })
                             }}
                           >
                             {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
