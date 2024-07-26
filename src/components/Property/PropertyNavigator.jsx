@@ -77,8 +77,8 @@ export default function PropertyNavigator({
   props,
 }) {
   // console.log('In Property Navigator');
-  // console.log(index, propertyList);
-  // console.log(contracts);
+  // console.log(index, propertyList);	
+  console.log('props contracts', contracts);
   const navigate = useNavigate();
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
 
@@ -167,7 +167,7 @@ export default function PropertyNavigator({
 
   const [activeStep, setActiveStep] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [contractsData, setContractsData] = useState(contracts);
+  const [contractsData, setContractsData] = useState([]);
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
@@ -236,6 +236,7 @@ export default function PropertyNavigator({
       ? JSON.parse(propertyList[nextIndex].property_images)
       : [];
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
+	setContractsData(contracts);
     setActiveStep(0);
   }, [index, propertyList]);
 
@@ -245,28 +246,38 @@ export default function PropertyNavigator({
       console.log("ROHIT - setting propertyId - ", propertyData[currentIndex].property_uid);
       setPropertyId(propertyData[currentIndex].property_uid);
 
-      const getContractsForOwner = async () => {
-        try {
-          const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-          // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-          if (!response.ok) {
-            console.log('Error fetching contracts data');
-          }
-          const contractsResponse = await response.json();
-          var count = 0;
-          const contracts = contractsResponse.result.filter((contract) => contract.property_id === propertyId);
-          contracts.forEach((contract) => {
-            if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
-              count++;
-            }
-          });
-          setContractsNewSent(count);
-          setContractsData(contracts);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getContractsForOwner();
+    //   const getContractsForOwner = async () => {
+    //     try {
+    //       const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
+    //       // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+    //       if (!response.ok) {
+    //         console.log('Error fetching contracts data');
+    //       }
+    //       const contractsResponse = await response.json();
+    //       var count = 0;
+    //       const contracts = contractsResponse.result.filter((contract) => contract.property_id === propertyId);
+    //       contracts.forEach((contract) => {
+    //         if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
+    //           count++;
+    //         }
+    //       });
+    //       setContractsNewSent(count);
+    //       setContractsData(contracts);
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   };
+    //   getContractsForOwner();
+		var count = 0;
+		const filtered = contractsData.filter((contract) => contract.property_id === propertyId);
+		filtered.forEach((contract) => {
+		if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
+			count++;
+		}
+		});
+		setContractsNewSent(count);
+		setContractsData(contracts);
+
       const rentDetails = getRentStatus();
       console.log("ROHIT - rentDetails - ", rentDetails);
       setpropertyRentStatus(rentDetails);
@@ -300,22 +311,22 @@ export default function PropertyNavigator({
       : theme.typography.common.blue
   );
 
-  useEffect(() => {
-    let profileId = getProfileId();
-    // console.log('getProfileID', getProfileId());
-    if (profileId.startsWith('600')) {
-      maintenanceManagerDataCollectAndProcess(
-        setMaintenanceReqData,
-        setShowSpinner,
-        setDisplayMaintenanceData,
-        profileId
-      );
-    } else if (profileId.startsWith('110')) {
-      maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
-    } else if (profileId.startsWith('200')) {
-      maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
-    }
-  }, [currentIndex, propertyId]);
+//   useEffect(() => {
+//     let profileId = getProfileId();
+//     // console.log('getProfileID', getProfileId());
+//     if (profileId.startsWith('600')) {
+//       maintenanceManagerDataCollectAndProcess(
+//         setMaintenanceReqData,
+//         setShowSpinner,
+//         setDisplayMaintenanceData,
+//         profileId
+//       );
+//     } else if (profileId.startsWith('110')) {
+//       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
+//     } else if (profileId.startsWith('200')) {
+//       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
+//     }
+//   }, [currentIndex, propertyId]);
 
   let dashboard_id = getProfileId();
   useEffect(() => {
