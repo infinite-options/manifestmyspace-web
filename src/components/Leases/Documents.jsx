@@ -25,6 +25,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Documents = ({ documents, setDocuments, setuploadedFiles, editOrUpdateLease, documentsRef, setDeletedFiles }) => {
+
+    console.log("ROHIT - Documents - props.documents - ", documents);
     const [open, setOpen] = useState(false);
     const [currentRow, setcurrentRow] = useState(null);
     const color = theme.palette.form.main;
