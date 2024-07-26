@@ -314,8 +314,8 @@ const CustomImage = (props) => {
         ownerUID: payload.owner_uid,
         navigatingFrom: "HappinessMatrixWidget",
         index: index,
-        happinessMatrixData: dataforhappiness,
-        happinessData: happinessData,
+        // happinessMatrixData: dataforhappiness,
+        // happinessData: happinessData,
       },
     });
   };

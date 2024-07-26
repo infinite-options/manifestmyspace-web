@@ -372,8 +372,8 @@ export default function PropertyNavigator({
         ownerUID: ownerData,
         navigatingFrom: "PropertyNavigator",
         index: index,
-        happinessMatrixData: dataforhappiness,
-        happinessData: happinessData,
+        // happinessMatrixData: dataforhappiness,
+        // happinessData: happinessData,
         contactDetail: contactDetails,
       },
     });

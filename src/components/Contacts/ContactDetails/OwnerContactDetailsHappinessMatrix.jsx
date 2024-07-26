@@ -61,7 +61,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const navigatingFrom = location.state.navigatingFrom;
-  const happinessData = location.state?.happinessData;
+  //const happinessData = location.state?.happinessData;
 
   const [contactDetails, setContactDetails] = useState();
   const [contactsTab, setContactsTab] = useState("");
@@ -69,15 +69,25 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   const [index, setIndex] = useState(location.state.index);
   const ownerUID = location.state.ownerUID;
 
-  const cashflowData = location.state?.cashflowData;
-  console.log("In the beginning: ", cashflowData);
+  // const cashflowData = location.state?.cashflowData;
+  // console.log("In the beginning: ", cashflowData);
+  // const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
+  // const cashflowDetails = happinessData?.delta_cashflow_details?.result;
+  // const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
+  // const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
+  // const [filteredCashflowDetails, setFilteredCashflowDetails] = useState(cashflowDetails);
+  // const [filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty] = useState(cashflowDetailsByProperty);
+  // const [filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth] = useState(cashflowDetailsByPropertyByMonth);
+
+  const [happinessData, setHappinessData] = useState([]);
+  const [cashflowData, setCashflowData] = useState(null);
   const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
-  const cashflowDetails = happinessData?.delta_cashflow_details?.result;
-  const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
-  const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
-  const [filteredCashflowDetails, setFilteredCashflowDetails] = useState(cashflowDetails);
-  const [filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty] = useState(cashflowDetailsByProperty);
-  const [filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth] = useState(cashflowDetailsByPropertyByMonth);
+  const [cashflowDetails, setCashFlowDetails] = useState([]);
+  const [cashflowDetailsByProperty, setCashflowDetailsByProperty] = useState([]);
+  const [cashflowDetailsByPropertyByMonth, setCashflowDetailsByPropertyByMonth] = useState([]);
+  const [filteredCashflowDetails, setFilteredCashflowDetails] = useState([]);
+  const [filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty] = useState([]);
+  const [filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth] = useState([]);
 
   const [happinessMatrixData, setHappinessMatrixData] = useState([]);
   let [matrixData, setMatrixData] = useState([]);
@@ -91,6 +101,32 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+        // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch dashboard data');
+        }
+        const jsonData = await response.json();
+        // setHappinessData(jsonData.HappinessMatrix);
+        // setdataforhappiness(jsonData)
+        console.log('jsondata', jsonData);
+        setHappinessMatrixData(setting_matrix_data(jsonData));
+        setHappinessData(jsonData.HappinessMatrix);
+        setCashFlowDetails(jsonData.HappinessMatrix?.delta_cashflow_details_by_property?.result);
+        setCashflowDetailsByProperty(jsonData.HappinessMatrix.delta_cashflow_details_by_property_by_month?.result);
+        setCashflowDetailsByPropertyByMonth(jsonData.HappinessMatrix.delta_cashflow_details_by_property_by_month?.result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchDashboardData();
+  }, [index]);
+
+
 
   // useEffect(() => {
   //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
@@ -138,6 +174,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   }, []);
 
   useEffect(() => {
+    console.log('check cashflow', cashflowData);
     if (contactDetails && cashflowData) {
       setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
       setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
@@ -171,6 +208,8 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
         expected_cashflow = deltaCashflowItem.expected_cashflow;
         actual_cashflow = deltaCashflowItem.actual_cashflow;
       }
+
+      console.log('deltaCashflowItem', deltaCashflowItem);
 
       let quarter;
       let vacancy_perc = parseFloat(vacancyItem.vacancy_perc);
@@ -826,14 +865,14 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
           onClick={() =>
             getNumOfMaintenanceReqs(params.row.property_uid) > 0
               ? navigate("/managerMaintenance", {
-                  state: {
-                    selectedProperty: {
-                      address: params.row.property_address,
-                      property_uid: params.row.property_uid,
-                      checked: true,
-                    },
+                state: {
+                  selectedProperty: {
+                    address: params.row.property_address,
+                    property_uid: params.row.property_uid,
+                    checked: true,
                   },
-                })
+                },
+              })
               : null
           }
         >
@@ -935,33 +974,33 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     },
     ...(tab !== "by_month"
       ? [
-          {
-            field: "property_address",
-            headerName: "Address",
-            width: 150,
-            renderCell: (params) => <span>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
-          },
-        ]
+        {
+          field: "property_address",
+          headerName: "Address",
+          width: 150,
+          renderCell: (params) => <span>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
+        },
+      ]
       : []),
     ...(tab !== "by_property"
       ? [
-          {
-            field: "year_month",
-            headerName: "Month",
-            width: 100,
-            renderCell: (params) => <span>{params.row.cf_month !== null ? params.row.cf_month : "-"}</span>,
-          },
-        ]
+        {
+          field: "year_month",
+          headerName: "Month",
+          width: 100,
+          renderCell: (params) => <span>{params.row.cf_month !== null ? params.row.cf_month : "-"}</span>,
+        },
+      ]
       : []),
     ...(tab !== "by_property"
       ? [
-          {
-            field: "year",
-            headerName: "Year",
-            width: 100,
-            renderCell: (params) => <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>,
-          },
-        ]
+        {
+          field: "year",
+          headerName: "Year",
+          width: 100,
+          renderCell: (params) => <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>,
+        },
+      ]
       : []),
     {
       field: "actual_cashflow",
