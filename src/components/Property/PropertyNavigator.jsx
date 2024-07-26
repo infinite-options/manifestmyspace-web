@@ -1,8 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  Card, CardContent, CardMedia, Typography, Button, Box, Stack, Paper, Grid, Badge, Dialog, DialogActions,
-  DialogContent, DialogTitle, IconButton, TextField, Snackbar, Alert, MenuItem, Select, FormControl, InputLabel
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Button,
+  Box,
+  Stack,
+  Paper,
+  Grid,
+  Badge,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  TextField,
+  Snackbar,
+  Alert,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import axios from "axios";
 import theme from "../../theme/theme";
@@ -21,27 +41,28 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import AddIcon from "@mui/icons-material/Add";
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import { DataGrid } from '@mui/x-data-grid';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useUser } from '../../contexts/UserContext';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import { DataGrid } from "@mui/x-data-grid";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useUser } from "../../contexts/UserContext";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
-import { maintenanceOwnerDataCollectAndProcess } from '../Maintenance/MaintenanceOwner.jsx';
-import { maintenanceManagerDataCollectAndProcess } from '../Maintenance/MaintenanceManager.jsx';
+import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
+import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/MaintenanceManager.jsx";
 
-import APIConfig from '../../utils/APIConfig';
-import { v4 as uuidv4 } from 'uuid';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import APIConfig from "../../utils/APIConfig";
+import { v4 as uuidv4 } from "uuid";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
+const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 const getAppColor = (app) =>
   app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
@@ -111,7 +132,13 @@ export default function PropertyNavigator({
     console.log("ROHIT - PropertyNavigator - currentId - ", currentId);
   }, [currentId]);
 
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
+  // Parse property images once outside the component
+  const parsedPropertyImages = propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
+  // console.log('parsedImages:', parsedPropertyImages);
+  // console.log('parsedImages.length:', parsedPropertyImages.length);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -715,32 +742,32 @@ export default function PropertyNavigator({
         console.log("Error fetching lists data");
       }
       const responseJson = await response.json();
-      const applnCategories = responseJson.result.filter(res => res.list_category === "appliances");
+      const applnCategories = responseJson.result.filter((res) => res.list_category === "appliances");
       setApplianceCategories(applnCategories);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const applnColumns = [
-    { field: 'appliance_uid', headerName: 'UID', width: 80 },
-    { field: 'appliance_type', headerName: 'Appliance', width: 80 },
-    { field: 'appliance_desc', headerName: 'Description', width: 80 },
-    { field: 'appliance_manufacturer', headerName: 'Manufacturer', width: 80 },
-    { field: 'appliance_purchased_from', headerName: 'Purchased From', width: 80 },
-    { field: 'appliance_purchased', headerName: 'Purchased On', width: 80 },
-    { field: 'appliance_purchase_order', headerName: 'Purchase Order Number', width: 80 },
-    { field: 'appliance_installed', headerName: 'Installed On', width: 80 },
-    { field: 'appliance_serial_num', headerName: 'Serial Number', width: 80 },
-    { field: 'appliance_model_num', headerName: 'Model Number', width: 80 },
-    { field: 'appliance_warranty_till', headerName: 'Warranty Till', width: 80 },
-    { field: 'appliance_warranty_info', headerName: 'Warranty Info', width: 80 },
-    { field: 'appliance_url', headerName: 'URLs', width: 80 },
-    { field: 'appliance_images', headerName: 'Images', width: 80 },
-    { field: 'appliance_documents', headerName: 'Documents', width: 80 },
+    { field: "appliance_uid", headerName: "UID", width: 80 },
+    { field: "appliance_type", headerName: "Appliance", width: 80 },
+    { field: "appliance_desc", headerName: "Description", width: 80 },
+    { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
+    { field: "appliance_purchased_from", headerName: "Purchased From", width: 80 },
+    { field: "appliance_purchased", headerName: "Purchased On", width: 80 },
+    { field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
+    { field: "appliance_installed", headerName: "Installed On", width: 80 },
+    { field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
+    { field: "appliance_model_num", headerName: "Model Number", width: 80 },
+    { field: "appliance_warranty_till", headerName: "Warranty Till", width: 80 },
+    { field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
+    { field: "appliance_url", headerName: "URLs", width: 80 },
+    { field: "appliance_images", headerName: "Images", width: 80 },
+    { field: "appliance_documents", headerName: "Documents", width: 80 },
     {
-      field: 'actions',
-      headerName: 'Actions',
+      field: "actions",
+      headerName: "Actions",
       width: 100,
       renderCell: (params) => (
         <Box>
@@ -751,8 +778,8 @@ export default function PropertyNavigator({
             <DeleteIcon />
           </IconButton>
         </Box>
-      )
-    }
+      ),
+    },
   ];
 
   return (

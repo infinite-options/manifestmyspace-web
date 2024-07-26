@@ -7,17 +7,19 @@ import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from '@mui/material';
 import GoogleSignup from './GoogleSignup';
-
+import axios from "axios";
+import { useCookies } from "react-cookie";
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { useUser } from "../../contexts/UserContext";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-
+import { roleMap } from "./helper";
 import DataValidator from "../DataValidator";
 
 
@@ -26,7 +28,8 @@ const NewUser = () => {
     const navigate = useNavigate();
     const [ role, setRole ] = useState(null);
     const [ showEmailSignup, setShowEmailSignup ] = useState(false);
-
+    const {  setAuthData, selectRole, setLoggedIn } = useUser();    
+    const [cookies, setCookie] = useCookies(["user"]);
     const [ showPassword, setShowPassword ] = useState(false);
 
     const [ email, setEmail ] = useState('');
@@ -64,19 +67,157 @@ const NewUser = () => {
         }
     }
 
-    const handleSignup = () => {
-        console.log("signup clicked");
 
-        if (validate_form() === false)
-            return;
-            
+    const checkIfUserExists = async (email) => {
+        try {
+            const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${email}`);
+            return response;
+        } catch (error) {
+            if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
+                return null;
+            } else {
+                throw error;
+            }
+        }
+    };
+
+    const handleLogin = async () => {
+        let newRole=role;
+        if (email === "" || password === "") {
+          alert("Please fill out all fields");
+          return;
+        }
+        // setShowSpinner(true);
+        axios
+          .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/AccountSalt/MYSPACE", {
+            email: email,
+          })
+          .then((res) => {
+            let saltObject = res;
+            if (saltObject.data.code === 200) {
+              let hashAlg = saltObject.data.result[0].password_algorithm;
+              let salt = saltObject.data.result[0].password_salt;
+    
+              if (hashAlg != null && salt != null) {
+                // Make sure the data exists
+                if (hashAlg !== "" && salt !== "") {
+                  // Rename hash algorithm so client can understand
+                  switch (hashAlg) {
+                    case "SHA256":
+                      hashAlg = "SHA-256";
+                      break;
+                    default:
+                      break;
+                  }
+                  // Salt plain text password
+                  let saltedPassword = password + salt;
+                  // Encode salted password to prepare for hashing
+                  const encoder = new TextEncoder();
+                  const data = encoder.encode(saltedPassword);
+                  //Hash salted password
+                  crypto.subtle.digest(hashAlg, data).then((res) => {
+                    let hash = res;
+                    // Decode hash with hex digest
+                    let hashArray = Array.from(new Uint8Array(hash));
+                    let hashedPassword = hashArray
+                      .map((byte) => {
+                        return byte.toString(16).padStart(2, "0");
+                      })
+                      .join("");
+                    console.log(hashedPassword);
+                    let loginObject = {
+                      email: email,
+                      password: hashedPassword,
+                    };
+                    console.log(JSON.stringify(loginObject));
+                    axios
+                      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
+                      .then(async (response) => {
+                        console.log(response.data.message);
+                        const { message, result } = response.data;
+                        if (message === "Incorrect password") {
+                          alert(response.data.message);
+                          navigate('/userLogin', { state: { user_emai: email } })
+                          // setShowSpinner(false);
+                        } else if (message === "Email doesn't exist") {
+                          //setUserDoesntExist(true);
+                          // setShowSpinner(false);
+                        } else if (message === "Login successful") {
+                          console.log("Login successfull moving to dashboard")
+                          setAuthData(result);
+                          setLoggedIn(true);
+                          const { role } = result.user;
+
+
+                          const existingRoles = role.split(",");
+                          // Check if the new role already exists
+                          if (!existingRoles.includes(newRole))
+                          {
+                          // Add the new role
+                          existingRoles.push(newRole);
+                          const updatedRole = existingRoles.join(",");
+                          // Send the update request to the server
+                          const response = await axios.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+                            user_uid: result.user.user_uid,
+                            role: updatedRole,
+                          });
+                          // Check if the response is successful
+                          if (response.status === 200) {
+                            let updatedUser=result
+                            updatedUser.user.role=updatedRole
+                            setAuthData(updatedUser)
+                            //setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
+                            alert("Role updated successfully");
+                            navigate("/addNewRole", { state: { user_uid: result.user.user_uid, newRole } });
+                            return ;
+                          } else {
+                            alert("An error occurred while updating the role.");
+                          }
+                        }
+                          const openingRole = role.split(",")[0];
+                          selectRole(openingRole);
+                          setLoggedIn(true);
+                          const { dashboardUrl } = roleMap[openingRole];
+                          console.log("Login successfull moving to dashboard " ,dashboardUrl)
+                          navigate(dashboardUrl);
+                        }
+                      })
+                      .catch((err) => {
+                        if (err.response) {
+                          console.log(err.response);
+                        }
+                        console.log(err);
+                      });
+                  });
+                }
+              }
+            } else {
+             // setUserDoesntExist(true);
+              // setShowSpinner(false);
+            }
+          });
+      };
+
+
+    const handleSignup = async () => {
+        console.log("signup clicked");
+        const userExists = await checkIfUserExists(email);
         const user = {
             email: email,
             password: password,
             role: role,
             isEmailSignup: true,
         };
-        navigate(`/createProfile`, { state: { user : user } });
+        console.log("user Exists", userExists)
+        if(userExists){
+            handleLogin();
+        }
+        else{
+
+            if (validate_form() === false)
+                return;
+            navigate(`/createProfile`, { state: { user : user } });
+        }
     }
 
     return (

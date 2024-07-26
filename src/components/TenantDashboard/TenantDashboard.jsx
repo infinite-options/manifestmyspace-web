@@ -73,9 +73,15 @@ function TenantDashboard(props) {
     console.log("Tenant ID: ", tenantId, "   Property ID: ", propertyId ? propertyId : "Not Selected");
     setAddMaintenance(false);
 
-    if (!getProfileId()) navigate("/PrivateprofileName");
+    if (!getProfileId())  { 
+      console.log("profile id is ***" ,getProfileId())
+      let newRole="TENANT"
+    navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } }); return ;}
+    
+
     const getTenantData = async () => {
-      setShowSpinner(true);
+      if (!getProfileId()) return ;
+      setShowSpinner(true); 
       try {
         console.log("Call endpoints");
         const tenantRequests = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
@@ -329,7 +335,7 @@ function TenantDashboard(props) {
           </Grid>
           {/* </Grid> */}
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <AccountBalanceWidget
               selectedProperty={selectedProperty}
               selectedLease={selectedLease}
@@ -347,7 +353,7 @@ function TenantDashboard(props) {
             />
           </Grid>
 
-          <Grid item xs={12} md={9}>
+          <Grid item xs={12} md={8}>
             {rightPane !== "" ? (
               renderRightPane()
             ) : (

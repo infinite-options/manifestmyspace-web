@@ -33,6 +33,7 @@ const useStyles = makeStyles({
 
 export default function PropertyRentWidget(props) {
   console.log("In Property Rent Widget ");
+
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId } = useUser();
   const classes = useStyles();
@@ -41,6 +42,9 @@ export default function PropertyRentWidget(props) {
   const [propertyList, setPropertyList] = useState([]);
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [allRentStatus, setAllRentStatus] = useState([]);
+
+  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole);
+  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
 
   useEffect(() => {
     const propertyRentDetails = async () => {
@@ -102,7 +106,10 @@ export default function PropertyRentWidget(props) {
     { rent_status: "paid late", number: paidLateCount, fill: "#FFC85C" },
     { rent_status: "paid on time", number: paidCount, fill: "#3D5CAC" },
     { rent_status: "vacant", number: vacantCount, fill: "#160449" },
+    // { rent_status: 'Empty', number: totalPropertiesCount == 0 ? 1 : 0, fill: "#3D5CAC"}
   ];
+
+  const defaultData = [{ rent_status: "no properties", number: 3, fill: "#3D5CAC" }];
 
   // Add object conditionally only if selectedRole is "OWNER"
   if (selectedRole === "OWNER") {
@@ -406,12 +413,13 @@ export default function PropertyRentWidget(props) {
         >
           Add your first
           <tspan x={130} y={145}>
-            propertie here
+            property here
           </tspan>
         </text>
       </PieChart>
       )}
         <CustomLegend navigate={navigate} data={data} />
+
         <Button
           variant="outlined"
           id="revenue"
@@ -430,24 +438,6 @@ export default function PropertyRentWidget(props) {
             navigate(propertyRoutingBasedOnSelectedRole());
           }}
         >
-          {/* <Box
-                sx={{
-                    width: 7,
-                    height: 7,
-                    backgroundColor: '#160449',
-                    borderRadius: "50%",
-                    display: "flex",
-                    flexDirection: 'row',
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#FFFFFF",
-                    fontSize: "20px",
-                    paddingRight: "20px",
-                }}
-            >            
-                View {contractRequests?.length}
-            </Box>
-                Property Listings */}
           View {vacantCount} Property Listings
         </Button>
         <Button

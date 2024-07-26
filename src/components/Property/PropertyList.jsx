@@ -1,48 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Typography,
-  Box,
-  Stack,
-  Paper,
-  Button,
-  ThemeProvider,
-  Form,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Grid,
-  Input,
-  Container,
-  Radio,
-  FormLabel,
-  FormControlLabel,
-  RadioGroup,
-  UploadFile,
-  InputAdornment,
-  InputBase,
-  IconButton,
-  CardMedia,
-  CardContent,
-  CardActions,
-  ListItemText,
-  ListItem,
-  List,
-  Avatar,
-  Badge,
-} from "@mui/material";
-
+import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
 import theme from "../../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import propertyImage from "./propertyImage.png";
 import maintenanceIcon from "./maintenanceIcon.png";
-import samplePropertyData from "./samplePropertyData";
 import { useUser } from "../../contexts/UserContext";
 import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop";
@@ -51,7 +15,7 @@ import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 import PropertyDetail from "./PropertyDetail";
 import PropertyDetail2 from "./PropertyDetail2";
-import PMRent from "../Rent/PMRent/PMRent";
+// import PMRent from "../Rent/PMRent/PMRent";
 import PropertyForm from "../Property/PropertyForm";
 //import SearchManager from "./Property/SearchManager";
 
@@ -191,7 +155,7 @@ function getPropertyList(data) {
   });
 }
 
-export default function PropertyList({ }) {
+export default function PropertyList({}) {
   console.log("In Property List");
   let navigate = useNavigate();
   const { getProfileId, isManagement, isOwner } = useUser();
@@ -217,6 +181,7 @@ export default function PropertyList({ }) {
   const { selectedRole } = useUser();
   // console.log("getProfileId information", getProfileId());
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
+  const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
 
   function numberOfMaintenanceItems(maintenanceItems) {
     console.log(maintenanceItems);
@@ -262,11 +227,11 @@ export default function PropertyList({ }) {
       if (propertyData.Property.code == 200 && propertyRent.RentStatus.code == 200) {
         setDataReady(true);
       }
-      if (selectedRole == "MANAGER" && sessionStorage.getItem('isrent') == "true") {
+      if (selectedRole == "MANAGER" && sessionStorage.getItem("isrent") == "true") {
         setFromRentWidget(true);
       } else {
         setFromRentWidget(false);
-        sessionStorage.removeItem('isrent')
+        sessionStorage.removeItem("isrent");
       }
     };
     fetchData();
@@ -274,9 +239,9 @@ export default function PropertyList({ }) {
     handleResize();
     setShowSpinner(false);
     // Optionally, add a resize event listener
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -439,19 +404,19 @@ export default function PropertyList({ }) {
 
   const columns = [
     {
-      field: 'avatar',
-      headerName: '',
+      field: "avatar",
+      headerName: "",
       flex: 0.4,
       renderCell: (params) => (
         <Avatar
           src={`${getCoverPhoto(params.row)}?${Date.now()}`}
           alt="property image"
           sx={{
-            borderRadius: '0',
-            width: '60px',
-            height: '60px',
-            margin: '0px',
-            padding: '0px',
+            borderRadius: "0",
+            width: "60px",
+            height: "60px",
+            margin: "0px",
+            padding: "0px",
           }}
         />
       ),
@@ -461,14 +426,12 @@ export default function PropertyList({ }) {
       headerName: "Address",
       headerAlign: "center",
       flex: 1,
-      renderCell: (params) => (
-        displayAddress(params.row)
-      ),
+      renderCell: (params) => displayAddress(params.row),
     },
     {
-      field: 'paymentStatus',
-      headerName: 'Status',
-      headerAlign: 'center',
+      field: "paymentStatus",
+      headerName: "Status",
+      headerAlign: "center",
       flex: 0.6,
       renderCell: (params) => (
         <Box
@@ -503,12 +466,12 @@ export default function PropertyList({ }) {
                 color: theme.palette.primary.main,
                 fontWeight: theme.typography.primary.fontWeight,
                 fontSize: "11px",
-                margin: '0px',
-                height: '50px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
+                margin: "0px",
+                height: "50px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
                 textAlign: "center",
               }}
             >
@@ -526,54 +489,54 @@ export default function PropertyList({ }) {
       renderCell: (params) => {
         const numOfMaintenanceReqs = getNumOfMaintenanceReqs(params.row);
         return (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: '100%',
-          }}
-        >
-          <Badge
-            overlap="circular"
-            color="error"
-            badgeContent={numOfMaintenanceReqs}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
+          <Box
             sx={{
-              color: '#000000',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              height: "100%",
             }}
-            onClick={(e) => {
-              //console.log('selected in', params)
-              if (numOfMaintenanceReqs > 0){
-              if (selectedRole === "OWNER") {
-                navigate('/ownerMaintenance', {
-                  state: {
-                    fromProperty: true,
-                    index: params.id,
-                    propertyId: displayedItems[params.id].property_uid,
-                  },
-                });
-              } else {
-                navigate('/managerMaintenance', {
-                  state: {
-                    fromProperty: true,
-                    index: params.id,
-                    propertyId: displayedItems[params.id].property_uid,
-                  },
-                });
-              };
-            }
-            }
-            }
           >
-            <img src={maintenanceIcon} alt="maintenance icon" style={{ width: '35px', height: '35px' }} />
-          </Badge>
-        </Box>
-      )}
+            <Badge
+              overlap="circular"
+              color="error"
+              badgeContent={numOfMaintenanceReqs}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              sx={{
+                color: "#000000",
+              }}
+              onClick={(e) => {
+                //console.log('selected in', params)
+                if (numOfMaintenanceReqs > 0) {
+                  if (selectedRole === "OWNER") {
+                    navigate("/ownerMaintenance", {
+                      state: {
+                        fromProperty: true,
+                        index: params.id,
+                        propertyId: displayedItems[params.id].property_uid,
+                      },
+                    });
+                  } else {
+                    navigate("/managerMaintenance", {
+                      state: {
+                        fromProperty: true,
+                        index: params.id,
+                        propertyId: displayedItems[params.id].property_uid,
+                      },
+                    });
+                  }
+                }
+              }}
+            >
+              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "35px", height: "35px" }} />
+            </Badge>
+          </Box>
+        );
+      },
     },
   ];
 
@@ -612,7 +575,6 @@ export default function PropertyList({ }) {
       top: params.isFirstVisible ? 0 : 3,
       bottom: params.isLastVisible ? 0 : 3,
     };
-    
   });
 
   const handleFormSubmit = () => {
@@ -623,28 +585,36 @@ export default function PropertyList({ }) {
   };
 
   const handleFormBack = () => {
-    if (propertyList.length > 0){
+    if (propertyList.length > 0) {
       setShowPropertyForm(false);
     } else {
       navigate(-1);
     }
-
-  }
-
+  };
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '20px', marginTop: theme.spacing(2) }}>
+      <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         {showSpinner || !dataReady ? (
           <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
             <CircularProgress color="inherit" />
           </Backdrop>
         ) : (
-          <Grid container spacing={6}>
-            {isFromRentWidget === true ? (
+          <Grid container spacing={4}>
+            {showRentForm === true ? (
               <Grid item xs={12} md={4}>
-                <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} />
-              </Grid>) : (
+                {/* <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} /> */}
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                  }}
+                >
+                  All Properties Legend
+                </Typography>
+              </Grid>
+            ) : (
               <Grid item xs={12} md={propertyList.length >= 0 && isDesktop ? 4 : 12}>
                 <Box
                   sx={{
@@ -673,7 +643,7 @@ export default function PropertyList({ }) {
                             fontSize: theme.typography.largeFont,
                           }}
                         >
-                          All Properties
+                          All Properties List
                         </Typography>
                       </Box>
                       <Button
@@ -687,42 +657,52 @@ export default function PropertyList({ }) {
                     </Stack>
                     <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ position: "relative" }}>
                       {/* New Buttons */}
-                      <Box sx={{ display: 'flex', width: '100%', alignItems: "center", justifyContent: "space-between", padding: "0px 10px" }}>
-                        <Button onClick={sortByZip} sx={{
-                          background: "#3D5CAC",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          cursor: "pointer",
-                          textTransform: "none",
-                          minWidth: "100px", // Fixed width for the button
-                          minHeight: "35px",
-                        }}
-                          size="small">
+                      <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", padding: "0px 10px" }}>
+                        <Button
+                          onClick={sortByZip}
+                          sx={{
+                            background: "#3D5CAC",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            cursor: "pointer",
+                            textTransform: "none",
+                            minWidth: "100px", // Fixed width for the button
+                            minHeight: "35px",
+                          }}
+                          size="small"
+                        >
                           Zip
                         </Button>
-                        <Button onClick={sortByAddress} variant="outlined" sx={{
-                          background: "#3D5CAC",
-                          color: theme.palette.background.default,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          cursor: "pointer",
-                          textTransform: "none",
-                          minWidth: "100px", // Fixed width for the button
-                          minHeight: "35px",
-                        }}
-                          size="small">
+                        <Button
+                          onClick={sortByAddress}
+                          variant="outlined"
+                          sx={{
+                            background: "#3D5CAC",
+                            color: theme.palette.background.default,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            cursor: "pointer",
+                            textTransform: "none",
+                            minWidth: "100px", // Fixed width for the button
+                            minHeight: "35px",
+                          }}
+                          size="small"
+                        >
                           Address
                         </Button>
-                        <Button onClick={sortByStatus} sx={{
-                          background: "#3D5CAC",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          cursor: "pointer",
-                          textTransform: "none",
-                          minWidth: "100px", // Fixed width for the button
-                          minHeight: "35px",
-                        }}
-                          size="small">
+                        <Button
+                          onClick={sortByStatus}
+                          sx={{
+                            background: "#3D5CAC",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            cursor: "pointer",
+                            textTransform: "none",
+                            minWidth: "100px", // Fixed width for the button
+                            minHeight: "35px",
+                          }}
+                          size="small"
+                        >
                           Rent Status
                         </Button>
                       </Box>
@@ -752,30 +732,30 @@ export default function PropertyList({ }) {
                           }}
                           getRowSpacing={getRowSpacing}
                           sx={{
-                            '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
-                            '& .MuiDataGrid-row:hover': {
-                              cursor: 'pointer',
+                            "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                            "& .MuiDataGrid-row:hover": {
+                              cursor: "pointer",
                             },
-                            '& .MuiDataGrid-cell': {
-                              padding: '0px',
-                              margin: '0px',
-                              alignItems: 'center',
-                              justifyContent: 'center',
+                            "& .MuiDataGrid-cell": {
+                              padding: "0px",
+                              margin: "0px",
+                              alignItems: "center",
+                              justifyContent: "center",
                             },
-                            '& .MuiDataGrid-row.Mui-selected': {
-                              backgroundColor: '#949494',
+                            "& .MuiDataGrid-row.Mui-selected": {
+                              backgroundColor: "#949494",
                             },
                             [`& .${gridClasses.row}`]: {
                               bgcolor: theme.palette.form.main, // Row background color
-                              '&:before': {
+                              "&:before": {
                                 content: '""',
-                                display: 'block',
-                                height: '100%',
-                                backgroundColor: '#ffffff',
-                                position: 'absolute',
-                                left: '0',
-                                right: '0',
-                                zIndex: '-1',
+                                display: "block",
+                                height: "100%",
+                                backgroundColor: "#ffffff",
+                                position: "absolute",
+                                left: "0",
+                                right: "0",
+                                zIndex: "-1",
                               },
                             },
                           }}
@@ -786,7 +766,7 @@ export default function PropertyList({ }) {
                 </Box>
               </Grid>
             )}
-            {propertyList.length >= 0 && allRentStatus.length >= 0 && isDesktop === true &&
+            {propertyList.length >= 0 && allRentStatus.length >= 0 && isDesktop === true && (
               <Grid item xs={12} md={8}>
               {showPropertyForm ? (
                 <PropertyForm onBack={handleFormBack} onSubmit={handleFormSubmit} property_endpoint_resp={rawPropertyData} />

@@ -86,10 +86,10 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
           style={{
             backgroundColor: "#D6D5DA",
             borderRadius: 10,
-            height: 30,
-            marginBlock: 10,
-            width: '100%',
-            paddingBottom: "5px",
+            height: 20,
+            // marginBlock: 10,
+            // width: '100%',
+            padding: "5px",
             outline: 'none',
             border: 'none'
           }}
