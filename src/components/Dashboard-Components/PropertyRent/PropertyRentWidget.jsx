@@ -41,25 +41,7 @@ export default function PropertyRentWidget(props) {
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
   const [rawPropertyData, setRawPropertyData] = useState([]);
-  const [allRentStatus, setAllRentStatus] = useState([]);
-
-  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole);
-  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
-
-  useEffect(() => {
-    const propertyRentDetails = async () => {
-      try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-        // const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/600-000003`);
-        const rentResponse = await response.json();
-        setAllRentStatus(rentResponse.RentStatus.result);
-      } catch (error) {
-        console.error("Failed to fetch rent details:", error);
-      }
-    };
-    propertyRentDetails();
-  }, []);
-
+  
   useEffect(() => {
     console.log("PropertyRentWidget - propertyList - ", propertyList);
   }, [propertyList]);
@@ -289,7 +271,7 @@ export default function PropertyRentWidget(props) {
                   key={property.property_uid}
                   onClick={() => {
                     console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
-                    navigate(`/propertyDetail`, { state: { index, propertyList, allRentStatus, rawPropertyData } });
+                    navigate(`/properties`, { state: { index, propertyList } });
                   }}
                 >
                   {property.property_address}
