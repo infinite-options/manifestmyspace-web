@@ -206,7 +206,7 @@ export default function PropertyRentWidget(props) {
     });
   }
 
-  const defaultData = [{ rent_status: "no properties", number: 1, fill: "#3D5CAC" }];
+  //const defaultData = [{ rent_status: "no properties", number: 1, fill: "#3D5CAC" }];
 
   const renderDefaultLegendText = (value, entry) => {
     return (
