@@ -48,8 +48,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { formatPhoneNumber } from "../Onboarding/helper";
-
+import { formatPhoneNumber, headers, roleMap } from "../Onboarding/helper";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -68,13 +67,13 @@ const CustomTextField = withStyles({
 })(TextField);
 
 // Variable Declaration
-export default function ReferUser({}) {
+export default function ReferUser({ onClose, onReferralSuccess}) {
   console.log("In ReferUser.jsx");
   const location = useLocation();
 //   const { property_endpoint_resp } = location.state;
   // console.log(property_endpoint_resp);
   let navigate = useNavigate();  
-  const { user, selectedRole, selectRole, Name, getProfileId } = useUser();
+  const { user, selectedRole, selectRole, Name, getProfileId, updateProfileUid } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
 
   
@@ -128,7 +127,34 @@ export default function ReferUser({}) {
         setShowSpinner(false);
         return;
       } else {
-        // setAuthData(response.data.result);        
+        // setAuthData(response.data.result); 
+        console.log("---response before payload---", response);
+        const payload = {owner_user_id: response.data.result?.user?.user_uid,
+        owner_first_name: response.data.result?.user?.first_name,
+        owner_last_name: response.data.result?.user?.last_name,
+        owner_phone_number: response.data.result?.user?.phone_number,
+        owner_email: response.data.result?.user?.email};
+        
+        const form = new FormData();
+    for (let key in payload) {      
+      form.append(key, payload[key]);      
+    }
+
+    for (var pair of form.entries()) {
+      console.log(pair[0]+ ', ' + pair[1]); 
+    }
+    const { profileApi } = roleMap["OWNER"];
+
+    const { data } = await axios.post(
+      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+      form,
+      headers
+    );
+
+    if (data.owner_uid) {
+      updateProfileUid({ owner_id: data.owner_uid });
+    }
+        
         const userUID = response.data.result?.user?.user_uid;        
         // const link = `http://localhost:3000/referralSignup/${userUID}`
         const link = `https://iopropertymanagement.netlify.app/referralSignup/${userUID}`
@@ -145,6 +171,7 @@ export default function ReferUser({}) {
 
         if(emailResponse.status === 200){
           setShowEmailSentDialog(true);
+          onReferralSuccess(data.owner_uid); 
         }
 
         setShowSpinner(false);
@@ -197,7 +224,7 @@ export default function ReferUser({}) {
               </Typography>
             </Box>
             <Box position="absolute" right={0}>
-              <Button onClick={() => handleBackButton()}>
+              <Button onClick={onClose}>
                 <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>

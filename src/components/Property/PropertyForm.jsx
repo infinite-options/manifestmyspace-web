@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import {
 	TextField,
 	Button,
@@ -13,10 +14,10 @@ import {
 	Container,
 	Box,
 	ThemeProvider,
+	Modal,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import MapIcon from '@mui/icons-material/Map';
-import { useLocation, useNavigate } from "react-router-dom";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import AddressAutocompleteInput from './AddressAutocompleteInput';
 import theme from '../../theme/theme';
@@ -26,6 +27,7 @@ import { getLatLongFromAddress } from "../../utils/geocode";
 import StaticMap from "./StaticMap"
 import APIConfig from "../../utils/APIConfig";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ReferUser from '../../components/Referral/ReferUser';
 
 const useStyles = makeStyles({
 	card: {
@@ -98,7 +100,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = ({ onBack, onSubmit }) => {
+const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp}) => {
 	const classes = useStyles();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
@@ -108,7 +110,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 	const [selectedImageList, setSelectedImageList] = useState([]);
 
     const location = useLocation();
-  // const { property_endpoint_resp } = location.state;
+    //const { property_endpoint_resp } = location.state;
 
 	const [address, setAddress] = useState('');
 	const [unit, setUnit] = useState('');
@@ -131,6 +133,11 @@ const PropertyForm = ({ onBack, onSubmit }) => {
   const [applianceList, setApplianceList] = useState([]);
   const [selectedAppliances, setSelectedAppliances] = useState([]);
   const [coordinates, setCoordinates] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
 	const handleAddressSelect = async (address) => {
 		setAddress(address.street ? address.street : '');
@@ -183,9 +190,18 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 		navigate(-1); };
 
     const handleOwnerChange = (event) => {
+		if (event.target.value === 'referOwner') {
+			setIsModalOpen(true);
+		  } else {
             setSelectedOwner(event.target.value);
+		  }
          
 	};
+
+	const handleSetSelectedOwner = (userId) => {
+		setSelectedOwner(userId);
+		setIsModalOpen(false);
+	  };
 
     const handleListedChange = (event) => {
         setListed(event.target.checked);
@@ -289,7 +305,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
         } catch (error) {
           console.log("Error posting data:", error);
         } 
-        /*
+        
         // create new contract if profile === manager
         if (selectedRole === "MANAGER") {
           const contractFormData = new FormData();
@@ -337,14 +353,14 @@ const PropertyForm = ({ onBack, onSubmit }) => {
                 contract_uid: responseContractUID,
                 contract_business_id: getProfileId(),
                 contract_property_id: responsePropertyUID,
-                // property_endpoint_resp: property_endpoint_resp,
+                property_endpoint_resp: property_endpoint_resp,
               },
             });
           } catch (error) {
             console.error("Error:", error);
           }
         }
-     */
+     
         setAddress("");
         setCity("");
         setState("");
@@ -357,9 +373,8 @@ const PropertyForm = ({ onBack, onSubmit }) => {
         setSelectedImageList([]);
         setActiveStep(0);
         setShowSpinner(false);
-        if (selectedRole === "OWNER") {
 			onSubmit(); // Call the parent's submit handler
-        }
+        
       };
 
       useEffect(() => {
@@ -375,13 +390,13 @@ const PropertyForm = ({ onBack, onSubmit }) => {
                 return;
               }
               const ownerdata = await response.json();
-              console.log(ownerdata);
+              console.log("----ownerdata---", ownerdata);
               let contactArray = ownerdata.management_contacts.owners;
               let ownerObjList = [];
               contactArray.forEach((contact) => {
                 let obj = {
-                  owner_id: contact.contact_uid,
-                  owner_name: contact.contact_first_name + " " + contact.contact_last_name,
+                  owner_id: contact.owner_uid,
+                  owner_name: contact.owner_first_name + " " + contact.owner_last_name,
                 };
                 ownerObjList.push(obj);
               });
@@ -412,8 +427,10 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 		<ThemeProvider theme={theme}>
 		<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', marginTop: theme.spacing(4)  }}>
 			
-			<Button onClick={onBack}>
-                <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
+			<Button onClick={onBack} sx={{ '&:hover': {
+          backgroundColor: 'white',
+        }}}>
+                <ArrowBackIcon sx={{  color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20}} />
               </Button>
             
 			<Card sx={{ backgroundColor: '#D6D5DA', marginBottom: '18px', padding: '16px', borderRadius: '8px' }}>
@@ -473,6 +490,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 										size="small"
 										fullWidth
                                         onChange={handleUnitChange}
+										placeholder="Optional"
 									/>
 								</Grid>
 								<Grid item xs={2}>
@@ -762,12 +780,14 @@ const PropertyForm = ({ onBack, onSubmit }) => {
                         <MenuItem value="" disabled>
                           Select Owner
                         </MenuItem>
+						<MenuItem value="referOwner">Refer Owner</MenuItem>
                         {ownerList.map((option, index) => (
                           <MenuItem key={index} value={option.owner_id}>
                             {option.owner_name}
                           </MenuItem>
                         ))}
                       </Select>
+
                     </div>
                   ) : (
                     <div></div>
@@ -838,7 +858,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 			</Card>
 
 			<Grid container spacing={2}>
-				<Grid item xs={12} sm={6}>
+				<Grid item xs={12} sm={12}>
 					<Button
 						variant="contained"
 						fullWidth
@@ -856,24 +876,12 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 						Save Property
 					</Button>
 				</Grid>
-				<Grid item xs={12} sm={6}>
-					<Button
-						variant="contained"
-						fullWidth
-						sx={{
-							backgroundColor: '#D29494',
-							'&:hover': {
-								backgroundColor: '#D29494',
-							},
-							color: '#160449',
-							fontWeight: 'bold',
-							textTransform: 'none',
-						}}
-					>
-						Save Property & Select Property Manager
-					</Button>
-				</Grid>
 			</Grid>
+			<Modal open={isModalOpen} onClose={handleCloseModal}>
+  <Box>
+    <ReferUser onClose={handleCloseModal} onReferralSuccess={handleSetSelectedOwner} />
+  </Box>
+</Modal>
 		</Container>
 		</ThemeProvider>);
 };
