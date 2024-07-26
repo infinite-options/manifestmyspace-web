@@ -402,7 +402,7 @@ export default function PropertyRentWidget(props) {
             fill: "#160449",
             fontWeight: "bold",
           }}
-          onClick={() => navigate('/properties', { state: { showPropertyForm: true } })}
+          onClick={() => navigate('/properties', { state: { showPropertyForm: true , rawPropertyData: rawPropertyData} })}
         >
           Add your first
           <tspan x={130} y={145}>

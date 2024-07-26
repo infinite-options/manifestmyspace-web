@@ -789,7 +789,7 @@ export default function PropertyList({ }) {
             {propertyList.length >= 0 && allRentStatus.length >= 0 && isDesktop === true &&
               <Grid item xs={12} md={8}>
               {showPropertyForm ? (
-                <PropertyForm onBack={handleFormBack} onSubmit={handleFormSubmit}  />
+                <PropertyForm onBack={handleFormBack} onSubmit={handleFormSubmit} property_endpoint_resp={rawPropertyData} />
               ) : (
                 <PropertyDetail2 index={propertyIndex} propertyList={displayedItems} allRentStatus={allRentStatus} isDesktop={isDesktop} />
               )}

@@ -100,7 +100,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = ({ onBack, onSubmit }) => {
+const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp}) => {
 	const classes = useStyles();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
@@ -110,7 +110,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
 	const [selectedImageList, setSelectedImageList] = useState([]);
 
     const location = useLocation();
-  // const { property_endpoint_resp } = location.state;
+    //const { property_endpoint_resp } = location.state;
 
 	const [address, setAddress] = useState('');
 	const [unit, setUnit] = useState('');
@@ -305,7 +305,7 @@ const PropertyForm = ({ onBack, onSubmit }) => {
         } catch (error) {
           console.log("Error posting data:", error);
         } 
-        /*
+        
         // create new contract if profile === manager
         if (selectedRole === "MANAGER") {
           const contractFormData = new FormData();
@@ -353,14 +353,14 @@ const PropertyForm = ({ onBack, onSubmit }) => {
                 contract_uid: responseContractUID,
                 contract_business_id: getProfileId(),
                 contract_property_id: responsePropertyUID,
-                // property_endpoint_resp: property_endpoint_resp,
+                property_endpoint_resp: property_endpoint_resp,
               },
             });
           } catch (error) {
             console.error("Error:", error);
           }
         }
-     */
+     
         setAddress("");
         setCity("");
         setState("");
