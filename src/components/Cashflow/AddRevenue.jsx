@@ -32,13 +32,13 @@ const AddRevenue = (props) => {
   console.log("In Add Revenue");
   const classes = useStyles();
   const navigate = useNavigate();
-  const { getProfileId } = useUser();
+  const { getProfileId, selectedRole } = useUser();
   const [category, setCategory] = useState("Deposits");
   const [frequency, setFrequency] = useState("Monthly");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
-  const [propertyList, setPropertyList] = useState([]);
+  const [propertyList, setPropertyList] = useState(props.propertyList);
   const [payable, setPayable] = useState("Property Manager");
   const [selectedProperty, setSelectedProperty] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
@@ -49,6 +49,12 @@ const AddRevenue = (props) => {
   const [isCheckedTwo, setIsCheckedTwo] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [partialAmount, setPartialAmount] = useState(null);
+
+  const setCurrentWindow = props.setCurrentWindow;
+
+  useEffect(() => {
+    setPropertyList(props.propertyList);
+  }, [props.propertyList]);
 
   const handleCheckboxChange = (option) => {
     console.log(option);
@@ -162,7 +168,15 @@ const AddRevenue = (props) => {
     let currentMonth = currentDate.toLocaleString("default", { month: "long" });
     let currentYear = currentDate.getFullYear().toString();
 
-    navigate("/cashflow", { state: { month: currentMonth, year: currentYear } });
+    // navigate("/cashflow", { state: { month: currentMonth, year: currentYear } });
+
+    if(selectedRole === "OWNER"){
+      // navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
+      setCurrentWindow("CASHFLOW_DETAILS");
+    } else if (selectedRole === "MANAGER"){
+      // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+      setCurrentWindow("PROFITABILITY");
+    }
   };
   return (
     <>
@@ -170,19 +184,19 @@ const AddRevenue = (props) => {
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
           <CircularProgress color="inherit" />
         </Backdrop>
-        <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}></PropertyListData>
+        {/* <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}></PropertyListData> */}
         <Box
           style={{
             display: "flex",
             justifyContent: "center",
             width: "100%", // Take up full screen width
             minHeight: "100vh", // Set the Box height to full height
-            marginTop: theme.spacing(2), // Set the margin to 20px
+            // marginTop: theme.spacing(2), // Set the margin to 20px
           }}
         >
           <Paper
             style={{
-              margin: "30px",
+              // margin: "30px",
               padding: 20,
               // backgroundColor: theme.palette.primary.main,
               backgroundColor: theme.palette.custom.yellow,
@@ -219,7 +233,7 @@ const AddRevenue = (props) => {
                   <MenuItem value="" disabled>
                     Select Property
                   </MenuItem>
-                  {propertyList.map((option, index) => (
+                  {propertyList?.map((option, index) => (
                     <MenuItem key={index} value={option}>
                       {option.property_address}
                       {", "}

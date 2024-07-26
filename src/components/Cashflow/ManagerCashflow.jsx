@@ -49,6 +49,8 @@ import ManagerProfitability from "./ManagerProfitability";
 import ManagerTransactions from "./ManagerTransactions";
 import PaymentsManager from "../Payments/PaymentsManager";
 import MakePayment from "./MakePayment";
+import AddRevenue from "./AddRevenue";
+import AddExpense from "./AddExpense";
 
 import axios from "axios";
 
@@ -116,14 +118,15 @@ export default function ManagerCashflow() {
   const [ profitabilityData, setProfitabilityData ] = useState([]);
   const [ transactionsData, setTransactionsData ] = useState([]);
 
-  const [ showProfitability, setShowProfitability ] = useState(location.state?.showProfitability || false)
-  const [ showTransactions,  setShowTransactions ]  = useState(location.state?.showTransactions || false)
-  const [ showPayments,      setShowPayments ]      = useState(location.state?.showPayments || false);
-  const [ showSelectPayment, setShowSelectPayment ] = useState(false);
+  const [ currentWindow, setCurrentWindow ] = useState(location.state?.currentWindow || "PROFITABILITY")
 
   const [ selectedPayment, setSelectedPayment ] = useState(null);
 
+  const [ propertyList, setPropertyList ] = useState([]);
+  const [ selectedProperty, setSelectedProperty ] = useState("ALL");
+
   async function fetchCashflow(userProfileId, month, year) {
+    setShowSpinner(true);
     try {
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
@@ -131,15 +134,44 @@ export default function ManagerCashflow() {
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
       const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
       console.log("Manager Cashflow Data: ", cashflow.data);
+      setShowSpinner(false);
       return cashflow.data;
     } catch (error) {
       console.error("Error fetching cashflow data:", error);
+      setShowSpinner(false);
+    }
+  }
+
+  async function fetchProperties(userProfileId, month, year) {
+    setShowSpinner(true);
+    try {
+      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
+      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
+      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
+      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
+      const properties = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${userProfileId}`);
+      console.log("Manager Properties: ", properties.data);
+      setShowSpinner(false);
+      return properties.data;
+    } catch (error) {
+      console.error("Error fetching properties data:", error);
+      setShowSpinner(false);
     }
   }
 
   useEffect(() => {
     console.log("ROHIT - cashflowData - ", cashflowData);
   }, [cashflowData]);
+
+  useEffect(() => {
+    console.log("ROHIT - propertyList - ", propertyList);
+  }, [propertyList]);
+
+  useEffect(() => {
+    console.log("ROHIT - ManagerCashflow - selectedProperty - ", selectedProperty);
+  }, [selectedProperty]);
+
+  
 
 //   useEffect(() => {
 //     console.log("rentsByProperty - ", rentsByProperty);
@@ -163,6 +195,16 @@ export default function ManagerCashflow() {
       .catch((error) => {
         console.error("Error fetching cashflow data:", error);
       });
+
+    fetchProperties(profileId)
+      .then((data) => {
+        setPropertyList(data?.Property?.result)
+      })
+      .catch((error) => {
+        console.error("Error fetching PropertyList:", error);
+      });
+
+
   }, []);
 
   const refreshCashflowData = () => {
@@ -179,7 +221,17 @@ export default function ManagerCashflow() {
   }
 
   useEffect(() => {
-    const profitDatacurrentMonth = cashflowData?.Profit?.result?.filter( item => item.cf_month === month && item.cf_year === year);    
+    //PROFITS
+    const allProfitData = cashflowData?.Profit?.result;
+    let filteredProfitData = []
+    if(selectedProperty === "ALL"){
+      filteredProfitData = allProfitData
+      console.log("ROHIT - filteredProfitData - ", filteredProfitData);
+    } else {
+      filteredProfitData = allProfitData?.filter( item => item.property_id === selectedProperty)
+      console.log("ROHIT - filteredProfitData - ", filteredProfitData);
+    }
+    const profitDatacurrentMonth = filteredProfitData?.filter( item => item.cf_month === month && item.cf_year === year);    
 
     const rentDataCurrentMonth = profitDatacurrentMonth?.filter(item => ((item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "revenue"));
     
@@ -315,7 +367,7 @@ export default function ManagerCashflow() {
     console.log("totalRents - ", totalRents);
     setRentsTotal(totalRents);
     
-  }, [month, year, cashflowData]);
+  }, [month, year, cashflowData, selectedProperty]);
 
   // useEffect(() => {
   //     console.log("revenueByType", revenueByType)
@@ -340,16 +392,17 @@ export default function ManagerCashflow() {
               payoutsTotal={payoutsTotal}
               graphData={profitabilityData?.result}
 
-              setShowProfitability={setShowProfitability}
-              setShowTransactions={setShowTransactions}
-              setShowPayments={setShowPayments}
-              setShowSelectPayment={setShowSelectPayment}
+              setCurrentWindow={setCurrentWindow}
+
+              propertyList={propertyList}
+              selectedProperty={selectedProperty}
+              setSelectedProperty={setSelectedProperty}
             />
           </Grid>
 
           <Grid container item xs={12} md={8} columnSpacing={6}>
             {
-              showProfitability && (
+              currentWindow === "PROFITABILITY" && (
                 <ManagerProfitability 
                   propsMonth={month}
                   propsYear={year}
@@ -365,7 +418,7 @@ export default function ManagerCashflow() {
               )
             }
             {
-              showTransactions && (
+              currentWindow === "TRANSACTIONS" && (
                 <ManagerTransactions
                   propsMonth={month}
                   propsYear={year}
@@ -373,29 +426,41 @@ export default function ManagerCashflow() {
                   setYear={setYear}
                   transactionsData={transactionsData}
 
-                  setShowProfitability={setShowProfitability}
-                  setShowTransactions={setShowTransactions}
-                  setShowSelectPayment={setShowSelectPayment}
                   setSelectedPayment={setSelectedPayment}
-                  
+                  setCurrentWindow={setCurrentWindow} 
+                  selectedProperty={selectedProperty}                                   
                 />
               )
             }
             {
-              showPayments && (
+              currentWindow === "PAYMENTS" && (
                 <PaymentsManager />
               )
             }  
             {
-              showSelectPayment && (
+              currentWindow === "MAKE_PAYMENT"  && (
                 <MakePayment 
                   selectedPayment={selectedPayment}
                   refreshCashflowData={refreshCashflowData}
                   
-                  setShowProfitability={setShowProfitability}
-                  setShowTransactions={setShowTransactions}
-                  setShowSelectPayment={setShowSelectPayment}
+                  setCurrentWindow={setCurrentWindow}
                   />
+              )
+            }
+            {
+              currentWindow === "ADD_REVENUE" && (
+                <AddRevenue 
+                  propertyList={propertyList} 
+                  setCurrentWindow={setCurrentWindow}
+                />
+              )
+            }                      
+            {
+              currentWindow === "ADD_EXPENSE" && (
+                <AddExpense 
+                  propertyList={propertyList} 
+                  setCurrentWindow={setCurrentWindow}
+                />
               )
             }                      
           </Grid>
