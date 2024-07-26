@@ -78,14 +78,15 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const[ employee_photo_url, setEmployeePhoto]=useState('')
   const [paymentMethods, setPaymentMethods] = useState({
-    paypal: { value: "", checked: false, uid: "" },
-    apple_pay: { value: "", checked: false, uid: "" },
-    stripe: { value: "", checked: false, uid: "" },
-    zelle: { value: "", checked: false, uid: "" },
-    venmo: { value: "", checked: false, uid: "" },
-    credit_card: { value: "", checked: false, uid: "" },
-    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
+    paypal: { value: "", checked: false, uid: "", status: "Inactive" },
+    apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
+    stripe: { value: "", checked: false, uid: "", status: "Inactive" },
+    zelle: { value: "", checked: false, uid: "", status: "Inactive" },
+    venmo: { value: "", checked: false, uid: "", status: "Inactive" },
+    credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
+    bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
 });
+
 
   // Personal info state variables
   const [empFirstName, setEmpFirstName] = useState("");
@@ -129,29 +130,32 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
         }
        
 
-        const paymentMethods = JSON.parse(profileData.paymentMethods);
+        const paymentMethodsData = JSON.parse(profileData.paymentMethods);
                 const updatedPaymentMethods = {
-                    paypal: { value: "", checked: false, uid: "" },
-                    apple_pay: { value: "", checked: false, uid: "" },
-                    stripe: { value: "", checked: false, uid: "" },
-                    zelle: { value: "", checked: false, uid: "" },
-                    venmo: { value: "", checked: false, uid: "" },
-                    credit_card: { value: "", checked: false, uid: "" },
-                    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
+                    paypal: { value: "", checked: false, uid: "", status: "Inactive" },
+                    apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
+                    stripe: { value: "", checked: false, uid: "", status: "Inactive" },
+                    zelle: { value: "", checked: false, uid: "", status: "Inactive" },
+                    venmo: { value: "", checked: false, uid: "", status: "Inactive" },
+                    credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
+                    bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
                 };
-                paymentMethods.forEach((method) => {
+                paymentMethodsData.forEach((method) => {
+                    const status = method.paymentMethod_status || "Inactive";
                     if (method.paymentMethod_type === "bank_account") {
                         updatedPaymentMethods.bank_account = {
                             account_number: method.paymentMethod_account_number || "",
                             routing_number: method.paymentMethod_routing_number || "",
-                            checked: true,
+                            checked: status === "Active",
                             uid: method.paymentMethod_uid,
+                            status,
                         };
                     } else {
                         updatedPaymentMethods[method.paymentMethod_type] = {
                             value: method.paymentMethod_name,
-                            checked: true,
+                            checked: status === "Active",
                             uid: method.paymentMethod_uid,
+                            status,
                         };
                     }
                 });
@@ -424,6 +428,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
       const form = encodeForm(payload);
       const data = await saveProfile(form);
       const paymentSetup = await handlePaymentStep();
+      setIsSave(true);
        
       //const createEmp= await SaveEmpStep();
       
@@ -488,21 +493,13 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
 
 
   const handleChangeChecked = (e) => {
-      const { name, checked } = e.target;
-      const map = { ...paymentMethods };
-      map[name].checked = checked;
-      if (name === "bank_account") {
-          if (!checked) {
-              map.bank_account.account_number = "";
-              map.bank_account.routing_number = "";
-          }
-      } else {
-          if (!checked) {
-              map[name].value = "";
-          }
-      }
-      setPaymentMethods(map);
-  };
+    const { name, checked } = e.target;
+    const map = { ...paymentMethods };
+    map[name].checked = checked;
+    map[name].status = checked ? "Active" : "Inactive";
+    setPaymentMethods(map);
+};
+
 
   useEffect(() => {
       let disable_state = Object.keys(paymentMethods).some((key) => {
@@ -531,31 +528,36 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
     const putPayload = [];
     const postPayload = [];
     keys.forEach((key) => {
-        if (paymentMethods[key].value !== "" || (key === "bank_account" && paymentMethods[key].checked)) {
+        if (paymentMethods[key].uid) {
             let paymentMethodPayload = {
                 paymentMethod_type: key,
                 paymentMethod_profile_id: getProfileId(),
-                
+                paymentMethod_status: paymentMethods[key].status,
             };
             if (key === "bank_account") {
                 const bankAccount = paymentMethods[key];
-                if (bankAccount.routing_number && bankAccount.account_number) {
-                    paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
-                    paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-                    if (bankAccount.uid) {
-                        putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
-                    } else {
-                        postPayload.push(paymentMethodPayload);
-                    }
-                }
+                paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
+                paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
+                paymentMethodPayload.paymentMethod_uid = bankAccount.uid;
             } else {
                 paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-                if (paymentMethods[key].uid) {
-                    putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
-                } else {
-                    postPayload.push(paymentMethodPayload);
-                }
+                paymentMethodPayload.paymentMethod_uid = paymentMethods[key].uid;
             }
+            putPayload.push(paymentMethodPayload);
+        } else if (paymentMethods[key].checked) {
+            let paymentMethodPayload = {
+                paymentMethod_type: key,
+                paymentMethod_profile_id: getProfileId(),
+                paymentMethod_status: "Active",
+            };
+            if (key === "bank_account") {
+                const bankAccount = paymentMethods[key];
+                paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
+                paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
+            } else {
+                paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
+            }
+            postPayload.push(paymentMethodPayload);
         }
     });
 
@@ -579,6 +581,7 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
     setCookie("default_form_vals", { ...cookiesData, paymentMethods });
 };
 
+
   const paymentMethodsArray = [
       { name: "PayPal", icon: PayPal, state: paymentMethods.paypal },
       { name: "Apple Pay", icon: ApplePay, state: paymentMethods.apple_pay },
@@ -590,63 +593,64 @@ const ManagerOnBoardDesktopForm = ({profileData, setIsSave}) => {
   ];
 
   const renderPaymentMethods = () => {
-      return paymentMethodsArray.map((method, index) => (
-          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={index}>
-              <Grid item xs={2}>
-                  <Checkbox
-                      name={method.name.toLowerCase().replace(/\s/g, "_")}
-                      checked={method.state?.checked}
-                      onChange={handleChangeChecked}
-                  />
-              </Grid>
-              <Grid item xs={2}>
-                  <img src={method.icon} alt={method.name} />
-              </Grid>
-              {method.name === "Bank Account" ? (
-                  <>
-                      <Grid item xs={4}>
-                          <TextField
-                              name={`${method.name.toLowerCase().replace(/\s/g, "_")}_account`}
-                              value={method.state?.account_number}
-                              onChange={handleChangeValue}
-                              variant="filled"
-                              fullWidth
-                              placeholder={`Enter Your Bank Account Number`}
-                              disabled={!method.state?.checked}
-                              className={classes.root}
-                          />
-                      </Grid>
-                      <Grid item xs={4}>
-                          <TextField
-                              name={`${method.name.toLowerCase().replace(/\s/g, "_")}_routing`}
-                              value={method.state?.routing_number}
-                              onChange={handleChangeValue}
-                              variant="filled"
-                              fullWidth
-                              placeholder={`Enter Your Bank Routing Number`}
-                              disabled={!method.state?.checked}
-                              className={classes.root}
-                          />
-                      </Grid>
-                  </>
-              ) : (
-                  <Grid item xs={8}>
-                      <TextField
-                          name={method.name.toLowerCase().replace(/\s/g, "_")}
-                          value={method.state?.value}
-                          onChange={handleChangeValue}
-                          variant="filled"
-                          fullWidth
-                          placeholder={`Enter ${method.name}`}
-                          disabled={!method.state?.checked}
-                          className={classes.root}
-                      />
-                  </Grid>
-              )}
-          </Grid>
-      ));
-  };
-
+    return paymentMethodsArray.map((method, index) => (
+        <Grid
+            container
+            rowSpacing={1}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            key={index}
+        >
+            <Grid item xs={2}>
+                <Checkbox
+                    name={method.name.toLowerCase().replace(/\s/g, "_")}
+                    checked={method.state?.checked}
+                    onChange={handleChangeChecked}
+                />
+            </Grid>
+            <Grid item xs={2}>
+                <img src={method.icon} alt={method.name} />
+            </Grid>
+            {method.name === "Bank Account" ? (
+                <>
+                    <Grid item xs={4}>
+                        <TextField
+                            name={`${method.name.toLowerCase().replace(/\s/g, "_")}_account`}
+                            value={method.state?.account_number}
+                            onChange={handleChangeValue}
+                            variant="filled"
+                            fullWidth
+                            placeholder={`Enter Your Bank Account Number`}
+                            className={classes.root}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            name={`${method.name.toLowerCase().replace(/\s/g, "_")}_routing`}
+                            value={method.state?.routing_number}
+                            onChange={handleChangeValue}
+                            variant="filled"
+                            fullWidth
+                            placeholder={`Enter Your Bank Routing Number`}
+                            className={classes.root}
+                        />
+                    </Grid>
+                </>
+            ) : (
+                <Grid item xs={8}>
+                    <TextField
+                        name={method.name.toLowerCase().replace(/\s/g, "_")}
+                        value={method.state?.value}
+                        onChange={handleChangeValue}
+                        variant="filled"
+                        fullWidth
+                        placeholder={`Enter ${method.name}`}
+                        className={classes.root}
+                    />
+                </Grid>
+            )}
+        </Grid>
+    ));
+};
 //   "business_services_fees": "[{\"id\": 1, \"of\": \"Rent\", \"charge\": \"15%\", \"fee_name\": \"Service Charge\", \"frequency\": \"Annually\"}]",
 //                 "business_locations": "[{\"id\": 1, \"city\": \"Boston\", \"miles\": \"50\", \"state\": \"MA\", \"address\": \"\", \"location\": \"MA\"}]",
  
