@@ -24,7 +24,7 @@ function PMRent(props) {
   const [rentData, setRentData] = useState({});
   const [showSpinner, setShowSpinner] = useState(false);
   const [rentDetailIndexList, setRentDetailIndexList] = useState([]);
-  console.log("checking", props.onPropertyInRentWidgetClicked)
+  console.log("checking", props.onPropertyInRentWidgetClicked);
 
   // useEffect(() => {
   //   console.log("rentDetailIndexList - ", rentDetailIndexList);
@@ -32,8 +32,8 @@ function PMRent(props) {
 
   useEffect(() => {
     setShowSpinner(true);
-    const requestURL = `${APIConfig.baseURL.dev}/rents/${getProfileId()}`; 
-    // const requestURL = `${APIConfig.baseURL.dev}/rents/600-000003`; 
+    const requestURL = `${APIConfig.baseURL.dev}/rents/${getProfileId()}`;
+    // const requestURL = `${APIConfig.baseURL.dev}/rents/600-000003`;
     axios.get(requestURL).then((res) => {
       const fetchingData = res.data.RentStatus.result;
       setDataNum(fetchingData.length);
@@ -44,9 +44,9 @@ function PMRent(props) {
       const paid = [];
       const vacant = [];
 
-      const indexList = []
+      const indexList = [];
       for (let i = 0; i < fetchingData.length; i++) {
-        indexList.push(fetchingData[i]?.rent_detail_index)        
+        indexList.push(fetchingData[i]?.rent_detail_index);
         const data = fetchingData[i];
         switch (data.rent_status) {
           case "UNPAID":
@@ -79,7 +79,7 @@ function PMRent(props) {
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <RentTitle>Property Rent</RentTitle>
+      <RentTitle>Property Rent 456</RentTitle>
       <ViewOptionContainer>
         <Box
           sx={{
@@ -119,7 +119,7 @@ function PMRent(props) {
           marginTop: "20px",
         }}
       >
-        <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}/>
+        <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} />
       </Box>
     </MainContainer>
   );

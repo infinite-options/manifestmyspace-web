@@ -68,13 +68,13 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
     const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, photo, setPhoto } = useOnboardingContext();
     const { ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
     const [paymentMethods, setPaymentMethods] = useState({
-        paypal: { value: "", checked: false, uid: "" },
-        apple_pay: { value: "", checked: false, uid: "" },
-        stripe: { value: "", checked: false, uid: "" },
-        zelle: { value: "", checked: false, uid: "" },
-        venmo: { value: "", checked: false, uid: "" },
-        credit_card: { value: "", checked: false, uid: "" },
-        bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
+        paypal: { value: "", checked: false, uid: "", status: "Inactive" },
+        apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
+        stripe: { value: "", checked: false, uid: "", status: "Inactive" },
+        zelle: { value: "", checked: false, uid: "", status: "Inactive" },
+        venmo: { value: "", checked: false, uid: "", status: "Inactive" },
+        credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
+        bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
     });
     const [businesses, setBusinesses] = useState([]);
     const [selectedBusiness, setSelectedBusiness] = useState("");
@@ -83,7 +83,7 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
 
     const fetchBusinesses = async () => {
         const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
-        const args = {
+        const args = { 
             business_type: "MAINTENANCE",
         };
         const response = await axios.get(url + objToQueryString(args));
@@ -121,33 +121,37 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
                 
             
     
-            const paymentMethods = JSON.parse(profileData.employeePaymentMethods);
-                const updatedPaymentMethods = {
-                    paypal: { value: "", checked: false, uid: "" },
-                    apple_pay: { value: "", checked: false, uid: "" },
-                    stripe: { value: "", checked: false, uid: "" },
-                    zelle: { value: "", checked: false, uid: "" },
-                    venmo: { value: "", checked: false, uid: "" },
-                    credit_card: { value: "", checked: false, uid: "" },
-                    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
-                };
-                paymentMethods.forEach((method) => {
-                    if (method.paymentMethod_type === "bank_account") {
-                        updatedPaymentMethods.bank_account = {
-                            account_number: method.paymentMethod_account_number || "",
-                            routing_number: method.paymentMethod_routing_number || "",
-                            checked: true,
-                            uid: method.paymentMethod_uid,
-                        };
-                    } else {
-                        updatedPaymentMethods[method.paymentMethod_type] = {
-                            value: method.paymentMethod_name,
-                            checked: true,
-                            uid: method.paymentMethod_uid,
-                        };
-                    }
-                });
-                setPaymentMethods(updatedPaymentMethods);
+            
+            const paymentMethodsData = JSON.parse(profileData.employeePaymentMethods);
+            const updatedPaymentMethods = {
+                paypal: { value: "", checked: false, uid: "", status: "Inactive" },
+                apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
+                stripe: { value: "", checked: false, uid: "", status: "Inactive" },
+                zelle: { value: "", checked: false, uid: "", status: "Inactive" },
+                venmo: { value: "", checked: false, uid: "", status: "Inactive" },
+                credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
+                bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
+            };
+            paymentMethodsData.forEach((method) => {
+                const status = method.paymentMethod_status || "Inactive";
+                if (method.paymentMethod_type === "bank_account") {
+                    updatedPaymentMethods.bank_account = {
+                        account_number: method.paymentMethod_account_number || "",
+                        routing_number: method.paymentMethod_routing_number || "",
+                        checked: status === "Active",
+                        uid: method.paymentMethod_uid,
+                        status,
+                    };
+                } else {
+                    updatedPaymentMethods[method.paymentMethod_type] = {
+                        value: method.paymentMethod_name,
+                        checked: status === "Active",
+                        uid: method.paymentMethod_uid,
+                        status,
+                    };
+                }
+            });
+            setPaymentMethods(updatedPaymentMethods);
 
                 setShowSpinner(false);
             } catch (error) {
@@ -341,6 +345,7 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         const form = encodeForm(payload);
         const data = await createProfile(form);
         const paymentSetup = await handlePaymentStep();
+        setIsSave(true);
         setShowSpinner(false);
         // if (data.employee_uid) {
         //     updateProfileUid({ employee_id: data.employee_uid });
@@ -366,16 +371,7 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         const { name, checked } = e.target;
         const map = { ...paymentMethods };
         map[name].checked = checked;
-        if (name === "bank_account") {
-            if (!checked) {
-                map.bank_account.account_number = "";
-                map.bank_account.routing_number = "";
-            }
-        } else {
-            if (!checked) {
-                map[name].value = "";
-            }
-        }
+        map[name].status = checked ? "Active" : "Inactive";
         setPaymentMethods(map);
     };
 
@@ -402,31 +398,36 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         const putPayload = [];
         const postPayload = [];
         keys.forEach((key) => {
-            if (paymentMethods[key].value !== "" || (key === "bank_account" && paymentMethods[key].checked)) {
+            if (paymentMethods[key].uid) {
                 let paymentMethodPayload = {
                     paymentMethod_type: key,
                     paymentMethod_profile_id: getProfileId(),
-                    
+                    paymentMethod_status: paymentMethods[key].status,
                 };
                 if (key === "bank_account") {
                     const bankAccount = paymentMethods[key];
-                    if (bankAccount.routing_number && bankAccount.account_number) {
-                        paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
-                        paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-                        if (bankAccount.uid) {
-                            putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
-                        } else {
-                            postPayload.push(paymentMethodPayload);
-                        }
-                    }
+                    paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
+                    paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
+                    paymentMethodPayload.paymentMethod_uid = bankAccount.uid;
                 } else {
                     paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-                    if (paymentMethods[key].uid) {
-                        putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
-                    } else {
-                        postPayload.push(paymentMethodPayload);
-                    }
+                    paymentMethodPayload.paymentMethod_uid = paymentMethods[key].uid;
                 }
+                putPayload.push(paymentMethodPayload);
+            } else if (paymentMethods[key].checked) {
+                let paymentMethodPayload = {
+                    paymentMethod_type: key,
+                    paymentMethod_profile_id: getProfileId(),
+                    paymentMethod_status: "Active",
+                };
+                if (key === "bank_account") {
+                    const bankAccount = paymentMethods[key];
+                    paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
+                    paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
+                } else {
+                    paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
+                }
+                postPayload.push(paymentMethodPayload);
             }
         });
 
@@ -449,7 +450,6 @@ const MaintEmpOnBoardDesktopForm = ({profileData, setIsSave}) => {
         setShowSpinner(false);
         setCookie("default_form_vals", { ...cookiesData, paymentMethods });
     };
-
 
     
     const paymentMethodsArray = [

@@ -60,13 +60,13 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [paymentMethods, setPaymentMethods] = useState({
-    paypal: { value: "", checked: false, uid: "" },
-    apple_pay: { value: "", checked: false, uid: "" },
-    stripe: { value: "", checked: false, uid: "" },
-    zelle: { value: "", checked: false, uid: "" },
-    venmo: { value: "", checked: false, uid: "" },
-    credit_card: { value: "", checked: false, uid: "" },
-    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
+    paypal: { value: "", checked: false, uid: "", status: "Inactive" },
+    apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
+    stripe: { value: "", checked: false, uid: "", status: "Inactive" },
+    zelle: { value: "", checked: false, uid: "", status: "Inactive" },
+    venmo: { value: "", checked: false, uid: "", status: "Inactive" },
+    credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
+    bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
 });
 
 
@@ -86,7 +86,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
   useEffect(() => {
     console.log("calling useeffect")
     //setIsSave(false)
-    const fetchProfileData = async () => {
+    const fetchProfileData = async () => { 
         setShowSpinner(true);
         try {
         //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
@@ -114,29 +114,32 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                 setLocations(JSON.parse(profileData.business_locations));
         }
 
-        const paymentMethods = JSON.parse(profileData.paymentMethods);
+        const paymentMethodsData = JSON.parse(profileData.paymentMethods);
                 const updatedPaymentMethods = {
-                    paypal: { value: "", checked: false, uid: "" },
-                    apple_pay: { value: "", checked: false, uid: "" },
-                    stripe: { value: "", checked: false, uid: "" },
-                    zelle: { value: "", checked: false, uid: "" },
-                    venmo: { value: "", checked: false, uid: "" },
-                    credit_card: { value: "", checked: false, uid: "" },
-                    bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
+                    paypal: { value: "", checked: false, uid: "", status: "Inactive" },
+                    apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
+                    stripe: { value: "", checked: false, uid: "", status: "Inactive" },
+                    zelle: { value: "", checked: false, uid: "", status: "Inactive" },
+                    venmo: { value: "", checked: false, uid: "", status: "Inactive" },
+                    credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
+                    bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
                 };
-                paymentMethods.forEach((method) => {
+                paymentMethodsData.forEach((method) => {
+                    const status = method.paymentMethod_status || "Inactive";
                     if (method.paymentMethod_type === "bank_account") {
                         updatedPaymentMethods.bank_account = {
                             account_number: method.paymentMethod_account_number || "",
                             routing_number: method.paymentMethod_routing_number || "",
-                            checked: true,
+                            checked: status === "Active",
                             uid: method.paymentMethod_uid,
+                            status,
                         };
                     } else {
                         updatedPaymentMethods[method.paymentMethod_type] = {
                             value: method.paymentMethod_name,
-                            checked: true,
+                            checked: status === "Active",
                             uid: method.paymentMethod_uid,
+                            status,
                         };
                     }
                 });
@@ -440,6 +443,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
           const createEmp= await CreateEmpStep(data.business_uid);
           console.log(createEmp);
           setDashboardButtonEnabled(true)
+          setIsSave(true);
       }
       setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });
       return;
@@ -451,22 +455,13 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
     navigate("/maintenanceDashboard")
 }
 
-  const handleChangeChecked = (e) => {
-      const { name, checked } = e.target;
-      const map = { ...paymentMethods };
-      map[name].checked = checked;
-      if (name === "bank_account") {
-          if (!checked) {
-              map.bank_account.account_number = "";
-              map.bank_account.routing_number = "";
-          }
-      } else {
-          if (!checked) {
-              map[name].value = "";
-          }
-      }
-      setPaymentMethods(map);
-  };
+const handleChangeChecked = (e) => {
+    const { name, checked } = e.target;
+    const map = { ...paymentMethods };
+    map[name].checked = checked;
+    map[name].status = checked ? "Active" : "Inactive";
+    setPaymentMethods(map);
+};
 
   useEffect(() => {
       let disable_state = Object.keys(paymentMethods).some((key) => {
@@ -495,31 +490,36 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
     const putPayload = [];
     const postPayload = [];
     keys.forEach((key) => {
-        if (paymentMethods[key].value !== "" || (key === "bank_account" && paymentMethods[key].checked)) {
+        if (paymentMethods[key].uid) {
             let paymentMethodPayload = {
                 paymentMethod_type: key,
                 paymentMethod_profile_id: getProfileId(),
-                
+                paymentMethod_status: paymentMethods[key].status,
             };
             if (key === "bank_account") {
                 const bankAccount = paymentMethods[key];
-                if (bankAccount.routing_number && bankAccount.account_number) {
-                    paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
-                    paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-                    if (bankAccount.uid) {
-                        putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
-                    } else {
-                        postPayload.push(paymentMethodPayload);
-                    }
-                }
+                paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
+                paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
+                paymentMethodPayload.paymentMethod_uid = bankAccount.uid;
             } else {
                 paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-                if (paymentMethods[key].uid) {
-                    putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
-                } else {
-                    postPayload.push(paymentMethodPayload);
-                }
+                paymentMethodPayload.paymentMethod_uid = paymentMethods[key].uid;
             }
+            putPayload.push(paymentMethodPayload);
+        } else if (paymentMethods[key].checked) {
+            let paymentMethodPayload = {
+                paymentMethod_type: key,
+                paymentMethod_profile_id: getProfileId(),
+                paymentMethod_status: "Active",
+            };
+            if (key === "bank_account") {
+                const bankAccount = paymentMethods[key];
+                paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
+                paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
+            } else {
+                paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
+            }
+            postPayload.push(paymentMethodPayload);
         }
     });
 
@@ -576,7 +576,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                               variant="filled"
                               fullWidth
                               placeholder={`Enter Your Bank Account Number`}
-                              disabled={!method.state?.checked}
+                             
                               className={classes.root}
                           />
                       </Grid>
@@ -588,7 +588,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                               variant="filled"
                               fullWidth
                               placeholder={`Enter Your Bank Routing Number`}
-                              disabled={!method.state?.checked}
+                              
                               className={classes.root}
                           />
                       </Grid>
@@ -602,7 +602,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
                           variant="filled"
                           fullWidth
                           placeholder={`Enter ${method.name}`}
-                          disabled={!method.state?.checked}
+                          
                           className={classes.root}
                       />
                   </Grid>

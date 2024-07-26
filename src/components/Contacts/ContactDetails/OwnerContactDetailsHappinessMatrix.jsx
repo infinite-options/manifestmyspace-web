@@ -127,7 +127,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
         });
     };
 
-    if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom == "PropertyNavigator") {
+    if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom === "PropertyNavigator") {
       getDataFromAPI();
       setContactsTab("Owner");
     } else if (navigatingFrom === "PMContacts") {

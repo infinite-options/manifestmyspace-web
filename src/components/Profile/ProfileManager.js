@@ -102,6 +102,7 @@ const ProfileManager = () => {
       const profileResponse = await axios.get(url);
       const profileData = profileResponse.data.profile.result[0];
       setProfileData(profileData);
+      setIsSave(false)
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }

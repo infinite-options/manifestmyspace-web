@@ -33,13 +33,13 @@ const AddNewRole = () => {
     const [cookie, setCookie] = useCookies(["default_form_vals"]);
     const cookiesData = cookie["default_form_vals"];
 
-    const [email, setEmail] = useState('');
-    const [businessEmail, setBusinessEmail] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState(user.email);
+    const [businessEmail, setBusinessEmail] = useState(user.email);
+    const [firstName, setFirstName] = useState(user.first_name);
+    const [lastName, setLastName] = useState(user.last_name);
     const [businessName, setBusinessName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');  
-    const [businessPhoneNumber, setBusinessPhoneNumber] = useState('');  
+    const [phoneNumber, setPhoneNumber] = useState(user.phone_number);  
+    const [businessPhoneNumber, setBusinessPhoneNumber] = useState(user.phone_number);  
 
     console.log("cookiesData is set to ****", cookiesData)
 
@@ -173,7 +173,8 @@ const AddNewRole = () => {
 
         selectRole(newRole);
         const existingRoles = user.role ? user.role.split(",") : [];
-        existingRoles.push(newRole);
+        if(!existingRoles.includes(newRole))
+        {existingRoles.push(newRole);}
         const updatedRole = existingRoles.join(",");
 
         let role_id = {};
