@@ -3,8 +3,8 @@ import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Card, CardHeader, Sli
 import theme from "../../theme/theme";
 import PropertyNavigator from "../Property/PropertyNavigator";
 
-export default function PropertyDetail({ index, propertyList, allRentStatus, isDesktop }) {
-  console.log("In Property Detail Desktop");
+export default function PropertyDetail({ index, propertyList, allRentStatus, isDesktop, allContracts }) {
+  console.log("In Property Detail Desktop", allContracts);
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -16,7 +16,7 @@ export default function PropertyDetail({ index, propertyList, allRentStatus, isD
           height:"100%",
         }}
       >
-        <PropertyNavigator index={index} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop}/>
+        <PropertyNavigator index={index} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts}/>
       </Box>
     </ThemeProvider>
   );

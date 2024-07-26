@@ -182,6 +182,7 @@ export default function PropertyList({}) {
   // console.log("getProfileId information", getProfileId());
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
   const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
+  const [allContracts, setAllContracts] = useState([]); 
 
   function numberOfMaintenanceItems(maintenanceItems) {
     console.log(maintenanceItems);
@@ -244,6 +245,24 @@ export default function PropertyList({}) {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(()=>{
+    const getContractsForOwner = async () => {
+      try {
+        const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
+        // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+        if (!response.ok) {
+          console.log('Error fetching contracts data');
+        }
+        const contractsResponse = await response.json();
+        console.log('contractsResponse--', contractsResponse.result);
+        await setAllContracts(contractsResponse.result);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getContractsForOwner();
+  }, [])
 
   const propertyRentDetails = async () => {
     try {
@@ -771,7 +790,7 @@ export default function PropertyList({}) {
               {showPropertyForm ? (
                 <PropertyForm onBack={handleFormBack} onSubmit={handleFormSubmit} property_endpoint_resp={rawPropertyData} />
               ) : (
-                <PropertyDetail2 index={propertyIndex} propertyList={displayedItems} allRentStatus={allRentStatus} isDesktop={isDesktop} />
+                <PropertyDetail2 index={propertyIndex} propertyList={displayedItems} allRentStatus={allRentStatus} isDesktop={isDesktop} allContracts={allContracts}/>
               )}
             </Grid>
               
