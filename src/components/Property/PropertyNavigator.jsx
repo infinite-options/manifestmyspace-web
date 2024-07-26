@@ -62,7 +62,7 @@ import { v4 as uuidv4 } from "uuid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
+//const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 const getAppColor = (app) =>
   app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
@@ -132,11 +132,11 @@ export default function PropertyNavigator({
     console.log("ROHIT - PropertyNavigator - currentId - ", currentId);
   }, [currentId]);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  //const handleOpen = () => setOpen(true);
+  //const handleClose = () => setOpen(false);
 
   // Parse property images once outside the component
-  const parsedPropertyImages = propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
+  //const parsedPropertyImages = propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
   // console.log('parsedImages:', parsedPropertyImages);
   // console.log('parsedImages.length:', parsedPropertyImages.length);
 

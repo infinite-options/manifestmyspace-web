@@ -775,7 +775,7 @@ export default function PropertyList({}) {
               )}
             </Grid>
               
-            }
+            )}
           </Grid>)}
       </Container>
     </ThemeProvider>
