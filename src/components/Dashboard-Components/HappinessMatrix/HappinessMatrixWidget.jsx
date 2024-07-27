@@ -13,9 +13,9 @@ export default function HappinessMatrixWidget(props) {
   const { page, setIndex, happinessData, dataforhappiness, contactDetails } = props;
   const [data, setData] = useState([]);
 
-  console.log('happiness data initial', happinessData);
-  console.log('happiness data initial1', happinessData.matrix_data);
-  console.log('happiness data initial2', happinessData.matrix_data.result[0]);
+  console.log("happiness data initial", happinessData);
+  console.log("happiness data initial1", happinessData.matrix_data);
+  console.log("happiness data initial2", happinessData.matrix_data.result[0]);
   // useEffect(() => {
   //   console.log("HappinessMatrixWidget - happinessData:", happinessData);
   // }, [happinessData]);
@@ -25,9 +25,15 @@ export default function HappinessMatrixWidget(props) {
   // let cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
   // let cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
 
-  useEffect(()=>{
+  useEffect(() => {
+    console.log("In UseEffect: ", happinessData.matrix_data.result);
     setData(happinessData.matrix_data.result);
-  }, [])
+
+    // write a function to store the data with an index an x, y plot
+    // check if the x,y plots are too close to one another
+    // If the x, y are too close, adjust one of the points
+    // plot the data
+  }, [happinessData.matrix_data.result]);
   // useEffect(() => {
 
   //   const setting_matrix_data = () => {
@@ -128,9 +134,9 @@ export default function HappinessMatrixWidget(props) {
   function overlap(owner1, owner2, margin) {
     const { vacancy_perc: x1, delta_cashflow_perc: y1 } = owner1;
     const { vacancy_perc: x2, delta_cashflow_perc: y2 } = owner2;
-    console.log('checking distance1', x1, y1, x2, y2);
+    console.log("checking distance1", x1, y1, x2, y2);
     const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    console.log('checking distance', distance);
+    console.log("checking distance", distance);
     return distance < margin;
   }
 
@@ -140,14 +146,13 @@ export default function HappinessMatrixWidget(props) {
       for (let j = i + 1; j < owners.length; j++) {
         while (overlap(owners[i], owners[j], margin)) {
           // Move points slightly in both x and y directions
-          console.log('checking i', owners[i]);
-          console.log('checking j', owners[j]);
+          console.log("checking i", owners[i]);
+          console.log("checking j", owners[j]);
           if (owners[j].vacancy_perc > -50) {
             owners[j].vacancy_perc -= 5;
           } else {
             owners[j].vacancy_perc += 5;
           }
-
 
           if (owners[j].delta_cashflow_perc > -50) {
             owners[j].delta_cashflow_perc -= 5;
@@ -181,7 +186,7 @@ export default function HappinessMatrixWidget(props) {
       points.push(pointObject);
     });
 
-    console.log('points to plot', points)
+    console.log("points to plot", points);
     setPointsToPlot(points);
   }
 
@@ -246,12 +251,12 @@ export default function HappinessMatrixWidget(props) {
       >
         <Grid container style={{ paddingTop: "10px" }}>
           <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginBottom: "10px" }}>
-            <Typography variant="h5" sx={{ fontSize: page === "OwnerContactDetails" ? "35px" : "24px", fontWeight: "bold", color: "#160449" }}>
+            <Typography variant='h5' sx={{ fontSize: page === "OwnerContactDetails" ? "35px" : "24px", fontWeight: "bold", color: "#160449" }}>
               Happiness Matrix
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: page === "OwnerContactDetails" ? "#D6D5DA" : "", borderRadius: "15px" }}>
-            <ResponsiveContainer width="100%" height={380}>
+            <ResponsiveContainer width='100%' height={380}>
               <ScatterChart
                 // width={chartWidth}
                 // height={chartHeight}
@@ -261,9 +266,9 @@ export default function HappinessMatrixWidget(props) {
                 {/* <CartesianGrid /> */}
 
                 <YAxis
-                  type="number"
-                  dataKey="y"
-                  name="Delta Cashflow"
+                  type='number'
+                  dataKey='y'
+                  name='Delta Cashflow'
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
@@ -283,9 +288,9 @@ export default function HappinessMatrixWidget(props) {
                 />
 
                 <XAxis
-                  type="number"
-                  dataKey="x"
-                  name="Vacancies"
+                  type='number'
+                  dataKey='x'
+                  name='Vacancies'
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
@@ -332,9 +337,9 @@ export default function HappinessMatrixWidget(props) {
                   }}
                 />
                 <Scatter
-                  name="happiness_matrix"
+                  name='happiness_matrix'
                   data={pointsToPlot}
-                  fill="#8884d8"
+                  fill='#8884d8'
                   shape={(props) => (
                     <CustomImage
                       {...props}
@@ -355,18 +360,18 @@ export default function HappinessMatrixWidget(props) {
                   )}
                 />
 
-                <ReferenceLine y={-0.5} stroke="#000000" strokeDasharray="3 3" />
+                <ReferenceLine y={-0.5} stroke='#000000' strokeDasharray='3 3' />
 
-                <ReferenceLine x={-50} stroke="#000000" strokeDasharray="3 3" />
+                <ReferenceLine x={-50} stroke='#000000' strokeDasharray='3 3' />
 
                 <ReferenceLine
                   segment={[
                     { x: -100, y: -1.1 },
                     { x: 0, y: 0.1 },
                   ]}
-                  stroke="#000000"
+                  stroke='#000000'
                   strokeWidth={1}
-                  ifOverflow="hidden"
+                  ifOverflow='hidden'
                 />
               </ScatterChart>
             </ResponsiveContainer>
@@ -380,20 +385,7 @@ export default function HappinessMatrixWidget(props) {
 const CustomImage = (props) => {
   // console.log("In CustomImage");
   const navigate = useNavigate();
-  const {
-    cx,
-    cy,
-    payload,
-    onClick,
-    isClicked,
-    isVisible,
-    index,
-    dataforhappiness,
-    page,
-    setIndex,
-    contactDetails,
-    happinessData,
-  } = props;
+  const { cx, cy, payload, onClick, isClicked, isVisible, index, dataforhappiness, page, setIndex, contactDetails, happinessData } = props;
 
   const [isClickedState, setIsClickedState] = useState(isClicked);
 
@@ -441,7 +433,7 @@ const CustomImage = (props) => {
         {![null, undefined, ""].includes(payload?.photo) ? (
           <img
             src={payload.photo}
-            alt="scatter-image"
+            alt='scatter-image'
             style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", filter: isClickedState ? "brightness(0.7)" : "none" }}
           />
         ) : (
@@ -458,7 +450,7 @@ const CustomImage = (props) => {
           />
         )}
       </foreignObject>
-      {payload?.photo && <circle cx={cx} cy={cy} r={diameter / 2 + outlineWidth / 2} fill="none" stroke={payload.color} strokeWidth={outlineWidth} />}
+      {payload?.photo && <circle cx={cx} cy={cy} r={diameter / 2 + outlineWidth / 2} fill='none' stroke={payload.color} strokeWidth={outlineWidth} />}
     </g>
   );
 };
