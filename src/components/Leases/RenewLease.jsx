@@ -513,16 +513,16 @@ return (
                             </AccordionSummary>
                             <AccordionDetails>
                                 {leaseAdults &&
-                                    <AdultOccupant leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                                    <AdultOccupant leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_adults"}/>
                                 }
                                 {leaseChildren &&
-                                    <ChildrenOccupant leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                                    <ChildrenOccupant leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}  dataKey={"lease_children"}/>
                                 }
                                 {leasePets &&
-                                    <PetsOccupant leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                                    <PetsOccupant leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_pets"}/>
                                 }
                                 {leaseVehicles &&
-                                    <VehiclesOccupant leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                                    <VehiclesOccupant leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_vehicles"}/>
                                 }
                             </AccordionDetails>
                         </Accordion>
@@ -530,7 +530,7 @@ return (
                 </Grid>
                 <Grid item xs={12} md={12}>
                     <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        <Documents documents={documents} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} />
+                        <Documents documents={documents} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />
                     </Paper>
                 </Grid>
 
