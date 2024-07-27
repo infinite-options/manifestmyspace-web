@@ -83,6 +83,7 @@ import OwnerContactDetailsHappinessMatrix from "./Contacts/ContactDetails/OwnerC
 import OwnerContactTest from "./Contacts/ContactDetails/OwnerContactTest";
 
 import PropertyList from "./Property/PropertyList";
+import Properties from "./Property/Properties";
 // import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard/OwnerDashboard";
 import ManagerOnBoardDesktopForm from "./Onboarding/ManagerOnBoardDesktopForm";
@@ -204,189 +205,190 @@ function Main() {
         <Header role={selectedRole} />
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<PublicRoutes />}>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="onboardingDesktop" element={<OnBoardDesktop />} />
-            <Route path="newUser" element={<NewUser2 />} />
-            <Route path="createProfile" element={<CreateProfile />} />
-            <Route path="register" element={<Register />} />
-            <Route path="returningUser" element={<ReturningUser />} />
-            <Route path="userLogin" element={<UserLogin />} />
-            <Route path="selectRole" element={<SelectRole />} />
-            <Route path="profileName" element={<ProfileName />} />
-            <Route path="profileInfo" element={<ProfileInfo />} />
-            <Route path="personalInfo" element={<PersonalInfo />} />
-            <Route path="profilePayment" element={<ProfilePayment />} />
-            <Route path="onboardingRouter" element={<OnboardingRouter />} />
-            <Route path="contactInfo" element={<ContactInfo />} />
-            <Route path="forbidden" element={<Forbidden />} />
-            <Route path="referralSignup/:userID" element={<ReferralSignup />} />
-            <Route path="referralSignupPassword" element={<ReferralSignupPassword />} />
-            <Route path="referralGoogleSignup/:userID" element={<ReferralGoogleSignup />} />
+          <Route path='/' element={<PublicRoutes />}>
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/onboarding' element={<Onboarding />} />
+            <Route path='onboardingDesktop' element={<OnBoardDesktop />} />
+            <Route path='newUser' element={<NewUser2 />} />
+            <Route path='createProfile' element={<CreateProfile />} />
+            <Route path='register' element={<Register />} />
+            <Route path='returningUser' element={<ReturningUser />} />
+            <Route path='userLogin' element={<UserLogin />} />
+            <Route path='selectRole' element={<SelectRole />} />
+            <Route path='profileName' element={<ProfileName />} />
+            <Route path='profileInfo' element={<ProfileInfo />} />
+            <Route path='personalInfo' element={<PersonalInfo />} />
+            <Route path='profilePayment' element={<ProfilePayment />} />
+            <Route path='onboardingRouter' element={<OnboardingRouter />} />
+            <Route path='contactInfo' element={<ContactInfo />} />
+            <Route path='forbidden' element={<Forbidden />} />
+            <Route path='referralSignup/:userID' element={<ReferralSignup />} />
+            <Route path='referralSignupPassword' element={<ReferralSignupPassword />} />
+            <Route path='referralGoogleSignup/:userID' element={<ReferralGoogleSignup />} />
           </Route>
 
           {/* Private Routes */}
-          <Route path="/" element={<PrivateRoutes />}>
-            <Route path="tt" element={<ProfileManager />} />
-            <Route path="pe" element={<ProfileEditor />} />
-            <Route path="addNewRole" element={<AddNewRole />} />
-            <Route path="dashboard" element={<MaintenanceWidget />} />
-            <Route path="cashflow" element={<Cashflow />} />
-            <Route path="managerCashflow" element={<ManagerCashflow />} />
-            <Route path="managerTransactions" element={<ManagerTransactions />} />
-            <Route path="selectMonthComponent" element={<SelectMonthComponent />} />
-            <Route path="addExpense" element={<AddExpense />} />
-            <Route path="addRevenue" element={<AddRevenue />} />
-            <Route path="addUtility" element={<AddUtility />} />
-            <Route path="listings" element={<PropertyListings />} />
-            <Route path="addListing" element={<AddListing />} />
+          <Route path='/' element={<PrivateRoutes />}>
+            <Route path='tt' element={<ProfileManager />} />
+            <Route path='pe' element={<ProfileEditor />} />
+            <Route path='addNewRole' element={<AddNewRole />} />
+            <Route path='dashboard' element={<MaintenanceWidget />} />
+            <Route path='cashflow' element={<Cashflow />} />
+            <Route path='managerCashflow' element={<ManagerCashflow />} />
+            <Route path='managerTransactions' element={<ManagerTransactions />} />
+            <Route path='selectMonthComponent' element={<SelectMonthComponent />} />
+            <Route path='addExpense' element={<AddExpense />} />
+            <Route path='addRevenue' element={<AddRevenue />} />
+            <Route path='addUtility' element={<AddUtility />} />
+            <Route path='listings' element={<PropertyListings />} />
+            <Route path='addListing' element={<AddListing />} />
 
-            <Route path="viewLease" element={<ViewLease />} />
-            <Route path="editLease" element={<EditLease />} />
-            <Route path="leaseDocument" element={<LeasePDF />} />
-            <Route path="Leases" element={<LeasesDashboard />} />
+            <Route path='viewLease' element={<ViewLease />} />
+            <Route path='editLease' element={<EditLease />} />
+            <Route path='leaseDocument' element={<LeasePDF />} />
+            <Route path='Leases' element={<LeasesDashboard />} />
 
-            <Route path="PrivateprofileName" element={<ProfileName />} />
-            <Route path="PrivateprofileInfo" element={<ProfileInfo />} />
-            <Route path="PrivatepersonalInfo" element={<PersonalInfo />} />
-            <Route path="PrivateprofilePayment" element={<ProfilePayment />} />
-            <Route path="PrivateonboardingRouter" element={<OnboardingRouter />} />
+            <Route path='PrivateprofileName' element={<ProfileName />} />
+            <Route path='PrivateprofileInfo' element={<ProfileInfo />} />
+            <Route path='PrivatepersonalInfo' element={<PersonalInfo />} />
+            <Route path='PrivateprofilePayment' element={<ProfilePayment />} />
+            <Route path='PrivateonboardingRouter' element={<OnboardingRouter />} />
 
-            <Route path="maintenanceProfile" element={<MaintenanceProfile />} />
+            <Route path='maintenanceProfile' element={<MaintenanceProfile />} />
 
-            <Route path="announcements" element={<Announcements />} />
-            <Route path="managerCreateAnnouncement" element={<ManagerCreateAnnouncement />} />
-            <Route path="ownerProfile" element={<OwnerProfile />} />
-            <Route path="ownerDocuments" element={<OwnerDocuments />} />
-            <Route path="ownerDocumentsPDF" element={<DocumentPDF />} />
-            <Route path="ownerUploadDocuments" element={<OwnerUploadDocuments />} />
+            <Route path='announcements' element={<Announcements />} />
+            <Route path='managerCreateAnnouncement' element={<ManagerCreateAnnouncement />} />
+            <Route path='ownerProfile' element={<OwnerProfile />} />
+            <Route path='ownerDocuments' element={<OwnerDocuments />} />
+            <Route path='ownerDocumentsPDF' element={<DocumentPDF />} />
+            <Route path='ownerUploadDocuments' element={<OwnerUploadDocuments />} />
             {/* <Route path="ownerRent" element={<OwnerRent />} /> */}
             {/* <Route path="ownerRentDetail" element={<OwnerRentDetail />} /> */}
 
-            <Route path="tenantDocuments" element={<TenantDocuments />} />
-            <Route path="tenantLeases" element={<TenantLeases />} />
-            <Route path="tenantProfile" element={<TenantProfile />} />
-            <Route path="tenantProfileEdit" element={<TenantProfileEdit />} />
-            <Route path="addRole" element={<AddRole />} />
-            <Route path="tenantDashboard" element={<TenantDashboard />} />
-            <Route path="newTenantDashboard" element={<NewTenantDashboard />} />
+            <Route path='tenantDocuments' element={<TenantDocuments />} />
+            <Route path='tenantLeases' element={<TenantLeases />} />
+            <Route path='tenantProfile' element={<TenantProfile />} />
+            <Route path='tenantProfileEdit' element={<TenantProfileEdit />} />
+            <Route path='addRole' element={<AddRole />} />
+            <Route path='tenantDashboard' element={<TenantDashboard />} />
+            <Route path='newTenantDashboard' element={<NewTenantDashboard />} />
 
-            <Route path="pmProfile" element={<PMProfile />} />
-            <Route path="pmProfileEdit" element={<PMProfileEdit />} />
-            <Route path="pmContracts" element={<PMContracts />} />
-            <Route path="managementContractDetails" element={<ManagementContractDetails />} />
-            <Route path="pmDocuments" element={<PMDocuments />} />
-            <Route path="pmUploadDocuments" element={<PMUploadDocuments />} />
-            <Route path="pmRent" element={<PMRent />} />
-            <Route path="pmRentDetail" element={<PMRentDetail />} />
-            <Route path="addPaymentSettings" element={<AddPayment />} />
-            <Route path="selectPayment" element={<SelectPayment />} />
-            <Route path="PaymentConfirmation" element={<PaymentConfirmation />} />
-            <Route path="transactionHistory" element={<TransactionHistory />} />
-            <Route path="viewTransactionOwner" element={<ViewTransactionOwner />} />
-            <Route path="payments" element={<Payments />} />
-            <Route path="card" element={<CardDetails />} />
-            <Route path="managerDashboardHappinessMatrix" element={<ManagerDashboardHappinessMatrix />} />
-            <Route path="settingsOwner" element={<Settings />} />
-            <Route path="settingsTenant" element={<SettingsTenant />} />
-            <Route path="settingsManager" element={<SettingsManager />} />
-            <Route path="settingsMaintenance" element={<SettingsMaintenance />} />
-            <Route path="settingsPM_Employee" element={<Settings />} />
-            <Route path="settingsMaintenance" element={<Settings />} />
-            <Route path="settingsMaint_Employee" element={<Settings />} />
-            <Route path="editProfileSettings" element={<EditProfileSettings />} />
-            <Route path="editProfileSettingsManager" element={<EditProfileSettingsManager />} />
-            <Route path="editProfileSettingsTenant" element={<EditProfileSettingsTenant />} />
-            <Route path="editProfileSettingsMaintenance" element={<EditProfileSettingsMaintenance />} />
-            <Route path="changePasswordSettings" element={<ChangePasswordSettings />} />
-            <Route path="changePasswordSettingsManager" element={<ChangePasswordSettingsManager />} />
-            <Route path="changePasswordSettingsTenant" element={<ChangePasswordSettingsTenant />} />
-            <Route path="changePasswordSettingsMaintenance" element={<ChangePasswordSettingsMaintenance />} />
-            <Route path="addCardSettings" element={<AddCard />} />
-            <Route path="cardDetailsSettings" element={<CardDetailsSettings />} />
-            <Route path="cardDetailsSettingsManager" element={<CardDetailsSettingsManager />} />
-            <Route path="cardDetailsSettingsTenant" element={<CardDetailsSettingsTenant />} />
-            <Route path="cardDetailsSettingsMaintenance" element={<CardDetailsSettingsMaintenance />} />
+            <Route path='pmProfile' element={<PMProfile />} />
+            <Route path='pmProfileEdit' element={<PMProfileEdit />} />
+            <Route path='pmContracts' element={<PMContracts />} />
+            <Route path='managementContractDetails' element={<ManagementContractDetails />} />
+            <Route path='pmDocuments' element={<PMDocuments />} />
+            <Route path='pmUploadDocuments' element={<PMUploadDocuments />} />
+            <Route path='pmRent' element={<PMRent />} />
+            <Route path='pmRentDetail' element={<PMRentDetail />} />
+            <Route path='addPaymentSettings' element={<AddPayment />} />
+            <Route path='selectPayment' element={<SelectPayment />} />
+            <Route path='PaymentConfirmation' element={<PaymentConfirmation />} />
+            <Route path='transactionHistory' element={<TransactionHistory />} />
+            <Route path='viewTransactionOwner' element={<ViewTransactionOwner />} />
+            <Route path='payments' element={<Payments />} />
+            <Route path='card' element={<CardDetails />} />
+            <Route path='managerDashboardHappinessMatrix' element={<ManagerDashboardHappinessMatrix />} />
+            <Route path='settingsOwner' element={<Settings />} />
+            <Route path='settingsTenant' element={<SettingsTenant />} />
+            <Route path='settingsManager' element={<SettingsManager />} />
+            <Route path='settingsMaintenance' element={<SettingsMaintenance />} />
+            <Route path='settingsPM_Employee' element={<Settings />} />
+            <Route path='settingsMaintenance' element={<Settings />} />
+            <Route path='settingsMaint_Employee' element={<Settings />} />
+            <Route path='editProfileSettings' element={<EditProfileSettings />} />
+            <Route path='editProfileSettingsManager' element={<EditProfileSettingsManager />} />
+            <Route path='editProfileSettingsTenant' element={<EditProfileSettingsTenant />} />
+            <Route path='editProfileSettingsMaintenance' element={<EditProfileSettingsMaintenance />} />
+            <Route path='changePasswordSettings' element={<ChangePasswordSettings />} />
+            <Route path='changePasswordSettingsManager' element={<ChangePasswordSettingsManager />} />
+            <Route path='changePasswordSettingsTenant' element={<ChangePasswordSettingsTenant />} />
+            <Route path='changePasswordSettingsMaintenance' element={<ChangePasswordSettingsMaintenance />} />
+            <Route path='addCardSettings' element={<AddCard />} />
+            <Route path='cardDetailsSettings' element={<CardDetailsSettings />} />
+            <Route path='cardDetailsSettingsManager' element={<CardDetailsSettingsManager />} />
+            <Route path='cardDetailsSettingsTenant' element={<CardDetailsSettingsTenant />} />
+            <Route path='cardDetailsSettingsMaintenance' element={<CardDetailsSettingsMaintenance />} />
 
-            <Route path="propertyInfo" element={<PropertyInfo />} />
-            <Route path="contacts" element={<Contacts />} />
-            <Route path="ownerContacts" element={<OwnerContacts />} />
-            <Route path="PMContacts" element={<PMContacts />} />
-            <Route path="tenantContacts" element={<TenantContacts />} />
-            <Route path="maintenanceContacts" element={<MaintenanceContacts />} />
-            <Route path="contactDetails" element={<ContactDetails />} />
-            <Route path="addContacts" element={<AddContacts />} />
-            <Route path="tenantContactDetails" element={<TenantContactDetails />} />
-            <Route path="managerContactDetails" element={<ManagerContactDetails />} />
-            <Route path="maintenanceContactDetails" element={<MaintenanceContactDetails />} />
-            <Route path="ownerContactDetails" element={<OwnerContactDetails />} />
-            <Route path="ownerContactDetailsHappinessMatrix" element={<OwnerContactDetailsHappinessMatrix />} />
-            <Route path="ownerContactTest" element={<OwnerContactTest />} />
+            <Route path='propertyInfo' element={<PropertyInfo />} />
+            <Route path='contacts' element={<Contacts />} />
+            <Route path='ownerContacts' element={<OwnerContacts />} />
+            <Route path='PMContacts' element={<PMContacts />} />
+            <Route path='tenantContacts' element={<TenantContacts />} />
+            <Route path='maintenanceContacts' element={<MaintenanceContacts />} />
+            <Route path='contactDetails' element={<ContactDetails />} />
+            <Route path='addContacts' element={<AddContacts />} />
+            <Route path='tenantContactDetails' element={<TenantContactDetails />} />
+            <Route path='managerContactDetails' element={<ManagerContactDetails />} />
+            <Route path='maintenanceContactDetails' element={<MaintenanceContactDetails />} />
+            <Route path='ownerContactDetails' element={<OwnerContactDetails />} />
+            <Route path='ownerContactDetailsHappinessMatrix' element={<OwnerContactDetailsHappinessMatrix />} />
+            <Route path='ownerContactTest' element={<OwnerContactTest />} />
 
-            <Route path="managerMaintenance" element={<MaintenanceManager />} />
-            <Route path="ownerMaintenance" element={<MaintenanceOwner />} />
-            <Route path="ownerDashboard" element={<OwnerDashboard />} />
+            <Route path='managerMaintenance' element={<MaintenanceManager />} />
+            <Route path='ownerMaintenance' element={<MaintenanceOwner />} />
+            <Route path='ownerDashboard' element={<OwnerDashboard />} />
 
-            <Route path="maintenanceDashboard" element={<MaintenanceDashboard />} />
-            <Route path="maintenanceDashboard2" element={<MaintenanceDashboard2 />} />
-            <Route path="addMaintenanceItem" element={<AddMaintenanceItem />} />
-            <Route path="editMaintenanceItem" element={<EditMaintenanceItem />} />
-            <Route path="maintenance/detail" element={<MaintenanceRequestDetail />} />
-            <Route path="maintenanceRequestNavigator" element={<MaintenanceRequestNavigator />} />
-            <Route path="addProperty" element={<AddProperty />} />
-            <Route path="editProperty" element={<EditProperty />} />
-            <Route path="propertyDetail" element={<PropertyDetail />} />
-            <Route path="searchManager" element={<SearchManager />} />
-            <Route path="managerDetails" element={<ManagerDetails />} />
-            <Route path="tenantMaintenance" element={<TenantMaintenance />} />
-            <Route path="addTenantMaintenanceItem" element={<AddTenantMaintenanceItem />} />
-            <Route path="myProperty" element={<TenantProperty />} />
-            <Route path="properties" element={<PropertyList />} />
+            <Route path='maintenanceDashboard' element={<MaintenanceDashboard />} />
+            <Route path='maintenanceDashboard2' element={<MaintenanceDashboard2 />} />
+            <Route path='addMaintenanceItem' element={<AddMaintenanceItem />} />
+            <Route path='editMaintenanceItem' element={<EditMaintenanceItem />} />
+            <Route path='maintenance/detail' element={<MaintenanceRequestDetail />} />
+            <Route path='maintenanceRequestNavigator' element={<MaintenanceRequestNavigator />} />
+            <Route path='addProperty' element={<AddProperty />} />
+            <Route path='editProperty' element={<EditProperty />} />
+            <Route path='propertyDetail' element={<PropertyDetail />} />
+            <Route path='searchManager' element={<SearchManager />} />
+            <Route path='managerDetails' element={<ManagerDetails />} />
+            <Route path='tenantMaintenance' element={<TenantMaintenance />} />
+            <Route path='addTenantMaintenanceItem' element={<AddTenantMaintenanceItem />} />
+            <Route path='myProperty' element={<TenantProperty />} />
+            <Route path='propertiesPM' element={<Properties />} />
+            <Route path='properties' element={<PropertyList />} />
             {/* <Route path="PMProperties" element={<PMProperties />} /> */}
-            <Route path="tenantMaintenanceItemDetail" element={<TenantMaintenanceItemDetail />} />
+            <Route path='tenantMaintenanceItemDetail' element={<TenantMaintenanceItemDetail />} />
 
-            <Route path="settingsManagerACH1" element={<SettingsACH1 />} />
-            <Route path="settingsManagerACH2" element={<SettingsACH2 />} />
-            <Route path="settingsManagerACH3" element={<SettingsACH3 />} />
-            <Route path="settingsManagerACH4" element={<SettingsACH4 />} />
-            <Route path="settingsManagerACH5" element={<SettingsACH5 />} />
+            <Route path='settingsManagerACH1' element={<SettingsACH1 />} />
+            <Route path='settingsManagerACH2' element={<SettingsACH2 />} />
+            <Route path='settingsManagerACH3' element={<SettingsACH3 />} />
+            <Route path='settingsManagerACH4' element={<SettingsACH4 />} />
+            <Route path='settingsManagerACH5' element={<SettingsACH5 />} />
 
-            <Route path="poContracts" element={<POContracts />} />
-            <Route path="managerDashboard" element={<ManagerDashboard />} />
-            <Route path="emp_waiting" element={<Emp_Waiting />} />
+            <Route path='poContracts' element={<POContracts />} />
+            <Route path='managerDashboard' element={<ManagerDashboard />} />
+            <Route path='emp_waiting' element={<Emp_Waiting />} />
 
-            <Route path="quoteAccept" element={<QuoteAcceptForm />} />
-            <Route path="quoteRequest" element={<QuoteRequestForm />} />
-            <Route path="scheduleMaintenance" element={<RescheduleMaintenance />} />
-            <Route path="rescheduleMaintenance" element={<RescheduleMaintenance />} />
-            <Route path="payMaintenance" element={<PayMaintenanceForm />} />
+            <Route path='quoteAccept' element={<QuoteAcceptForm />} />
+            <Route path='quoteRequest' element={<QuoteRequestForm />} />
+            <Route path='scheduleMaintenance' element={<RescheduleMaintenance />} />
+            <Route path='rescheduleMaintenance' element={<RescheduleMaintenance />} />
+            <Route path='payMaintenance' element={<PayMaintenanceForm />} />
 
-            <Route path="businessDeclineQuoteForm" element={<BusinessQuoteForm acceptBool={false} />} />
-            <Route path="businessAcceptQuoteForm" element={<BusinessQuoteForm acceptBool={true} />} />
-            <Route path="businessEditQuoteForm" element={<BusinessQuoteForm acceptBool={true} editBool={true} />} />
-            <Route path="businessInvoiceForm" element={<BusinessInvoiceForm />} />
-            <Route path="workerMaintenance" element={<WorkerMaintenance />} />
-            <Route path="workerMaintenance/detail" element={<WorkerMaintenanceRequestDetail />} />
+            <Route path='businessDeclineQuoteForm' element={<BusinessQuoteForm acceptBool={false} />} />
+            <Route path='businessAcceptQuoteForm' element={<BusinessQuoteForm acceptBool={true} />} />
+            <Route path='businessEditQuoteForm' element={<BusinessQuoteForm acceptBool={true} editBool={true} />} />
+            <Route path='businessInvoiceForm' element={<BusinessInvoiceForm />} />
+            <Route path='workerMaintenance' element={<WorkerMaintenance />} />
+            <Route path='workerMaintenance/detail' element={<WorkerMaintenanceRequestDetail />} />
 
-            <Route path="pmQuotesRequested" element={<PMQuotesRequested />} />
-            <Route path="pmQuotesList" element={<PMQuotesList />} />
-            <Route path="newOwnerInquiry" element={<NewOwnerInquiry />} />
-            <Route path="requestQuotes" element={<RequestQuotes />} />
-            <Route path="viewDocument" element={<ViewDocument />} />
+            <Route path='pmQuotesRequested' element={<PMQuotesRequested />} />
+            <Route path='pmQuotesList' element={<PMQuotesList />} />
+            <Route path='newOwnerInquiry' element={<NewOwnerInquiry />} />
+            <Route path='requestQuotes' element={<RequestQuotes />} />
+            <Route path='viewDocument' element={<ViewDocument />} />
 
-            <Route path="tenantLease" element={<TenantLease />} />
-            <Route path="tenantApplication" element={<TenantApplication />} />
-            <Route path="tenantApplicationNav" element={<TenantApplicationNav />} />
-            <Route path="pmNotifications" element={<PMNotifications />} />
-            <Route path="poNotifications" element={<PONotifications />} />
-            <Route path="propertyContract" element={<PropertyContract />} />
-            <Route path="profile/:id" element={<PublicProfile />} />
+            <Route path='tenantLease' element={<TenantLease />} />
+            <Route path='tenantApplication' element={<TenantApplication />} />
+            <Route path='tenantApplicationNav' element={<TenantApplicationNav />} />
+            <Route path='pmNotifications' element={<PMNotifications />} />
+            <Route path='poNotifications' element={<PONotifications />} />
+            <Route path='propertyContract' element={<PropertyContract />} />
+            <Route path='profile/:id' element={<PublicProfile />} />
 
-            <Route path="referUser" element={<ReferUser />} />
-            <Route path="employeeAccess" element={<EmployeeAccess />} />
+            <Route path='referUser' element={<ReferUser />} />
+            <Route path='employeeAccess' element={<EmployeeAccess />} />
 
-            <Route path="newPropertyForm" element={<OwnerFirstProperty />} />
+            <Route path='newPropertyForm' element={<OwnerFirstProperty />} />
           </Route>
         </Routes>
         <Footer />
@@ -398,7 +400,7 @@ export default Main;
 
 const PrivateRoutes = () => {
   const { isLoggedIn } = useUser();
-  return isLoggedIn ? <Outlet /> : <Navigate to="/forbidden" />;
+  return isLoggedIn ? <Outlet /> : <Navigate to='/forbidden' />;
 };
 
 const PublicRoutes = () => {
