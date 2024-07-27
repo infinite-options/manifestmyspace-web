@@ -31,36 +31,40 @@ const useStyles = makeStyles({
   },
 });
 
-export default function PropertyRentWidget(props) {
+function PropertyRentWidget(props) {
   console.log("In Property Rent Widget ");
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getProfileId } = useUser();
   const classes = useStyles();
   const navigate = useNavigate();
+  const { getProfileId } = useUser();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
   const [rawPropertyData, setRawPropertyData] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole);
   console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
+  // console.log("Selected Role: ", selectedRole);
+  // console.log("Role: ", user);
+  // console.log("Is it in mobile", isMobile);
+  // console.log("PropertyRentWidget - props for rentData", props.rentData);
+  // console.log("PropertyRentWidget - props for contract requests- ", props.contractRequests);
+  console.log("PropertyRentWidget - props for propertyData", props.propertyData);
 
   useEffect(() => {
-    console.log("PropertyRentWidget - propertyList - ", propertyList);
-  }, [propertyList]);
+    setRawPropertyData(props.propertyData);
+    setPropertyList(props.propertyData);
+  }, [props.propertyData]);
 
-  console.log("Is it in mobile", isMobile);
-  // console.log(selectedRole);
-  console.log("props for rentData", props.rentData);
-  // console.log("Role: ", user);
-  // console.log("Selected Role: ", selectedRole);
-  console.log("PropertyRentWidget - props - ", props);
+  // useEffect(() => {
+  //   console.log("PropertyRentWidget - propertyList - ", propertyList);
+  // }, [propertyList]);
 
+  // SET RENT STATUS
   let rentStatusData = props.rentData;
-  const property_endpoint_resp = props.propertyEndpointResp;
-  // console.log("PropertyRentWidget - property_endpoint_resp - ", property_endpoint_resp);
+
   const contractRequests = props?.contractRequests;
-  console.log("PropertyRentWidget - contractRequests - ", contractRequests);
+  // console.log("PropertyRentWidget - contractRequests - ", contractRequests);
 
   let unpaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "UNPAID") : 0;
   // console.log(unpaidCount);
@@ -101,104 +105,64 @@ export default function PropertyRentWidget(props) {
     data.push({ rent_status: "no manager", number: noManagerCount, fill: "#111111" });
   }
 
-  const renderColorfulLegendText = (value, entry) => {
-    const { color } = entry;
-    const status = data.find((item) => item.fill === color)?.rent_status;
-    const num = data.find((item) => item.fill === color)?.number;
-    return (
-      <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>
-        {num} {status}
-      </span>
-    );
-  };
+  // const renderColorfulLegendText = (value, entry) => {
+  //   const { color } = entry;
+  //   const status = data.find((item) => item.fill === color)?.rent_status;
+  //   const num = data.find((item) => item.fill === color)?.number;
+  //   return (
+  //     <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>
+  //       {num} {status}
+  //     </span>
+  //   );
+  // };
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  useEffect(() => {
-    // console.log("PropertyRentWidget - anchorEl - ", anchorEl);
-  }, [anchorEl]);
+  // useEffect(() => {
+  //   // console.log("PropertyRentWidget - anchorEl - ", anchorEl);
+  // }, [anchorEl]);
 
+  // SET PROPERTY DATA
   const handleSelectPropertyClick = async (event) => {
     setAnchorEl(event.currentTarget);
     if (propertyList?.length > 0) {
+      console.log("Properties in List: ", propertyList);
       return;
     }
-    // const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/600-000003`);
-    const propertiesResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
-    try {
-      const propertyData = await propertiesResponse.json();
-      // console.log("PropertyRentWidget - propertyData - ", propertyData);
-      // setPropertiesList(propertiesResponseJSON.Property.result);
+    // try {
+    //   const propertyList = getPropertyList(props.propertyData);
+    //   // console.log("In Property List >> Property List: ", propertyList);
+    //   // console.log("Testing Property Data", propertyData.Property.result);
 
-      const propertyList = getPropertyList(propertyData);
-      setRawPropertyData(propertyData);
-      // console.log("In Property List >> Property List: ", propertyList);
-      // console.log("Testing Property Data", propertyData.Property.result);
-
-      setPropertyList([...propertyList]);
-    } catch (error) {
-      console.error(error);
-    }
+    //   setPropertyList([...propertyList]);
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  function getPropertyList(data) {
-    const propertyList = data["Property"].result;
-    const applications = data["Applications"].result;
-    const maintenance = data["MaintenanceRequests"].result;
-    //   const newContracts = data["NewPMRequests"].result;
-    //   console.log(maintenance);
+  // function getPropertyList(data) {
+  //   const propertyList = data["Property"].result;
 
-    const appsMap = new Map();
-    applications.forEach((a) => {
-      const appsByProperty = appsMap.get(a.property_uid) || [];
-      appsByProperty.push(a);
-      appsMap.set(a.property_uid, appsByProperty);
-    });
-
-    const maintMap = new Map();
-    maintenance.forEach((m) => {
-      // console.log("before", m);
-      const maintByProperty = maintMap.get(m.maintenance_property_id) || [];
-      maintByProperty.push(m);
-      // console.log("after", maintByProperty);
-      maintMap.set(m.maintenance_property_id, maintByProperty);
-    });
-
-    //   const contractsMap = new Map();
-    //   newContracts.forEach((c) => {
-    //     // console.log("before", m);
-    //     const contractsByProperty = maintMap.get(c.property_id) || [];
-    //     contractsByProperty.push(c);
-    //     // console.log("after", maintByProperty);
-    //     contractsMap.set(c.property_id, contractsByProperty);
-    //   });
-
-    //   console.log(maintMap);
-    return propertyList.map((p) => {
-      p.applications = appsMap.get(p.property_uid) || [];
-      p.applicationsCount = [...p.applications].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
-      p.maintenance = maintMap.get(p.property_uid) || [];
-      p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
-      // p.newContracts = contractsMap.get(p.property_uid) || [];
-      // p.newContractsCount = [...p.newContracts].filter((m) => m.contract_status === "NEW").length;
-      // console.log("P:", p);
-      // console.log("P:", p.applications);
-      // console.log("P:", p.applicationsCount);
-      return p;
-    });
-  }
+  //   return propertyList.map((p) => {
+  //     p.applications = appsMap.get(p.property_uid) || [];
+  //     p.applicationsCount = [...p.applications].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
+  //     p.maintenance = maintMap.get(p.property_uid) || [];
+  //     p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
+  //     // p.newContracts = contractsMap.get(p.property_uid) || [];
+  //     // p.newContractsCount = [...p.newContracts].filter((m) => m.contract_status === "NEW").length;
+  //     // console.log("P:", p);
+  //     // console.log("P:", p.applications);
+  //     // console.log("P:", p.applicationsCount);
+  //     return p;
+  //   });
+  // }
 
   //const defaultData = [{ rent_status: "no properties", number: 1, fill: "#3D5CAC" }];
 
   const renderDefaultLegendText = (value, entry) => {
-    return (
-      <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>
-        No properties
-      </span>
-    );
+    return <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>No properties</span>;
   };
 
   return (
@@ -213,7 +177,7 @@ export default function PropertyRentWidget(props) {
         position: "relative",
       }}
     >
-      <Typography className="mt-widget-title" sx={{ fontSize: "25px", fontWeight: 600, paddingTop: "15px" }}>
+      <Typography className='mt-widget-title' sx={{ fontSize: "25px", fontWeight: 600, paddingTop: "15px" }}>
         {" "}
         Property Rent
       </Typography>
@@ -221,8 +185,8 @@ export default function PropertyRentWidget(props) {
         {/* <Grid item xs={2} sm={0}></Grid> */}
         <Grid item xs={6}>
           <Button
-            variant="outlined"
-            id="revenue"
+            variant='outlined'
+            id='revenue'
             className={classes.button}
             style={{
               // height: "100%",
@@ -237,14 +201,14 @@ export default function PropertyRentWidget(props) {
               navigate(propertyRoutingBasedOnSelectedRole());
             }}
           >
-            <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: "4px" }} />
+            <CalendarIcon stroke='#3D5CAC' width='20' height='20' style={{ marginRight: "4px" }} />
             {!isMobile && "Last 30 days"}
           </Button>
         </Grid>
         <Grid item xs={6}>
           <Button
-            variant="outlined"
-            id="revenue"
+            variant='outlined'
+            id='revenue'
             className={classes.button}
             style={{
               // height: "100%",
@@ -257,27 +221,10 @@ export default function PropertyRentWidget(props) {
             }}
             onClick={handleSelectPropertyClick}
           >
-            <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: "4px" }} />
+            <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "4px" }} />
             {!isMobile && "Select Property"}
           </Button>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            // anchorOrigin={{
-            //     vertical: 'bottom',
-            //     horizontal: 'left',
-            // }}
-            // transformOrigin={{
-            //     vertical: 'top',
-            //     horizontal: 'left',
-            // }}
-            // sx={{
-            //     '& .MuiPaper-root': {
-            //       width: anchorEl ? anchorEl.clientWidth : null,
-            //     },
-            // }}
-          >
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
             {propertyList.map((property, index) => {
               return (
                 <MenuItem
@@ -287,7 +234,7 @@ export default function PropertyRentWidget(props) {
                     navigate(`/properties`, { state: { index, propertyList, rawPropertyData } });
                   }}
                 >
-                  {property.property_address}
+                  {`${property.property_address}${property.property_unit ? `, Unit ${property.property_unit}` : ""}`}
                 </MenuItem>
               );
             })}
@@ -308,9 +255,10 @@ export default function PropertyRentWidget(props) {
           justifyContent: "center",
           marginBottom: "10px",
         }}
-      >{totalPropertiesCount > 0 ? (
-        <PieChart width={250} height={250}>
-        {/* <Legend
+      >
+        {totalPropertiesCount > 0 ? (
+          <PieChart width={250} height={250}>
+            {/* <Legend
           height={36}
           iconType="circle"
           layout="vertical"
@@ -320,44 +268,44 @@ export default function PropertyRentWidget(props) {
           formatter={renderColorfulLegendText}
           onClick={() => navigate("/pmRent")}
         /> */}
-        <Pie
-          data={data}
-          cx={125}
-          cy={125}
-          innerRadius={60}
-          outerRadius={90}
-          paddingAngle={0}
-          dataKey="number"
-          filter="url(#shadow)"
-          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
-          ))}
-        </Pie>
-        <text
-          x={130}
-          y={125}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          cursor="pointer"
-          style={{
-            fontFamily: "Source Sans Pro",
-            fontSize: "20px",
-            fill: "#160449",
-            fontWeight: "bold",
-          }}
-          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-        >
-          View all {totalPropertiesCount}
-          <tspan x={130} y={145}>
-            Properties
-          </tspan>
-        </text>
-      </PieChart>
-      ) : (
-        <PieChart width={250} height={250}>
-        {/* <Legend
+            <Pie
+              data={data}
+              cx={125}
+              cy={125}
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={0}
+              dataKey='number'
+              filter='url(#shadow)'
+              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
+              ))}
+            </Pie>
+            <text
+              x={130}
+              y={125}
+              textAnchor='middle'
+              dominantBaseline='middle'
+              cursor='pointer'
+              style={{
+                fontFamily: "Source Sans Pro",
+                fontSize: "20px",
+                fill: "#160449",
+                fontWeight: "bold",
+              }}
+              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              View all {totalPropertiesCount}
+              <tspan x={130} y={145}>
+                Properties
+              </tspan>
+            </text>
+          </PieChart>
+        ) : (
+          <PieChart width={250} height={250}>
+            {/* <Legend
           height={36}
           iconType="circle"
           layout="vertical"
@@ -367,47 +315,47 @@ export default function PropertyRentWidget(props) {
           formatter={renderColorfulLegendText}
           onClick={() => navigate("/pmRent")}
         /> */}
-        <Pie
-          data={defaultData}
-          cx={125}
-          cy={125}
-          innerRadius={60}
-          outerRadius={90}
-          paddingAngle={0}
-          dataKey="number"
-          filter="url(#shadow)"
-          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-        >
-          {defaultData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
-          ))}
-        </Pie>
-        <text
-          x={130}
-          y={125}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          cursor="pointer"
-          style={{
-            fontFamily: "Source Sans Pro",
-            fontSize: "15px",
-            fill: "#160449",
-            fontWeight: "bold",
-          }}
-          onClick={() => navigate('/properties', { state: { showPropertyForm: true , rawPropertyData: rawPropertyData} })}
-        >
-          Add your first
-          <tspan x={130} y={145}>
-            property here
-          </tspan>
-        </text>
-      </PieChart>
-      )}
+            <Pie
+              data={defaultData}
+              cx={125}
+              cy={125}
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={0}
+              dataKey='number'
+              filter='url(#shadow)'
+              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              {defaultData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
+              ))}
+            </Pie>
+            <text
+              x={130}
+              y={125}
+              textAnchor='middle'
+              dominantBaseline='middle'
+              cursor='pointer'
+              style={{
+                fontFamily: "Source Sans Pro",
+                fontSize: "15px",
+                fill: "#160449",
+                fontWeight: "bold",
+              }}
+              onClick={() => navigate("/properties", { state: { showPropertyForm: true, rawPropertyData: rawPropertyData } })}
+            >
+              Add your first
+              <tspan x={130} y={145}>
+                property here
+              </tspan>
+            </text>
+          </PieChart>
+        )}
         <CustomLegend navigate={navigate} data={data} />
 
         <Button
-          variant="outlined"
-          id="revenue"
+          variant='outlined'
+          id='revenue'
           className={classes.button}
           style={{
             height: "100%",
@@ -426,8 +374,8 @@ export default function PropertyRentWidget(props) {
           View {vacantCount} Property Listings
         </Button>
         <Button
-          variant="outlined"
-          id="revenue"
+          variant='outlined'
+          id='revenue'
           className={classes.button}
           style={{
             height: "100%",
@@ -439,7 +387,7 @@ export default function PropertyRentWidget(props) {
           }}
           onClick={() => {
             console.log("New Request Clicked");
-            navigate("/pmQuotesList", { state: { property_endpoint_resp } });
+            navigate("/pmQuotesList");
           }}
         >
           <Box
@@ -529,7 +477,7 @@ const CustomLegend = ({ data, navigate }) => {
               }}
             >
               {capitalize(item.rent_status)}
-              <Typography variant="body2" align="right" sx={{ marginLeft: "auto" }}>
+              <Typography variant='body2' align='right' sx={{ marginLeft: "auto" }}>
                 {item.number}
               </Typography>
             </ListItem>
@@ -539,3 +487,5 @@ const CustomLegend = ({ data, navigate }) => {
     </Box>
   );
 };
+
+export default PropertyRentWidget;

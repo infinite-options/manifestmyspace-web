@@ -45,17 +45,13 @@ function ManagerDashboard() {
   const [happinessData, setHappinessData] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
   const [contractRequests, setContractRequests] = useState([]);
-  // const [matrixData, setMatrixData] = useState([]);
+  const [propertyData, setPropertyData] = useState([]);
 
   const [showSpinner, setShowSpinner] = useState(true);
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
-
-  // Can we delete these?
-  const [dataforhappiness, setdataforhappiness] = useState([]);
-  const [property_endpoint_resp, set_property_endpoint_resp] = useState([]);
 
   //
   //
@@ -110,10 +106,6 @@ function ManagerDashboard() {
   }, [rentStatus]);
 
   useEffect(() => {
-    console.log("property endpoint resp - ", property_endpoint_resp);
-  }, [property_endpoint_resp]);
-
-  useEffect(() => {
     console.log("Contract requests - ", contractRequests);
   }, [contractRequests]);
 
@@ -150,13 +142,11 @@ function ManagerDashboard() {
         setHappinessData(jsonData.HappinessMatrix);
         // setMatrixData(jsonData.matrix_data);
 
-        // DATA FOR HAPPINESS - Need to Remove this after Divya moves the Happiness Matrix Widget Info
-        setdataforhappiness(jsonData);
-        // setting_matrix_data(jsonData);
-        set_property_endpoint_resp(jsonData);
-
         // MAINTENANCE Status
         setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
+
+        // PROPERTY DAYA
+        setPropertyData(jsonData.Properties.result);
 
         // NEW PM REQUESTS
         setContractRequests(jsonData.NewPMRequests.result);
@@ -207,7 +197,7 @@ function ManagerDashboard() {
             </Box>
           </Grid>
           <Grid item xs={12} md={3}>
-            <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyEndpointResp={property_endpoint_resp} />
+            <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyData={propertyData} />
           </Grid>
           <Grid item xs={12} md={9}>
             <RevenueWidget revenueData={revenueData} />
