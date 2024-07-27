@@ -12,9 +12,9 @@ function CustomImage(props) {
   const { cx, cy, payload, onClick, isClicked, isVisible, contactDetails, happinessData } = props;
   const [isClickedState, setIsClickedState] = useState(isClicked);
 
-  console.log("In Custom Image Props: ", props);
-  console.log("In Custom Image Cx Cy: ", cx, cy);
-  console.log("In Custom Image payload: ", payload);
+  //   console.log("In Custom Image Props: ", props);
+  //   console.log("In Custom Image Cx Cy: ", cx, cy);
+  //   console.log("In Custom Image payload: ", payload);
 
   if (!isVisible) {
     return null;
@@ -24,13 +24,13 @@ function CustomImage(props) {
   const outlineWidth = isClicked ? 4 : 2;
 
   const handleClick = (payload) => {
-    console.log("input to  handleClick: ", payload);
+    // console.log("input to  handleClick: ", payload);
     setIsClickedState(true);
-    console.log("CustomImage - handeClick");
+    // console.log("CustomImage - handeClick");
     if (onClick) {
       onClick(payload); // Call the passed onClick function
     }
-    console.log("CustomImage - handleClick - payload - ", payload);
+    // console.log("CustomImage - handleClick - payload - ", payload);
     // if (page === "OwnerContactDetails") {
     //   const idx = contactDetails.findIndex((contact) => contact.owner_uid === payload?.owner_uid);
     //   setIndex(idx);

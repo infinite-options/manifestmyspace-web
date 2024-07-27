@@ -121,98 +121,6 @@ function ManagerDashboard() {
     console.log("Happiness Matrix Info - ", happinessData);
   }, [happinessData]);
 
-  //
-  //
-  // // This should be done in Happiness Matrix Widget - Divya
-  // const setting_matrix_data = (happiness_response) => {
-  //   // console.log("In Setting Happiness Matrix", happiness_response);
-  //   // Transforming the data
-  //   // console.log("setting_matrix_data - happiness_response - ", happiness_response);
-  //   const transformedData = happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
-  //     // console.log("In Happiness Matrix before vacancy");
-  //     // console.log("setting_matrix_data - vacancyItem - ", vacancyItem);
-  //     const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
-  //     // console.log("setting_matrix_data - deltaCashflowItem - ", deltaCashflowItem);
-
-  //     let fullName = "";
-  //     let ownerUID = "";
-  //     let percent_delta_cashflow = 0;
-  //     let owner_photo_url = "";
-  //     let cashflow = 0;
-  //     let expected_cashflow = 0;
-  //     let actual_cashflow = 0;
-
-  //     if (deltaCashflowItem) {
-  //       // console.log("deltaCashflowItem - ", deltaCashflowItem);
-  //       fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
-  //       ownerUID = deltaCashflowItem.owner_uid;
-  //       percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
-  //       owner_photo_url = deltaCashflowItem.owner_photo_url;
-  //       cashflow = deltaCashflowItem.cashflow;
-  //       expected_cashflow = deltaCashflowItem.expected_cashflow;
-  //       actual_cashflow = deltaCashflowItem.actual_cashflow;
-  //     }
-
-  //     let quarter;
-  //     let vacancy_perc = parseFloat(vacancyItem.vacancy_perc);
-  //     let delta_cf_perc = -1 * parseFloat(percent_delta_cashflow);
-
-  //     if (delta_cf_perc > -0.5 && vacancy_perc > -50) {
-  //       quarter = 1;
-  //     } else if (delta_cf_perc < -0.5 && vacancy_perc > -50) {
-  //       quarter = 2;
-  //     } else if (delta_cf_perc < -0.5 && vacancy_perc < -50) {
-  //       quarter = 3;
-  //     } else if (delta_cf_perc > -0.5 && vacancy_perc < -50) {
-  //       quarter = 4;
-  //     }
-
-  //     // console.log("delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
-  //     // console.log("quarter - ", fullName, quarter);
-
-  //     let borderColor;
-
-  //     switch (quarter) {
-  //       case 1:
-  //         borderColor = "#006400"; // Green
-  //         break;
-  //       case 2:
-  //         borderColor = "#FF8A00"; // Orange color
-  //         break;
-  //       case 3:
-  //         borderColor = "#D22B2B"; // Red color
-  //         break;
-  //       case 4:
-  //         borderColor = "#FFC85C"; // Yellow color
-  //         break;
-  //       default:
-  //         borderColor = "#000000"; // Black color
-  //     }
-
-  //     return {
-  //       owner_uid: ownerUID,
-  //       name: fullName.trim(),
-  //       photo: owner_photo_url,
-  //       vacancy_perc: parseFloat(vacancyItem.vacancy_perc).toFixed(2),
-  //       delta_cashflow_perc: percent_delta_cashflow || 0,
-  //       vacancy_num: vacancyItem.vacancy_num || 0,
-  //       cashflow: cashflow || 0,
-  //       expected_cashflow: expected_cashflow || 0,
-  //       actual_cashflow: actual_cashflow || 0,
-  //       delta_cashflow: actual_cashflow - expected_cashflow,
-  //       index: i,
-  //       color: borderColor,
-  //       total_properties: vacancyItem.total_properties || 0,
-  //     };
-  //   });
-
-  //   setMatrixData(transformedData);
-  // };
-  // // End of Happiness Matrix Widget Info - Divya
-
-  //
-  //
-  //  USE EFFECT gets all the data
   useEffect(() => {
     // const dataObject = {};
     // console.log("In UseEffect");
@@ -306,12 +214,7 @@ function ManagerDashboard() {
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget
-                  happinessData={happinessData}
-                  // data={matrixData}
-                  // dataforhappiness={dataforhappiness}
-                  // matrixData = {matrixData}
-                />
+                <HappinessMatrixWidget happinessData={happinessData} />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget maintenanceData={maintenanceStatusData} />

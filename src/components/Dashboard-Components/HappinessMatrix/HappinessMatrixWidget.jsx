@@ -19,12 +19,12 @@ function HappinessMatrixWidget(props) {
   // console.log("happiness data initial2", happinessData.matrix_data.result[0]);
 
   useEffect(() => {
-    console.log("In UseEffect: ", happinessData.matrix_data.result);
+    // console.log("In UseEffect: ", happinessData.matrix_data.result);
     setData(happinessData.matrix_data.result);
 
     const points = [];
     data?.forEach((owner) => {
-      console.log("In get points: ", owner.vacancy_perc, owner.percent_delta_cashflow);
+      // console.log("In get points: ", owner.vacancy_perc, owner.percent_delta_cashflow);
       let x = Number(owner.vacancy_perc);
       let y = Number(owner.percent_delta_cashflow);
 
@@ -37,7 +37,7 @@ function HappinessMatrixWidget(props) {
       points.push(pointObject);
     });
 
-    console.log("points to plot", points);
+    // console.log("points to plot", points);
     setPointsToPlot(points);
   }, [happinessData.matrix_data.result]);
 
@@ -54,7 +54,7 @@ function HappinessMatrixWidget(props) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const handlePointClick = (payload) => {
-    console.log("In handlePointClick - payload: ", payload);
+    // console.log("In handlePointClick - payload: ", payload);
     let { index } = payload;
     if (clickedIndex === index) {
       // setHiddenPoints((prevHiddenPoints) => [...prevHiddenPoints, index]);
