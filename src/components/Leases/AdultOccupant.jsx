@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData }) => {
+const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey }) => {
     console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
@@ -110,14 +110,15 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                 const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
                 //Save adults back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, {key:'lease_adults', value:rowWithoutId}]);
+                // setModifiedData((prev) => [...prev, {key:'lease_adults', value:rowWithoutId}]);
+                setModifiedData((prev) => [...prev, {key: dataKey, value:rowWithoutId}]);
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
             
         } else {
-            setModifiedData((prev) => [...prev, {key:'lease_adults', value:[...leaseAdults, { ...currentRow}]}])
+            setModifiedData((prev) => [...prev, {key: dataKey, value:[...leaseAdults, { ...currentRow}]}])
             setIsUpdated(true);
         }
     };
@@ -131,7 +132,7 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
     const handleDelete = () => {
         const filtered = adults.filter(adult => adult.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, {key:'lease_adults', value:rowWithoutId}]);
+        setModifiedData((prev) => [...prev, {key: dataKey, value:rowWithoutId}]);
         setIsUpdated(true);
     };
 

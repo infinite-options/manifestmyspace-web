@@ -12,6 +12,7 @@ import { useCookies } from "react-cookie";
 import { useUser } from "../../contexts/UserContext";
 import ApplicationSettings from "./ApplicationSettings";
 import ManagerOnBoardDesktopForm from "../Onboarding/ManagerOnBoardDesktopForm";
+import ManagerOnboardingForm from "../Onboarding/ManagerOnboardingForm";
 import TenantOnBoardDesktopForm from "../Onboarding/TenantOnBoardDesktopForm";
 import TenantOnBoardingForm from "../Onboarding/TenantOnBoardingForm";
 import OwnerOnBoardDeskTopForm from "../Onboarding/OwnerOnBoardDesktopForm";
@@ -60,6 +61,7 @@ function ProfileEditor() {
   // setActiveForm(selectedRole);
 
   useEffect(() => {
+    console.log("ROHIT - ProfileEditor useEffect called. isSave - ", isSave);
     if (user.dark_mode) {
       setDarkMode(user.dark_mode == "true");
     }
@@ -167,7 +169,7 @@ function ProfileEditor() {
     if (profileData) {
       switch (activeForm) {
         case "MANAGER":
-          return <ManagerOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
+          return <ManagerOnboardingForm profileData={profileData} setIsSave={setIsSave} />;
         case "PM_EMPLOYEE":
           return <PMEmpOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
         case "OWNER":
