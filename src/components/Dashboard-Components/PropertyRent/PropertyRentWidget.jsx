@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Legend, Cell } from "recharts";
-import { Chart } from "react-google-charts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, List, ListItem, Typography, Button, Grid, Menu, MenuItem } from "@mui/material";
 import { useUser } from "../../../contexts/UserContext.jsx";
 import { makeStyles } from "@material-ui/core";
-// import home_icon from "../../../images/home_icon.svg";
 import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
 import APIConfig from "../../../utils/APIConfig.jsx";
@@ -31,7 +29,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function PropertyRentWidget(props) {
+function PropertyRentWidget(props) {
   console.log("In Property Rent Widget ");
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -58,7 +56,7 @@ export default function PropertyRentWidget(props) {
 
   let rentStatusData = props.rentData;
   const property_endpoint_resp = props.propertyEndpointResp;
-  // console.log("PropertyRentWidget - property_endpoint_resp - ", property_endpoint_resp);
+  console.log("PropertyRentWidget - property_endpoint_resp - ", property_endpoint_resp);
   const contractRequests = props?.contractRequests;
   console.log("PropertyRentWidget - contractRequests - ", contractRequests);
 
@@ -194,11 +192,7 @@ export default function PropertyRentWidget(props) {
   //const defaultData = [{ rent_status: "no properties", number: 1, fill: "#3D5CAC" }];
 
   const renderDefaultLegendText = (value, entry) => {
-    return (
-      <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>
-        No properties
-      </span>
-    );
+    return <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>No properties</span>;
   };
 
   return (
@@ -213,7 +207,7 @@ export default function PropertyRentWidget(props) {
         position: "relative",
       }}
     >
-      <Typography className="mt-widget-title" sx={{ fontSize: "25px", fontWeight: 600, paddingTop: "15px" }}>
+      <Typography className='mt-widget-title' sx={{ fontSize: "25px", fontWeight: 600, paddingTop: "15px" }}>
         {" "}
         Property Rent
       </Typography>
@@ -221,8 +215,8 @@ export default function PropertyRentWidget(props) {
         {/* <Grid item xs={2} sm={0}></Grid> */}
         <Grid item xs={6}>
           <Button
-            variant="outlined"
-            id="revenue"
+            variant='outlined'
+            id='revenue'
             className={classes.button}
             style={{
               // height: "100%",
@@ -237,14 +231,14 @@ export default function PropertyRentWidget(props) {
               navigate(propertyRoutingBasedOnSelectedRole());
             }}
           >
-            <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: "4px" }} />
+            <CalendarIcon stroke='#3D5CAC' width='20' height='20' style={{ marginRight: "4px" }} />
             {!isMobile && "Last 30 days"}
           </Button>
         </Grid>
         <Grid item xs={6}>
           <Button
-            variant="outlined"
-            id="revenue"
+            variant='outlined'
+            id='revenue'
             className={classes.button}
             style={{
               // height: "100%",
@@ -257,7 +251,7 @@ export default function PropertyRentWidget(props) {
             }}
             onClick={handleSelectPropertyClick}
           >
-            <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: "4px" }} />
+            <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "4px" }} />
             {!isMobile && "Select Property"}
           </Button>
           <Menu
@@ -308,9 +302,10 @@ export default function PropertyRentWidget(props) {
           justifyContent: "center",
           marginBottom: "10px",
         }}
-      >{totalPropertiesCount > 0 ? (
-        <PieChart width={250} height={250}>
-        {/* <Legend
+      >
+        {totalPropertiesCount > 0 ? (
+          <PieChart width={250} height={250}>
+            {/* <Legend
           height={36}
           iconType="circle"
           layout="vertical"
@@ -320,44 +315,44 @@ export default function PropertyRentWidget(props) {
           formatter={renderColorfulLegendText}
           onClick={() => navigate("/pmRent")}
         /> */}
-        <Pie
-          data={data}
-          cx={125}
-          cy={125}
-          innerRadius={60}
-          outerRadius={90}
-          paddingAngle={0}
-          dataKey="number"
-          filter="url(#shadow)"
-          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
-          ))}
-        </Pie>
-        <text
-          x={130}
-          y={125}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          cursor="pointer"
-          style={{
-            fontFamily: "Source Sans Pro",
-            fontSize: "20px",
-            fill: "#160449",
-            fontWeight: "bold",
-          }}
-          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-        >
-          View all {totalPropertiesCount}
-          <tspan x={130} y={145}>
-            Properties
-          </tspan>
-        </text>
-      </PieChart>
-      ) : (
-        <PieChart width={250} height={250}>
-        {/* <Legend
+            <Pie
+              data={data}
+              cx={125}
+              cy={125}
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={0}
+              dataKey='number'
+              filter='url(#shadow)'
+              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
+              ))}
+            </Pie>
+            <text
+              x={130}
+              y={125}
+              textAnchor='middle'
+              dominantBaseline='middle'
+              cursor='pointer'
+              style={{
+                fontFamily: "Source Sans Pro",
+                fontSize: "20px",
+                fill: "#160449",
+                fontWeight: "bold",
+              }}
+              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              View all {totalPropertiesCount}
+              <tspan x={130} y={145}>
+                Properties
+              </tspan>
+            </text>
+          </PieChart>
+        ) : (
+          <PieChart width={250} height={250}>
+            {/* <Legend
           height={36}
           iconType="circle"
           layout="vertical"
@@ -367,47 +362,47 @@ export default function PropertyRentWidget(props) {
           formatter={renderColorfulLegendText}
           onClick={() => navigate("/pmRent")}
         /> */}
-        <Pie
-          data={defaultData}
-          cx={125}
-          cy={125}
-          innerRadius={60}
-          outerRadius={90}
-          paddingAngle={0}
-          dataKey="number"
-          filter="url(#shadow)"
-          onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-        >
-          {defaultData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
-          ))}
-        </Pie>
-        <text
-          x={130}
-          y={125}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          cursor="pointer"
-          style={{
-            fontFamily: "Source Sans Pro",
-            fontSize: "15px",
-            fill: "#160449",
-            fontWeight: "bold",
-          }}
-          onClick={() => navigate('/properties', { state: { showPropertyForm: true , rawPropertyData: rawPropertyData} })}
-        >
-          Add your first
-          <tspan x={130} y={145}>
-            property here
-          </tspan>
-        </text>
-      </PieChart>
-      )}
+            <Pie
+              data={defaultData}
+              cx={125}
+              cy={125}
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={0}
+              dataKey='number'
+              filter='url(#shadow)'
+              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+            >
+              {defaultData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
+              ))}
+            </Pie>
+            <text
+              x={130}
+              y={125}
+              textAnchor='middle'
+              dominantBaseline='middle'
+              cursor='pointer'
+              style={{
+                fontFamily: "Source Sans Pro",
+                fontSize: "15px",
+                fill: "#160449",
+                fontWeight: "bold",
+              }}
+              onClick={() => navigate("/properties", { state: { showPropertyForm: true, rawPropertyData: rawPropertyData } })}
+            >
+              Add your first
+              <tspan x={130} y={145}>
+                property here
+              </tspan>
+            </text>
+          </PieChart>
+        )}
         <CustomLegend navigate={navigate} data={data} />
 
         <Button
-          variant="outlined"
-          id="revenue"
+          variant='outlined'
+          id='revenue'
           className={classes.button}
           style={{
             height: "100%",
@@ -426,8 +421,8 @@ export default function PropertyRentWidget(props) {
           View {vacantCount} Property Listings
         </Button>
         <Button
-          variant="outlined"
-          id="revenue"
+          variant='outlined'
+          id='revenue'
           className={classes.button}
           style={{
             height: "100%",
@@ -529,7 +524,7 @@ const CustomLegend = ({ data, navigate }) => {
               }}
             >
               {capitalize(item.rent_status)}
-              <Typography variant="body2" align="right" sx={{ marginLeft: "auto" }}>
+              <Typography variant='body2' align='right' sx={{ marginLeft: "auto" }}>
                 {item.number}
               </Typography>
             </ListItem>
@@ -539,3 +534,5 @@ const CustomLegend = ({ data, navigate }) => {
     </Box>
   );
 };
+
+export default PropertyRentWidget;

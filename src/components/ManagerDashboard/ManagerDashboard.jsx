@@ -298,11 +298,7 @@ function ManagerDashboard() {
             </Box>
           </Grid>
           <Grid item xs={12} md={3}>
-            <PropertyRentWidget
-              rentData={rentStatus}
-              contractRequests={contractRequests}
-              // propertyEndpointResp={property_endpoint_resp}
-            />
+            <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyEndpointResp={property_endpoint_resp} />
           </Grid>
           <Grid item xs={12} md={9}>
             <RevenueWidget revenueData={revenueData} />
