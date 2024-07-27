@@ -30,6 +30,9 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Snackbar,
+  Alert, 
+  AlertTitle,
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { makeStyles } from "@material-ui/core/styles";
@@ -113,6 +116,14 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   const [ licenseState, setLicenseState ] = useState("");
   const [ licenseExp, setLicenseExp ] = useState("");
 
+  const [modifiedData, setModifiedData] = useState([]);
+
+  const [isUpdate, setIsUpdate] = useState(false);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
 
   const getListDetails = async () => {
     try {
@@ -139,89 +150,199 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   }, [paymentMethods]);
 
   useEffect(() => {
+    console.log("ROHIT - modifiedData - ", modifiedData);    
+  }, [modifiedData]);
+
+
+  const updateModifiedData = (updatedItem) => {
+    setModifiedData((prev) => {      
+      const existingKeyIndex = prev.findIndex(item => item.key === updatedItem.key);
+        
+      if (existingKeyIndex !== -1) {
+        return prev.map((item, index) => 
+          index === existingKeyIndex ? { ...item, value: updatedItem.value } : item
+        );
+      }  
+      return [...prev, { key: updatedItem.key, value: updatedItem.value }];
+    });
+  }
+  
+
+
+  const handleFirstNameChange = (event) => {
+    setFirstName(event.target.value);
+    updateModifiedData({ key: "tenant_first_name", value: event.target.value });
+  };
+
+  const handleLastNameChange = (event) => {
+    setLastName(event.target.value);
+    updateModifiedData({ key: "tenant_last_name", value: event.target.value });
+  };
+
+  const handleAddressSelect = (address) => {
+    setAddress(address.street ? address.street : "");
+    updateModifiedData({ key: "tenant_address", value: address.street ? address.street : "" });    
+    setCity(address.city ? address.city : "");
+    updateModifiedData({ key: "tenant_city", value: address.city ? address.city : "" });  
+    setState(address.state ? address.state : "");
+    updateModifiedData({ key: "tenant_state", value: address.state ? address.state : "" });
+    setZip(address.zip ? address.zip : "");
+    updateModifiedData({ key: "tenant_zip", value: address.zip ? address.zip : "" });
+  };
+
+  const handleUnitChange = (event) => {
+    setUnit(event.target.value);
+    updateModifiedData({ key: "tenant_unit", value: event.target.value });
+  };
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+    updateModifiedData({ key: "tenant_email", value: event.target.value });
+  };
+
+  const handlePhoneNumberChange = (event) => {
+    setPhoneNumber(formatPhoneNumber(event.target.value));
+    updateModifiedData({ key: "tenant_phone_number", value: formatPhoneNumber(event.target.value) });
+  };
+  
+  const handleLicenseChange = (event) => {
+    setLicense(event.target.value);
+    updateModifiedData({ key: "tenant_drivers_license_number", value: event.target.value });
+  };
+
+  const handleLicenseStateChange = (event) => {
+    setLicenseState(event.target.value);
+    updateModifiedData({ key: "tenant_drivers_license_state", value: event.target.value });
+  };
+
+  const handleLicenseExpChange = (event) => {
+    setLicenseExp(event.target.value);
+    updateModifiedData({ key: "tenant_drivers_license_exp", value: event.target.value });
+  };
+
+  const handleSSNChange = (event) => { 
+    let value = event.target.value;
+    if (value.length > 11) return;
+    setSsn(value);    
+    updateModifiedData({ key: "tenant_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });  
+  };
+
+  const handleJobTitleChange = (event) => {
+    setJobTitle(event.target.value);
+    updateModifiedData({ key: "tenant_current_job_title", value: event.target.value });
+  };
+
+  const handleCompanyChange = (event) => {
+    setCompanyName(event.target.value);
+    updateModifiedData({ key: "tenant_current_job_company", value: event.target.value });
+  };
+
+  const handleSalaryChange = (event) => {
+    setCurrentSalary(event.target.value);
+    updateModifiedData({ key: "tenant_current_salary", value: event.target.value });
+  };
+
+  const handleSalaryFrequencyChange = (event) => {
+    setSalaryFrequency(event.target.value);
+    updateModifiedData({ key: "tenant_salary_frequency", value: event.target.value });
+  };
+
+  
+
+
+  const setProfileData = async () => {
+    setShowSpinner(true);
+    try {
+      // const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+      // const profileData = profileResponse.data.profile.result[0];
+      setFirstName(profileData.tenant_first_name || "");
+      setLastName(profileData.tenant_last_name || "");
+      setEmail(profileData.tenant_email || "");
+      setPhoneNumber(formatPhoneNumber(profileData.tenant_phone_number || ""));
+      setPhoto(profileData.tenant_photo_url ? { image: profileData.tenant_photo_url } : null);
+      setSsn(profileData.tenant_ssn ? AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+      setMask(profileData.tenant_ssn ? maskNumber(AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+      setAddress(profileData.tenant_address || "");
+      setUnit(profileData.tenant_unit || "");
+      setCity(profileData.tenant_city || "");
+      setState(profileData.tenant_state || "");
+      setZip(profileData.tenant_zip || "");
+      setCurrentSalary(profileData.tenant_current_salary || "");
+      setSalaryFrequency(profileData.tenant_salary_frequency || "");
+      setJobTitle(profileData.tenant_current_job_title || "");
+      setCompanyName(profileData.tenant_current_job_company || "");
+
+      setLicense(profileData.tenant_drivers_license_number || "");
+      setLicenseState(profileData.tenant_drivers_license_state || "");
+      setLicenseExp(profileData.tenant_drivers_license_exp || "");
+
+      setAdults(JSON.parse(profileData.tenant_adult_occupants) || []);
+      setChildren(JSON.parse(profileData.tenant_children_occupants) || []);
+      setPets(JSON.parse(profileData.tenant_pet_occupants) || []);
+      setVehicles(JSON.parse(profileData.tenant_vehicle_info) || []);
+
+      const parsedDocs = JSON.parse(profileData.tenant_documents);
+      console.log("ROHIT - parsedDocs - ", parsedDocs);
+      const docs = parsedDocs?.map((doc, index) => ({
+          ...doc,
+          id: index
+      }));
+      // console.log('initial docs', docs);
+      setDocuments(docs);
+      documentsRef.current = parsedDocs;
+
+
+      const paymentMethods = JSON.parse(profileData.paymentMethods);
+      const updatedPaymentMethods = {
+        paypal: { value: "", checked: false, uid: "" },
+        apple_pay: { value: "", checked: false, uid: "" },
+        stripe: { value: "", checked: false, uid: "" },
+        zelle: { value: "", checked: false, uid: "" },
+        venmo: { value: "", checked: false, uid: "" },
+        credit_card: { value: "", checked: false, uid: "" },
+        bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
+      };
+      paymentMethods.forEach((method) => {
+        if (method.paymentMethod_type === "bank_account") {
+          updatedPaymentMethods.bank_account = {
+            account_number: method.paymentMethod_account_number || "",
+            routing_number: method.paymentMethod_routing_number || "",
+            checked: method.paymentMethod_status === "Active",
+            uid: method.paymentMethod_uid,
+          };
+        } else {
+          updatedPaymentMethods[method.paymentMethod_type] = {
+            value: method.paymentMethod_name,
+            checked: method.paymentMethod_status === "Active",
+            uid: method.paymentMethod_uid,
+          };
+        }
+      });
+      setPaymentMethods(updatedPaymentMethods);
+
+      setShowSpinner(false);
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+      setShowSpinner(false);
+    }
+  };
+
+  useEffect(() => {
     console.log("calling useeffect");
     setIsSave(false);
-    const setProfileData = async () => {
-      setShowSpinner(true);
-      try {
-        // const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
-        // const profileData = profileResponse.data.profile.result[0];
-        setFirstName(profileData.tenant_first_name || "");
-        setLastName(profileData.tenant_last_name || "");
-        setEmail(profileData.tenant_email || "");
-        setPhoneNumber(formatPhoneNumber(profileData.tenant_phone_number || ""));
-        setPhoto(profileData.tenant_photo_url ? { image: profileData.tenant_photo_url } : null);
-        setSsn(profileData.tenant_ssn ? AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
-        setMask(profileData.tenant_ssn ? maskNumber(AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
-        setAddress(profileData.tenant_address || "");
-        setUnit(profileData.tenant_unit || "");
-        setCity(profileData.tenant_city || "");
-        setState(profileData.tenant_state || "");
-        setZip(profileData.tenant_zip || "");
-        setCurrentSalary(profileData.tenant_current_salary || "");
-        setSalaryFrequency(profileData.tenant_salary_frequency || "");
-        setJobTitle(profileData.tenant_current_job_title || "");
-        setCompanyName(profileData.tenant_current_job_company || "");
 
-        setLicense(profileData.tenant_drivers_license_number || "");
-        setLicenseState(profileData.tenant_drivers_license_state || "");
-        setLicenseExp(profileData.tenant_drivers_license_exp || "");
-
-        setAdults(JSON.parse(profileData.tenant_adult_occupants) || []);
-        setChildren(JSON.parse(profileData.tenant_children_occupants) || []);
-        setPets(JSON.parse(profileData.tenant_pet_occupants) || []);
-        setVehicles(JSON.parse(profileData.tenant_vehicle_info) || []);
-
-        const parsedDocs = JSON.parse(profileData.tenant_documents);
-        console.log("ROHIT - parsedDocs - ", parsedDocs);
-        const docs = parsedDocs?.map((doc, index) => ({
-            ...doc,
-            id: index
-        }));
-        // console.log('initial docs', docs);
-        setDocuments(docs);
-        documentsRef.current = parsedDocs;
-
-
-        const paymentMethods = JSON.parse(profileData.paymentMethods);
-        const updatedPaymentMethods = {
-          paypal: { value: "", checked: false, uid: "" },
-          apple_pay: { value: "", checked: false, uid: "" },
-          stripe: { value: "", checked: false, uid: "" },
-          zelle: { value: "", checked: false, uid: "" },
-          venmo: { value: "", checked: false, uid: "" },
-          credit_card: { value: "", checked: false, uid: "" },
-          bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
-        };
-        paymentMethods.forEach((method) => {
-          if (method.paymentMethod_type === "bank_account") {
-            updatedPaymentMethods.bank_account = {
-              account_number: method.paymentMethod_account_number || "",
-              routing_number: method.paymentMethod_routing_number || "",
-              checked: method.paymentMethod_status === "Active",
-              uid: method.paymentMethod_uid,
-            };
-          } else {
-            updatedPaymentMethods[method.paymentMethod_type] = {
-              value: method.paymentMethod_name,
-              checked: method.paymentMethod_status === "Active",
-              uid: method.paymentMethod_uid,
-            };
-          }
-        });
-        setPaymentMethods(updatedPaymentMethods);
-
-        setShowSpinner(false);
-      } catch (error) {
-        console.error("Error fetching profile data:", error);
-        setShowSpinner(false);
-      }
-    };
 
     setProfileData();
 
     getListDetails();
   }, []);
+
+  useEffect(() => {
+    console.log("calling profileData useEffect");
+
+    setIsSave(false);
+    setProfileData();
+  }, [profileData]);
 
   const readImage = (file) => {
     const reader = new FileReader();
@@ -245,14 +366,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
       return;
     }
     readImage(file);
-  };
-
-  const handleAddressSelect = (address) => {
-    setAddress(address.street ? address.street : "");
-    setCity(address.city ? address.city : "");
-    setState(address.state ? address.state : "");
-    setZip(address.zip ? address.zip : "");
-  };
+  };  
 
   const paymentMethodsArray = [
     { name: "PayPal", icon: PayPal, state: paymentMethods.paypal },
@@ -441,12 +555,12 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     return form;
   };
 
-  const saveProfile = async (form) => {
-    const profileApi = "/profile";
-    const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
-    setIsSave(true);
-    return data;
-  };
+  // const saveProfile = async (form) => {
+  //   const profileApi = "/profile";
+  //   const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+  //   setIsSave(true);
+  //   return data;
+  // };
 
   const handlePaymentStep = async () => {
     setShowSpinner(true);
@@ -527,13 +641,151 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
 
-    const payload = getPayload();
-    const form = encodeForm(payload);
-    const data = await saveProfile(form);
+    // const payload = getPayload();
+    // const form = encodeForm(payload);
+    // const data = await saveProfile(form);
+
+    saveProfile();
+
     const paymentSetup = await handlePaymentStep();
     setShowSpinner(false);
     return;
   };
+
+  const showSnackbar = (message, severity) => {
+    console.log('Inside show snackbar');
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleUpdate = () => {
+    // setIsUpdate( prevState => !prevState);
+    console.log('handleUpdate called');
+    setIsSave(true);
+}
+
+  const editOrUpdateTenant = async () => {
+    console.log('inside editOrUpdateTenant', modifiedData);
+    try {
+        if (modifiedData.length > 0) {
+            setShowSpinner(true);
+            const headers = {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Credentials": "*",
+            };
+
+            const profileFormData = new FormData();
+
+            // const feesJSON = JSON.stringify(leaseFees)
+            // leaseApplicationFormData.append("lease_fees", feesJSON);
+            // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+            modifiedData.forEach(item => {
+                console.log(`Key: ${item.key}`);
+                if (item.key === "uploadedFiles") {
+                    console.log('uploadedFiles', item.value);
+                    if (item.value.length) {
+                        const documentsDetails = [];
+                        [...item.value].forEach((file, i) => {
+                          profileFormData.append(`file-${i}`, file.file, file.name);
+                            const fileType = 'pdf';
+                            const documentObject = {
+                                // file: file,
+                                fileIndex: i,
+                                fileName: file.name,
+                                fileType: file.type,
+                                type: file.type,
+                            };
+                            documentsDetails.push(documentObject);
+                        });
+                        profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
+                    }
+                } else {
+                  profileFormData.append(item.key, JSON.stringify(item.value));
+                }
+            });
+            profileFormData.append('tenant_uid', profileData.tenant_uid);
+            
+        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
+            .then((response) => {
+                console.log('Data updated successfully', response);
+                showSnackbar("Your profile has been successfully updated.", "success");                
+                handleUpdate();
+                setShowSpinner(false);
+            })
+            .catch((error) => {
+                setShowSpinner(false);
+                showSnackbar("Cannot update your profile. Please try again", "error");
+                if (error.response) {
+                    console.log(error.response.data);
+                }
+            });
+        setShowSpinner(false);
+        setModifiedData([]);
+    } else {
+        showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+    }
+    } catch (error) {
+        showSnackbar("Cannot update the lease. Please try again", "error");
+        console.log("Cannot Update the lease", error);
+        setShowSpinner(false);
+    }
+  }
+
+  const saveProfile = async () => {
+    console.log('inside saveProfile', modifiedData);
+    try {
+        if (modifiedData.length > 0) {
+            setShowSpinner(true);
+            const headers = {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Credentials": "*",
+            };
+
+            const profileFormData = new FormData();
+
+            // const feesJSON = JSON.stringify(leaseFees)
+            // leaseApplicationFormData.append("lease_fees", feesJSON);
+            // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+            modifiedData.forEach(item => {
+              console.log(`Key: ${item.key}`);                
+              profileFormData.append(item.key, item.value);                
+            });
+            profileFormData.append('tenant_uid', profileData.tenant_uid);
+            
+        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
+            .then((response) => {
+                console.log('Data updated successfully', response);
+                showSnackbar("Your profile has been successfully updated.", "success");                
+                handleUpdate();
+                setShowSpinner(false);
+            })
+            .catch((error) => {
+                setShowSpinner(false);
+                showSnackbar("Cannot update your profile. Please try again", "error");
+                if (error.response) {
+                    console.log(error.response.data);
+                }
+            });
+        setShowSpinner(false);
+        setModifiedData([]);
+    } else {
+        showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+    }
+    } catch (error) {
+        showSnackbar("Cannot update the lease. Please try again", "error");
+        console.log("Cannot Update the lease", error);
+        setShowSpinner(false);
+    }
+  }
 
 
   return (
@@ -596,10 +848,10 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
               </Grid>
               <Grid container item xs={12} columnSpacing={2}>
                 <Grid item xs={6}>
-                  <TextField name="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} variant="filled" fullWidth placeholder="First name" className={classes.root} />
+                  <TextField name="firstName" value={firstName} onChange={(e) => handleFirstNameChange(e)} variant="filled" fullWidth placeholder="First name" className={classes.root} />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name="lastName" value={lastName} variant="filled" onChange={(e) => setLastName(e.target.value)} fullWidth placeholder="Last name" className={classes.root} />
+                  <TextField name="lastName" value={lastName} variant="filled" onChange={handleLastNameChange} fullWidth placeholder="Last name" className={classes.root} />
                 </Grid>
                 
 
@@ -635,7 +887,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField value={unit} onChange={(e) => setUnit(e.target.value)} variant="filled" placeholder="3" className={classes.root}></TextField>
+                    <TextField value={unit} onChange={ handleUnitChange } variant="filled" placeholder="3" className={classes.root}></TextField>
                   </Grid>
                   
                 </Grid>
@@ -652,7 +904,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField name="City" value={city} onChange={(e) => setCity(e.target.value)} variant="filled" placeholder="City" className={classes.root} />
+                    <TextField disabled name="City" value={city} onChange={(e) => setCity(e.target.value)} variant="filled" placeholder="City" className={classes.root} />
                   </Grid>
                   
                 </Grid>
@@ -670,7 +922,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField name="State" value={state} onChange={(e) => setState(e.target.value)} variant="filled" placeholder="State" className={classes.root} />
+                    <TextField disabled name="State" value={state} onChange={(e) => setState(e.target.value)} variant="filled" placeholder="State" className={classes.root} />
                   </Grid>
                   
                 </Grid>
@@ -688,7 +940,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField name="Zip" value={zip} onChange={(e) => setZip(e.target.value)} variant="filled" placeholder="Zip" className={classes.root} />
+                    <TextField disabled name="Zip" value={zip} onChange={(e) => setZip(e.target.value)} variant="filled" placeholder="Zip" className={classes.root} />
                   </Grid>
                   
                 </Grid>
@@ -708,7 +960,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={email} onChange={(e) => setEmail(e.target.value)} variant="filled" placeholder="Email" className={classes.root}></TextField>
+                    <TextField fullWidth value={email} onChange={handleEmailChange} variant="filled" placeholder="Email" className={classes.root}></TextField>
                   </Grid>
                   
                 </Grid>
@@ -725,7 +977,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} variant="filled" placeholder="Phone Number" className={classes.root}></TextField>
+                    <TextField fullWidth value={phoneNumber} onChange={handlePhoneNumberChange} variant="filled" placeholder="Phone Number" className={classes.root}></TextField>
                   </Grid>
                   
                 </Grid>                
@@ -745,7 +997,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={license} onChange={(e) => setLicense(e.target.value)} variant="filled" placeholder="License Number" className={classes.root}></TextField>
+                    <TextField fullWidth value={license} onChange={ handleLicenseChange } variant="filled" placeholder="License Number" className={classes.root}></TextField>
                   </Grid>
                   
                 </Grid>
@@ -762,7 +1014,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={licenseState} onChange={(e) => setLicenseState(e.target.value)} variant="filled" placeholder="License State" className={classes.root}></TextField>
+                    <TextField fullWidth value={licenseState} onChange={ handleLicenseStateChange } variant="filled" placeholder="License State" className={classes.root}></TextField>
                   </Grid>
                   
                 </Grid>                
@@ -779,7 +1031,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={licenseExp} onChange={(e) => setLicenseExp(e.target.value)} variant="filled" placeholder="License Exp" className={classes.root}></TextField>
+                    <TextField fullWidth value={licenseExp} onChange={handleLicenseExpChange} variant="filled" placeholder="License Exp" className={classes.root}></TextField>
                   </Grid>
                   
                 </Grid>                
@@ -799,7 +1051,17 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={ssn} onChange={(e) => setSsn(e.target.value)} variant="filled" placeholder="SSN" className={classes.root}></TextField>
+                    <TextField 
+                      fullWidth
+                      // value={mask}
+                      value={ssn}
+                      // onChange={(e) => setSsn(e.target.value)}
+                      onChange={handleSSNChange}
+                      variant="filled"
+                      placeholder="SSN"
+                      className={classes.root}
+                    >
+                    </TextField>
                   </Grid>
                   
                 </Grid>                                                         
@@ -854,7 +1116,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
             </Grid>
 
             <Grid item xs={12}>
-              <TextField name="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} variant="filled" fullWidth placeholder="Job Title" className={classes.root} />
+              <TextField name="jobTitle" value={jobTitle} onChange={handleJobTitleChange} variant="filled" fullWidth placeholder="Job Title" className={classes.root} />
             </Grid>                        
           </Grid>
 
@@ -872,7 +1134,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
             </Grid>
 
             <Grid item xs={12}>
-              <TextField name="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} variant="filled" fullWidth placeholder="Company Name" className={classes.root} />
+              <TextField name="company" value={companyName} onChange={ handleCompanyChange } variant="filled" fullWidth placeholder="Company Name" className={classes.root} />
             </Grid>                        
           </Grid>            
           
@@ -893,7 +1155,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
             </Grid>
 
             <Grid item xs={12}>
-              <TextField InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment>,}} name="salary" value={currentSalary} onChange={(e) => setCurrentSalary(e.target.value)} variant="filled" fullWidth placeholder="Current Salary" className={classes.root} />
+              <TextField InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment>,}} name="salary" value={currentSalary} onChange={ handleSalaryChange } variant="filled" fullWidth placeholder="Current Salary" className={classes.root} />
             </Grid>                        
           </Grid>
 
@@ -914,7 +1176,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
               <Select 
                 name="salaryFrequency"
                 value={salaryFrequency}
-                onChange={(e) => setSalaryFrequency(e.target.value)}
+                onChange={ handleSalaryFrequencyChange }
                 variant="filled"
                 fullWidth 
                 className={classes.root}
@@ -989,16 +1251,16 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
               </AccordionSummary>
               <AccordionDetails>
                   {adults &&
-                      <AdultOccupant leaseAdults={adults} setLeaseAdults={setAdults} relationships={relationships} editOrUpdateLease={ () => { console.log("ROHIT - doing nothing")}} adultsRef={adultsRef}/>
+                      <AdultOccupant leaseAdults={adults} setLeaseAdults={setAdults} relationships={relationships} editOrUpdateLease={ editOrUpdateTenant } adultsRef={adultsRef} modifiedData={modifiedData} setModifiedData={setModifiedData} dataKey={'tenant_adult_occupants'}/>
                   }
                   {children &&
-                      <ChildrenOccupant leaseChildren={children} setLeaseChildren={setChildren} relationships={relationships} editOrUpdateLease={ () => { console.log("ROHIT - doing nothing")}} childrenRef={childrenRef}/>
+                      <ChildrenOccupant leaseChildren={children} setLeaseChildren={setChildren} relationships={relationships} editOrUpdateLease={ editOrUpdateTenant } childrenRef={childrenRef} modifiedData={modifiedData} setModifiedData={setModifiedData} dataKey={'tenant_children_occupants'}/>
                   }
                   {pets &&
-                      <PetsOccupant leasePets={pets} setLeasePets={setPets} editOrUpdateLease={ () => { console.log("ROHIT - doing nothing")}} petsRef={petsRef}/>
+                      <PetsOccupant leasePets={pets} setLeasePets={setPets} editOrUpdateLease={ editOrUpdateTenant } petsRef={petsRef} modifiedData={modifiedData} setModifiedData={setModifiedData} dataKey={'tenant_pet_occupants'}/>
                   }
                   {vehicles &&
-                      <VehiclesOccupant leaseVehicles={vehicles} setLeaseVehicles={setVehicles} states={states} editOrUpdateLease={ () => { console.log("ROHIT - doing nothing")}} vehiclesRef={vehiclesRef}/>
+                      <VehiclesOccupant leaseVehicles={vehicles} setLeaseVehicles={setVehicles} states={states} editOrUpdateLease={ editOrUpdateTenant } vehiclesRef={vehiclesRef} modifiedData={modifiedData} setModifiedData={setModifiedData} dataKey={'tenant_vehicle_info'}/>
                   }
               </AccordionDetails>
           </Accordion>          
@@ -1011,8 +1273,16 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: '10px', marginBottom: '10px', }}
       >
         <Grid item xs={12} md={12}>            
-          <Documents documents={documents} setDocuments={setDocuments}
-              setuploadedFiles={setuploadedFiles} editOrUpdateLease={ () => { console.log("ROHIT - doing nothing")}} documentsRef={documentsRef} setDeletedFiles={setDeletedFiles}
+          <Documents 
+            documents={documents}
+            setDocuments={setDocuments}            
+            setuploadedFiles={setuploadedFiles}
+            editOrUpdateLease={ editOrUpdateTenant }
+            documentsRef={documentsRef}
+            setDeletedFiles={setDeletedFiles}
+            modifiedData={modifiedData}
+            setModifiedData={setModifiedData}
+            dataKey={"tenant_documents"}
           />            
         </Grid>
       </Grid>
@@ -1024,6 +1294,13 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
           </Typography>
         </Button>
       </Grid>
+
+      <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+            {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

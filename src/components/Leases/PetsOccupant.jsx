@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedData }) => {
+const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedData, dataKey }) => {
     console.log('Inside Pets occupants', leasePets);
     const [pets, setPets] = useState([]);
     const [open, setOpen] = useState(false);
@@ -131,14 +131,14 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                 const updatedRow = pets.map(pet => (pet.id === currentRow.id ? currentRow : pet));
                 //Save pets back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, { key: 'lease_pets', value: rowWithoutId }]);
+                setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
 
         } else {
-            setModifiedData((prev) => [...prev, { key: 'lease_pets', value: [...leasePets, { ...currentRow }] }])
+            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leasePets, { ...currentRow }] }])
             setIsUpdated(true);
         }
     };
@@ -152,7 +152,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
     const handleDelete = (id) => {
         const filtered = pets.filter(pet => pet.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, { key: 'lease_pets', value: rowWithoutId }]);
+        setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
         setIsUpdated(true);
     };
 
