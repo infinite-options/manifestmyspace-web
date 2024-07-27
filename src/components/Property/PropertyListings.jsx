@@ -42,19 +42,19 @@ const SearchBar = ({ propertyList, setFilteredItems, ...props }) => {
         display: "flex",
       }}
     >
-      <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
+      <IconButton type='submit' sx={{ p: "10px" }} aria-label='search'>
         <SearchIcon />
       </IconButton>
       <InputBase
         sx={{ ml: 1, zIndex: 1000, flexGrow: 1 }}
-        placeholder="Search..."
+        placeholder='Search...'
         inputProps={{ "aria-label": "search" }}
         value={searchTerm}
         onChange={handleSearchChange}
         color={theme.typography.common.blue}
       />
       {searchTerm && (
-        <IconButton aria-label="clear" onClick={clearSearch}>
+        <IconButton aria-label='clear' onClick={clearSearch}>
           <CloseIcon />
         </IconButton>
       )}
@@ -161,11 +161,11 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
 
   return (
     <>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" sx={{ padding: "10px" }}>
+      <Stack direction='row' justifyContent='space-between' alignItems='center' position='relative' sx={{ padding: "10px" }}>
         <Box>
-          <Stack direction="column">
+          <Stack direction='column'>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.common.fontWeight,
@@ -185,9 +185,9 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
           </Stack>
         </Box>
         <Box>
-          <Stack direction="column">
+          <Stack direction='column'>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.common.fontWeight,
@@ -211,9 +211,9 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
           </Stack>
         </Box>
         <Box>
-          <Stack direction="column">
+          <Stack direction='column'>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.common.fontWeight,
@@ -234,9 +234,9 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
           </Stack>
         </Box>
         <Box>
-          <Stack direction="column">
+          <Stack direction='column'>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.common.fontWeight,
@@ -258,9 +258,9 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
         </Box>
       </Stack>
       {areAnyFiltersSet ? (
-        <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" display="flex" sx={{ padding: "10px" }}>
+        <Stack direction='row' justifyContent='space-between' alignItems='center' position='relative' display='flex' sx={{ padding: "10px" }}>
           <Button
-            variant="contained"
+            variant='contained'
             sx={{
               color: theme.typography.secondary.white,
               fontWeight: theme.typography.common.fontWeight,
@@ -330,130 +330,130 @@ const PropertyListings = ({ setRightPane }) => {
 
   return (
     <div>
-    <ThemeProvider theme={theme}>
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <Box
-        style={{
-          display: "flex",
-          fontFamily: "Source Sans Pro",
-          justifyContent: "center",
-          width: "100%",
-          minHeight: "90vh",
-          marginTop: theme.spacing(2),
-        }}
-      >
-        <Paper
+      <ThemeProvider theme={theme}>
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+        <Box
           style={{
-            // margin: "30px",
-            padding: theme.spacing(2),
-            backgroundColor: theme.palette.primary.main,
+            display: "flex",
+            fontFamily: "Source Sans Pro",
+            justifyContent: "center",
             width: "100%",
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
-            // paddingTop: "10px",
+            minHeight: "90vh",
+            marginTop: theme.spacing(2),
           }}
         >
-          <Stack direction="row" justifyContent="center" alignItems="center" position="relative" sx={{ paddingBottom: "25px", paddingTop: "15px" }}>
-            <Box direction="row" justifyContent="center" alignItems="center">
+          <Paper
+            style={{
+              // margin: "30px",
+              padding: theme.spacing(2),
+              backgroundColor: theme.palette.primary.main,
+              width: "100%",
+              [theme.breakpoints.down("sm")]: {
+                width: "80%",
+              },
+              [theme.breakpoints.up("sm")]: {
+                width: "50%",
+              },
+              // paddingTop: "10px",
+            }}
+          >
+            <Stack direction='row' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "25px", paddingTop: "15px" }}>
+              <Box direction='row' justifyContent='center' alignItems='center'>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: "18px",
+                  }}
+                >
+                  Search For Your New Home
+                </Typography>
+              </Box>
+            </Stack>
+            <Stack>
+              <SearchBar propertyList={sortedProperties} setFilteredItems={setDisplayProperties} sx={{ width: "100%" }} />
+            </Stack>
+            <Stack>
+              <FilterButtons propertyList={sortedProperties} filteredItems={displayProperties} setFilteredItems={setDisplayProperties} />
+            </Stack>
+            <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ padding: "5px 15px" }}>
+              <Box position='relative' left={0}>
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                  }}
+                >
+                  Map
+                  <LocationOn
+                    sx={{
+                      fontSize: theme.typography.largeFont,
+                    }}
+                  />
+                </Typography>
+              </Box>
+              <Box position='relative' right={0}>
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                  }}
+                >
+                  Saved Search
+                  <TurnedInNot
+                    sx={{
+                      fontSize: theme.typography.largeFont,
+                    }}
+                  />
+                </Typography>
+              </Box>
+            </Stack>
+            <Stack alignItems='flex-start' sx={{ padding: "10px 15px" }}>
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
                   fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "18px",
+                  fontSize: "16px",
                 }}
               >
-                Search For Your New Home
+                Apartments For Rent In San Jose CA
               </Typography>
-            </Box>
-          </Stack>
-          <Stack>
-            <SearchBar propertyList={sortedProperties} setFilteredItems={setDisplayProperties} sx={{ width: "100%" }} />
-          </Stack>
-          <Stack>
-            <FilterButtons propertyList={sortedProperties} filteredItems={displayProperties} setFilteredItems={setDisplayProperties} />
-          </Stack>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ padding: "5px 15px" }}>
-            <Box position="relative" left={0}>
               <Typography
                 sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.largeFont,
+                  color: theme.typography.primary.black,
+                  fontSize: theme.typography.smallFont,
                 }}
               >
-                Map
-                <LocationOn
-                  sx={{
-                    fontSize: theme.typography.largeFont,
-                  }}
-                />
+                {displayProperties.length} Available
               </Typography>
-            </Box>
-            <Box position="relative" right={0}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.largeFont,
-                }}
-              >
-                Saved Search
-                <TurnedInNot
-                  sx={{
-                    fontSize: theme.typography.largeFont,
-                  }}
-                />
-              </Typography>
-            </Box>
-          </Stack>
-          <Stack alignItems="flex-start" sx={{ padding: "10px 15px" }}>
-            <Typography
-              sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: "16px",
-              }}
-            >
-              Apartments For Rent In San Jose CA
-            </Typography>
-            <Typography
-              sx={{
-                color: theme.typography.primary.black,
-                fontSize: theme.typography.smallFont,
-              }}
-            >
-              {displayProperties.length} Available
-            </Typography>
-          </Stack>
-          <Stack sx={{ padding: 5 }}>
-            <PropertiesMap properties={displayProperties} />
-          </Stack>
-          {displayProperties.length > 0 &&
-            displayProperties.map((property, index) => {
-              var status = "";
-              let i = sortedProperties.findIndex((p) => p.property_uid === property.property_uid);
-              const appliedData = userLeases
-                .filter((lease) => lease.lease_property_id === property.property_uid && lease.lease_uid !== null)
-                .sort((a, b) => {
-                  const uidA = parseInt(a.lease_uid.split("-")[1]);
-                  const uidB = parseInt(b.lease_uid.split("-")[1]);
-                  return uidB - uidA;
-                })[0];
+            </Stack>
+            <Stack sx={{ padding: 5 }}>
+              <PropertiesMap properties={displayProperties} />
+            </Stack>
+            {displayProperties.length > 0 &&
+              displayProperties.map((property, index) => {
+                var status = "";
+                let i = sortedProperties.findIndex((p) => p.property_uid === property.property_uid);
+                const appliedData = userLeases
+                  .filter((lease) => lease.lease_property_id === property.property_uid && lease.lease_uid !== null)
+                  .sort((a, b) => {
+                    const uidA = parseInt(a.lease_uid.split("-")[1]);
+                    const uidB = parseInt(b.lease_uid.split("-")[1]);
+                    return uidB - uidA;
+                  })[0];
 
-              if (appliedData) {
-                status = appliedData.lease_status;
-              }
-              return <PropertyCard data={property} key={i} status={status} leaseData={appliedData} setRightPane={setRightPane} />;
-            })}
-        </Paper>
-      </Box>
-    </ThemeProvider>
+                if (appliedData) {
+                  status = appliedData.lease_status;
+                }
+                return <PropertyCard data={property} key={i} status={status} leaseData={appliedData} setRightPane={setRightPane} />;
+              })}
+          </Paper>
+        </Box>
+      </ThemeProvider>
     </div>
   );
 };
@@ -461,6 +461,7 @@ const PropertyListings = ({ setRightPane }) => {
 function PropertyCard({ data, status, leaseData, setRightPane }) {
   const navigate = useNavigate();
   const [lease, setLease] = useState(leaseData || {});
+  console.log("In PropertyCard: ", data);
   const property = data;
   const propertyImages = property?.property_images || "";
   const ppt_images = propertyImages.split(",");
@@ -756,239 +757,239 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
 
   return (
     <div>
-    <Card sx={{ margin: 5 }}>
-      <ReactImageGallery items={images} showFullscreenButton={false} showPlayButton={false} showThumbnails={false} />
+      <Card sx={{ margin: 5 }}>
+        <ReactImageGallery items={images} showFullscreenButton={false} showPlayButton={false} showThumbnails={false} />
 
-      <Stack direction="row" justifyContent="space-between">
-        <Box
-          sx={{
-            backgroundColor: "#8897BA",
-            color: theme.typography.secondary.white,
-            boxShadow: "0 8px 8px 0 rgba(0, 0, 0, 0.4)",
-            zIndex: 5,
-            width: "fit-content",
-            position: "relative",
-            borderRadius: "8px",
-            margin: "-20px 15px 5px",
-            padding: "3px 5px",
-            alignSelf: "flex-start",
-          }}
-        >
-          <Typography
+        <Stack direction='row' justifyContent='space-between'>
+          <Box
             sx={{
-              padding: "5px",
-              fontSize: "18px",
+              backgroundColor: "#8897BA",
+              color: theme.typography.secondary.white,
+              boxShadow: "0 8px 8px 0 rgba(0, 0, 0, 0.4)",
+              zIndex: 5,
+              width: "fit-content",
+              position: "relative",
+              borderRadius: "8px",
+              margin: "-20px 15px 5px",
+              padding: "3px 5px",
+              alignSelf: "flex-start",
             }}
           >
-            {listed_rent}
-            <span style={{ opacity: "60%" }}> / Month</span>
-          </Typography>
-        </Box>
-        {status_label[status]}
-      </Stack>
-      <CardContent>
-        <Stack
-          direction="row"
-          justifyContent={"space-between"}
-          sx={{
-            color: theme.typography.common.blue,
-          }}
-        >
-          <Box>
-            <Stack
-              direction={"row"}
+            <Typography
               sx={{
-                color: theme.palette.primary.lightYellow,
+                padding: "5px",
+                fontSize: "18px",
               }}
             >
-              <Rating name="read-only" precision={0.5} value={5} />
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                }}
-              >
-                (2)
-              </Typography>
-            </Stack>
+              {listed_rent}
+              <span style={{ opacity: "60%" }}> / Month</span>
+            </Typography>
           </Box>
-          <Box>
-            <LocationOn /> <TurnedInNot />
-          </Box>
+          {status_label[status]}
         </Stack>
-        <Stack>
-          <Typography
+        <CardContent>
+          <Stack
+            direction='row'
+            justifyContent={"space-between"}
             sx={{
               color: theme.typography.common.blue,
-              fontWeight: theme.typography.common.fontWeight,
-              fontSize: "18px",
             }}
           >
-            {formatAddress()}
-          </Typography>
-          <Typography
-            sx={{
-              color: theme.typography.primary.black,
-              fontSize: "16px",
-            }}
-          >
-            {property?.property_city + ", " + property?.property_state + " " + property?.property_zip}
-          </Typography>
-          <Stack justifyContent={"center"} alignItems={"center"} direction={"row"} sx={{ padding: "5px 10px" }}>
-            <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px 15px" }}>
-              <Typography
+            <Box>
+              <Stack
+                direction={"row"}
                 sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "16px",
+                  color: theme.palette.primary.lightYellow,
                 }}
               >
-                {property?.property_type}
-              </Typography>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontSize: "16px",
-                }}
-              >
-                Type
-              </Typography>
-            </Stack>
-            <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px 15px" }}>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "16px",
-                }}
-              >
-                {property?.property_num_beds}
-              </Typography>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontSize: "16px",
-                }}
-              >
-                Bed
-              </Typography>
-            </Stack>
-            <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px 15px" }}>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "16px",
-                }}
-              >
-                {property?.property_num_baths}
-              </Typography>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontSize: "16px",
-                }}
-              >
-                Bath
-              </Typography>
-            </Stack>
-            <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px 15px" }}>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "16px",
-                }}
-              >
-                {property?.property_area}
-              </Typography>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontSize: "16px",
-                }}
-              >
-                Sq Ft
-              </Typography>
+                <Rating name='read-only' precision={0.5} value={5} />
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                  }}
+                >
+                  (2)
+                </Typography>
+              </Stack>
+            </Box>
+            <Box>
+              <LocationOn /> <TurnedInNot />
+            </Box>
+          </Stack>
+          <Stack>
+            <Typography
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.common.fontWeight,
+                fontSize: "18px",
+              }}
+            >
+              {formatAddress()}
+            </Typography>
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontSize: "16px",
+              }}
+            >
+              {property?.property_city + ", " + property?.property_state + " " + property?.property_zip}
+            </Typography>
+            <Stack justifyContent={"center"} alignItems={"center"} direction={"row"} sx={{ padding: "5px 10px" }}>
+              <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px 15px" }}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: "16px",
+                  }}
+                >
+                  {property?.property_type}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "16px",
+                  }}
+                >
+                  Type
+                </Typography>
+              </Stack>
+              <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px 15px" }}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: "16px",
+                  }}
+                >
+                  {property?.property_num_beds}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "16px",
+                  }}
+                >
+                  Bed
+                </Typography>
+              </Stack>
+              <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px 15px" }}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: "16px",
+                  }}
+                >
+                  {property?.property_num_baths}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "16px",
+                  }}
+                >
+                  Bath
+                </Typography>
+              </Stack>
+              <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px 15px" }}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: "16px",
+                  }}
+                >
+                  {property?.property_area}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "16px",
+                  }}
+                >
+                  Sq Ft
+                </Typography>
+              </Stack>
             </Stack>
           </Stack>
-        </Stack>
-      </CardContent>
-      <CardActions
-        sx={{
-          justifyContent: "center",
-          flexWrap: { xs: "wrap", sm: "wrap", md: "nowrap" },
-          display: "flex",
-          width: "100%",
-        }}
-      >
-        <Stack
-          alignItems="center"
-          justifyContent="space-evenly"
-          direction="row"
-          spacing={2}
+        </CardContent>
+        <CardActions
           sx={{
-            flexWrap: "wrap",
-            rowGap: "10px",
+            justifyContent: "center",
+            flexWrap: { xs: "wrap", sm: "wrap", md: "nowrap" },
+            display: "flex",
+            width: "100%",
           }}
         >
-          <Button
-            variant="text"
+          <Stack
+            alignItems='center'
+            justifyContent='space-evenly'
+            direction='row'
+            spacing={2}
             sx={{
-              border: "1px solid",
-              color: theme.typography.common.blue,
-              marginRight: "5px",
-              textTransform: "none",
-              whiteSpace: "nowrap",
+              flexWrap: "wrap",
+              rowGap: "10px",
             }}
           >
-            Contact Property
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#97A7CF",
-              color: theme.typography.secondary.white,
-              marginLeft: "5px",
-              textTransform: "none",
-              whiteSpace: "nowrap",
-            }}
-            onClick={handleDetailsButton}
-          >
-            View Details
-          </Button>
-          {status === "NEW" ? (
             <Button
-              variant="contained"
+              variant='text'
               sx={{
-                backgroundColor: theme.typography.common.blue,
+                border: "1px solid",
+                color: theme.typography.common.blue,
+                marginRight: "5px",
+                textTransform: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Contact Property
+            </Button>
+            <Button
+              variant='contained'
+              sx={{
+                backgroundColor: "#97A7CF",
                 color: theme.typography.secondary.white,
                 marginLeft: "5px",
                 textTransform: "none",
                 whiteSpace: "nowrap",
               }}
-              onClick={() => navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } })}
+              onClick={handleDetailsButton}
             >
-              View Application
+              View Details
             </Button>
-          ) : null}
-          {status === "PROCESSING" ? (
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#7AD15B",
-                color: theme.typography.secondary.white,
-                marginLeft: "5px",
-                textTransform: "none",
-                whiteSpace: "nowrap",
-              }}
-              onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
-            >
-              View Lease
-            </Button>
-          ) : null}
-        </Stack>
-      </CardActions>
-    </Card>
+            {status === "NEW" ? (
+              <Button
+                variant='contained'
+                sx={{
+                  backgroundColor: theme.typography.common.blue,
+                  color: theme.typography.secondary.white,
+                  marginLeft: "5px",
+                  textTransform: "none",
+                  whiteSpace: "nowrap",
+                }}
+                onClick={() => navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } })}
+              >
+                View Application
+              </Button>
+            ) : null}
+            {status === "PROCESSING" ? (
+              <Button
+                variant='contained'
+                sx={{
+                  backgroundColor: "#7AD15B",
+                  color: theme.typography.secondary.white,
+                  marginLeft: "5px",
+                  textTransform: "none",
+                  whiteSpace: "nowrap",
+                }}
+                onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
+              >
+                View Lease
+              </Button>
+            ) : null}
+          </Stack>
+        </CardActions>
+      </Card>
     </div>
   );
 }

@@ -10,12 +10,12 @@ export default function HappinessMatrixWidget(props) {
   // const chartWidth = 400;
   // const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { page, setIndex, happinessData, dataforhappiness, contactDetails } = props;
+  const { page, setIndex, happinessData, contactDetails } = props;
   const [data, setData] = useState([]);
 
-  console.log("happiness data initial", happinessData);
-  console.log("happiness data initial1", happinessData.matrix_data);
-  console.log("happiness data initial2", happinessData.matrix_data.result[0]);
+  // console.log("happiness data initial", happinessData);
+  // console.log("happiness data initial1", happinessData.matrix_data);
+  // console.log("happiness data initial2", happinessData.matrix_data.result[0]);
   // useEffect(() => {
   //   console.log("HappinessMatrixWidget - happinessData:", happinessData);
   // }, [happinessData]);
@@ -29,11 +29,52 @@ export default function HappinessMatrixWidget(props) {
     console.log("In UseEffect: ", happinessData.matrix_data.result);
     setData(happinessData.matrix_data.result);
 
+    const points = [];
+    data?.forEach((owner) => {
+      console.log("In get points: ", owner.vacancy_perc, owner.percent_delta_cashflow);
+      let x = Number(owner.vacancy_perc);
+      let y = Number(owner.percent_delta_cashflow);
+
+      let pointObject = {
+        x: x,
+        y: -y,
+        ...owner,
+      };
+
+      points.push(pointObject);
+    });
+
+    console.log("points to plot", points);
+    setPointsToPlot(points);
+
     // write a function to store the data with an index an x, y plot
     // check if the x,y plots are too close to one another
     // If the x, y are too close, adjust one of the points
     // plot the data
   }, [happinessData.matrix_data.result]);
+
+  const [pointsToPlot, setPointsToPlot] = useState([]);
+
+  // function getPoints(data) {
+  //   const points = [];
+  //   data?.forEach((owner) => {
+  //     // console.log("In get points: ", owner.vacancy_perc, owner.delta_cashflow_perc);
+  //     let x = Number(owner.vacancy_perc);
+  //     let y = Number(owner.delta_cashflow_perc);
+
+  //     let pointObject = {
+  //       x: x,
+  //       y: -y,
+  //       ...owner,
+  //     };
+
+  //     points.push(pointObject);
+  //   });
+
+  //   console.log("points to plot", points);
+  //   setPointsToPlot(points);
+  // }
+
   // useEffect(() => {
 
   //   const setting_matrix_data = () => {
@@ -126,74 +167,52 @@ export default function HappinessMatrixWidget(props) {
   // }, [])
 
   // let [shifted_data, shift] = useState(JSON.parse(JSON.stringify(data)));
-  let [shifted_data, shift] = useState(data);
-
-  const [pointsToPlot, setPointsToPlot] = useState([]);
+  // let [shifted_data, shift] = useState(data);
 
   // Function to check if two points overlap
-  function overlap(owner1, owner2, margin) {
-    const { vacancy_perc: x1, delta_cashflow_perc: y1 } = owner1;
-    const { vacancy_perc: x2, delta_cashflow_perc: y2 } = owner2;
-    console.log("checking distance1", x1, y1, x2, y2);
-    const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    console.log("checking distance", distance);
-    return distance < margin;
-  }
+  // function overlap(owner1, owner2, margin) {
+  //   const { vacancy_perc: x1, delta_cashflow_perc: y1 } = owner1;
+  //   const { vacancy_perc: x2, delta_cashflow_perc: y2 } = owner2;
+  //   console.log("checking distance1", x1, y1, x2, y2);
+  //   const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  //   console.log("checking distance", distance);
+  //   return distance < margin;
+  // }
 
   // Function to adjust points
-  function adjustPoints(owners, margin = 5) {
-    for (let i = 0; i < owners.length; i++) {
-      for (let j = i + 1; j < owners.length; j++) {
-        while (overlap(owners[i], owners[j], margin)) {
-          // Move points slightly in both x and y directions
-          console.log("checking i", owners[i]);
-          console.log("checking j", owners[j]);
-          if (owners[j].vacancy_perc > -50) {
-            owners[j].vacancy_perc -= 5;
-          } else {
-            owners[j].vacancy_perc += 5;
-          }
+  // function adjustPoints(owners, margin = 5) {
+  //   for (let i = 0; i < owners.length; i++) {
+  //     for (let j = i + 1; j < owners.length; j++) {
+  //       while (overlap(owners[i], owners[j], margin)) {
+  //         // Move points slightly in both x and y directions
+  //         console.log("checking i", owners[i]);
+  //         console.log("checking j", owners[j]);
+  //         if (owners[j].vacancy_perc > -50) {
+  //           owners[j].vacancy_perc -= 5;
+  //         } else {
+  //           owners[j].vacancy_perc += 5;
+  //         }
 
-          if (owners[j].delta_cashflow_perc > -50) {
-            owners[j].delta_cashflow_perc -= 5;
-          } else {
-            owners[j].delta_cashflow_perc += 5;
-          }
-        }
-      }
-    }
-    return owners;
-  }
+  //         if (owners[j].delta_cashflow_perc > -50) {
+  //           owners[j].delta_cashflow_perc -= 5;
+  //         } else {
+  //           owners[j].delta_cashflow_perc += 5;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return owners;
+  // }
 
   //  Adjust points before rendering
-  useEffect(() => {
-    shift(adjustPoints(shifted_data));
-  }, []);
+  // useEffect(() => {
+  //   shift(adjustPoints(shifted_data));
+  // }, []);
 
-  function getPoints(data) {
-    const points = [];
-    data?.forEach((owner) => {
-      // console.log("In get points: ", owner.vacancy_perc, owner.delta_cashflow_perc);
-      let x = Number(owner.vacancy_perc);
-      let y = Number(owner.delta_cashflow_perc);
-
-      let pointObject = {
-        x: x,
-        y: -y,
-        ...owner,
-      };
-
-      points.push(pointObject);
-    });
-
-    console.log("points to plot", points);
-    setPointsToPlot(points);
-  }
-
-  useEffect(() => {
-    adjustPoints(data);
-    getPoints(data);
-  }, [data]);
+  // useEffect(() => {
+  //   adjustPoints(data);
+  //   getPoints(data);
+  // }, [data]);
 
   const axisLabelStyle = {
     fontFamily: "Source Sans Pro",
@@ -344,30 +363,24 @@ export default function HappinessMatrixWidget(props) {
                     <CustomImage
                       {...props}
                       onClick={() => handlePointClick(props.payload)}
-                      data={data}
-                      dataforhappiness={dataforhappiness}
                       happinessData={happinessData}
                       page={page}
                       contactDetails={contactDetails}
                       setIndex={setIndex}
-                      // cashflowDetails={cashflowDetails}
-                      // cashflowDetailsByProperty={cashflowDetailsByProperty}
-                      // cashflowDetailsByPropertyByMonth={cashflowDetailsByPropertyByMonth}
-                      // cashflowData={cashflowData}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}
                     />
                   )}
                 />
 
-                <ReferenceLine y={-0.5} stroke='#000000' strokeDasharray='3 3' />
+                <ReferenceLine y={-50} stroke='#000000' strokeDasharray='3 3' />
 
                 <ReferenceLine x={-50} stroke='#000000' strokeDasharray='3 3' />
 
                 <ReferenceLine
                   segment={[
-                    { x: -100, y: -1.1 },
-                    { x: 0, y: 0.1 },
+                    { x: -100, y: -100 },
+                    { x: 100, y: 100 },
                   ]}
                   stroke='#000000'
                   strokeWidth={1}

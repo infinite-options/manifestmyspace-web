@@ -13,10 +13,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import backButton from "../Payments/backIcon.png";
 import { set } from "date-fns";
 
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -24,7 +24,7 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault("America/Los_Angeles");
 
 const PropertyInfo = (props) => {
-console.log("props in info",props)
+  console.log("props in info", props);
   const location = useLocation();
   const navigate = useNavigate();
   const index = props.index;
@@ -35,8 +35,8 @@ console.log("props in info",props)
   const [showScheduler, setShowScheduler] = useState(false);
   const [schedulerDate, setSchedulerDate] = useState();
   const [buttonColor, setButtonColor] = useState("#3D5CAC");
-  console.log(property);
-  console.log(status);
+  console.log("Property: ", property);
+  console.log("Status: ", status);
 
   const [showRejectApplicationDialog, setshowRejectApplicationDialog] = useState(false);
 
@@ -53,7 +53,7 @@ console.log("props in info",props)
       setButtonColor("#7AD15B");
     } /* else if (status === "REJECTED") {
       setButtonColor("#490404"); 
-    } */else if (status === "REFUSED") {
+    } */ else if (status === "REFUSED") {
       // setButtonColor("#CB8E8E")
       setButtonColor("#3D5CAC");
     } else if (status === "ACTIVE") {
@@ -128,15 +128,15 @@ console.log("props in info",props)
       //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
       props.setRightPane({
         type: "tenantApplication",
-        state:{ property: property, status: status, lease: lease }
+        state: { property: property, status: status, lease: lease },
       });
-    } else if(status === "REJECTED"){
+    } else if (status === "REJECTED") {
       setshowRejectApplicationDialog(true);
-    }else if (status === "TENANT APPROVED" || status === "PROCESSING") {
+    } else if (status === "TENANT APPROVED" || status === "PROCESSING") {
       //navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
       props.setRightPane({
         type: "tenantApplication",
-        state:{ property: property, status: status, lease: lease }
+        state: { property: property, status: status, lease: lease },
       });
     } else {
       return null;
@@ -144,11 +144,11 @@ console.log("props in info",props)
   }
 
   function navigateToRejectPage() {
-      //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
-     props.setRightPane({
-        type: "tenantApplication",
-        state:{ property: property, status: status, lease: lease }
-      });
+    //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
+    props.setRightPane({
+      type: "tenantApplication",
+      state: { property: property, status: status, lease: lease },
+    });
   }
 
   function formatAddress() {
@@ -161,7 +161,7 @@ console.log("props in info",props)
   return (
     <ThemeProvider theme={theme}>
       <Scheduler show={showScheduler} setShow={setShowScheduler} date={schedulerDate} setDate={setSchedulerDate} />
-      <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative">
+      <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
         <Button
           onClick={() => props.setRightPane({ type: "listings" })}
           sx={{
@@ -212,7 +212,7 @@ console.log("props in info",props)
         >
           <Stack>
             <Stack
-              direction="row"
+              direction='row'
               justifyContent={"space-between"}
               sx={{
                 color: theme.typography.common.blue,
@@ -248,14 +248,14 @@ console.log("props in info",props)
               {property.property_uid}
             </Typography>
           </Stack>
-          <Stack alignItems="center" justifyContent="center" spacing={5} sx={{ padding: "20px" }}>
+          <Stack alignItems='center' justifyContent='center' spacing={5} sx={{ padding: "20px" }}>
             <Box
               sx={{
                 background: "#9EAED666",
                 borderRadius: "10px",
               }}
             >
-              <ButtonGroup variant="outlined">
+              <ButtonGroup variant='outlined'>
                 <Button sx={{ color: theme.typography.common.blue }}>Photos</Button>
                 <Button sx={{ color: theme.typography.common.blue }}>Video</Button>
                 <Button sx={{ color: theme.typography.common.blue }}>Map</Button>
@@ -264,8 +264,8 @@ console.log("props in info",props)
           </Stack>
           <ReactImageGallery items={images} showFullscreenButton={false} showPlayButton={false} showThumbnails={false} />
           <Stack
-            direction="row"
-            justifyContent="space-between"
+            direction='row'
+            justifyContent='space-between'
             sx={{
               color: theme.typography.common.blue,
               marginTop: "10px",
@@ -273,12 +273,12 @@ console.log("props in info",props)
           >
             <Box>
               <Stack
-                direction="row"
+                direction='row'
                 sx={{
                   color: theme.palette.primary.lightYellow,
                 }}
               >
-                <Rating name="read-only" precision={0.5} value={5} />
+                <Rating name='read-only' precision={0.5} value={5} />
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -300,9 +300,9 @@ console.log("props in info",props)
             </Box>
           </Stack>
           <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
+            direction='row'
+            justifyContent='space-between'
+            alignItems='center'
             sx={{
               color: theme.typography.common.blue,
               padding: "15px 0",
@@ -316,7 +316,7 @@ console.log("props in info",props)
               <strong>{listed_rent}</strong> Per Month
             </Typography>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 background: buttonColor,
                 color: theme.palette.background.default,
@@ -327,9 +327,9 @@ console.log("props in info",props)
               {renderCorrectButtonText()}
             </Button>
           </Stack>
-          <Stack justifyContent="space-between" alignItems="center" direction="row" sx={{ margin: "5px 10px" }}>
+          <Stack justifyContent='space-between' alignItems='center' direction='row' sx={{ margin: "5px 10px" }}>
             {property.property_pets_allowed > 0 ? (
-              <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px" }}>
+              <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px" }}>
                 <Typography
                   sx={{
                     color: "#7AD15B",
@@ -352,7 +352,7 @@ console.log("props in info",props)
             ) : (
               <></>
             )}
-            <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px 10px" }}>
+            <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px 10px" }}>
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
@@ -372,7 +372,7 @@ console.log("props in info",props)
                 Type
               </Typography>
             </Stack>
-            <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px 10px" }}>
+            <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px 10px" }}>
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
@@ -392,7 +392,7 @@ console.log("props in info",props)
                 Bed
               </Typography>
             </Stack>
-            <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px 10px" }}>
+            <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px 10px" }}>
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
@@ -412,7 +412,7 @@ console.log("props in info",props)
                 Bath
               </Typography>
             </Stack>
-            <Stack justifyContent="center" alignItems="center" sx={{ margin: "5px 10px" }}>
+            <Stack justifyContent='center' alignItems='center' sx={{ margin: "5px 10px" }}>
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
@@ -452,13 +452,13 @@ console.log("props in info",props)
             </AccordionSummary>
             <AccordionDetails sx={{ padding: "10px" }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Stack direction="row" justifyContent="space-between">
+                <Stack direction='row' justifyContent='space-between'>
                   <DateCalendar />
                   <DigitalClock timeStep={60} disablePast sx={{ width: "50%" }} />
                 </Stack>
-                <Box justifyContent="center" alignItems="center">
+                <Box justifyContent='center' alignItems='center'>
                   <Button
-                    variant="contained"
+                    variant='contained'
                     fullWidth
                     sx={{
                       backgroundColor: "#97A7CF",
@@ -472,7 +472,7 @@ console.log("props in info",props)
               </LocalizationProvider>
             </AccordionDetails>
           </Accordion>
-          <Stack justifyContent="flex-start" spacing={2} sx={{ margin: "25px 0" }}>
+          <Stack justifyContent='flex-start' spacing={2} sx={{ margin: "25px 0" }}>
             <Typography
               sx={{
                 fontWeight: theme.typography.primary.fontWeight,
@@ -483,19 +483,19 @@ console.log("props in info",props)
             </Typography>
             <Typography sx={{ textAlign: "justify" }}>{property.property_description}</Typography>
             <Typography sx={{ color: theme.typography.common.blue }}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_1650_4326)">
+              <svg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                <g clip-path='url(#clip0_1650_4326)'>
                   <path
-                    d="M3.5 13.5H1.5C1.23478 13.5 0.98043 13.3946 0.792893 13.2071C0.605357 13.0196 0.5 12.7652 0.5 12.5V1.5C0.5 1.23478 0.605357 0.98043 0.792893 0.792893C0.98043 0.605357 1.23478 0.5 1.5 0.5H12.5C12.7652 0.5 13.0196 0.605357 13.2071 0.792893C13.3946 0.98043 13.5 1.23478 13.5 1.5V12.5C13.5 12.7652 13.3946 13.0196 13.2071 13.2071C13.0196 13.3946 12.7652 13.5 12.5 13.5H10.5M0.5 3.5H13.5M7 13.5V7"
-                    stroke="#3D5CAC"
-                    strokeLinecap="round"
-                    stroke-linejoin="round"
+                    d='M3.5 13.5H1.5C1.23478 13.5 0.98043 13.3946 0.792893 13.2071C0.605357 13.0196 0.5 12.7652 0.5 12.5V1.5C0.5 1.23478 0.605357 0.98043 0.792893 0.792893C0.98043 0.605357 1.23478 0.5 1.5 0.5H12.5C12.7652 0.5 13.0196 0.605357 13.2071 0.792893C13.3946 0.98043 13.5 1.23478 13.5 1.5V12.5C13.5 12.7652 13.3946 13.0196 13.2071 13.2071C13.0196 13.3946 12.7652 13.5 12.5 13.5H10.5M0.5 3.5H13.5M7 13.5V7'
+                    stroke='#3D5CAC'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
                   />
-                  <path d="M4.5 9.5L7 7L9.5 9.5" stroke="#3D5CAC" strokeLinecap="round" stroke-linejoin="round" />
+                  <path d='M4.5 9.5L7 7L9.5 9.5' stroke='#3D5CAC' strokeLinecap='round' strokeLinejoin='round' />
                 </g>
                 <defs>
-                  <clipPath id="clip0_1650_4326">
-                    <rect width="14" height="14" fill="white" />
+                  <clipPath id='clip0_1650_4326'>
+                    <rect width='14' height='14' fill='white' />
                   </clipPath>
                 </defs>
               </svg>
@@ -572,63 +572,64 @@ console.log("props in info",props)
               </Typography>
             </Box>
           </Stack>
-          {showRejectApplicationDialog  && (
-                            <Dialog
-                                open={showRejectApplicationDialog}
-                                onClose={() => setshowRejectApplicationDialog(false)}
-                                aria-labelledby="alert-dialog-title"
-                                aria-describedby="alert-dialog-description"
-                            >                                
-                                <DialogContent>                                    
-                                    <DialogContentText 
-                                        id="alert-dialog-description"
-                                        sx={{
-
-                                            fontWeight: theme.typography.common.fontWeight,
-                                            paddingTop: "10px",                                                        
-                                        }}
-                                    >
-                                        Have you contacted property manager of {property.property_address} {property.property_unit} regarding reason for initial rejection?
-                                    </DialogContentText>
-                                </DialogContent>
-                                <DialogActions>                                    
-                                    <Box sx={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        justifyContent: 'center',
-                                    }}>
-                                        <Button
-                                            onClick={() => navigateToRejectPage()}
-                                            sx={{
-                                                color:"white",                            
-                                                backgroundColor: "#3D5CAC80",
-                                                ':hover': { 
-                                                    backgroundColor: '#3D5CAC'
-                                                },
-                                                marginRight: '10px',                             
-                                            }}
-                                            autoFocus
-                                        >
-                                            Yes
-                                        </Button>
-                                        <Button 
-                                            onClick={() => setshowRejectApplicationDialog(false)}
-                                            sx={{
-                                                color:"white",                            
-                                                backgroundColor: "#3D5CAC80",
-                                                ':hover': { 
-                                                    backgroundColor: '#3D5CAC'
-                                                },
-                                                marginLeft: '10px',                                                          
-                                            }}>
-                                            No
-                                        </Button>
-                                    </Box>
-
-                                </DialogActions>
-                            </Dialog>
-                        )}
+          {showRejectApplicationDialog && (
+            <Dialog
+              open={showRejectApplicationDialog}
+              onClose={() => setshowRejectApplicationDialog(false)}
+              aria-labelledby='alert-dialog-title'
+              aria-describedby='alert-dialog-description'
+            >
+              <DialogContent>
+                <DialogContentText
+                  id='alert-dialog-description'
+                  sx={{
+                    fontWeight: theme.typography.common.fontWeight,
+                    paddingTop: "10px",
+                  }}
+                >
+                  Have you contacted property manager of {property.property_address} {property.property_unit} regarding reason for initial rejection?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Button
+                    onClick={() => navigateToRejectPage()}
+                    sx={{
+                      color: "white",
+                      backgroundColor: "#3D5CAC80",
+                      ":hover": {
+                        backgroundColor: "#3D5CAC",
+                      },
+                      marginRight: "10px",
+                    }}
+                    autoFocus
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    onClick={() => setshowRejectApplicationDialog(false)}
+                    sx={{
+                      color: "white",
+                      backgroundColor: "#3D5CAC80",
+                      ":hover": {
+                        backgroundColor: "#3D5CAC",
+                      },
+                      marginLeft: "10px",
+                    }}
+                  >
+                    No
+                  </Button>
+                </Box>
+              </DialogActions>
+            </Dialog>
+          )}
         </Paper>
       </Box>
     </ThemeProvider>

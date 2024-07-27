@@ -45,7 +45,7 @@ function ManagerDashboard() {
   const [happinessData, setHappinessData] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
   const [contractRequests, setContractRequests] = useState([]);
-  const [matrixData, setMatrixData] = useState([]);
+  // const [matrixData, setMatrixData] = useState([]);
 
   const [showSpinner, setShowSpinner] = useState(true);
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
@@ -240,7 +240,7 @@ function ManagerDashboard() {
 
         // HAPPINESS MATRIX
         setHappinessData(jsonData.HappinessMatrix);
-        setMatrixData(jsonData.matrix_data);
+        // setMatrixData(jsonData.matrix_data);
 
         // DATA FOR HAPPINESS - Need to Remove this after Divya moves the Happiness Matrix Widget Info
         setdataforhappiness(jsonData);
@@ -299,11 +299,7 @@ function ManagerDashboard() {
             </Box>
           </Grid>
           <Grid item xs={12} md={3}>
-            <PropertyRentWidget
-              rentData={rentStatus}
-              contractRequests={contractRequests}
-              propertyEndpointResp={property_endpoint_resp}
-            />
+            <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyEndpointResp={property_endpoint_resp} />
           </Grid>
           <Grid item xs={12} md={9}>
             <RevenueWidget revenueData={revenueData} />
@@ -314,7 +310,7 @@ function ManagerDashboard() {
                   happinessData={happinessData}
                   // data={matrixData}
                   // dataforhappiness={dataforhappiness}
-                  matrixData = {matrixData}
+                  // matrixData = {matrixData}
                 />
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>

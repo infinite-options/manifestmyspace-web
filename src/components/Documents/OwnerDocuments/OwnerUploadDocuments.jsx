@@ -43,9 +43,9 @@ function OwnerUploadDocuments(props) {
           Upload Document
         </Box>
         <Box onClick={() => navigateTo("/ownerDocuments")}>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 5L5 15" stroke="#3D5CAC" strokeWidth="3" strokeLinecap="round" stroke-linejoin="round" />
-            <path d="M5 5L15 15" stroke="#3D5CAC" strokeWidth="3" strokeLinecap="round" stroke-linejoin="round" />
+          <svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
+            <path d='M15 5L5 15' stroke='#3D5CAC' strokeWidth='3' strokeLinecap='round' strokeLinejoin='round' />
+            <path d='M5 5L15 15' stroke='#3D5CAC' strokeWidth='3' strokeLinecap='round' strokeLinejoin='round' />
           </svg>
         </Box>
       </Box>
@@ -221,17 +221,17 @@ function OwnerUploadDocuments(props) {
         }}
       >
         <Box>
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13.5 19.5L22.5 19.5" stroke="#3D5CAC" strokeWidth="3" strokeLinecap="round" />
-            <path d="M13.5 13.5L19.5 13.5" stroke="#3D5CAC" strokeWidth="3" strokeLinecap="round" />
-            <path d="M13.5 25.5L19.5 25.5" stroke="#3D5CAC" strokeWidth="3" strokeLinecap="round" />
+          <svg width='36' height='36' viewBox='0 0 36 36' fill='none' xmlns='http://www.w3.org/2000/svg'>
+            <path d='M13.5 19.5L22.5 19.5' stroke='#3D5CAC' strokeWidth='3' strokeLinecap='round' />
+            <path d='M13.5 13.5L19.5 13.5' stroke='#3D5CAC' strokeWidth='3' strokeLinecap='round' />
+            <path d='M13.5 25.5L19.5 25.5' stroke='#3D5CAC' strokeWidth='3' strokeLinecap='round' />
             <path
-              d="M28.5 19.5V25.5C28.5 28.3284 28.5 29.7426 27.6213 30.6213C26.7426 31.5 25.3284 31.5 22.5 31.5H13.5C10.6716 31.5 9.25736 31.5 8.37868 30.6213C7.5 29.7426 7.5 28.3284 7.5 25.5V10.5C7.5 7.67157 7.5 6.25736 8.37868 5.37868C9.25736 4.5 10.6716 4.5 13.5 4.5H16.5"
-              stroke="#3D5CAC"
-              strokeWidth="3"
+              d='M28.5 19.5V25.5C28.5 28.3284 28.5 29.7426 27.6213 30.6213C26.7426 31.5 25.3284 31.5 22.5 31.5H13.5C10.6716 31.5 9.25736 31.5 8.37868 30.6213C7.5 29.7426 7.5 28.3284 7.5 25.5V10.5C7.5 7.67157 7.5 6.25736 8.37868 5.37868C9.25736 4.5 10.6716 4.5 13.5 4.5H16.5'
+              stroke='#3D5CAC'
+              strokeWidth='3'
             />
-            <path d="M27 4.5L27 13.5" stroke="#3D5CAC" strokeWidth="3" strokeLinecap="round" />
-            <path d="M31.5 9L22.5 9" stroke="#3D5CAC" strokeWidth="3" strokeLinecap="round" />
+            <path d='M27 4.5L27 13.5' stroke='#3D5CAC' strokeWidth='3' strokeLinecap='round' />
+            <path d='M31.5 9L22.5 9' stroke='#3D5CAC' strokeWidth='3' strokeLinecap='round' />
           </svg>
         </Box>
         <Box
@@ -258,9 +258,9 @@ function OwnerUploadDocuments(props) {
         }}
       >
         <Box>
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }}>
-            <path d="M9 2L9 16" stroke="#160449" strokeWidth="3" strokeLinecap="round" />
-            <path d="M16 9L2 9" stroke="#160449" strokeWidth="3" strokeLinecap="round" />
+          <svg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg' style={{ display: "block" }}>
+            <path d='M9 2L9 16' stroke='#160449' strokeWidth='3' strokeLinecap='round' />
+            <path d='M16 9L2 9' stroke='#160449' strokeWidth='3' strokeLinecap='round' />
           </svg>
         </Box>
         <Box

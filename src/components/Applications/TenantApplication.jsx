@@ -14,18 +14,19 @@ import DialogTitle from "@mui/material/DialogTitle";
 import APIConfig from "../../utils/APIConfig";
 
 export default function TenantApplication(props) {
+  console.log("In Tenant Application");
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId, roleName } = useUser();
 
-  console.log("props in tenantApplication", props)
+  console.log("props in tenantApplication", props);
 
   const [property, setProperty] = useState(props.property);
   const [status, setStatus] = useState(props.status);
   const [lease, setLease] = useState(props.lease);
   console.log("in tenant application status", status);
-  // console.log("lease", lease)
-  // console.log(property)
+  console.log("lease", lease);
+  console.log("property", property);
 
   const [tenantProfile, setTenantProfile] = useState(null);
 
@@ -196,7 +197,7 @@ export default function TenantApplication(props) {
 
     Promise.all([withdrawLeaseResponse]).then((values) => {
       //navigate("/listings"); // send success data back to the propertyInfo page
-      props.setRightPane({ type: "listings" })
+      props.setRightPane({ type: "listings" });
     });
   }
 
@@ -249,15 +250,15 @@ export default function TenantApplication(props) {
       });
 
       Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
-       // navigate("/listings"); // send success data back to the propertyInfo page
-        props.setRightPane({ type: "listings" })
+        // navigate("/listings"); // send success data back to the propertyInfo page
+        props.setRightPane({ type: "listings" });
       });
     } catch (error) {
       console.log("Error submitting application:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
-     // navigate("/listings");
-     props.setRightPane({ type: "listings" })
+      // navigate("/listings");
+      props.setRightPane({ type: "listings" });
     }
   }
 
@@ -269,11 +270,11 @@ export default function TenantApplication(props) {
         }}
       >
         <Box
-          component="span"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          position="relative"
+          component='span'
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          position='relative'
           sx={{
             paddingTop: "20px",
           }}
@@ -289,7 +290,7 @@ export default function TenantApplication(props) {
             Your Application For
           </Typography>
         </Box>
-        <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative">
+        <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
           <Typography
             sx={{
               justifySelf: "center",
@@ -301,7 +302,7 @@ export default function TenantApplication(props) {
             {formattedAddress()}
           </Typography>
         </Box>
-        <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" sx={{ paddingBottom: "10px" }}>
+        <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "10px" }}>
           <Button
             // onClick={() => navigate("-1")}
             onClick={() => props.setRightPane({ type: "listings" })}
@@ -328,7 +329,7 @@ export default function TenantApplication(props) {
         </Box>
         <Divider light />
         {status ? (
-          <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" sx={{ padding: "10px" }}>
+          <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ padding: "10px" }}>
             <Typography
               sx={{
                 justifySelf: "center",
@@ -831,7 +832,7 @@ export default function TenantApplication(props) {
                       justifyContent: "space-between",
                     }}
                   >
-                    <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                    <a href={doc.link} target='_blank' rel='noopener noreferrer'>
                       <Box
                         sx={{
                           // height: '16px',
@@ -846,7 +847,7 @@ export default function TenantApplication(props) {
                     </a>
                     {formatDocumentType(doc.type)}
                     <Button
-                      variant="text"
+                      variant='text'
                       onClick={(event) => {
                         deleteTenantDocument(i);
                       }}
@@ -880,7 +881,7 @@ export default function TenantApplication(props) {
               }}
             >
               <Button
-                variant="contained"
+                variant='contained'
                 sx={{
                   backgroundColor: "#9EAED6",
                   textTransform: "none",
@@ -902,7 +903,7 @@ export default function TenantApplication(props) {
                 </Typography>
               </Button>
               <Button
-                variant="contained"
+                variant='contained'
                 sx={{
                   backgroundColor: "#CB8E8E",
                   textTransform: "none",
@@ -910,7 +911,7 @@ export default function TenantApplication(props) {
                   display: "flex",
                   width: "45%",
                 }}
-                onClick={() => props.setRightPane({ type: "tenantProfileEdit" }) }
+                onClick={() => props.setRightPane({ type: "tenantProfileEdit" })}
               >
                 <Typography
                   sx={{
@@ -953,12 +954,12 @@ export default function TenantApplication(props) {
               <Dialog
                 open={showWithdrawLeaseDialog}
                 onClose={() => setShowWithdrawLeaseDialog(false)}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
               >
                 <DialogContent>
                   <DialogContentText
-                    id="alert-dialog-description"
+                    id='alert-dialog-description'
                     sx={{
                       fontWeight: theme.typography.common.fontWeight,
                       paddingTop: "10px",

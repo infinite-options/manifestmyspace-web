@@ -73,15 +73,16 @@ function TenantDashboard(props) {
     console.log("Tenant ID: ", tenantId, "   Property ID: ", propertyId ? propertyId : "Not Selected");
     setAddMaintenance(false);
 
-    if (!getProfileId())  { 
-      console.log("profile id is ***" ,getProfileId())
-      let newRole="TENANT"
-    navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } }); return ;}
-    
+    if (!getProfileId()) {
+      console.log("profile id is ***", getProfileId());
+      let newRole = "TENANT";
+      navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
+      return;
+    }
 
     const getTenantData = async () => {
-      if (!getProfileId()) return ;
-      setShowSpinner(true); 
+      if (!getProfileId()) return;
+      setShowSpinner(true);
       try {
         console.log("Call endpoints");
         const tenantRequests = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
@@ -199,6 +200,7 @@ function TenantDashboard(props) {
       setAnnouncementsData(filteredAnnouncements);
     }
     if (paymentHistory && paymentExpected) {
+      console.log("Payments exist: ", paymentHistory, paymentExpected);
       let filteredPaymentHistory = paymentHistory.filter((payment) => payment.pur_property_id === selectedProperty.property_uid);
       let filteredPaymentExpected = paymentExpected.filter((payment) => payment.pur_property_id === selectedProperty.property_uid);
       var rentFeeSum = 0;
@@ -252,7 +254,7 @@ function TenantDashboard(props) {
       case "tenantProfileEdit":
         return <TenantProfileEdit {...rightPane.state} setRightPane={setRightPane} />;
       case "announcements":
-        return <Announcements setRightPane={setRightPane} />
+        return <Announcements setRightPane={setRightPane} />;
       default:
         return null;
     }
@@ -278,10 +280,10 @@ function TenantDashboard(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container spacing={6}>
           <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-            <CircularProgress color="inherit" />
+            <CircularProgress color='inherit' />
           </Backdrop>
 
           {/* <Grid item xs={12}> */}
@@ -319,7 +321,7 @@ function TenantDashboard(props) {
               }}
             >
               <Button
-                variant="contained"
+                variant='contained'
                 sx={{
                   backgroundColor: "#97A7CF",
                   color: theme.typography.secondary.white,
@@ -362,7 +364,7 @@ function TenantDashboard(props) {
                   <DashboardTab>
                     <Grid
                       container
-                      direction="row"
+                      direction='row'
                       sx={{
                         paddingBottom: "10px",
                       }}
@@ -406,7 +408,7 @@ function TenantDashboard(props) {
                               fontWeight: "bold",
                             }}
                             onClick={() => {
-                              setRightPane({ type: "announcements" })
+                              setRightPane({ type: "announcements" });
                             }}
                           >
                             {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
@@ -425,7 +427,7 @@ function TenantDashboard(props) {
                 </Grid>
                 <Grid item xs={12}>
                   <DashboardTab>
-                    <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                    <Grid container direction='row' sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
                       <Grid item xs={2}></Grid>
                       <Grid item xs={8}>
                         <Box
@@ -455,7 +457,7 @@ function TenantDashboard(props) {
                 </Grid>
                 <Grid item xs={12}>
                   <DashboardTab>
-                    <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                    <Grid container direction='row' sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
                       <Grid item xs={2}></Grid>
                       <Grid item xs={8}>
                         <Box
@@ -864,6 +866,7 @@ function DashboardTab(props) {
 
 export default TenantDashboard;
 
+// NEED THIS FOR PROPERTY DROP DOWN MENU
 const AccountBalanceWidget = ({
   selectedProperty,
   selectedLease,
@@ -905,13 +908,13 @@ const AccountBalanceWidget = ({
   const showLeaseStatusIndicator = (lease_status) => {
     return (
       <>
-        {lease_status === "ACTIVE" ? <CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }} /> : null /* blue */}
-        {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ? <CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }} /> : null /* orange */}
-        {lease_status === "NEW" ? <CircleIcon fontSize="small" sx={{ color: "#FAD102", paddingRight: "10px" }} /> : null /* yellow */}
-        {lease_status === "PROCESSING" ? <CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }} /> : null /* green */}
-        {lease_status === "REJECTED" ? <CircleIcon fontSize="small" sx={{ color: "#FA0202", paddingRight: "10px" }} /> : null /* red */}
-        {lease_status === "RESCIND" ? <CircleIcon fontSize="small" sx={{ color: "#000000", paddingRight: "10px" }} /> : null /* black */}
-        {lease_status === "ENDED" ? <CircleIcon fontSize="small" sx={{ color: "#2E2E2E", paddingRight: "10px" }} /> : null /* black */}
+        {lease_status === "ACTIVE" ? <CircleIcon fontSize='small' sx={{ color: "#3D5CAC", paddingRight: "10px" }} /> : null /* blue */}
+        {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ? <CircleIcon fontSize='small' sx={{ color: "#FF8832", paddingRight: "10px" }} /> : null /* orange */}
+        {lease_status === "NEW" ? <CircleIcon fontSize='small' sx={{ color: "#FAD102", paddingRight: "10px" }} /> : null /* yellow */}
+        {lease_status === "PROCESSING" ? <CircleIcon fontSize='small' sx={{ color: "#00D100", paddingRight: "10px" }} /> : null /* green */}
+        {lease_status === "REJECTED" ? <CircleIcon fontSize='small' sx={{ color: "#FA0202", paddingRight: "10px" }} /> : null /* red */}
+        {lease_status === "RESCIND" ? <CircleIcon fontSize='small' sx={{ color: "#000000", paddingRight: "10px" }} /> : null /* black */}
+        {lease_status === "ENDED" ? <CircleIcon fontSize='small' sx={{ color: "#2E2E2E", paddingRight: "10px" }} /> : null /* black */}
       </>
     );
   };
@@ -935,7 +938,7 @@ const AccountBalanceWidget = ({
 
   return (
     // <DashboardTab fullHeight={!isMobile ? true : false}>
-    <DashboardTab height="100%">
+    <DashboardTab height='100%'>
       <Box
         sx={{
           display: "flex",
@@ -1001,7 +1004,7 @@ const AccountBalanceWidget = ({
                   <Typography>{propertyAddr}</Typography>
                   <KeyboardArrowDownIcon sx={{ alignItem: "center" }} onClick={(event) => handleOpen(event)} />
                   <Menu
-                    id="demo-customized-menu"
+                    id='demo-customized-menu'
                     MenuListProps={{
                       "aria-labelledby": "demo-customized-button",
                     }}
@@ -1189,7 +1192,7 @@ const AccountBalanceWidget = ({
         }}
         onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
       >
-        <img src={documentIcon} alt="document-icon" style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+        <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
         <u>View Full Lease</u>
       </Box>
     </DashboardTab>
@@ -1197,6 +1200,7 @@ const AccountBalanceWidget = ({
 };
 
 function TenantPaymentHistoryTable(props) {
+  console.log("In Tenant Payment History Table from Stack");
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;
 
@@ -1309,6 +1313,7 @@ function TenantPaymentHistoryTable(props) {
   };
 
   if (props.data && props.data.length > 0) {
+    console.log("In Tenant Payment History Table from Stack - Displaying Info");
     return (
       <DataGrid
         rows={props.data}
@@ -1338,7 +1343,7 @@ function TenantMaintenanceRequestsTable(props) {
   const data = props.data;
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;
-  console.log("TenantMaintenanceRequestTable", isMobile);
+  console.log("TenantMaintenanceRequestTable is Mobile", isMobile);
   const location = useLocation();
   let navigate = useNavigate();
 
@@ -1445,7 +1450,7 @@ function TenantMaintenanceRequestsTable(props) {
       field: "favorite_image",
       headerName: "Images",
       flex: 0.5,
-      renderCell: (params) => <img src={params.value} alt="Maintenance" style={{ width: "60px", height: "55px" }} />,
+      renderCell: (params) => <img src={params.value} alt='Maintenance' style={{ width: "60px", height: "55px" }} />,
       headerAlign: "center",
     },
     {
