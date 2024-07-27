@@ -68,6 +68,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
 
   const [index, setIndex] = useState(location.state.index);
   const ownerUID = location.state.ownerUID;
+  console.log("In Owner Contact Details - Owner ID: ", ownerUID);
 
   const cashflowData = location.state?.cashflowData;
   console.log("In the beginning: ", cashflowData);
@@ -230,7 +231,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px", marginTop: "10px", backgroundColor: "#FFFFFF" }}>
+        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px", marginTop: "10px", backgroundColor: "#FFFFFF" }}>
           <Grid container columnSpacing={5} sx={{ marginTop: "10px" }}>
             {!isMobile && (
               <Grid container item xs={12} md={4} sx={{ padding: "10px", backgroundColor: theme.palette.primary.main, borderRadius: "10px" }}>
@@ -313,12 +314,12 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   return (
     <>
       <Container sx={{ padding: "5px" }}>
-        <Grid container justifyContent="center" sx={{ padding: "10px 10px" }}>
+        <Grid container justifyContent='center' sx={{ padding: "10px 10px" }}>
           <Typography sx={{ fontSize: "35px", color: "#160449", fontWeight: "bold" }}>All Owner Contacts</Typography>
-          <Grid container item xs={12} justifyContent="center">
+          <Grid container item xs={12} justifyContent='center'>
             <TextField
               value={searchTerm}
-              placeholder="Search Keyword"
+              placeholder='Search Keyword'
               onChange={(e) => setSearchTerm(e.target.value)}
               sx={{
                 width: "100%",
@@ -331,14 +332,14 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
               }}
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">
+                  <InputAdornment position='start'>
                     <SearchIcon sx={{ color: "#3D5CAC", fontSize: "1.5rem" }} />
                   </InputAdornment>
                 ),
               }}
             />
           </Grid>
-          <Grid container item xs={12} justifyContent="center" sx={{ height: "380px", overflow: "auto" }}>
+          <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflow: "auto" }}>
             {filteredContactsData?.map((contact, index) => {
               return (
                 <Grid item xs={12} key={index} sx={{ marginBottom: "5px" }} onClick={() => setIndex(index)}>
@@ -428,10 +429,10 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
 
   return (
     <Grid container sx={{ backgroundColor: theme.palette.primary.main, borderRadius: "10px", padding: "10px" }}>
-      <Grid item xs={12} container justifyContent="center" sx={{ height: "50px" }}>
+      <Grid item xs={12} container justifyContent='center' sx={{ height: "50px" }}>
         <Typography sx={{ fontSize: "35px", fontWeight: "bold", color: "#160449" }}>Owner Contact</Typography>
       </Grid>
-      <Grid item xs={12} container justifyContent="center">
+      <Grid item xs={12} container justifyContent='center'>
         <Typography sx={{ fontSize: "20px", color: "#3D5CAC" }}>
           {index + 1} of {contactDetails?.length} Owners
         </Typography>
@@ -440,8 +441,8 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
         container
         item
         xs={12}
-        direction="row"
-        alignContent="space-between"
+        direction='row'
+        alignContent='space-between'
         sx={{ backgroundColor: "#3D5CAC", borderRadius: "10px", marginBottom: "10px", paddingTop: "5px", paddingBottom: "10px" }}
       >
         <Grid item xs={1}>
@@ -454,16 +455,16 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
               paddingLeft: "10px",
             }}
           >
-            <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width='33' height='33' viewBox='0 0 33 33' fill='none' xmlns='http://www.w3.org/2000/svg'>
               <path
-                d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z"
+                d='M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z'
                 fill={theme.typography.secondary.white}
               />
             </svg>
           </Box>
         </Grid>
-        <Grid container direction="row" item xs={10}>
-          <Grid item xs={12} container justifyContent="center">
+        <Grid container direction='row' item xs={10}>
+          <Grid item xs={12} container justifyContent='center'>
             <Typography sx={{ fontSize: "25px", fontWeight: "bold", color: "#F2F2F2" }}>
               {`
                     ${contactDetails && contactDetails[index]?.owner_first_name ? contactDetails[index]?.owner_first_name : "<FIRST_NAME>"}
@@ -471,7 +472,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
                   `}
             </Typography>
           </Grid>
-          <Grid item xs={12} container justifyContent="center">
+          <Grid item xs={12} container justifyContent='center'>
             <Box
               sx={{
                 backgroundColor: "#A9A9A9",
@@ -483,7 +484,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
             >
               <img
                 src={contactDetails && contactDetails[index]?.owner_photo_url ? contactDetails[index].owner_photo_url : User_fill}
-                alt="profile placeholder"
+                alt='profile placeholder'
                 style={{
                   height: "60px",
                   width: "60px",
@@ -494,7 +495,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
             </Box>
           </Grid>
         </Grid>
-        <Grid item xs={1} container justifyContent="flex-end">
+        <Grid item xs={1} container justifyContent='flex-end'>
           <Box
             onClick={() => {
               console.log("Next button clicked");
@@ -504,9 +505,9 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
               paddingRight: "10px",
             }}
           >
-            <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width='33' height='33' viewBox='0 0 33 33' fill='none' xmlns='http://www.w3.org/2000/svg'>
               <path
-                d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z"
+                d='M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z'
                 fill={theme.typography.secondary.white}
               />
             </svg>
@@ -591,16 +592,16 @@ const OwnerInformation = ({ contactDetails, index }) => {
       <Grid item xs={12}>
         <Typography sx={{ fontSize: "20px", fontWeight: "bold", color: "#160449", marginTop: "10px" }}>CONTACT INFORMATION</Typography>
       </Grid>
-      <Grid container direction="row" item xs={12} alignContent="center">
-        <img src={EmailIcon} alt="email" />
+      <Grid container direction='row' item xs={12} alignContent='center'>
+        <img src={EmailIcon} alt='email' />
         <Typography sx={{ color: "#160449" }}>{contactDetails && contactDetails[index]?.owner_email}</Typography>
       </Grid>
-      <Grid container direction="row" item xs={12} alignContent="center">
-        <img src={PhoneIcon} alt="phone" />
+      <Grid container direction='row' item xs={12} alignContent='center'>
+        <img src={PhoneIcon} alt='phone' />
         <Typography sx={{ color: "#160449" }}>{contactDetails && contactDetails[index]?.owner_phone_number}</Typography>
       </Grid>
-      <Grid container direction="row" item xs={12} alignItems="center">
-        <img src={AddressIcon} alt="address" />
+      <Grid container direction='row' item xs={12} alignItems='center'>
+        <img src={AddressIcon} alt='address' />
 
         <Typography sx={{ color: "#160449" }}>
           {contactDetails &&
@@ -703,8 +704,8 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty} />
         </Grid>
       </Grid>
-      <Grid container direction="row" sx={{ padding: "10px" }}>
-        <Grid container item xs={6} justifyContent="center">
+      <Grid container direction='row' sx={{ padding: "10px" }}>
+        <Grid container item xs={6} justifyContent='center'>
           <Button
             sx={{
               textTransform: "none",
@@ -716,7 +717,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
             <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>New {`(${newContracts?.length})`}</Typography>
           </Button>
         </Grid>
-        <Grid container item xs={6} justifyContent="center">
+        <Grid container item xs={6} justifyContent='center'>
           <Button
             sx={{
               textTransform: "none",
@@ -838,8 +839,8 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
           }
         >
           <Badge
-            overlap="circular"
-            color="error"
+            overlap='circular'
+            color='error'
             badgeContent={getNumOfMaintenanceReqs(params.row.property_uid)}
             anchorOrigin={{
               vertical: "top",
@@ -856,7 +857,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
               // onClick={() => navigate("/maintenance")}
               sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" }, alignContent: "left", justifyContent: "left" }}
             >
-              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "30px", height: "30px" }} />
+              <img src={maintenanceIcon} alt='maintenance icon' style={{ width: "30px", height: "30px" }} />
             </Button>
           </Badge>
         </Box>
@@ -994,7 +995,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
   return (
     <>
       <Grid container item xs={12} sx={{ padding: "10px" }}>
-        <Grid container justifyContent="center" item xs={3}>
+        <Grid container justifyContent='center' item xs={3}>
           <Box
             sx={{
               display: "flex",
@@ -1006,7 +1007,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>CASHFLOW</Typography>
           </Box>
         </Grid>
-        <Grid container justifyContent="center" item xs={3}>
+        <Grid container justifyContent='center' item xs={3}>
           <Button
             sx={{
               width: "150px",
@@ -1021,7 +1022,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Month</Typography>
           </Button>
         </Grid>
-        <Grid container justifyContent="center" item xs={3}>
+        <Grid container justifyContent='center' item xs={3}>
           <Button
             sx={{
               width: "150px",
@@ -1036,7 +1037,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
           </Button>
         </Grid>
-        <Grid container justifyContent="center" item xs={3}>
+        <Grid container justifyContent='center' item xs={3}>
           <Button
             sx={{
               width: "200px",
