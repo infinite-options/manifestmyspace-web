@@ -37,9 +37,10 @@ const SearchManager = ({ searchManagerState }) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
+  //console.log('----search manager searchManagerState---', searchManagerState)
   const managerState = location.state || searchManagerState;
   const { index, propertyData, isDesktop } = managerState || {};
-  console.log('---propertyData searchmanager---', propertyData, index);
+  //console.log('---propertyData searchmanager---', propertyData, index);
   const [displayed_managers, set_displayed_managers] = useState([]);
   const [all_managers, set_all_managers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

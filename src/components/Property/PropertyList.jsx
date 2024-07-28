@@ -212,13 +212,17 @@ export default function PropertyList({}) {
 	const [showSearchManager, setShowSearchManager] = useState(false);
 	const [searchManagerState, setSearchManagerState] = useState(null);
 
-	const handleShowSearchManager = async (state) => {
+  const handleShowSearchManager = async (state) => {
     console.log('----handleShowSearchManager---', state);
+    setSearchManagerState(state);
+  };
 
-		await setSearchManagerState(state);
-    console.log('----setting searchManagerState---', searchManagerState);
-		await setShowSearchManager(true);
-	};
+  useEffect(() => {
+    if (searchManagerState !== null) {
+      console.log('----setting searchManagerState---', searchManagerState);
+      setShowSearchManager(true);
+    }
+  }, [searchManagerState]);
 
 	function numberOfMaintenanceItems(maintenanceItems) {
 		console.log(maintenanceItems);
@@ -876,7 +880,9 @@ export default function PropertyList({}) {
 										property_endpoint_resp={rawPropertyData}
 									/>
 								) : showSearchManager && searchManagerState ? (
-									<SearchManager state={searchManagerState} />
+                  (() => {
+                    return <SearchManager searchManagerState={searchManagerState} />;
+                  })()
 								) : (
 									<PropertyDetail2
 										index={propertyIndex}

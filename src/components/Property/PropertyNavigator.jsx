@@ -562,6 +562,7 @@ export default function PropertyNavigator({
     } else {
       // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
       const state = { index: currentIndex, propertyData , isDesktop };
+      //console.log('inside prop nav----', state);
       onShowSearchManager(state);
     }
   };
