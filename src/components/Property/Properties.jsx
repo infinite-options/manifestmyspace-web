@@ -16,7 +16,7 @@ import APIConfig from "../../utils/APIConfig";
 import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
 
-function Properties() {
+function Properties(props) {
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
 
@@ -34,6 +34,19 @@ function Properties() {
   const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
+
+  const [LHS, setLHS] = useState(location.state?.showLHS || "List");
+  const [RHS, setRHS] = useState(location.state?.showLHS || "PropertyList");
+
+  // useEffect(() => {
+  //   setLHS(props.showLHS);
+  //   setRHS(props.showRHS);
+  // }, []);
+
+  useEffect(() => {
+    console.log("In Properties - LHS: ", LHS);
+    console.log("In Properties - RHS: ", RHS);
+  }, [LHS, RHS]);
 
   useEffect(() => {
     // console.log("PropertyList useEffect");
@@ -185,7 +198,7 @@ function Properties() {
         ) : ( */}
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            <PropertiesList index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
+            <PropertiesList index={propertyIndex} LHS={LHS} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
           </Grid>
           <Grid item xs={12} md={8}>
             {/* <Typography
@@ -197,7 +210,7 @@ function Properties() {
             >
               Proprty Navigator
             </Typography> */}
-            <PropertyNavigator index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
+            <PropertyNavigator index={propertyIndex} RHS={RHS} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
           </Grid>
         </Grid>
       </Container>
