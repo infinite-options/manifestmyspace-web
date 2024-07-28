@@ -18,8 +18,7 @@ import PropertyDetail2 from "./PropertyDetail2";
 // import PMRent from "../Rent/PMRent/PMRent";
 import PropertyForm from "../Property/PropertyForm";
 
-function PropertiesSearch() {
-  const SearchBar = ({ propertyList, setFilteredItems }) => {
+function PropertiesSearch({ propertyList, setFilteredItems}) {
     const [searchTerm, setSearchTerm] = useState("");
 
     const handleSearchChange = (event) => {
@@ -70,6 +69,5 @@ function PropertiesSearch() {
       </Paper>
     );
   };
-}
 
 export default PropertiesSearch;

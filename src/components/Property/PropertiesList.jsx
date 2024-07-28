@@ -19,7 +19,7 @@ import PropertyDetail2 from "./PropertyDetail2";
 import PropertyForm from "../Property/PropertyForm";
 import PropertiesSearch from "./PropertiesSearch";
 
-function PropertiesList() {
+function PropertiesList({ setSelectedPropertyIndex}) {
   const location = useLocation();
   const { getProfileId, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
@@ -178,6 +178,7 @@ function PropertiesList() {
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
     console.log("List Item Clicked", property, i, displayedItems);
     handlePropertyDetailNavigation(i, displayedItems);
+    setSelectedPropertyIndex(i);
   };
 
   function handlePropertyDetailNavigation(index, propertyList) {
@@ -492,7 +493,7 @@ function PropertiesList() {
   }
 
   return (
-    <Grid item xs={12} md={propertyList.length >= 0 && isDesktop ? 4 : 12}>
+    <Grid item xs={12} md={10}>
       <Box
         sx={{
           display: "flex",
@@ -520,7 +521,7 @@ function PropertiesList() {
                   fontSize: theme.typography.largeFont,
                 }}
               >
-                All Properties List
+                All Properties
               </Typography>
             </Box>
             <Button position='absolute' right={0} sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }} onClick={() => setShowPropertyForm(true)}>
