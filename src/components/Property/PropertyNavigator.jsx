@@ -68,6 +68,7 @@ const getAppColor = (app) =>
   app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
 
 export default function PropertyNavigator({
+  onShowSearchManager,
   index,
   propertyList,
   allRentStatus,
@@ -559,7 +560,9 @@ export default function PropertyNavigator({
         },
       });
     } else {
-      navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
+      // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
+      const state = { index: currentIndex, propertyData , isDesktop };
+      onShowSearchManager(state);
     }
   };
 

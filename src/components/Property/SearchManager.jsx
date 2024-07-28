@@ -32,12 +32,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // SearchManager Component
-const SearchManager = () => {
+const SearchManager = ({ searchManagerState }) => {
   // State declarations
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { index, propertyData, isDesktop } = location.state;
+  const managerState = location.state || searchManagerState;
+  const { index, propertyData, isDesktop } = managerState || {};
+  console.log('---propertyData searchmanager---', propertyData, index);
   const [displayed_managers, set_displayed_managers] = useState([]);
   const [all_managers, set_all_managers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -244,6 +246,7 @@ function DocumentCard(props) {
   let feesArray = JSON.parse(obj.business_services_fees);
 
   const handleRequestQuotes = async (obj) => {
+    console.log('---handle request quotes---', propertyData, index);
 
     navigate("/requestQuotes",{
       state:{
