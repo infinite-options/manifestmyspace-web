@@ -198,6 +198,7 @@ function PropertyRentWidget(props) {
               borderRadius: "5px",
             }}
             onClick={() => {
+              console.log("Clicked 1");
               navigate(propertyRoutingBasedOnSelectedRole());
             }}
           >
@@ -229,10 +230,11 @@ function PropertyRentWidget(props) {
               return (
                 <MenuItem
                   key={property.property_uid}
-                  onClick={() => {
-                    console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
-                    navigate(`/properties`, { state: { index, propertyList, rawPropertyData } });
-                  }}
+                  // onClick={() => {
+                  //   console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
+                  //   navigate(`/propertiesPM`, { state: { index, propertyList, rawPropertyData } });
+                  // }}
+                  onClick={() => navigate("/propertiesPM", { state: { index: { index }, showLHS: "Rent", showRHS: "Details" } })}
                 >
                   {`${property.property_address}${property.property_unit ? `, Unit ${property.property_unit}` : ""}`}
                 </MenuItem>
@@ -342,7 +344,8 @@ function PropertyRentWidget(props) {
                 fill: "#160449",
                 fontWeight: "bold",
               }}
-              onClick={() => navigate("/properties", { state: { showPropertyForm: true, rawPropertyData: rawPropertyData } })}
+              // onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true, rawPropertyData: rawPropertyData } })}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "Details" } })}
             >
               Add your first
               <tspan x={130} y={145}>
@@ -434,14 +437,15 @@ const CustomLegend = ({ data, navigate }) => {
         position: "relative",
         paddingBottom: "10px",
       }}
-      onClick={() => {
-        if (isMobile) {
-          navigate("/pmRent");
-        } else {
-          sessionStorage.setItem("isrent", "true");
-          navigate("/properties");
-        }
-      }}
+      // onClick={() => {
+      //   if (isMobile) {
+      //     navigate("/pmRent");
+      //   } else {
+      //     sessionStorage.setItem("isrent", "true");
+      //     navigate("/propertiesPM");
+      //   }
+      // }}
+      onClick={() => navigate("/propertiesPM", { state: { showLHS: "Rent", showRHS: "Details" } })}
     >
       {/* <h2 className="mt-widget-title">Maintenance</h2> */}
       <Box

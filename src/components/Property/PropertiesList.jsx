@@ -32,6 +32,7 @@ function PropertiesList(props) {
   const [zipSortOrder, setZipSortOrder] = useState("asc");
   const [propertyIndex, setPropertyIndex] = useState(0);
   const [allRentStatus, setAllRentStatus] = useState([]);
+  const [LHS, setLHS] = useState("Rent");
   const [isFromRentWidget, setFromRentWidget] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
@@ -43,20 +44,23 @@ function PropertiesList(props) {
   // console.log("In Property List - displayList outside: ", displayedItems);
   console.log("In Property List - propertyIndex outside: ", propertyIndex);
   console.log("In Property List - rentStatus outside: ", allRentStatus);
+  console.log("In Property List - LHS outside: ", LHS);
 
   useEffect(() => {
     setPropertyList(props.propertyList);
     setDisplayedItems(props.propertyList);
     setPropertyIndex(props.index || 0);
     setAllRentStatus(props.allRentStatus);
-  }, [props.allRentStatus, props.index, props.propertyList]);
+    setLHS(props.LHS);
+  }, [props.LHS, props.allRentStatus, props.index, props.propertyList]);
 
   useEffect(() => {
     console.log("In Property List - propertyList: ", propertyList);
     console.log("In Property List - displayList: ", displayedItems);
     console.log("In Property List - propertyIndex: ", propertyIndex);
     console.log("In Property List - allRentStatus: ", allRentStatus);
-  }, [allRentStatus, displayedItems, propertyIndex, propertyList]);
+    console.log("In Property List - LHS: ", LHS);
+  }, [LHS, allRentStatus, displayedItems, propertyIndex, propertyList]);
 
   // ENDPOINT CALLS
   // CALL PROPERTIES ENDPOINT
@@ -603,58 +607,114 @@ function PropertiesList(props) {
           </Stack>
           <Box sx={{ padding: "10px" }}>
             <PropertiesSearch propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
-            <Box sx={{ marginTop: "20px" }}>
-              <DataGrid
-                getRowHeight={() => "auto"}
-                rows={rows}
-                columns={columns}
-                autoHeight
-                pageSizeOptions={[15]}
-                initialState={{
-                  pagination: {
-                    paginationModel: {
-                      pageSize: 15,
+
+            {LHS === "List" ? (
+              <Box sx={{ marginTop: "20px" }}>
+                <DataGrid
+                  getRowHeight={() => "auto"}
+                  rows={rows}
+                  columns={columns}
+                  autoHeight
+                  pageSizeOptions={[15]}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 15,
+                      },
                     },
-                  },
-                }}
-                onRowClick={onPropertyClick}
-                rowSelectionModel={[propertyIndex]}
-                onRowSelectionModelChange={(newSelection) => {
-                  if (newSelection.length > 0) {
-                    setPropertyIndex(newSelection[0]);
-                  }
-                }}
-                getRowSpacing={getRowSpacing}
-                sx={{
-                  "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                  "& .MuiDataGrid-row:hover": {
-                    cursor: "pointer",
-                  },
-                  "& .MuiDataGrid-cell": {
-                    padding: "0px",
-                    margin: "0px",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                  "& .MuiDataGrid-row.Mui-selected": {
-                    backgroundColor: "#949494",
-                  },
-                  [`& .${gridClasses.row}`]: {
-                    bgcolor: theme.palette.form.main, // Row background color
-                    "&:before": {
-                      content: '""',
-                      display: "block",
-                      height: "100%",
-                      backgroundColor: "#ffffff",
-                      position: "absolute",
-                      left: "0",
-                      right: "0",
-                      zIndex: "-1",
+                  }}
+                  onRowClick={onPropertyClick}
+                  rowSelectionModel={[propertyIndex]}
+                  onRowSelectionModelChange={(newSelection) => {
+                    if (newSelection.length > 0) {
+                      setPropertyIndex(newSelection[0]);
+                    }
+                  }}
+                  getRowSpacing={getRowSpacing}
+                  sx={{
+                    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                    "& .MuiDataGrid-row:hover": {
+                      cursor: "pointer",
                     },
-                  },
-                }}
-              />
-            </Box>
+                    "& .MuiDataGrid-cell": {
+                      padding: "0px",
+                      margin: "0px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                    "& .MuiDataGrid-row.Mui-selected": {
+                      backgroundColor: "#949494",
+                    },
+                    [`& .${gridClasses.row}`]: {
+                      bgcolor: theme.palette.form.main, // Row background color
+                      "&:before": {
+                        content: '""',
+                        display: "block",
+                        height: "100%",
+                        backgroundColor: "#ffffff",
+                        position: "absolute",
+                        left: "0",
+                        right: "0",
+                        zIndex: "-1",
+                      },
+                    },
+                  }}
+                />
+              </Box>
+            ) : (
+              <Box sx={{ marginTop: "200px" }}>
+                <DataGrid
+                  getRowHeight={() => "auto"}
+                  rows={rows}
+                  columns={columns}
+                  autoHeight
+                  pageSizeOptions={[15]}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 15,
+                      },
+                    },
+                  }}
+                  onRowClick={onPropertyClick}
+                  rowSelectionModel={[propertyIndex]}
+                  onRowSelectionModelChange={(newSelection) => {
+                    if (newSelection.length > 0) {
+                      setPropertyIndex(newSelection[0]);
+                    }
+                  }}
+                  getRowSpacing={getRowSpacing}
+                  sx={{
+                    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                    "& .MuiDataGrid-row:hover": {
+                      cursor: "pointer",
+                    },
+                    "& .MuiDataGrid-cell": {
+                      padding: "0px",
+                      margin: "0px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                    "& .MuiDataGrid-row.Mui-selected": {
+                      backgroundColor: "#949494",
+                    },
+                    [`& .${gridClasses.row}`]: {
+                      bgcolor: theme.palette.form.main, // Row background color
+                      "&:before": {
+                        content: '""',
+                        display: "block",
+                        height: "100%",
+                        backgroundColor: "#ffffff",
+                        position: "absolute",
+                        left: "0",
+                        right: "0",
+                        zIndex: "-1",
+                      },
+                    },
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </Paper>
       </Box>

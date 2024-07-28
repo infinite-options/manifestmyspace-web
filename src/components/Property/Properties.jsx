@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
@@ -17,7 +18,7 @@ import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
 import EditProperty from "./EditProperty";
 
-function Properties() {
+function Properties(props) {
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
 
@@ -38,6 +39,20 @@ function Properties() {
 
   const [view, setView] = useState("navigator"); 
   const [page, setPage] = useState(""); 
+
+  // LHS , RHS
+  const [LHS, setLHS] = useState(location.state?.showLHS || "List");
+  const [RHS, setRHS] = useState(location.state?.showLHS || "PropertyList");
+
+  // useEffect(() => {
+  //   setLHS(props.showLHS);
+  //   setRHS(props.showRHS);
+  // }, []);
+
+  useEffect(() => {
+    console.log("In Properties - LHS: ", LHS);
+    console.log("In Properties - RHS: ", RHS);
+  }, [LHS, RHS]);
 
   useEffect(() => {
     // console.log("PropertyList useEffect");
@@ -198,12 +213,7 @@ function Properties() {
         ) : ( */}
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            <PropertiesList 
-            index={propertyIndex} 
-            propertyList={propertyList} 
-            allRentStatus={allRentStatus} 
-            isDesktop={isDesktop} 
-            contracts={allContracts} />
+            <PropertiesList index={propertyIndex} LHS={LHS} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
           </Grid>
           <Grid item xs={12} md={8}>
             {/* <Typography
@@ -218,6 +228,7 @@ function Properties() {
             {view == "navigator" ? (
                 <PropertyNavigator 
                 index={propertyIndex} 
+                RHS={RHS} 
                 propertyList={propertyList} 
                 allRentStatus={allRentStatus} 
                 isDesktop={isDesktop} 
