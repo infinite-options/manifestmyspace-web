@@ -31,7 +31,7 @@ function PropertiesList(props) {
   const [statusSortOrder, setStatusSortOrder] = useState("asc");
   const [zipSortOrder, setZipSortOrder] = useState("asc");
   const [propertyIndex, setPropertyIndex] = useState(0);
-  const [allRentStatus, setAllRentStatus] = useState(props.allRentStatus);
+  const [allRentStatus, setAllRentStatus] = useState([]);
   const [isFromRentWidget, setFromRentWidget] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
@@ -41,18 +41,22 @@ function PropertiesList(props) {
 
   // console.log("In Property List - propertyList outside: ", propertyList);
   // console.log("In Property List - displayList outside: ", displayedItems);
+  console.log("In Property List - propertyIndex outside: ", propertyIndex);
+  console.log("In Property List - rentStatus outside: ", allRentStatus);
 
   useEffect(() => {
     setPropertyList(props.propertyList);
     setDisplayedItems(props.propertyList);
     setPropertyIndex(props.index || 0);
-  }, [props.index, props.propertyList]);
+    setAllRentStatus(props.allRentStatus);
+  }, [props.allRentStatus, props.index, props.propertyList]);
 
-  // useEffect(() => {
-  //   console.log("In Property List - propertyList: ", propertyList);
-  //   console.log("In Property List - displayList: ", displayedItems);
-  //   console.log("In Property List - propertyIndex: ", propertyIndex);
-  // }, [displayedItems, propertyIndex, propertyList]);
+  useEffect(() => {
+    console.log("In Property List - propertyList: ", propertyList);
+    console.log("In Property List - displayList: ", displayedItems);
+    console.log("In Property List - propertyIndex: ", propertyIndex);
+    console.log("In Property List - allRentStatus: ", allRentStatus);
+  }, [allRentStatus, displayedItems, propertyIndex, propertyList]);
 
   // ENDPOINT CALLS
   // CALL PROPERTIES ENDPOINT
