@@ -15,6 +15,7 @@ import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
+import EditProperty from "./EditProperty";
 
 function Properties() {
   const [dataReady, setDataReady] = useState(false);
@@ -34,6 +35,9 @@ function Properties() {
   const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
+
+  const [view, setView] = useState("navigator"); 
+  const [page, setPage] = useState(""); 
 
   useEffect(() => {
     // console.log("PropertyList useEffect");
@@ -175,6 +179,15 @@ function Properties() {
     });
   }
 
+  const handleEditClick = (editPage) => {
+    setPage(editPage)
+    setView("edit");
+  };
+
+  const handleBackClick = () => {
+    setView("navigator");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
@@ -185,7 +198,12 @@ function Properties() {
         ) : ( */}
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            <PropertiesList index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
+            <PropertiesList 
+            index={propertyIndex} 
+            propertyList={propertyList} 
+            allRentStatus={allRentStatus} 
+            isDesktop={isDesktop} 
+            contracts={allContracts} />
           </Grid>
           <Grid item xs={12} md={8}>
             {/* <Typography
@@ -197,7 +215,27 @@ function Properties() {
             >
               Proprty Navigator
             </Typography> */}
-            <PropertyNavigator index={propertyIndex} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
+            {view == "navigator" ? (
+                <PropertyNavigator 
+                index={propertyIndex} 
+                propertyList={propertyList} 
+                allRentStatus={allRentStatus} 
+                isDesktop={isDesktop} 
+                contracts={allContracts} 
+                onEditClick={handleEditClick}
+              />
+            ):(
+              <EditProperty
+              currentId={propertyList[propertyIndex].property_uid}
+              property={propertyList[propertyIndex]}
+              index={propertyIndex}
+              propertyList={propertyList}
+              page={page}
+              isDesktop={isDesktop}
+              allRentStatus={allRentStatus}
+              rawPropertyData={propertyList} 
+              onBackClick={handleBackClick}/>
+            )}
           </Grid>
         </Grid>
       </Container>

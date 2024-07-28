@@ -41,14 +41,16 @@ import AddressAutocompleteInput from "./AddressAutocompleteInput";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function EditProperty({}) {
+function EditProperty(props) {
   console.log("In Edit Property2 - rename to Edit Property");
   const { state } = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   // const propertyData = location.state.item
   // const propertyId = location.state.propertyId;
-  let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state;
+  let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData, onBackClick } = props;
+
+  
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   // console.log("Property Id", propertyId)
   console.log("Property Data in Edit Property", propertyData);
@@ -1268,3 +1270,5 @@ export default function EditProperty({}) {
     </ThemeProvider>
   );
 }
+
+export default EditProperty;
