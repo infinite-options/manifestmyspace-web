@@ -92,6 +92,8 @@ const ViewLease = (props) => {
   const [moveOutDate, setMoveOutDate] = useState(new Date());
   const [expanded, setExpanded] = useState(false);
 
+  // const [leaseID, setLeaseID] = useState("");
+
   useEffect(() => {
     setMoveOut(formatDate(moveOutDate));
   }, [moveOutDate]);
@@ -167,21 +169,23 @@ const ViewLease = (props) => {
     setConfirmEndLeaseDialogOpen(false);
     navigate(-1);
   };
-  const leaseID = location.state.lease_id; //'300-000005';
-  const propertyUID = location.state.property_uid;
-  const isDesktop = location.state.isDesktop;
-  const index = location.state.index;
-
   // console.log(location.state)
   // console.log("leaseID", leaseID)
   // console.log("propertyUID", propertyUID)
+
+  const leaseID = props.lease_id ? props.lease_id : location.state.lease_id;
+  const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
+  const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
+  const index = props.lease_id ? props.index : location.state.index;
 
   useEffect(() => {
     setShowSpinner(true);
     // axios.get(`http://localhost:4000/leaseDetails/${getProfileId()}`).then((res) => {
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
       const data = res.data["Lease_Details"].result;
+      // console.log("FETCHING THE DATA ", data);
       // setFetchData(data);
+
       data.forEach((lease) => {
         if (lease.lease_uid === leaseID) {
           console.log(JSON.parse(lease.lease_fees));

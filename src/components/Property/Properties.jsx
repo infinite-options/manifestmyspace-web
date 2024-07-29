@@ -16,6 +16,7 @@ import APIConfig from "../../utils/APIConfig";
 import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
 import EditProperty from "./EditProperty";
+import ViewLease from "../Leases/ViewLease";
 
 function Properties(props) {
   const [dataReady, setDataReady] = useState(false);
@@ -41,6 +42,7 @@ function Properties(props) {
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
   const [page, setPage] = useState(""); 
 
+  // console.log("LEASE", propertyList[propertyIndex].lease_id)
   // useEffect(() => {
   //   setLHS(props.showLHS);
   //   setRHS(props.showRHS);
@@ -196,9 +198,16 @@ function Properties(props) {
     setRHS("EditProperty");
   };
 
+  const handleViewLeaseClick = () => {
+    // setPage("ViewLease");
+    console.log("View leases", propertyList[0].lease_uid)
+    setRHS("ViewLease");
+  }
+
   const handleBackClick = () => {
     setRHS("PropertyNavigator");
   };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -225,6 +234,7 @@ function Properties(props) {
                 isDesktop={isDesktop} 
                 contracts={allContracts} 
                 onEditClick={handleEditClick}
+                onViewLeaseClick={handleViewLeaseClick}
               />
             )}
             {RHS === "EditProperty" && (
@@ -238,6 +248,14 @@ function Properties(props) {
                 allRentStatus={allRentStatus}
                 rawPropertyData={propertyList} 
                 onBackClick={handleBackClick}
+              />
+            )}
+            {RHS === "ViewLease" && (
+              <ViewLease
+              lease_id = {propertyList[0].lease_uid}
+              index = {propertyIndex}
+              isDesktop = {isDesktop}
+              onBackClick = {handleBackClick}
               />
             )}
           </Grid>

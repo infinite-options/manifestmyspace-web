@@ -75,6 +75,7 @@ export default function PropertyNavigator({
   contracts,
   isDesktop = true,
   onEditClick,
+  onViewLeaseClick,
   props,
 }) {
   // console.log('In Property Navigator');
@@ -719,6 +720,10 @@ export default function PropertyNavigator({
     handleOpen();
   };
 
+  const handleViewLeaseClick = () => {
+    onViewLeaseClick("ViewLease");
+  };
+
   const handleDeleteClick = (id) => {
     setAppliances(appliances.filter((appliance) => appliance.appliance_uid !== id));
   };
@@ -1349,15 +1354,16 @@ export default function PropertyNavigator({
                         },
                       }}
                       className=".MuiButton-icon"
-                      onClick={() =>
-                        navigate('/viewLease', {
-                          state: {
-                            lease_id: property.lease_uid,
-                            index: currentIndex,
-                            isDesktop: isDesktop,
-                          },
-                        })
-                      }
+                      onClick={handleViewLeaseClick}
+                      // onClick={() =>
+                      //   navigate('/viewLease', {
+                      //     state: {
+                      //       lease_id: property.lease_uid,
+                      //       index: currentIndex,
+                      //       isDesktop: isDesktop,
+                      //     },
+                      //   })
+                      // }
                     >
                       <img src={LeaseIcon} />
                     </Button>
@@ -1586,15 +1592,16 @@ export default function PropertyNavigator({
                         },
                       }}
                       className=".MuiButton-icon"
-                      onClick={() =>
-                        navigate('/viewLease', {
-                          state: {
-                            lease_id: property.lease_uid,
-                            index: currentIndex,
-                            isDesktop: isDesktop,
-                          },
-                        })
-                      }
+                      onClick={handleViewLeaseClick}
+                      // onClick={() =>
+                      //   navigate('/viewLease', {
+                      //     state: {
+                      //       lease_id: property.lease_uid,
+                      //       index: currentIndex,
+                      //       isDesktop: isDesktop,
+                      //     },
+                      //   })
+                      // }
                     >
                       <img src={LeaseIcon} />
                     </Button>
