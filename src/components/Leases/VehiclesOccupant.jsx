@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData }) => {
+const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData, dataKey }) => {
     console.log('Inside vehicles occupants', leaseVehicles);
     const [vehicles, setVehicles] = useState([]);
     const [open, setOpen] = useState(false);
@@ -134,14 +134,14 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                 const updatedRow = vehicles.map(veh => (veh.id === currentRow.id ? currentRow : veh));
                 //Save pets back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, { key: 'lease_vehicles', value: rowWithoutId }]);
+                setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
 
         } else {
-            setModifiedData((prev) => [...prev, { key: 'lease_vehicles', value: [...leaseVehicles, { ...currentRow }] }])
+            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...currentRow }] }])
             setIsUpdated(true);
         }
     };
@@ -155,7 +155,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     const handleDelete = (id) => {
         const filtered = vehicles.filter(veh => veh.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, { key: 'lease_vehicles', value: rowWithoutId }]);
+        setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
         setIsUpdated(true);
     };
 

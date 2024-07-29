@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData }) => {
+const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData, dataKey }) => {
   const [open, setOpen] = useState(false);
   const [currentRow, setcurrentRow] = useState(null);
   const color = theme.palette.form.main;
@@ -94,11 +94,11 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
       console.log("current row is", currentRow);
       const updatedDocuments = documents.map((doc) => (doc.id === currentRow.id ? currentRow : doc));
       const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
-      setModifiedData((prev) => [...prev, { key: "lease_documents", value: updatedDocsWithoutId }]);
+      setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
       setIsUpdated(true);
     } else {
       console.log("arr", newFiles);
-      setModifiedData((prev) => [...prev, { key: "lease_documents", value: documents }]);
+      setModifiedData((prev) => [...prev, { key: dataKey, value: documents }]);
       setModifiedData((prev) => [...prev, { key: "uploadedFiles", value: uploadedFiles }]);
       setIsUpdated(true);
     }
@@ -160,7 +160,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
     console.log("currentRow.id", currentRow.id);
     const updatedDocuments = documents.filter((doc) => doc.id !== currentRow.id);
     const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
-    setModifiedData((prev) => [...prev, { key: "lease_documents", value: updatedDocsWithoutId }]);
+    setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
     setModifiedData((prev) => [...prev, { key: "deleted_documents", value: [currentRow.link] }]);
     setIsUpdated(true);
   };
@@ -403,9 +403,11 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                     if (newFiles) {
                       //update document type
                       let newArr = [...newFiles];
-                      newArr[0].type = currentRow.type;
+                    //   newArr[0].type = currentRow.type;
+                      newArr[0].type = e.target.value;
                       setNewFiles(newArr);
-                      setuploadedFiles((prevFiles) => [...prevFiles, ...newArr]);
+                    //   setuploadedFiles((prevFiles) => [...prevFiles, ...newArr]);
+                      setuploadedFiles(() => [...newArr]); 
                     }
                   }}
                   size="small"

@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, setModifiedData, modifiedData }) => {
+const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey }) => {
     console.log('Inside Children occupants', leaseChildren);
     const [children, setChildren] = useState([]);
     const [open, setOpen] = useState(false);
@@ -136,14 +136,14 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                 const updatedRow = children.map(child => (child.id === currentRow.id ? currentRow : child));
                 //Save children back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, { key: 'lease_children', value: rowWithoutId }]);
+                setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
 
         } else {
-            setModifiedData((prev) => [...prev, { key: 'lease_children', value: [...leaseChildren, { ...currentRow }] }]);
+            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseChildren, { ...currentRow }] }]);
             setIsUpdated(true);
         }
     };
@@ -157,7 +157,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
     const handleDelete = (id) => {
         const filtered = children.filter(child => child.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, { key: 'lease_children', value: rowWithoutId }]);
+        setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
         setIsUpdated(true);
     };
 
