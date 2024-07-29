@@ -74,6 +74,7 @@ export default function PropertyNavigator({
   rawPropertyData,
   contracts,
   isDesktop = true,
+  onEditClick,
   props,
 }) {
   // console.log('In Property Navigator');
@@ -568,6 +569,8 @@ export default function PropertyNavigator({
       state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop },
     });
   };
+
+
 
   const getRentStatus = () => {
     try {
@@ -1225,20 +1228,7 @@ export default function PropertyNavigator({
                               width: '100%',
                             }}
                             size="small"
-                            onClick={() => {
-                              navigate('/editProperty', {
-                                state: {
-                                  currentId,
-                                  property,
-                                  index: currentIndex,
-                                  propertyList: propertyData,
-                                  page: 'edit_property',
-                                  isDesktop,
-                                  allRentStatus,
-                                  rawPropertyData,
-                                },
-                              });
-                            }}
+                            onClick={() => onEditClick("edit_property")}
                           >
                             <PostAddIcon sx={{ color: '#FFFFFF', fontSize: '18px' }} />
                             <Typography
@@ -1270,20 +1260,7 @@ export default function PropertyNavigator({
                               width: '100%',
                             }}
                             size="small"
-                            onClick={() => {
-                              navigate('/editProperty', {
-                                state: {
-                                  currentId,
-                                  property,
-                                  index: currentIndex,
-                                  propertyList: propertyData,
-                                  page: 'add_listing',
-                                  isDesktop,
-                                  allRentStatus,
-                                  rawPropertyData,
-                                },
-                              });
-                            }}
+                            onClick={() => onEditClick("add_listing")}
                           >
                             <PostAddIcon
                               sx={{ color: '#FFFFFF', fontSize: '18px', margin: '5px' }}
@@ -1315,20 +1292,7 @@ export default function PropertyNavigator({
                               width: '100%',
                             }}
                             size="small"
-                            onClick={() => {
-                              navigate('/editProperty', {
-                                state: {
-                                  currentId,
-                                  property,
-                                  index: currentIndex,
-                                  propertyList: propertyData,
-                                  page: 'edit_listing',
-                                  isDesktop,
-                                  allRentStatus,
-                                  rawPropertyData,
-                                },
-                              });
-                            }}
+                            onClick={() => onEditClick("edit_listing")}
                           >
                             <PostAddIcon
                               sx={{ color: '#FFFFFF', fontSize: '18px', margin: '5px' }}
