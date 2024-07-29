@@ -200,7 +200,7 @@ function Properties(props) {
 
   const handleViewLeaseClick = () => {
     // setPage("ViewLease");
-    console.log("View leases", propertyList[0].lease_uid)
+    console.log("View leases", propertyList[propertyIndex].lease_uid)
     setRHS("ViewLease");
   }
 
