@@ -1234,6 +1234,7 @@ export default function PropertyNavigator({
                             }}
                             size="small"
                             onClick={() => onEditClick("edit_property")}
+                            // onClick={handleEditButton}
                           >
                             <PostAddIcon sx={{ color: '#FFFFFF', fontSize: '18px' }} />
                             <Typography

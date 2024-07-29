@@ -5,6 +5,8 @@ const libraries = ['places'];
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
+  console.log('In address autocomplete, checking address', defaultValue);
+  console.log('In address autocomplete, checking gray', gray);
   const autocomplete = useRef(null);
 
   const extractAddress = (components) => {
@@ -82,7 +84,8 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
       {gray ? (
         <input
           type="text"
-          defaultValue={defaultValue ? defaultValue : ""}
+          defaultValue={defaultValue ? defaultValue : "x"}
+          value={defaultValue ? defaultValue : "x"}
           style={{
             backgroundColor: "#D6D5DA",
             borderRadius: 10,
@@ -98,7 +101,8 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
       ) : (
         <input
           type="text"
-          defaultValue={defaultValue ? defaultValue : ""}
+          defaultValue={defaultValue ? defaultValue : "y"}
+          value={defaultValue ? defaultValue : "y"}
           style={{
             boxSizing: 'border-box',
             border: '1px solid transparent',

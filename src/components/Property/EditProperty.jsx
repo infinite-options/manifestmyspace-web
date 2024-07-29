@@ -48,10 +48,10 @@ function EditProperty(props) {
   const { getProfileId } = useUser();
   // const propertyData = location.state.item
   // const propertyId = location.state.propertyId;
-  let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData, onBackClick } = props;
+  let { index, propertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick } = props;
+  console.log("In Edit Property3", index);
 
-  
-  const [propertyData, setPropertyData] = useState(propertyList[index]);
+  const [propertyData, setPropertyData] = useState([]);
   // console.log("Property Id", propertyId)
   console.log("Property Data in Edit Property", propertyData);
   const { user, selectedRole, selectRole, Name } = useUser();
@@ -109,39 +109,73 @@ function EditProperty(props) {
     "WI",
     "WY",
   ];
-  const [address, setAddress] = useState(propertyData.property_address);
-  const [city, setCity] = useState(propertyData.property_city);
-  const [propertyState, setPropertyState] = useState(propertyData.property_state);
-  const [zip, setZip] = useState(propertyData.property_zip);
-  const [propertyType, setPropertyType] = useState(propertyData.property_type);
-  const [squareFootage, setSquareFootage] = useState(propertyData.property_area);
-  const [bedrooms, setBedrooms] = useState(propertyData.property_num_beds);
-  const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
-  const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
-  const [utilities, setUtiltiies] = useState(propertyData.property_utilities);
-  const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
-  const [description, setDescription] = useState(propertyData.property_description);
-  const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [propertyState, setPropertyState] = useState("");
+  const [zip, setZip] = useState("");
+  const [propertyType, setPropertyType] = useState("");
+  const [squareFootage, setSquareFootage] = useState("");
+  const [bedrooms, setBedrooms] = useState("");
+  const [bathrooms, setBathrooms] = useState("");
+  const [isListed, setListed] = useState(false);
+  const [utilities, setUtiltiies] = useState([]);
+  const [activeDate, setActiveDate] = useState(null);
+  const [description, setDescription] = useState("");
+  const [selectedImageList, setSelectedImageList] = useState("");
   const [imageState, setImageState] = useState([]);
   const [deletedImageList, setDeletedImageList] = useState([]);
-  const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
+  const [favImage, setFavImage] = useState("");
   const [activeStep, setActiveStep] = useState(0);
-  const maxSteps = selectedImageList.length;
-  const [notes, setNotes] = useState(propertyData.property_notes);
-  const [unit, setUnit] = useState(propertyData.property_unit);
-  const [propertyValue, setPropertyValue] = useState(propertyData.property_value);
-  const [assessmentYear, setAssessmentYear] = useState(propertyData.property_value_year);
-  const [deposit, setDeposit] = useState(propertyData.property_deposit);
-  const [listedRent, setListedRent] = useState(propertyData.property_listed_rent);
-  const [petsAllowed, setPetsAllowed] = useState(propertyData.property_pets_allowed === 1 ? true : false);
-  const [depositForRent, setDepositForRent] = useState(propertyData.property_deposit_for_rent === 1 ? true : false);
-  const [taxes, setTaxes] = useState(propertyData.property_taxes);
-  const [mortgages, setMortgages] = useState(propertyData.property_mortgages);
-  const [insurance, setInsurance] = useState(propertyData.property_insurance);
-  const [communityAmenities, setCommunityAmenities] = useState(propertyData.property_amenities_community);
-  const [unitAmenities, setUnitAmenities] = useState(propertyData.property_amenities_unit);
-  const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
+  const [maxSteps, setMaxSteps] = useState(0);
+  const [notes, setNotes] = useState("");
+  const [unit, setUnit] = useState("");
+  const [propertyValue, setPropertyValue] = useState("");
+  const [assessmentYear, setAssessmentYear] = useState("");
+  const [deposit, setDeposit] = useState("");
+  const [listedRent, setListedRent] = useState("");
+  const [petsAllowed, setPetsAllowed] = useState(false);
+  const [depositForRent, setDepositForRent] = useState(false);
+  const [taxes, setTaxes] = useState("");
+  const [mortgages, setMortgages] = useState("");
+  const [insurance, setInsurance] = useState("");
+  const [communityAmenities, setCommunityAmenities] = useState("");
+  const [unitAmenities, setUnitAmenities] = useState("");
+  const [nearbyAmenities, setNearbyAmenities] = useState("");
   // const [page, setPage] = useState("Edit");
+
+  useEffect(() => {
+    const property = propertyList[index];
+    setPropertyData(property);
+    setAddress(property.property_address);
+    setCity(property.property_city);
+    setPropertyState(property.property_state);
+    setZip(property.property_zip);
+    setPropertyType(property.property_type);
+    setSquareFootage(property.property_area);
+    setBedrooms(property.property_num_beds);
+    setBathrooms(property.property_num_baths);
+    setListed(property.property_available_to_rent === 1 ? true : false);
+    setUtiltiies(property.property_utilities);
+    setActiveDate(property.property_active_date);
+    setDescription(property.property_description);
+    setSelectedImageList(JSON.parse(property.property_images));
+    setFavImage(property.property_favorite_image);
+    setMaxSteps(selectedImageList.length);
+    setNotes(property.property_notes);
+    setUnit(property.property_unit);
+    setPropertyValue(property.property_value);
+    setAssessmentYear(property.property_value_year);
+    setDeposit(property.property_deposit);
+    setListedRent(property.property_listed_rent);
+    setPetsAllowed(property.property_pets_allowed === 1 ? true : false);
+    setDepositForRent(property.property_deposit_for_rent === 1 ? true : false);
+    setTaxes(property.property_taxes);
+    setMortgages(property.property_mortgages);
+    setInsurance(property.property_insurance);
+    setCommunityAmenities(property.property_amenities_community);
+    setUnitAmenities(property.property_amenities_unit);
+    setNearbyAmenities(property.property_amenities_nearby);
+  }, [index])
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -211,31 +245,31 @@ function EditProperty(props) {
     return mappedResults;
   };
 
-  const utilitiesObject = JSON.parse(propertyData.property_utilities);
-  console.log("UTILITIES OBJECT", utilitiesObject);
-  let utilitiesInUIDForm = {};
-  let mappedUtilities2 = {};
-  useEffect(() => {
-    if (utilitiesObject) {
-      console.log("***********************************EditProperty useEffect*************************************************");
-      for (const utility of utilitiesObject) {
-        console.log(utility.utility_type_id, utility.utility_payer_id);
-        utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
-      }
-      console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+  // const utilitiesObject = JSON.parse(utilities);
+  // console.log("UTILITIES OBJECT", utilitiesObject);
+  // let utilitiesInUIDForm = {};
+  // let mappedUtilities2 = {};
+  // useEffect(() => {
+  //   if (utilitiesObject) {
+  //     console.log("***********************************EditProperty useEffect*************************************************");
+  //     for (const utility of utilitiesObject) {
+  //       console.log(utility.utility_type_id, utility.utility_payer_id);
+  //       utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+  //     }
+  //     console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
 
-      // setUtilitiesPaidBy(utilitiesInUIDForm)
-      mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-      console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-      console.log("   ", mappedUtilities2);
-      setMappedUtilitiesPaidBy(mappedUtilities2);
-    } else {
-      setMappedUtilitiesPaidBy(defaultUtilities);
-      setIsDefaultUtilities(true);
-    }
-    loadImages();
-    console.log("****************************************EditProperty useEffect********************************************");
-  }, []);
+  //     // setUtilitiesPaidBy(utilitiesInUIDForm)
+  //     mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
+  //     console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+  //     console.log("   ", mappedUtilities2);
+  //     setMappedUtilitiesPaidBy(mappedUtilities2);
+  //   } else {
+  //     setMappedUtilitiesPaidBy(defaultUtilities);
+  //     setIsDefaultUtilities(true);
+  //   }
+  //   loadImages();
+  //   console.log("****************************************EditProperty useEffect********************************************");
+  // }, []);
 
   useEffect(() => {
     console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
@@ -319,9 +353,9 @@ function EditProperty(props) {
   const handleBackButton = (e) => {
     e.preventDefault();
     console.log("handleBackButton");
-    if(isDesktop == true){
-      navigate('/properties', {state:{index:index}});
-    }else{
+    if (isDesktop == true) {
+      navigate('/properties', { state: { index: index } });
+    } else {
       navigate(-1);
     }
   };
@@ -492,17 +526,17 @@ function EditProperty(props) {
 
     const autoUpdate = async () => {
       const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
-      console.log('---updateResponse---',updateResponse);
+      console.log('---updateResponse---', updateResponse);
       // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
       const updatedJson = await updateResponse.json();
-      console.log('---updatedJson---',updatedJson);
+      console.log('---updatedJson---', updatedJson);
       const updatedProperty = updatedJson.Property.result[0];
-      console.log('---updatedProperty---',updatedProperty);
+      console.log('---updatedProperty---', updatedProperty);
       propertyList = propertyList.map((property) => {
         if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
         return property;
       });
-      console.log('---index---',index);
+      console.log('---index---', index);
       console.log("updatedPropertyList - ", propertyList);
       setPropertyData(propertyList[index]);
     };
@@ -521,10 +555,10 @@ function EditProperty(props) {
       await autoUpdate();
 
       console.log("propertyList after autoUpdate - ", propertyList);
-      if(isDesktop == true){
-        navigate('/properties', {state:{index:index}});
-      }else{
-        navigate("/propertyDetail", { state: { index:index, propertyList:propertyList, allRentStatus:allRentStatus, isDesktop:isDesktop, rawPropertyData:rawPropertyData } });
+      if (isDesktop == true) {
+        navigate('/properties', { state: { index: index } });
+      } else {
+        navigate("/propertyDetail", { state: { index: index, propertyList: propertyList, allRentStatus: allRentStatus, isDesktop: isDesktop, rawPropertyData: rawPropertyData } });
       }
     } catch (error) {
       console.error("Error:", error);
@@ -567,6 +601,7 @@ function EditProperty(props) {
   };
 
   const handleAddressSelect = (address) => {
+    console.log('handleAddressSelect', address);
     setAddress(address.street ? address.street : "");
     setCity(address.city ? address.city : "");
     setPropertyState(address.state ? address.state : "");
@@ -681,7 +716,19 @@ function EditProperty(props) {
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Address
                   </Typography>
-                  <AddressAutocompleteInput onAddressSelect={handleAddressSelect} defaultValue={`${address}, ${city}, ${propertyState}`} />
+                  <AddressAutocompleteInput onAddressSelect={handleAddressSelect} defaultValue={`${address}, ${city}, ${propertyState}`} gray={0}/> 
+                  {/* <TextField
+                    onChange={(e) => setAddress(e.target.value)}
+                    sx={{
+                      backgroundColor: "white",
+                      borderColor: "black",
+                      borderRadius: "7px",
+                    }}
+                    placeholder="Address"
+                    value={`${address}, ${city}, ${propertyState}`}
+                    size="small"
+                    fullWidth
+                  /> */}
                 </Grid>
 
                 {/* Text Field for Address */}
