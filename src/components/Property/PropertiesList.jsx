@@ -18,6 +18,7 @@ import PropertyDetail2 from "./PropertyDetail2";
 // import PMRent from "../Rent/PMRent/PMRent";
 import PropertyForm from "../Property/PropertyForm";
 import PropertiesSearch from "./PropertiesSearch";
+import PMRent from "../Rent/PMRent/PMRent";
 
 function PropertiesList(props) {
   console.log("In Property List: ", props.propertyList);
@@ -203,6 +204,12 @@ function PropertiesList(props) {
     console.log("List Item Clicked", property, i, displayedItems);
     handlePropertyDetailNavigation(i, displayedItems);
     // setSelectedPropertyIndex(i);
+  };
+
+  const onPropertyInRentWidgetClicked = (property_uid) => {
+    const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
+    console.log("onPropertyInRentWidgetClicked Clicked", i, displayedItems);
+    setPropertyIndex(i);
   };
 
   function handlePropertyDetailNavigation(index, propertyList) {
@@ -608,61 +615,16 @@ function PropertiesList(props) {
           <Box sx={{ padding: "10px" }}>
             <PropertiesSearch propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
 
-            {LHS === "List" ? (
+            {LHS === "Rent" ? (
               <Box sx={{ marginTop: "20px" }}>
-                <DataGrid
-                  getRowHeight={() => "auto"}
-                  rows={rows}
-                  columns={columns}
-                  autoHeight
-                  pageSizeOptions={[15]}
-                  initialState={{
-                    pagination: {
-                      paginationModel: {
-                        pageSize: 15,
-                      },
-                    },
-                  }}
-                  onRowClick={onPropertyClick}
-                  rowSelectionModel={[propertyIndex]}
-                  onRowSelectionModelChange={(newSelection) => {
-                    if (newSelection.length > 0) {
-                      setPropertyIndex(newSelection[0]);
-                    }
-                  }}
-                  getRowSpacing={getRowSpacing}
-                  sx={{
-                    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                    "& .MuiDataGrid-row:hover": {
-                      cursor: "pointer",
-                    },
-                    "& .MuiDataGrid-cell": {
-                      padding: "0px",
-                      margin: "0px",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    },
-                    "& .MuiDataGrid-row.Mui-selected": {
-                      backgroundColor: "#949494",
-                    },
-                    [`& .${gridClasses.row}`]: {
-                      bgcolor: theme.palette.form.main, // Row background color
-                      "&:before": {
-                        content: '""',
-                        display: "block",
-                        height: "100%",
-                        backgroundColor: "#ffffff",
-                        position: "absolute",
-                        left: "0",
-                        right: "0",
-                        zIndex: "-1",
-                      },
-                    },
-                  }}
-                />
+                (
+                <Grid item xs={12} md={12}>
+                  <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} />
+                </Grid>
+                )
               </Box>
             ) : (
-              <Box sx={{ marginTop: "200px" }}>
+              <Box sx={{ marginTop: "20px" }}>
                 <DataGrid
                   getRowHeight={() => "auto"}
                   rows={rows}
