@@ -11,19 +11,21 @@ import { useUser } from "../../contexts/UserContext";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function PMQuotesRequested({}) {
+export default function PMQuotesRequested({pmQuoteRequestedState, setCurrentView}) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
-  console.log("--debug location.state--", location.state);
+  console.log("--debug location.state--", location.state || pmQuoteRequestedState);
+  console.log('----pmQuoteRequestedState.contracts---', pmQuoteRequestedState.contracts);
+  const PMQuotesDetails = location.state || pmQuoteRequestedState;
 
-  const [contracts, setContracts] = useState(location.state.contracts);
+  const [contracts, setContracts] = useState(PMQuotesDetails.contracts);
 
   const [refresh, setRefresh] = useState(false);
-  const property = location.state.propertyData;
-  const propertyId = property[location.state.index]?.property_uid;
-  const index = location.state.index;
-  const isDesktop = location.state.isDesktop;
+  const property = PMQuotesDetails.propertyData;
+  const propertyId = property[PMQuotesDetails.index]?.property_uid ;
+  const index = PMQuotesDetails.index;
+  const isDesktop = PMQuotesDetails.isDesktop;
 
   const statusList = ["New Quotes", "Contracts"];
   const statusColor = ["#3D5CAC", "#160449"];
@@ -281,7 +283,7 @@ export default function PMQuotesRequested({}) {
 
   const viewAllProperties = () => {
     if (isDesktop == true) {
-      navigate("/properties", { state: { index: index } });
+      setCurrentView('defaultview');
     } else {
       navigate(-1);
     }

@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // SearchManager Component
-const SearchManager = ({ searchManagerState, onShowRequestQuotes }) => {
+const SearchManager = ({ searchManagerState, onShowRequestQuotes, setCurrentView }) => {
   // State declarations
   const classes = useStyles();
   const navigate = useNavigate();
@@ -80,7 +80,8 @@ const SearchManager = ({ searchManagerState, onShowRequestQuotes }) => {
 
   const navigateToPrev = () => {
     if(isDesktop === true){
-      navigate('/properties', {state:{index:index}});
+      //navigate('/properties', {state:{index:index}});
+      setCurrentView('defaultview');
     }else{
       navigate(-1);
     }

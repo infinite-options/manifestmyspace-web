@@ -33,6 +33,7 @@ import PropertyForm from '../Property/PropertyForm';
 import SearchManager from '../Property/SearchManager';
 import RequestQuotes from '../Property/RequestQuotes';
 import ManagerDetails from "../Property/ManagerDetails";
+import PMQuotesRequested from "../Property/PMQuotesRequested";
 
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
@@ -218,6 +219,13 @@ export default function PropertyList({}) {
 const [requestQuotesState, setRequestQuotesState] = useState(null);
 
 const [managerDetailsState, setManagerDetailsState] = useState(null);
+const [pmQuoteRequestedState, setPmQuoteRequestedState] = useState(null);
+
+useEffect(() => {
+  if (pmQuoteRequestedState !== null) {
+    setCurrentView('pmquoterequested');
+  }
+}, [pmQuoteRequestedState]);
 
 const handleManagerDetails = async (state) => {
   setManagerDetailsState(state);
@@ -906,12 +914,14 @@ useEffect(() => {
 									/>
 								) : currentView === 'searchmanager' && searchManagerState ? (
                   (() => {
-                    return <SearchManager searchManagerState={searchManagerState} onShowRequestQuotes={handleShowRequestQuotes} />;
+                    return <SearchManager searchManagerState={searchManagerState} onShowRequestQuotes={handleShowRequestQuotes} setCurrentView={setCurrentView}/>;
                   })()
 								) : currentView === 'requestquote' && requestQuotesState ? (
                   <RequestQuotes requestQuotesState={requestQuotesState} setCurrentView={setCurrentView}/>
                 ): currentView === 'managerdetails' && managerDetailsState ? (
                   <ManagerDetails managerDetailsState={managerDetailsState} setCurrentView={setCurrentView}/>
+                ): currentView === 'pmquoterequested' && pmQuoteRequestedState ? (
+                  <PMQuotesRequested pmQuoteRequestedState={pmQuoteRequestedState} setCurrentView={setCurrentView}/>
                 ):(
 									<PropertyDetail2
 										index={propertyIndex}
@@ -921,6 +931,7 @@ useEffect(() => {
 										allContracts={allContracts}
 										onShowSearchManager={handleShowSearchManager}
                     setManagerDetailsState={setManagerDetailsState}
+                    setPmQuoteRequestedState={setPmQuoteRequestedState}
 									/>
 								)}
 							</Grid>
