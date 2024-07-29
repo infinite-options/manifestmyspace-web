@@ -617,29 +617,27 @@ function EditProperty(props) {
           alignItems: "center", // Center content horizontally
           width: "100%",
           minHeight: "100vh",
-          marginTop: theme.spacing(2), // Adjust this for desired distance from the top
           paddingBottom: "25px",
         }}
       >
         <Paper
           style={{
-            margin: "30px",
-            padding: theme.spacing(2),
+            marginTop: "15px",
             backgroundColor: theme.palette.form.main,
-            width: "85%", // Occupy full width with 25px margins on each side
+            width: "100%", // Occupy full width with 25px margins on each side
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },
             [theme.breakpoints.up("sm")]: {
               width: "50%",
             },
-            paddingTop: "10px",
+            // paddingTop: "10px",
           }}
         >
           <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
             <Box direction="row" justifyContent="center" alignItems="center">
               {page === "edit_property" && (
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, marginTop:'10px' }}>
                   Edit Property
                 </Typography>
               )}
@@ -966,10 +964,9 @@ function EditProperty(props) {
 
         <Paper
           style={{
-            margin: "30px",
-            padding: theme.spacing(2),
+            margin: "15px",
             backgroundColor: theme.palette.form.main,
-            width: "85%", // Occupy full width with 25px margins on each side
+            width: "100%", // Occupy full width with 25px margins on each side
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },
@@ -1054,10 +1051,9 @@ function EditProperty(props) {
 
         <Paper
           style={{
-            margin: "30px",
-            padding: theme.spacing(2),
+            margin: "15px",
             backgroundColor: theme.palette.form.main,
-            width: "85%", // Occupy full width with 25px margins on each side
+            width: "100%", // Occupy full width with 25px margins on each side
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },
@@ -1143,10 +1139,9 @@ function EditProperty(props) {
 
         <Paper
           style={{
-            margin: "30px",
-            padding: theme.spacing(2),
+            margin: "15px",
             backgroundColor: theme.palette.form.main,
-            width: "85%", // Occupy full width with 25px margins on each side
+            width: "100%", // Occupy full width with 25px margins on each side
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },

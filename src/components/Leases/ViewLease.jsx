@@ -238,11 +238,7 @@ const ViewLease = (props) => {
 
   const handleCloseButton = (e) => {
     e.preventDefault();
-    if (isDesktop === true) {
-      navigate("/properties", { state: { index: index } });
-    } else {
-      navigate(-1);
-    }
+    props.onBackClick();
   };
 
   const handleToggleAccordion = () => {
