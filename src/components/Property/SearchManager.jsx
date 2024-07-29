@@ -32,18 +32,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // SearchManager Component
-const SearchManager = () => {
+const SearchManager = ({ searchManagerState, onShowRequestQuotes, setCurrentView }) => {
   // State declarations
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { index, propertyData, isDesktop } = location.state;
+  //console.log('----search manager searchManagerState---', searchManagerState)
+  const managerState = location.state || searchManagerState;
+  const { index, propertyData, isDesktop } = managerState || {};
+  //console.log('---propertyData searchmanager---', propertyData, index);
   const [displayed_managers, set_displayed_managers] = useState([]);
   const [all_managers, set_all_managers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { getProfileId } = useUser();
   const [ownerId, setOwnerId] = useState(getProfileId());
   const [showSpinner, setShowSpinner] = useState(false);
+
+  const handleRequestQuotes = async (managerData) => {
+    onShowRequestQuotes({ managerData, propertyData, index, isDesktop });
+  };
 
   // Function to fetch manager information
   const get_manager_info = async () => {
@@ -73,7 +80,8 @@ const SearchManager = () => {
 
   const navigateToPrev = () => {
     if(isDesktop === true){
-      navigate('/properties', {state:{index:index}});
+      //navigate('/properties', {state:{index:index}});
+      setCurrentView('defaultview');
     }else{
       navigate(-1);
     }
@@ -208,7 +216,7 @@ const SearchManager = () => {
                   }}
                 />
                 {displayed_managers.map((m) => (
-                  <DocumentCard data={m} ownerId={ownerId} propertyData={propertyData} index={index} />
+                  <DocumentCard data={m} ownerId={ownerId} propertyData={propertyData} index={index} onRequestQuotes={handleRequestQuotes}/>
                 ))}
               </Box>
             </Box>
@@ -228,6 +236,7 @@ function DocumentCard(props) {
   const propertyData = props.propertyData;
   const index = props.index;
   const isDesktop = props.isDesktop;
+  const onRequestQuotes = props.onRequestQuotes;
   const navigate = useNavigate();
 
   console.log("BUSINESS Locations - ", obj.business_locations);
@@ -244,6 +253,7 @@ function DocumentCard(props) {
   let feesArray = JSON.parse(obj.business_services_fees);
 
   const handleRequestQuotes = async (obj) => {
+    console.log('---handle request quotes---', propertyData, index);
 
     navigate("/requestQuotes",{
       state:{
@@ -296,7 +306,7 @@ function DocumentCard(props) {
                             color: theme.palette.background.default,
                             borderRadius: "10px 10px 10px 10px",
                         }}
-                        onClick={() => handleRequestQuotes(obj)}
+                        onClick={() => onRequestQuotes(obj)}
                     >
                         Request Quote
                     </Button>

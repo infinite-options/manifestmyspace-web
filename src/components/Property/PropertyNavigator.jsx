@@ -64,8 +64,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 //const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
-const getAppColor = (app) =>
-  app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
+const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 export default function PropertyNavigator({
   index,
@@ -76,11 +75,16 @@ export default function PropertyNavigator({
   isDesktop = true,
   onEditClick,
   onViewLeaseClick,
+  setEditPropertyState,
+  setTenantAppNavState,
+  setPmQuoteRequestedState,
+  setManagerDetailsState,
+  onShowSearchManager,
   props,
 }) {
   // console.log('In Property Navigator');
-  // console.log(index, propertyList);	
-  console.log('props contracts', contracts);
+  // console.log(index, propertyList);
+  console.log("props contracts", contracts);
   const navigate = useNavigate();
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
 
@@ -146,9 +150,8 @@ export default function PropertyNavigator({
   const handleClose = () => setOpen(false);
 
   // Parse property images once outside the component
-  const parsedPropertyImages = propertyData && propertyData[currentIndex] && propertyData[currentIndex].property_images
-    ? JSON.parse(propertyData[currentIndex].property_images)
-    : [];
+  const parsedPropertyImages =
+    propertyData && propertyData[currentIndex] && propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
   // console.log('parsedImages:', parsedPropertyImages);
   // console.log('parsedImages.length:', parsedPropertyImages.length);
 
@@ -176,44 +179,42 @@ export default function PropertyNavigator({
   const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
 
   const color = theme.palette.form.main;
-  const [propertyId, setPropertyId] = useState(
-    propertyData && propertyData[currentIndex] ? propertyData[currentIndex].property_uid : null
-  );
-  let data = '';
+  const [propertyId, setPropertyId] = useState(propertyData && propertyData[currentIndex] ? propertyData[currentIndex].property_uid : null);
+  let data = "";
   const role = roleName();
-  if (role === 'Manager') {
-    data = 'maintenance_status';
-  } else if (role === 'Owner') {
-    data = 'maintenance_request_status';
+  if (role === "Manager") {
+    data = "maintenance_status";
+  } else if (role === "Owner") {
+    data = "maintenance_request_status";
   }
 
   const maintenanceColumns = [
     {
-      field: 'maintenance_request_uid',
-      headerName: 'UID',
+      field: "maintenance_request_uid",
+      headerName: "UID",
       flex: 1,
     },
     {
-      field: 'maintenance_request_created_date',
-      headerName: 'Created Date',
+      field: "maintenance_request_created_date",
+      headerName: "Created Date",
       flex: 1,
     },
     {
-      field: 'maintenance_title',
-      headerName: 'Title',
+      field: "maintenance_title",
+      headerName: "Title",
       flex: 1,
     },
 
     {
       field: data,
-      headerName: 'Status',
+      headerName: "Status",
       flex: 1,
     },
   ];
 
   function getPropertyList(data) {
-    const propertyList = data['Property'].result;
-    const applications = data['Applications'].result;
+    const propertyList = data["Property"].result;
+    const applications = data["Applications"].result;
     const appsMap = new Map();
     applications.forEach((a) => {
       const appsByProperty = appsMap.get(a.property_uid) || [];
@@ -222,7 +223,7 @@ export default function PropertyNavigator({
     });
     return propertyList.map((p) => {
       p.applications = appsMap.get(p.property_uid) || [];
-      p.applicationsCount = [...p.applications].filter((a) => a.lease_status === 'NEW').length;
+      p.applicationsCount = [...p.applications].filter((a) => a.lease_status === "NEW").length;
       return p;
     });
   }
@@ -234,11 +235,9 @@ export default function PropertyNavigator({
     const nextId = propertyList && propertyList[nextIndex] ? propertyList[nextIndex].property_uid : null;
     setCurrentId(nextId);
     setProperty(propertyList && propertyList[nextIndex]);
-    const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images
-      ? JSON.parse(propertyList[nextIndex].property_images)
-      : [];
+    const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
-	setContractsData(contracts);
+    setContractsData(contracts);
     setActiveStep(0);
   }, [index, propertyList]);
 
@@ -248,44 +247,44 @@ export default function PropertyNavigator({
       console.log("ROHIT - setting propertyId - ", propertyData[currentIndex].property_uid);
       setPropertyId(propertyData[currentIndex].property_uid);
 
-    //   const getContractsForOwner = async () => {
-    //     try {
-    //       const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-    //       // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-    //       if (!response.ok) {
-    //         console.log('Error fetching contracts data');
-    //       }
-    //       const contractsResponse = await response.json();
-    //       var count = 0;
-    //       const contracts = contractsResponse.result.filter((contract) => contract.property_id === propertyId);
-    //       contracts.forEach((contract) => {
-    //         if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
-    //           count++;
-    //         }
-    //       });
-    //       setContractsNewSent(count);
-    //       setContractsData(contracts);
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   };
-    //   getContractsForOwner();
-		var count = 0;
-		const filtered = contractsData.filter((contract) => contract.property_id === propertyId);
-		filtered.forEach((contract) => {
-		if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
-			count++;
-		}
-		});
-		setContractsNewSent(count);
-		setContractsData(contracts);
+      //   const getContractsForOwner = async () => {
+      //     try {
+      //       const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
+      //       // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+      //       if (!response.ok) {
+      //         console.log('Error fetching contracts data');
+      //       }
+      //       const contractsResponse = await response.json();
+      //       var count = 0;
+      //       const contracts = contractsResponse.result.filter((contract) => contract.property_id === propertyId);
+      //       contracts.forEach((contract) => {
+      //         if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
+      //           count++;
+      //         }
+      //       });
+      //       setContractsNewSent(count);
+      //       setContractsData(contracts);
+      //     } catch (error) {
+      //       console.log(error);
+      //     }
+      //   };
+      //   getContractsForOwner();
+      var count = 0;
+      const filtered = contractsData.filter((contract) => contract.property_id === propertyId);
+      filtered.forEach((contract) => {
+        if (contract.contract_status === "SENT" || contract.contract_status === "NEW") {
+          count++;
+        }
+      });
+      setContractsNewSent(count);
+      setContractsData(contracts);
 
       const rentDetails = getRentStatus();
       console.log("ROHIT - rentDetails - ", rentDetails);
       setpropertyRentStatus(rentDetails);
 
       if (property.leaseFees !== null) {
-        const rent = JSON.parse(propertyData[currentIndex].leaseFees).find((fee) => fee.fee_name === 'Rent');
+        const rent = JSON.parse(propertyData[currentIndex].leaseFees).find((fee) => fee.fee_name === "Rent");
         setrentFee(rent);
         // console.log('check rent', rent);
       } else {
@@ -293,7 +292,7 @@ export default function PropertyNavigator({
       }
 
       const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-      console.log('Appliances', propertyApplicances);
+      console.log("Appliances", propertyApplicances);
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
         getApplianceCategories();
@@ -302,33 +301,28 @@ export default function PropertyNavigator({
     }
   }, [currentIndex, propertyId]);
 
-  const tenant_detail =
-    property && property.lease_start && property.tenant_uid
-      ? `${property.tenant_first_name} ${property.tenant_last_name}`
-      : 'No Tenant';
-  const manager_detail = property && property.business_uid ? `${property.business_name}` : 'No Manager';
+  const tenant_detail = property && property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
+  const manager_detail = property && property.business_uid ? `${property.business_name}` : "No Manager";
   const [arrowButton1_color, set_arrow1_color] = useState(
-    tenant_detail === 'No Tenant' && manager_detail === 'No Manager'
-      ? theme.typography.common.gray
-      : theme.typography.common.blue
+    tenant_detail === "No Tenant" && manager_detail === "No Manager" ? theme.typography.common.gray : theme.typography.common.blue
   );
 
-//   useEffect(() => {
-//     let profileId = getProfileId();
-//     // console.log('getProfileID', getProfileId());
-//     if (profileId.startsWith('600')) {
-//       maintenanceManagerDataCollectAndProcess(
-//         setMaintenanceReqData,
-//         setShowSpinner,
-//         setDisplayMaintenanceData,
-//         profileId
-//       );
-//     } else if (profileId.startsWith('110')) {
-//       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
-//     } else if (profileId.startsWith('200')) {
-//       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
-//     }
-//   }, [currentIndex, propertyId]);
+  //   useEffect(() => {
+  //     let profileId = getProfileId();
+  //     // console.log('getProfileID', getProfileId());
+  //     if (profileId.startsWith('600')) {
+  //       maintenanceManagerDataCollectAndProcess(
+  //         setMaintenanceReqData,
+  //         setShowSpinner,
+  //         setDisplayMaintenanceData,
+  //         profileId
+  //       );
+  //     } else if (profileId.startsWith('110')) {
+  //       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
+  //     } else if (profileId.startsWith('200')) {
+  //       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
+  //     }
+  //   }, [currentIndex, propertyId]);
 
   let dashboard_id = getProfileId();
   useEffect(() => {
@@ -338,11 +332,11 @@ export default function PropertyNavigator({
         const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
         // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
         if (!response.ok) {
-          throw new Error('Failed to fetch dashboard data');
+          throw new Error("Failed to fetch dashboard data");
         }
         const jsonData = await response.json();
         setHappinessData(jsonData.HappinessMatrix);
-        setdataforhappiness(jsonData)
+        setdataforhappiness(jsonData);
       } catch (error) {
         console.error(error);
       }
@@ -352,23 +346,23 @@ export default function PropertyNavigator({
   }, [dashboard_id]);
 
   function getColorStatusBasedOnSelectedRole() {
-    if (role === 'Manager') {
+    if (role === "Manager") {
       return theme.colorStatusPMO;
-    } else if (role === 'Owner') {
+    } else if (role === "Owner") {
       return theme.colorStatusO;
-    } else if (role === 'Maintenance') {
+    } else if (role === "Maintenance") {
       return theme.colorStatusMM;
-    } else if (role === 'PM Employee') {
+    } else if (role === "PM Employee") {
       return theme.colorStatusPMO;
-    } else if (role === 'Maintenance Employee') {
+    } else if (role === "Maintenance Employee") {
       return theme.colorStatusMM;
-    } else if (role === 'Tenant') {
+    } else if (role === "Tenant") {
       return theme.colorStatusTenant;
     }
   }
 
   const handleOwnerClick = (ownerData) => {
-    navigate('/ownerContactDetailsHappinessMatrix', {
+    navigate("/ownerContactDetailsHappinessMatrix", {
       // navigate(`/ownerContactTest`, {
       state: {
         ownerUID: ownerData,
@@ -384,7 +378,7 @@ export default function PropertyNavigator({
   function handleOnClickNavigateToMaintenance(row) {
     const role = roleName();
     console.log(role);
-    let status = 'NEW REQUEST';
+    let status = "NEW REQUEST";
     // console.log('initial Status: ', status);
     // console.log('handleOnClickNavigateToMaintenance');
     // console.log('row', row);
@@ -398,39 +392,37 @@ export default function PropertyNavigator({
     // console.log('Row1: ', row.row);
     // console.log('Row2: ', row.row.maintenance_status);
 
-    if (role === 'Manager') {
+    if (role === "Manager") {
       // These maitenance_status fields work for a Property Manager.  Need to make this Role Specific
       status = row.row.maintenance_status;
       // console.log('Manager status', status);
 
-      if (status === 'NEW' || status === 'INFO') {
-        status = 'NEW REQUEST';
-      } else if (status === 'PROCESSING') {
-        status = 'QUOTES REQUESTED';
-      } else if (status === 'CANCELLED') {
-        status = 'COMPLETED';
+      if (status === "NEW" || status === "INFO") {
+        status = "NEW REQUEST";
+      } else if (status === "PROCESSING") {
+        status = "QUOTES REQUESTED";
+      } else if (status === "CANCELLED") {
+        status = "COMPLETED";
       }
     }
 
-    if (role === 'Owner') {
+    if (role === "Owner") {
       // Owner Status
       status = row.row.maintenance_request_status;
       // console.log('Owner status', status);
 
-      if (status === 'NEW') {
-        status = 'NEW REQUEST';
-      } else if (status === 'INFO') {
-        status = 'INFO REQUESTED';
+      if (status === "NEW") {
+        status = "NEW REQUEST";
+      } else if (status === "INFO") {
+        status = "INFO REQUESTED";
       }
     }
 
     try {
       if (!isDesktop) {
-        navigate('/maintenance/detail', {
+        navigate("/maintenance/detail", {
           state: {
-            maintenance_request_index: maintenanceReqData[status].findIndex(
-              (item) => item.maintenance_request_uid === row.id
-            ), // index in the status array
+            maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
             status: status,
             maintenanceItemsForStatus: maintenanceReqData[status],
             allMaintenanceData: maintenanceReqData,
@@ -440,11 +432,9 @@ export default function PropertyNavigator({
           },
         });
       } else {
-        navigate('/ownerMaintenance', {
+        navigate("/ownerMaintenance", {
           state: {
-            maintenance_request_index: maintenanceReqData[status].findIndex(
-              (item) => item.maintenance_request_uid === row.id
-            ), // index in the status array
+            maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
             status: status,
             maintenanceItemsForStatus: maintenanceReqData[status],
             allMaintenanceData: maintenanceReqData,
@@ -456,7 +446,7 @@ export default function PropertyNavigator({
       }
     } catch (error) {
       console.log(error);
-      alert('Error navigating to maintenance detail', error);
+      alert("Error navigating to maintenance detail", error);
     }
   }
 
@@ -480,14 +470,14 @@ export default function PropertyNavigator({
           pageSizeOptions={[5]}
           onRowClick={(row) => {
             {
-              console.log('Row =', row);
+              console.log("Row =", row);
             }
             handleOnClickNavigateToMaintenance(row);
           }}
         />
       );
     } else {
-      return 'No Open Maintenance Tickets';
+      return "No Open Maintenance Tickets";
     }
   }
 
@@ -501,7 +491,7 @@ export default function PropertyNavigator({
 
   function navigateToMaintenanceAccordion() {
     // console.log("click to maintenance accordion for property")
-    navigate('/maintenance');
+    navigate("/maintenance");
 
     // TODO: Need to send props to /maintenance to navigate to correct tab and item
   }
@@ -513,9 +503,7 @@ export default function PropertyNavigator({
     setCurrentId(nextId);
     setProperty(propertyData && propertyData[nextIndex]);
 
-    const parsedPropertyImages = propertyData && propertyData[nextIndex] && propertyData[nextIndex].property_images
-      ? JSON.parse(propertyData[nextIndex].property_images)
-      : [];
+    const parsedPropertyImages = propertyData && propertyData[nextIndex] && propertyData[nextIndex].property_images ? JSON.parse(propertyData[nextIndex].property_images) : [];
     // console.log('parsedImages:', parsedPropertyImages);
     // console.log('parsedImages.length:', parsedPropertyImages.length);
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
@@ -530,9 +518,8 @@ export default function PropertyNavigator({
     setCurrentId(previousId);
     setProperty(propertyData && propertyData[previousIndex]);
 
-    const parsedPropertyImages = propertyData && propertyData[previousIndex] && propertyData[previousIndex].property_images
-      ? JSON.parse(propertyData[previousIndex].property_images)
-      : [];
+    const parsedPropertyImages =
+      propertyData && propertyData[previousIndex] && propertyData[previousIndex].property_images ? JSON.parse(propertyData[previousIndex].property_images) : [];
     // console.log('parsedImages:', parsedPropertyImages);
     // console.log('parsedImages.length:', parsedPropertyImages.length);
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
@@ -550,7 +537,7 @@ export default function PropertyNavigator({
 
   const handleManagerChange = (index) => {
     if (property && property.business_uid) {
-      navigate('/managerDetails', {
+      /* navigate('/managerDetails', {
         state: {
           ownerId: property.owner_uid,
           managerBusinessId: property.business_uid,
@@ -559,26 +546,37 @@ export default function PropertyNavigator({
           index: currentIndex,
           isDesktop: isDesktop,
         },
-      });
+      }); */
+      const state = {
+        ownerId: property.owner_uid,
+        managerBusinessId: property.business_uid,
+        managerData: property,
+        propertyData: propertyData,
+        index: currentIndex,
+        isDesktop: isDesktop,
+      };
+      console.log("---inside prop nav state---", state);
+      setManagerDetailsState(state);
     } else {
-      navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
+      // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
+      const state = { index: currentIndex, propertyData, isDesktop };
+      //console.log('inside prop nav----', state);
+      onShowSearchManager(state);
     }
   };
 
   const handleAppClick = (index) => {
-    navigate('/tenantApplicationNav', {
-      state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop },
-    });
+    /* navigate('/tenantApplicationNav', {
+			state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop },
+		}); */
+    const state = { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop };
+    setTenantAppNavState(state);
   };
-
-
 
   const getRentStatus = () => {
     try {
-      const rentStatus = allRentStatus.filter(
-        (data) => data.property_uid == currentId && data.rent_status != 'VACANT'
-      );
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const rentStatus = allRentStatus.filter((data) => data.property_uid == currentId && data.rent_status != "VACANT");
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const formatData = (data) => {
         return data.map((item, index) => {
           console.log("ROHIT - item - ", item.rent_detail_index);
@@ -586,9 +584,9 @@ export default function PropertyNavigator({
             ...item,
             // idx: index,
             cf_monthName: monthNames[item.cf_month - 1],
-            total_paid_formatted: item.total_paid ? `$${item.total_paid}` : '-',
-            latest_date_formatted: item.latest_date || '-',
-            fees: '-',
+            total_paid_formatted: item.total_paid ? `$${item.total_paid}` : "-",
+            latest_date_formatted: item.latest_date || "-",
+            fees: "-",
           };
         });
       };
@@ -604,69 +602,69 @@ export default function PropertyNavigator({
   };
 
   const paymentStatusColorMap = (value) => {
-    if (value === 'PAID') {
+    if (value === "PAID") {
       return theme.palette.priority.clear;
-    } else if (value === 'UNPAID') {
+    } else if (value === "UNPAID") {
       return theme.palette.priority.high;
-    } else if (value === 'PARTAILLY PAID') {
+    } else if (value === "PARTAILLY PAID") {
       return theme.palette.priority.medium;
-    } else if (value === 'PAID LATE' || 'NO MANAGER') {
+    } else if (value === "PAID LATE" || "NO MANAGER") {
       return theme.palette.priority.low;
     }
   };
 
   const getLateFeesColor = (fee) => {
-    if (fee.lf_purchase_status === "PAID") return "green"
-    else return "red"
-  }
+    if (fee.lf_purchase_status === "PAID") return "green";
+    else return "red";
+  };
 
   const rentStatusColumns = [
     {
-      field: 'cf_monthName',
-      headerName: 'Month',
+      field: "cf_monthName",
+      headerName: "Month",
       sortable: isDesktop,
       // flex: 0.8,
       renderCell: (params) => {
-        return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
     {
-      field: 'latest_date_formatted',
-      headerName: 'Paid',
+      field: "latest_date_formatted",
+      headerName: "Paid",
       sortable: isDesktop,
       // flex: 1,
       renderCell: (params) => {
-        return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
     {
       // field: 'total_paid_formatted',\
-      field: 'pur_amount_due',
-      headerName: 'Amount',
+      field: "pur_amount_due",
+      headerName: "Amount",
       sortable: isDesktop,
       // flex: 1,
       renderCell: (params) => {
-        return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
 
     {
-      field: 'rent_status',
-      headerName: 'Rent Status',
+      field: "rent_status",
+      headerName: "Rent Status",
       sortable: isDesktop,
       // flex: 1,
       renderCell: (params) => {
         return (
           <Box
             sx={{
-              width: '100%',
-              margin: '0px',
-              textAlign: 'center',
-              color: '#F2F2F2',
+              width: "100%",
+              margin: "0px",
+              textAlign: "center",
+              color: "#F2F2F2",
               backgroundColor: paymentStatusColorMap(params.value),
-              overflowWrap: 'break-word',
-              whiteSpace: 'break-spaces',
-              fontSize: '13px',
+              overflowWrap: "break-word",
+              whiteSpace: "break-spaces",
+              fontSize: "13px",
             }}
           >
             {params.value}
@@ -675,23 +673,23 @@ export default function PropertyNavigator({
       },
     },
     {
-      field: 'fees',
-      headerName: 'Late Fees',
+      field: "fees",
+      headerName: "Late Fees",
       sortable: isDesktop,
       // flex: 0.5,
       renderCell: (params) => {
         // return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
         // return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.row.lf_pur_amount_due}</Box>;
-        return <Box sx={{ width: '100%', color: getLateFeesColor(params.row) }}>{params.row.lf_pur_amount_due}</Box>;
+        return <Box sx={{ width: "100%", color: getLateFeesColor(params.row) }}>{params.row.lf_pur_amount_due}</Box>;
       },
     },
     {
-      field: 'pur_description',
-      headerName: 'pur_description',
+      field: "pur_description",
+      headerName: "pur_description",
       sortable: isDesktop,
       // flex: 3,
       renderCell: (params) => {
-        return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
     // {
@@ -735,11 +733,7 @@ export default function PropertyNavigator({
     setError(newError);
     if (Object.keys(newError).length === 0) {
       if (isEditing) {
-        setAppliances(
-          appliances.map((appliance) =>
-            appliance.appliance_uid === currentApplRow.appliance_uid ? currentApplRow : appliance
-          )
-        );
+        setAppliances(appliances.map((appliance) => (appliance.appliance_uid === currentApplRow.appliance_uid ? currentApplRow : appliance)));
       } else {
         setAppliances([...appliances, { ...currentApplRow, appliance_uid: uuidv4() }]);
       }
@@ -804,33 +798,29 @@ export default function PropertyNavigator({
   return (
     <Paper
       style={{
-        marginTop: '10px',
+        marginTop: "10px",
         backgroundColor: theme.palette.primary.main,
-        width: '100%', // Occupy full width with 25px margins on each side
+        width: "100%", // Occupy full width with 25px margins on each side
       }}
     >
-      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Box
         sx={{
-          flexDirection: 'column', // Added this to stack children vertically
-          justifyContent: 'center',
-          width: '100%', // Take up full screen width
-          height: '100%',
+          flexDirection: "column", // Added this to stack children vertically
+          justifyContent: "center",
+          width: "100%", // Take up full screen width
+          height: "100%",
         }}
       >
-        <Grid container sx={{ marginTop: '15px', alignItems: 'center', justifyContent: 'center' }}>
-          <Grid item md={1} xs={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Grid container sx={{ marginTop: "15px", alignItems: "center", justifyContent: "center" }}>
+          <Grid item md={1} xs={2} sx={{ display: "flex", justifyContent: "center" }}>
             <Button onClick={handlePreviousCard} disabled={currentIndex === 0 || !propertyData || propertyData.length === 0}>
               {currentIndex === 0 ? (
-                <ArrowBackIcon
-                  sx={{ color: '#A0A0A0', width: '25px', height: '25px', margin: '0px' }}
-                />
+                <ArrowBackIcon sx={{ color: "#A0A0A0", width: "25px", height: "25px", margin: "0px" }} />
               ) : (
-                <ArrowBackIcon
-                  sx={{ color: '#000000', width: '25px', height: '25px', margin: '0px' }}
-                />
+                <ArrowBackIcon sx={{ color: "#000000", width: "25px", height: "25px", margin: "0px" }} />
               )}
             </Button>
           </Grid>
@@ -839,10 +829,10 @@ export default function PropertyNavigator({
             md={8}
             xs={8}
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <Typography
@@ -850,33 +840,31 @@ export default function PropertyNavigator({
                 color: theme.typography.primary.black,
                 fontWeight: theme.typography.primary.fontWeight,
                 fontSize: theme.typography.largeFont,
-                textAlign: 'center',
+                textAlign: "center",
               }}
-              paddingBottom="10px"
+              paddingBottom='10px'
             >
-              {property ? `${property.property_address} ${property.property_unit}, ${property.property_city} ${property.property_state} ${property.property_zip}` : 'No Property Selected'}
+              {property
+                ? `${property.property_address} ${property.property_unit}, ${property.property_city} ${property.property_state} ${property.property_zip}`
+                : "No Property Selected"}
             </Typography>
             <Typography
               sx={{
-                color: '#3D5CAC',
+                color: "#3D5CAC",
                 fontWeight: theme.typography.propertyPage.fontWeight,
-                fontSize: '16px',
-                textAlign: 'center',
+                fontSize: "16px",
+                textAlign: "center",
               }}
             >
               {currentIndex + 1} of {propertyData ? propertyData.length : 0} Properties
             </Typography>
           </Grid>
-          <Grid item md={1} xs={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item md={1} xs={2} sx={{ display: "flex", justifyContent: "center" }}>
             <Button onClick={handleNextCard} disabled={currentIndex === propertyData.length - 1 || !propertyData || propertyData.length === 0}>
               {currentIndex === propertyData.length - 1 ? (
-                <ArrowForwardIcon
-                  sx={{ color: '#A0A0A0', width: '25px', height: '25px', margin: '0px' }}
-                />
+                <ArrowForwardIcon sx={{ color: "#A0A0A0", width: "25px", height: "25px", margin: "0px" }} />
               ) : (
-                <ArrowForwardIcon
-                  sx={{ color: '#000000', width: '25px', height: '25px', margin: '0px' }}
-                />
+                <ArrowForwardIcon sx={{ color: "#000000", width: "25px", height: "25px", margin: "0px" }} />
               )}
             </Button>
           </Grid>
@@ -884,19 +872,19 @@ export default function PropertyNavigator({
 
         <Box
           sx={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '10px',
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "10px",
           }}
         >
-          <Grid container rowSpacing={4} columnSpacing={4} justify="space-between" alignItems="stretch">
+          <Grid container rowSpacing={4} columnSpacing={4} justify='space-between' alignItems='stretch'>
             <Grid item xs={12} md={12}>
               <Card
                 sx={{
                   backgroundColor: color,
-                  boxShadow: 'none',
-                  elevation: '0',
-                  padding: '16px',
+                  boxShadow: "none",
+                  elevation: "0",
+                  padding: "16px",
                 }}
               >
                 <Grid container spacing={2}>
@@ -904,88 +892,70 @@ export default function PropertyNavigator({
                     <Card
                       sx={{
                         backgroundColor: color,
-                        boxShadow: 'none',
-                        elevation: '0',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%', // Ensure card takes full height of its container
+                        boxShadow: "none",
+                        elevation: "0",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "100%", // Ensure card takes full height of its container
                       }}
                     >
                       <CardContent
                         sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '100%',
-                          height: '100%',
-                          padding: '0 !important',
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "100%",
+                          height: "100%",
+                          padding: "0 !important",
                         }}
                       >
                         <Box
                           sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            height: '200px',
-                            width: '100%',
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            height: "200px",
+                            width: "100%",
                           }}
                         >
                           <CardMedia
-                            component="img"
+                            component='img'
                             image={images[activeStep]}
                             sx={{
-                              elevation: '0',
-                              boxShadow: 'none',
+                              elevation: "0",
+                              boxShadow: "none",
                               flexGrow: 1,
-                              objectFit: 'fill',
-                              width: '100%',
-                              height: '100px',
+                              objectFit: "fill",
+                              width: "100%",
+                              height: "100px",
                             }}
                           />
                           <MobileStepper
                             steps={maxSteps}
-                            position="static"
+                            position='static'
                             activeStep={activeStep}
-                            variant="text"
+                            variant='text'
                             sx={{
                               backgroundColor: color,
-                              width: '100%',
-                              justifyContent: 'center',
-                              alignContent: 'center',
-                              alignItems: 'center',
-                              elevation: '0',
-                              boxShadow: 'none',
+                              width: "100%",
+                              justifyContent: "center",
+                              alignContent: "center",
+                              alignItems: "center",
+                              elevation: "0",
+                              boxShadow: "none",
                             }}
                             nextButton={
-                              <Button
-                                size="small"
-                                onClick={handleNext}
-                                disabled={activeStep === maxSteps - 1}
-                                sx={{ minWidth: '40px', width: '40px' }}
-                              >
-                                {theme.direction === 'rtl' ? (
-                                  <KeyboardArrowLeft />
-                                ) : (
-                                  <KeyboardArrowRight />
-                                )}
+                              <Button size='small' onClick={handleNext} disabled={activeStep === maxSteps - 1} sx={{ minWidth: "40px", width: "40px" }}>
+                                {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                               </Button>
                             }
                             backButton={
-                              <Button
-                                size="small"
-                                onClick={handleBack}
-                                disabled={activeStep === 0}
-                                sx={{ minWidth: '40px', width: '40px' }}
-                              >
-                                {theme.direction === 'rtl' ? (
-                                  <KeyboardArrowRight />
-                                ) : (
-                                  <KeyboardArrowLeft />
-                                )}
+                              <Button size='small' onClick={handleBack} disabled={activeStep === 0} sx={{ minWidth: "40px", width: "40px" }}>
+                                {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
                               </Button>
                             }
                           />
@@ -995,15 +965,15 @@ export default function PropertyNavigator({
                   </Grid>
                   <Grid item xs={0} md={0.5} />
                   <Grid item xs={12} md={5}>
-                    <Grid container spacing={2} sx={{ height: '100%' }}>
+                    <Grid container spacing={2} sx={{ height: "100%" }}>
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            textAlign: 'left',
+                            textAlign: "left",
                           }}
                         >
                           Type
@@ -1012,24 +982,24 @@ export default function PropertyNavigator({
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.light.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            textAlign: 'left',
+                            textAlign: "left",
                           }}
                         >
-                          {property ? property.property_type : '-'}
+                          {property ? property.property_type : "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            textAlign: 'left',
+                            textAlign: "left",
                           }}
                         >
                           Sqft
@@ -1038,24 +1008,24 @@ export default function PropertyNavigator({
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.light.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            textAlign: 'left',
+                            textAlign: "left",
                           }}
                         >
-                          {property ? property.property_area : '-'}
+                          {property ? property.property_area : "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            textAlign: 'left',
+                            textAlign: "left",
                           }}
                         >
                           Bedrooms
@@ -1064,24 +1034,24 @@ export default function PropertyNavigator({
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.light.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            textAlign: 'left',
+                            textAlign: "left",
                           }}
                         >
-                          {property ? property.property_num_beds : '-'}
+                          {property ? property.property_num_beds : "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            textAlign: 'left',
+                            textAlign: "left",
                           }}
                         >
                           Bathrooms
@@ -1090,20 +1060,20 @@ export default function PropertyNavigator({
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.light.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            textAlign: 'left',
+                            textAlign: "left",
                           }}
                         >
-                          {property ? property.property_num_baths : '-'}
+                          {property ? property.property_num_baths : "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
@@ -1115,19 +1085,19 @@ export default function PropertyNavigator({
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.light.fontWeight,
                             fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {property ? `$${property.property_value}` : '-'}
+                          {property ? `$${property.property_value}` : "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
@@ -1139,13 +1109,13 @@ export default function PropertyNavigator({
                       <Grid item xs={6}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.light.fontWeight,
                             fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {property ? `$${(property.property_value / property.property_area).toFixed(2)}` : '-'}
+                          {property ? `$${(property.property_value / property.property_area).toFixed(2)}` : "-"}
                         </Typography>
                       </Grid>
                     </Grid>
@@ -1157,63 +1127,63 @@ export default function PropertyNavigator({
                           // padding extra on the bottom
                           <Box sx={{ pb: 40 }}>
                             <Button
-                              variant="outlined"
+                              variant='outlined'
                               sx={{
-                                background: '#3D5CAC',
+                                background: "#3D5CAC",
                                 backgroundColor: theme.palette.success.main,
-                                cursor: 'pointer',
-                                textTransform: 'none',
-                                minWidth: '150px', // Fixed width for the button
-                                minHeight: '35px',
-                                width: '100%',
-                                '&:hover': {
+                                cursor: "pointer",
+                                textTransform: "none",
+                                minWidth: "150px", // Fixed width for the button
+                                minHeight: "35px",
+                                width: "100%",
+                                "&:hover": {
                                   backgroundColor: theme.palette.success.dark,
                                 },
                               }}
-                              size="small"
+                              size='small'
                             >
-                              <CheckIcon sx={{ color: '#FFFFFF', fontSize: '18px' }} />
+                              <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
                                 sx={{
-                                  textTransform: 'none',
-                                  color: '#FFFFFF',
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
                                   fontWeight: theme.typography.secondary.fontWeight,
                                   fontSize: theme.typography.smallFont,
-                                  whiteSpace: 'nowrap',
-                                  marginLeft: '1%', // Adjusting margin for icon and text
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
                                 }}
                               >
-                                {'Listed For Rent'}
+                                {"Listed For Rent"}
                               </Typography>
                             </Button>
                           </Box>
                         ) : (
                           <Box>
                             <Button
-                              variant="outlined"
+                              variant='outlined'
                               sx={{
-                                background: '#3D5CAC',
+                                background: "#3D5CAC",
                                 backgroundColor: theme.palette.priority.high,
-                                cursor: 'pointer',
-                                textTransform: 'none',
-                                minWidth: '150px', // Fixed width for the button
-                                minHeight: '35px',
-                                width: '100%',
+                                cursor: "pointer",
+                                textTransform: "none",
+                                minWidth: "150px", // Fixed width for the button
+                                minHeight: "35px",
+                                width: "100%",
                               }}
-                              size="small"
+                              size='small'
                             >
-                              <CloseIcon sx={{ color: '#FFFFFF', fontSize: '18px' }} />
+                              <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
                                 sx={{
-                                  textTransform: 'none',
-                                  color: '#FFFFFF',
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
                                   fontWeight: theme.typography.secondary.fontWeight,
                                   fontSize: theme.typography.smallFont,
-                                  whiteSpace: 'nowrap',
-                                  marginLeft: '1%', // Adjusting margin for icon and text
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
                                 }}
                               >
-                                {'Not Listed'}
+                                {"Not Listed"}
                               </Typography>
                             </Button>
                           </Box>
@@ -1222,102 +1192,97 @@ export default function PropertyNavigator({
                       <Grid item xs={12}>
                         <Box>
                           <Button
-                            variant="outlined"
+                            variant='outlined'
                             sx={{
-                              background: '#3D5CAC',
+                              background: "#3D5CAC",
                               color: theme.palette.background.default,
-                              cursor: 'pointer',
-                              textTransform: 'none',
-                              minWidth: '150px', // Fixed width for the button
-                              minHeight: '35px',
-                              width: '100%',
+                              cursor: "pointer",
+                              textTransform: "none",
+                              minWidth: "150px", // Fixed width for the button
+                              minHeight: "35px",
+                              width: "100%",
                             }}
-                            size="small"
+                            size='small'
                             onClick={() => {
                               // console.log('typeof edit', typeof(onEditClick));
                               onEditClick("edit_property");
-                            }
-                            }
+                            }}
                             // onClick={handleEditButton}
                           >
-                            <PostAddIcon sx={{ color: '#FFFFFF', fontSize: '18px' }} />
+                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                             <Typography
                               sx={{
-                                textTransform: 'none',
-                                color: '#FFFFFF',
+                                textTransform: "none",
+                                color: "#FFFFFF",
                                 fontWeight: theme.typography.secondary.fontWeight,
                                 fontSize: theme.typography.smallFont,
-                                whiteSpace: 'nowrap',
-                                marginLeft: '1%', // Adjusting margin for icon and text
+                                whiteSpace: "nowrap",
+                                marginLeft: "1%", // Adjusting margin for icon and text
                               }}
                             >
-                              {'Edit Property'}
+                              {"Edit Property"}
                             </Typography>
                           </Button>
                         </Box>
                       </Grid>
-                      {selectedRole === 'MANAGER' && property && property.property_available_to_rent !== 1 && (
+                      {selectedRole === "MANAGER" && property && property.property_available_to_rent !== 1 && (
                         <Grid item xs={12}>
                           <Button
-                            variant="outlined"
+                            variant='outlined'
                             sx={{
-                              background: '#3D5CAC',
+                              background: "#3D5CAC",
                               color: theme.palette.background.default,
-                              cursor: 'pointer',
-                              textTransform: 'none',
-                              minWidth: '150px',
-                              minHeight: '35px',
-                              width: '100%',
+                              cursor: "pointer",
+                              textTransform: "none",
+                              minWidth: "150px",
+                              minHeight: "35px",
+                              width: "100%",
                             }}
-                            size="small"
+                            size='small'
                             onClick={() => onEditClick("add_listing")}
                           >
-                            <PostAddIcon
-                              sx={{ color: '#FFFFFF', fontSize: '18px', margin: '5px' }}
-                            />
+                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
                             <Typography
                               sx={{
-                                textTransform: 'none',
-                                color: '#FFFFFF',
+                                textTransform: "none",
+                                color: "#FFFFFF",
                                 fontWeight: theme.typography.secondary.fontWeight,
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {'Create Listing'}
+                              {"Create Listing"}
                             </Typography>
                           </Button>
                         </Grid>
                       )}
-                      {selectedRole === 'MANAGER' && property && property.property_available_to_rent === 1 && (
+                      {selectedRole === "MANAGER" && property && property.property_available_to_rent === 1 && (
                         <Grid item xs={12}>
                           <Button
-                            variant="outlined"
+                            variant='outlined'
                             sx={{
-                              background: '#3D5CAC',
+                              background: "#3D5CAC",
                               color: theme.palette.background.default,
-                              cursor: 'pointer',
-                              textTransform: 'none',
-                              minWidth: '150px',
-                              minHeight: '35px',
-                              width: '100%',
+                              cursor: "pointer",
+                              textTransform: "none",
+                              minWidth: "150px",
+                              minHeight: "35px",
+                              width: "100%",
                             }}
-                            size="small"
+                            size='small'
                             onClick={() => onEditClick("edit_listing")}
                           >
-                            <PostAddIcon
-                              sx={{ color: '#FFFFFF', fontSize: '18px', margin: '5px' }}
-                            />
+                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
                             <Typography
                               sx={{
-                                textTransform: 'none',
-                                color: '#FFFFFF',
+                                textTransform: "none",
+                                color: "#FFFFFF",
                                 fontWeight: theme.typography.secondary.fontWeight,
                                 fontSize: theme.typography.smallFont,
-                                whiteSpace: 'nowrap',
-                                marginLeft: '1%', // Adjusting margin for icon and text
+                                whiteSpace: "nowrap",
+                                marginLeft: "1%", // Adjusting margin for icon and text
                               }}
                             >
-                              {'Edit Listing'}
+                              {"Edit Listing"}
                             </Typography>
                           </Button>
                         </Grid>
@@ -1331,13 +1296,13 @@ export default function PropertyNavigator({
             {/* Lease Detais grid */}
             {/* Left component */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ backgroundColor: color, height: '100%' }}>
+              <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box
                   sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginTop: '10px',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "10px",
                   }}
                 >
                   <Typography
@@ -1345,7 +1310,7 @@ export default function PropertyNavigator({
                       color: theme.typography.primary.black,
                       fontWeight: theme.typography.primary.fontWeight,
                       fontSize: theme.typography.largeFont,
-                      textAlign: 'center',
+                      textAlign: "center",
                     }}
                   >
                     Lease Details
@@ -1353,12 +1318,12 @@ export default function PropertyNavigator({
                   {property?.lease_uid && (
                     <Button
                       sx={{
-                        padding: '0px',
-                        '&:hover': {
+                        padding: "0px",
+                        "&:hover": {
                           backgroundColor: theme.palette.form.main,
                         },
                       }}
-                      className=".MuiButton-icon"
+                      className='.MuiButton-icon'
                       onClick={handleViewLeaseClick}
                       // onClick={() =>
                       //   navigate('/viewLease', {
@@ -1376,9 +1341,9 @@ export default function PropertyNavigator({
                 </Box>
                 <CardContent
                   sx={{
-                    flexDirection: 'column',
-                    alignItems: 'left',
-                    justifyContent: 'left',
+                    flexDirection: "column",
+                    alignItems: "left",
+                    justifyContent: "left",
                   }}
                 >
                   <Grid container spacing={2}>
@@ -1401,9 +1366,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {property ? (property.property_listed_rent
-                          ? '$' + property.property_listed_rent
-                          : 'No Rent Listed') : '-'}
+                        {property ? (property.property_listed_rent ? "$" + property.property_listed_rent : "No Rent Listed") : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -1425,7 +1388,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.available_topay + ' days in advance' : '-'}
+                        {rentFee ? rentFee.available_topay + " days in advance" : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -1447,7 +1410,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.frequency : '-'}
+                        {rentFee ? rentFee.frequency : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -1469,13 +1432,13 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {property ? (property.lease_end ? property.lease_end : 'No Lease') : '-'}
+                        {property ? (property.lease_end ? property.lease_end : "No Lease") : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
                       <Typography
                         sx={{
-                          textTransform: 'none',
+                          textTransform: "none",
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.secondary.fontWeight,
                           fontSize: theme.typography.smallFont,
@@ -1487,7 +1450,7 @@ export default function PropertyNavigator({
                     <Grid item xs={6}>
                       <Typography
                         sx={{
-                          textTransform: 'none',
+                          textTransform: "none",
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.light.fontWeight,
                           fontSize: theme.typography.smallFont,
@@ -1515,7 +1478,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.due_by : 'No Due Date Listed'}
+                        {rentFee ? rentFee.due_by : "No Due Date Listed"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -1537,7 +1500,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.late_fee : '-'}
+                        {rentFee ? rentFee.late_fee : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -1559,7 +1522,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.perDay_late_fee : '-'}
+                        {rentFee ? rentFee.perDay_late_fee : "-"}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -1569,13 +1532,13 @@ export default function PropertyNavigator({
 
             {/* Right component */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ backgroundColor: color, height: '100%' }}>
+              <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box
                   sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginTop: '10px',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "10px",
                   }}
                 >
                   <Typography
@@ -1583,7 +1546,7 @@ export default function PropertyNavigator({
                       color: theme.typography.primary.black,
                       fontWeight: theme.typography.primary.fontWeight,
                       fontSize: theme.typography.largeFont,
-                      textAlign: 'center',
+                      textAlign: "center",
                     }}
                   >
                     Management Details
@@ -1591,12 +1554,12 @@ export default function PropertyNavigator({
                   {property?.lease_uid && (
                     <Button
                       sx={{
-                        padding: '0px',
-                        '&:hover': {
+                        padding: "0px",
+                        "&:hover": {
                           backgroundColor: theme.palette.form.main,
                         },
                       }}
-                      className=".MuiButton-icon"
+                      className='.MuiButton-icon'
                       onClick={handleViewLeaseClick}
                       // onClick={() =>
                       //   navigate('/viewLease', {
@@ -1614,22 +1577,22 @@ export default function PropertyNavigator({
                 </Box>
                 <CardContent
                   sx={{
-                    flexDirection: 'column',
-                    alignItems: 'left',
-                    justifyContent: 'left',
+                    flexDirection: "column",
+                    alignItems: "left",
+                    justifyContent: "left",
                   }}
                 >
                   <Grid container spacing={2}>
-                    {selectedRole === 'OWNER' && (
+                    {selectedRole === "OWNER" && (
                       <Grid container item spacing={2}>
                         <Grid item xs={6}>
                           <Typography
                             sx={{
-                              textTransform: 'none',
+                              textTransform: "none",
                               color: theme.typography.primary.black,
                               fontWeight: theme.typography.secondary.fontWeight,
                               fontSize: theme.typography.smallFont,
-                              paddingRight: '15px',
+                              paddingRight: "15px",
                             }}
                           >
                             Property Manager:
@@ -1638,27 +1601,25 @@ export default function PropertyNavigator({
                         <Grid item xs={6}>
                           <Box
                             sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
                             }}
                           >
                             <Typography
                               sx={{
-                                textTransform: 'none',
+                                textTransform: "none",
                                 color: theme.typography.primary.black,
                                 fontWeight: theme.typography.light.fontWeight,
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {property && property.business_uid
-                                ? `${property.business_name}`
-                                : 'No Manager Selected'}
+                              {property && property.business_uid ? `${property.business_name}` : "No Manager Selected"}
                             </Typography>
                             <KeyboardArrowRightIcon
                               sx={{
                                 color: theme.typography.common.blue,
-                                cursor: 'pointer',
+                                cursor: "pointer",
                               }}
                               onClick={() => handleManagerChange(currentIndex)}
                             />
@@ -1666,12 +1627,12 @@ export default function PropertyNavigator({
                         </Grid>
                       </Grid>
                     )}
-                    {selectedRole === 'MANAGER' && (
+                    {selectedRole === "MANAGER" && (
                       <Grid container item spacing={2}>
                         <Grid item xs={6}>
                           <Typography
                             sx={{
-                              textTransform: 'none',
+                              textTransform: "none",
                               color: theme.typography.primary.black,
                               fontWeight: theme.typography.secondary.fontWeight,
                               fontSize: theme.typography.smallFont,
@@ -1683,16 +1644,16 @@ export default function PropertyNavigator({
                         <Grid item xs={6}>
                           <Box
                             sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              cursor: 'pointer',
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              cursor: "pointer",
                             }}
                             onClick={() =>
-                              navigate('/ownerContactDetailsHappinessMatrix', {
+                              navigate("/ownerContactDetailsHappinessMatrix", {
                                 state: {
                                   ownerUID: property.owner_uid,
-                                  navigatingFrom: 'PropertyNavigator',
+                                  navigatingFrom: "PropertyNavigator",
                                   index: index,
                                   happinessData: happinessData,
                                   happinessMatrixData: dataforhappiness,
@@ -1702,18 +1663,18 @@ export default function PropertyNavigator({
                           >
                             <Typography
                               sx={{
-                                textTransform: 'none',
+                                textTransform: "none",
                                 color: theme.typography.primary.black,
                                 fontWeight: theme.typography.light.fontWeight,
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {property ? `${property.owner_first_name}  ${property.owner_last_name}` : '-'}
+                              {property ? `${property.owner_first_name}  ${property.owner_last_name}` : "-"}
                             </Typography>
                             <KeyboardArrowRightIcon
                               sx={{
                                 color: theme.typography.common.blue,
-                                cursor: 'pointer',
+                                cursor: "pointer",
                               }}
                             />
                           </Box>
@@ -1722,29 +1683,29 @@ export default function PropertyNavigator({
                     )}
 
                     <Grid container item spacing={2}>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
                         <Typography
                           sx={{
-                            textTransform: 'none',
+                            textTransform: "none",
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
-                            paddingRight: '50px',
-                            paddingLeft: '4px',
+                            paddingRight: "50px",
+                            paddingLeft: "4px",
                           }}
                         >
                           Open Maintenance Tickets:
                         </Typography>
                         <Box
                           sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            cursor: 'pointer',
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
                           }}
                           onClick={() => {
                             if (property && property.maintenanceCount > 0) {
-                              if (selectedRole === 'OWNER') {
-                                navigate('/ownerMaintenance', {
+                              if (selectedRole === "OWNER") {
+                                navigate("/ownerMaintenance", {
                                   state: {
                                     propertyId: propertyId,
                                     fromProperty: true,
@@ -1752,7 +1713,7 @@ export default function PropertyNavigator({
                                   },
                                 });
                               } else {
-                                navigate('/managerMaintenance', {
+                                navigate("/managerMaintenance", {
                                   state: {
                                     propertyId: propertyId,
                                     fromProperty: true,
@@ -1766,64 +1727,67 @@ export default function PropertyNavigator({
                           <Badge
                             badgeContent={property?.maintenanceCount || 0}
                             showZero
-                            color="error"
+                            color='error'
                             sx={{
-                              paddingRight: '10px',
+                              paddingRight: "10px",
                             }}
                           />
                         </Box>
                       </Box>
                     </Grid>
-                    {contractsData && contractsData.length > 0 && selectedRole !== 'MANAGER' ? (
+                    {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
                       <>
                         <Grid item xs={10.7} md={10.7}>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
                             <Typography
                               sx={{
-                                textTransform: 'none',
+                                textTransform: "none",
                                 color: theme.typography.primary.black,
                                 fontWeight: theme.typography.secondary.fontWeight,
                                 fontSize: theme.typography.smallFont,
-                                paddingRight: '88px', // here padding
+                                paddingRight: "88px", // here padding
                               }}
                             >
                               PM Quotes Requested:
                             </Typography>
                             <Box
                               sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                cursor: 'pointer',
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
                               }}
                             >
-                              <Badge
-                                color="success"
-                                badgeContent={contractsNewSent}
-                                showZero
-                              />
+                              <Badge color='success' badgeContent={contractsNewSent} showZero />
                             </Box>
                           </Box>
                         </Grid>
                         <Grid item xs={1.3} md={1.3}>
                           <Box
                             sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              padding: '0px 0px 0px 8px',
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              padding: "0px 0px 0px 8px",
                             }}
                           >
                             <KeyboardArrowRightIcon
-                              sx={{ color: arrowButton1_color, cursor: 'pointer' }}
+                              sx={{ color: arrowButton1_color, cursor: "pointer" }}
                               onClick={() => {
-                                navigate('/pmQuotesRequested', {
+                                /* navigate('/pmQuotesRequested', {
                                   state: {
                                     index: currentIndex,
                                     propertyData: propertyData,
                                     contracts: contractsData,
                                     isDesktop: isDesktop,
                                   },
-                                });
+                                }); */
+                                const state = {
+                                  index: currentIndex,
+                                  propertyData: propertyData,
+                                  contracts: contractsData,
+                                  isDesktop: isDesktop,
+                                };
+                                setPmQuoteRequestedState(state);
                               }}
                             />
                           </Box>
@@ -1833,55 +1797,42 @@ export default function PropertyNavigator({
                     {property && property.applications.length > 0 && (
                       <>
                         <Grid item xs={12} md={12}>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
                             <Typography
                               sx={{
-                                textTransform: 'none',
+                                textTransform: "none",
                                 color: theme.typography.primary.black,
                                 fontWeight: theme.typography.secondary.fontWeight,
                                 fontSize: theme.typography.smallFont,
-                                paddingRight: '103px',
+                                paddingRight: "103px",
                               }}
                             >
                               Applications:
                             </Typography>
                             <Box
                               sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                cursor: 'pointer',
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
                               }}
                             >
                               <Badge
-                                color="success"
-                                badgeContent={
-                                  property.applications.filter(
-                                    (app) =>
-                                      app.lease_status === 'NEW' ||
-                                      app.lease_status === 'PROCESSING'
-                                  ).length
-                                }
+                                color='success'
+                                badgeContent={property.applications.filter((app) => app.lease_status === "NEW" || app.lease_status === "PROCESSING").length}
                                 showZero
                                 sx={{
-                                  paddingRight: '50px',
+                                  paddingRight: "50px",
                                 }}
                               />
                             </Box>
                           </Box>
                         </Grid>
                         <Grid item xs={12} md={12}>
-                          <Accordion
-                            theme={theme}
-                            sx={{ backgroundColor: '#e6e6e6', marginLeft: '-5px' }}
-                          >
-                            <AccordionSummary
-                              expandIcon={<ExpandMoreIcon />}
-                              aria-controls="panel1-content"
-                              id="panel1-header"
-                            >
+                          <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: "-5px" }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1-content' id='panel1-header'>
                               <Typography
                                 sx={{
-                                  textTransform: 'none',
+                                  textTransform: "none",
                                   color: theme.typography.primary.black,
                                   fontWeight: theme.typography.secondary.fontWeight,
                                   fontSize: theme.typography.smallFont,
@@ -1892,9 +1843,9 @@ export default function PropertyNavigator({
                             </AccordionSummary>
                             <AccordionDetails
                               sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                padding: '0px 5px 5px 5px',
+                                display: "flex",
+                                flexDirection: "column",
+                                padding: "0px 5px 5px 5px",
                               }}
                             >
                               {property.applications.map((app, index) => (
@@ -1903,44 +1854,41 @@ export default function PropertyNavigator({
                                   onClick={() => handleAppClick(index)}
                                   sx={{
                                     backgroundColor: getAppColor(app),
-                                    color: '#FFFFFF',
-                                    textTransform: 'none',
-                                    width: '100%',
-                                    height: '70px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
+                                    color: "#FFFFFF",
+                                    textTransform: "none",
+                                    width: "100%",
+                                    height: "70px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                     marginBottom: 2,
-                                    '&:hover, &:focus, &:active': {
+                                    "&:hover, &:focus, &:active": {
                                       backgroundColor: getAppColor(app),
                                     },
                                   }}
                                 >
-                                  <Box sx={{ display: 'flex' }}>
+                                  <Box sx={{ display: "flex" }}>
                                     <Typography
                                       sx={{
                                         fontSize: theme.typography.smallFont,
                                         mr: 1,
                                       }}
                                     >
-                                      {app.tenant_first_name +
-                                        ' ' +
-                                        app.tenant_last_name +
-                                        ' '}
+                                      {app.tenant_first_name + " " + app.tenant_last_name + " "}
                                     </Typography>
                                     <Typography
                                       sx={{
-                                        fontWeight: 'bold',
+                                        fontWeight: "bold",
                                         fontSize: theme.typography.smallFont,
                                         mr: 1,
                                       }}
                                     >
-                                      {app.lease_status + ' '}
+                                      {app.lease_status + " "}
                                     </Typography>
                                     <Typography
                                       sx={{
-                                        fontWeight: 'bold',
+                                        fontWeight: "bold",
                                         fontSize: theme.typography.smallFont,
                                       }}
                                     >
@@ -1961,26 +1909,26 @@ export default function PropertyNavigator({
           </Grid>
 
           {/* Rent history grid */}
-          <Grid item xs={12} sx={{ pt: '10px' }}>
-            <Card sx={{ backgroundColor: color, height: '100%' }}>
+          <Grid item xs={12} sx={{ pt: "10px" }}>
+            <Card sx={{ backgroundColor: color, height: "100%" }}>
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
                   fontWeight: theme.typography.primary.fontWeight,
                   fontSize: theme.typography.largeFont,
-                  textAlign: 'center',
-                  marginTop: '10px',
+                  textAlign: "center",
+                  marginTop: "10px",
                 }}
               >
                 Rent History
               </Typography>
               <CardContent
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-around',
-                  width: '100%',
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-around",
+                  width: "100%",
                 }}
               >
                 <DataGrid
@@ -1998,27 +1946,27 @@ export default function PropertyNavigator({
                   getRowId={(row) => row.rent_detail_index}
                   pageSizeOptions={[12]}
                   sx={{
-                    '& .MuiDataGrid-cell': {
-                      justifyContent: 'center',
-                      alignItems: 'center',
+                    "& .MuiDataGrid-cell": {
+                      justifyContent: "center",
+                      alignItems: "center",
                     },
-                    '& .MuiDataGrid-columnHeader': {
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      color: '#3D5CAC',
-                      textAlign: 'center',
+                    "& .MuiDataGrid-columnHeader": {
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#3D5CAC",
+                      textAlign: "center",
                     },
-                    '& .MuiDataGrid-columnHeaderTitle': {
-                      textAlign: 'center',
-                      font: 'bold',
-                      width: '100%',
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                      textAlign: "center",
+                      font: "bold",
+                      width: "100%",
                     },
-                    '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' },
-                    '@media (max-width: 600px)': {
-                      '& .MuiDataGrid-columnHeaderTitle': {
-                        width: '100%',
-                        margin: '0px',
-                        padding: '0px',
+                    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                    "@media (max-width: 600px)": {
+                      "& .MuiDataGrid-columnHeaderTitle": {
+                        width: "100%",
+                        margin: "0px",
+                        padding: "0px",
                       },
                     },
                   }}
@@ -2027,24 +1975,32 @@ export default function PropertyNavigator({
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={12} sx={{ pt: '10px' }}>
+          <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Box sx={{ width: '100%' }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0px 15px 0px 10px" }}>
-                  <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+              <Box sx={{ width: "100%" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    margin: "0px 15px 0px 10px",
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
                         fontWeight: theme.typography.primary.fontWeight,
                         fontSize: theme.typography.largeFont,
                         textAlign: "center",
-                        marginTop: '10px',
+                        marginTop: "10px",
                       }}
                     >
                       Appliances
                     </Typography>
                   </Box>
-                  <Button variant="outlined"
+                  <Button
+                    variant='outlined'
                     sx={{
                       background: "#3D5CAC",
                       color: theme.palette.background.default,
@@ -2055,15 +2011,25 @@ export default function PropertyNavigator({
                       fontWeight: theme.typography.secondary.fontWeight,
                       fontSize: theme.typography.smallFont,
                     }}
-                    size="small"
+                    size='small'
                     onClick={() => {
                       setcurrentApplRow({
-                        appliance_uid: '', appliance_url: '',
-                        appliance_type: '', appliance_desc: '', appliance_images: '', appliance_available: 0, appliance_installed: null,
-                        appliance_model_num: '', appliance_purchased: null, appliance_serial_num: '',
-                        appliance_property_id: { propertyId }, appliance_manufacturer: '',
-                        appliance_warranty_info: '', appliance_warranty_till: null,
-                        appliance_purchase_order: '', appliance_purchased_from: ''
+                        appliance_uid: "",
+                        appliance_url: "",
+                        appliance_type: "",
+                        appliance_desc: "",
+                        appliance_images: "",
+                        appliance_available: 0,
+                        appliance_installed: null,
+                        appliance_model_num: "",
+                        appliance_purchased: null,
+                        appliance_serial_num: "",
+                        appliance_property_id: { propertyId },
+                        appliance_manufacturer: "",
+                        appliance_warranty_info: "",
+                        appliance_warranty_till: null,
+                        appliance_purchase_order: "",
+                        appliance_purchased_from: "",
                       });
                       setIsEditing(false);
                       handleOpen();
@@ -2080,82 +2046,102 @@ export default function PropertyNavigator({
                   autoHeight
                   sx={{
                     fontSize: "10px",
-                    '& .wrap-text': {
-                      whiteSpace: 'normal !important',
-                      wordWrap: 'break-word !important',
-                      overflow: 'visible !important',
+                    "& .wrap-text": {
+                      whiteSpace: "normal !important",
+                      wordWrap: "break-word !important",
+                      overflow: "visible !important",
                     },
                   }}
                 />
-                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                  <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                  <Alert onClose={handleSnackbarClose} severity='error' sx={{ width: "100%" }}>
                     Please fill in all required fields.
                   </Alert>
                 </Snackbar>
                 <Dialog open={open} onClose={handleClose}>
-                  <DialogTitle>{isEditing ? 'Edit Appliance' : 'Add New Appliance'}</DialogTitle>
+                  <DialogTitle>{isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
                   <DialogContent>
-                    <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
+                    <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
                       <InputLabel required>Appliance Type</InputLabel>
                       <Select
-                        margin="dense"
-                        label="Appliance Type"
+                        margin='dense'
+                        label='Appliance Type'
                         fullWidth
                         required
-                        variant="outlined"
-                        value={currentApplRow?.appliance_type || ''}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_type: e.target.value })}
+                        variant='outlined'
+                        value={currentApplRow?.appliance_type || ""}
+                        onChange={(e) =>
+                          setcurrentApplRow({
+                            ...currentApplRow,
+                            appliance_type: e.target.value,
+                          })
+                        }
                       >
-                        {applianceCategories && applianceCategories.map((appln) => (
-                          <MenuItem key={appln.list_uid} value={appln.list_item}>
-                            {appln.list_item}
-                          </MenuItem>
-                        ))}
-
+                        {applianceCategories &&
+                          applianceCategories.map((appln) => (
+                            <MenuItem key={appln.list_uid} value={appln.list_item}>
+                              {appln.list_item}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </FormControl>
                     <TextField
-                      margin="dense"
-                      label="Description"
+                      margin='dense'
+                      label='Description'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_desc || ''}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_desc || ""}
                       onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
                     />
                     <TextField
-                      margin="dense"
-                      label="Manufacturer Name"
+                      margin='dense'
+                      label='Manufacturer Name'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_manufacturer || ''}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_manufacturer: e.target.value })}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_manufacturer || ""}
+                      onChange={(e) =>
+                        setcurrentApplRow({
+                          ...currentApplRow,
+                          appliance_manufacturer: e.target.value,
+                        })
+                      }
                     />
                     <TextField
-                      margin="dense"
-                      label="Purchased From"
+                      margin='dense'
+                      label='Purchased From'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_purchased_from || ''}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased_from: e.target.value })}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_purchased_from || ""}
+                      onChange={(e) =>
+                        setcurrentApplRow({
+                          ...currentApplRow,
+                          appliance_purchased_from: e.target.value,
+                        })
+                      }
                     />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
-                        label="Purchased On"
+                        label='Purchased On'
                         value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchased: e.target.value })}
+                        onChange={(e) =>
+                          setcurrentApplRow({
+                            ...currentApplRow,
+                            appliance_purchased: e.target.value,
+                          })
+                        }
                         textField={(params) => (
                           <TextField
                             {...params}
-                            margin="dense"
+                            margin='dense'
                             fullWidth
-                            size="small"
-                            variant="outlined"
+                            size='small'
+                            variant='outlined'
                             sx={{
-                              '& .MuiInputBase-root': {
-                                fontSize: '14px',
+                              "& .MuiInputBase-root": {
+                                fontSize: "14px",
                               },
-                              '& .MuiSvgIcon-root': {
-                                fontSize: '20px',
+                              "& .MuiSvgIcon-root": {
+                                fontSize: "20px",
                               },
                             }}
                           />
@@ -2164,29 +2150,39 @@ export default function PropertyNavigator({
                       />
                     </LocalizationProvider>
                     <TextField
-                      margin="dense"
-                      label="Purchase Order Number"
+                      margin='dense'
+                      label='Purchase Order Number'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_purchase_order || ''}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_purchase_order: e.target.value })}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_purchase_order || ""}
+                      onChange={(e) =>
+                        setcurrentApplRow({
+                          ...currentApplRow,
+                          appliance_purchase_order: e.target.value,
+                        })
+                      }
                     />
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
-                        label="Installed On"
+                        label='Installed On'
                         value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_installed: e.target.value })}
+                        onChange={(e) =>
+                          setcurrentApplRow({
+                            ...currentApplRow,
+                            appliance_installed: e.target.value,
+                          })
+                        }
                         textField={(params) => (
                           <TextField
                             {...params}
-                            size="small"
+                            size='small'
                             sx={{
-                              '& .MuiInputBase-root': {
-                                fontSize: '14px',
+                              "& .MuiInputBase-root": {
+                                fontSize: "14px",
                               },
-                              '& .MuiSvgIcon-root': {
-                                fontSize: '20px',
+                              "& .MuiSvgIcon-root": {
+                                fontSize: "20px",
                               },
                             }}
                           />
@@ -2196,44 +2192,64 @@ export default function PropertyNavigator({
                     </LocalizationProvider>
 
                     <TextField
-                      margin="dense"
-                      label="Serial Number"
+                      margin='dense'
+                      label='Serial Number'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_serial_num || ''}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_serial_num: e.target.value })}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_serial_num || ""}
+                      onChange={(e) =>
+                        setcurrentApplRow({
+                          ...currentApplRow,
+                          appliance_serial_num: e.target.value,
+                        })
+                      }
                     />
                     <TextField
-                      margin="dense"
-                      label="Model Number"
+                      margin='dense'
+                      label='Model Number'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_model_num || ''}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_model_num: e.target.value })}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_model_num || ""}
+                      onChange={(e) =>
+                        setcurrentApplRow({
+                          ...currentApplRow,
+                          appliance_model_num: e.target.value,
+                        })
+                      }
                     />
                     <TextField
-                      margin="dense"
-                      label="Warranty Info"
+                      margin='dense'
+                      label='Warranty Info'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_warranty_info || ''}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_info: e.target.value })}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_warranty_info || ""}
+                      onChange={(e) =>
+                        setcurrentApplRow({
+                          ...currentApplRow,
+                          appliance_warranty_info: e.target.value,
+                        })
+                      }
                     />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
-                        label="Warranty Till"
+                        label='Warranty Till'
                         value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
-                        onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_warranty_till: e.target.value })}
+                        onChange={(e) =>
+                          setcurrentApplRow({
+                            ...currentApplRow,
+                            appliance_warranty_till: e.target.value,
+                          })
+                        }
                         textField={(params) => (
                           <TextField
                             {...params}
-                            size="small"
+                            size='small'
                             sx={{
-                              '& .MuiInputBase-root': {
-                                fontSize: '14px',
+                              "& .MuiInputBase-root": {
+                                fontSize: "14px",
                               },
-                              '& .MuiSvgIcon-root': {
-                                fontSize: '20px',
+                              "& .MuiSvgIcon-root": {
+                                fontSize: "20px",
                               },
                             }}
                           />
@@ -2242,24 +2258,30 @@ export default function PropertyNavigator({
                       />
                     </LocalizationProvider>
                     <TextField
-                      margin="dense"
-                      label="URLs"
+                      margin='dense'
+                      label='URLs'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_url || ''}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_url || ""}
                       onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
                     />
                     <TextField
-                      margin="dense"
-                      label="Images"
+                      margin='dense'
+                      label='Images'
                       fullWidth
-                      variant="outlined"
-                      value={currentApplRow?.appliance_images || ''}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_images: e.target.value })}
+                      variant='outlined'
+                      value={currentApplRow?.appliance_images || ""}
+                      onChange={(e) =>
+                        setcurrentApplRow({
+                          ...currentApplRow,
+                          appliance_images: e.target.value,
+                        })
+                      }
                     />
                   </DialogContent>
                   <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
-                    <Button variant="outlined"
+                    <Button
+                      variant='outlined'
                       sx={{
                         background: "#3D5CAC",
                         color: theme.palette.background.default,
@@ -2269,10 +2291,13 @@ export default function PropertyNavigator({
                         fontWeight: theme.typography.secondary.fontWeight,
                         fontSize: theme.typography.smallFont,
                       }}
-                      size="small" onClick={handleClose}>
+                      size='small'
+                      onClick={handleClose}
+                    >
                       Cancel
                     </Button>
-                    <Button variant="outlined"
+                    <Button
+                      variant='outlined'
                       sx={{
                         background: "#3D5CAC",
                         color: theme.palette.background.default,
@@ -2282,8 +2307,9 @@ export default function PropertyNavigator({
                         fontWeight: theme.typography.secondary.fontWeight,
                         fontSize: theme.typography.smallFont,
                       }}
-                      size="small"
-                      onClick={handleAddAppln}>
+                      size='small'
+                      onClick={handleAddAppln}
+                    >
                       Save
                     </Button>
                   </DialogActions>
@@ -2299,7 +2325,7 @@ export default function PropertyNavigator({
 
 function Contract(props) {
   const textStyle = {
-    textTransform: 'none',
+    textTransform: "none",
     color: theme.typography.propertyPage.color,
     fontWeight: theme.typography.light.fontWeight,
     fontSize: theme.typography.smallFont,
@@ -2309,7 +2335,7 @@ function Contract(props) {
 
   return (
     <Typography sx={textStyle}>
-      {contract.contract_business_id} {contract.business_name} {contract.contract_uid}{' '}
+      {contract.contract_business_id} {contract.business_name} {contract.contract_uid}{" "}
     </Typography>
   );
 }

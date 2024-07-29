@@ -41,17 +41,20 @@ import AddressAutocompleteInput from "./AddressAutocompleteInput";
 
 import APIConfig from "../../utils/APIConfig";
 
-function EditProperty(props) {
+function EditProperty({ editPropertyState, setCurrentView, props }) {
   console.log("In Edit Property2 - rename to Edit Property");
   const { state } = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   // const propertyData = location.state.item
   // const propertyId = location.state.propertyId;
-  let { index, propertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick } = props;
-  console.log("In Edit Property3", index);
 
-  const [propertyData, setPropertyData] = useState([]);
+  // Check with Laysa
+  // replaced with line below
+  // let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state || editPropertyState;
+  let { index, propertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick } = props || state || editPropertyState;
+
+  const [propertyData, setPropertyData] = useState(propertyList[index]);
   // console.log("Property Id", propertyId)
   console.log("Property Data in Edit Property", propertyData);
   const { user, selectedRole, selectRole, Name } = useUser();
@@ -175,7 +178,7 @@ function EditProperty(props) {
     setCommunityAmenities(property.property_amenities_community);
     setUnitAmenities(property.property_amenities_unit);
     setNearbyAmenities(property.property_amenities_nearby);
-  }, [index])
+  }, [index]);
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -351,7 +354,7 @@ function EditProperty(props) {
   };
 
   const handleBackButton = (e) => {
-    console.log('close clicked');
+    console.log("close clicked");
     e.preventDefault();
     onBackClick();
   };
@@ -522,17 +525,17 @@ function EditProperty(props) {
 
     const autoUpdate = async () => {
       const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
-      console.log('---updateResponse---', updateResponse);
+      console.log("---updateResponse---", updateResponse);
       // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
       const updatedJson = await updateResponse.json();
-      console.log('---updatedJson---', updatedJson);
+      console.log("---updatedJson---", updatedJson);
       const updatedProperty = updatedJson.Property.result[0];
-      console.log('---updatedProperty---', updatedProperty);
+      console.log("---updatedProperty---", updatedProperty);
       propertyList = propertyList.map((property) => {
         if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
         return property;
       });
-      console.log('---index---', index);
+      console.log("---index---", index);
       console.log("updatedPropertyList - ", propertyList);
       setPropertyData(propertyList[index]);
     };
@@ -552,7 +555,7 @@ function EditProperty(props) {
 
       console.log("propertyList after autoUpdate - ", propertyList);
       if (isDesktop == true) {
-        navigate('/properties', { state: { index: index } });
+        navigate("/properties", { state: { index: index } });
       } else {
         navigate("/propertyDetail", { state: { index: index, propertyList: propertyList, allRentStatus: allRentStatus, isDesktop: isDesktop, rawPropertyData: rawPropertyData } });
       }
@@ -597,7 +600,7 @@ function EditProperty(props) {
   };
 
   const handleAddressSelect = (address) => {
-    console.log('handleAddressSelect', address);
+    console.log("handleAddressSelect", address);
     setAddress(address.street ? address.street : "");
     setCity(address.city ? address.city : "");
     setPropertyState(address.state ? address.state : "");
@@ -607,7 +610,7 @@ function EditProperty(props) {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Stack
         style={{
@@ -634,10 +637,12 @@ function EditProperty(props) {
             // paddingTop: "10px",
           }}
         >
-          <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
-            <Box direction="row" justifyContent="center" alignItems="center">
+          <Stack direction='row' justifyContent='center' alignItems='center' position='relative'>
+            <Box direction='row' justifyContent='center' alignItems='center'>
               {page === "edit_property" && (
-                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, marginTop:'10px' }}>
+                <Typography
+                  sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, marginTop: "10px" }}
+                >
                   Edit Property
                 </Typography>
               )}
@@ -654,15 +659,15 @@ function EditProperty(props) {
                 </Typography>
               )}
             </Box>
-            <Box position="absolute" right={0}>
+            <Box position='absolute' right={0}>
               <Button onClick={(e) => handleBackButton(e)}>
                 <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>
           </Stack>
 
-          <Stack direction="column" justifyContent="center" alignItems="center" padding="25px">
-            <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off" id="editPropertyForm">
+          <Stack direction='column' justifyContent='center' alignItems='center' padding='25px'>
+            <Box component='form' onSubmit={handleSubmit} noValidate autoComplete='off' id='editPropertyForm'>
               <Grid container columnSpacing={12} rowSpacing={6}>
                 {/* Select Field for Property */}
                 <Grid item xs={12}>
@@ -675,11 +680,11 @@ function EditProperty(props) {
                       width: "100%",
                     }}
                   >
-                    <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                    <Button size='small' onClick={handleBack} disabled={activeStep === 0}>
                       {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
                     </Button>
                     <CardMedia
-                      component="img"
+                      component='img'
                       // image={selectedImageList[activeStep]}
                       image={selectedImageList[activeStep] ? `${selectedImageList[activeStep]}?${Date.now()}` : selectedImageList[0] || defaultHouseImage}
                       sx={{
@@ -696,7 +701,7 @@ function EditProperty(props) {
                         justifyContent: "center",
                       }}
                     />
-                    <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                    <Button size='small' onClick={handleNext} disabled={activeStep === maxSteps - 1}>
                       {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                     </Button>
                   </div>
@@ -710,7 +715,7 @@ function EditProperty(props) {
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Address
                   </Typography>
-                  <AddressAutocompleteInput onAddressSelect={handleAddressSelect} defaultValue={`${address}, ${city}, ${propertyState}`} gray={0}/> 
+                  <AddressAutocompleteInput onAddressSelect={handleAddressSelect} defaultValue={`${address}, ${city}, ${propertyState}`} gray={0} />
                   {/* <TextField
                     onChange={(e) => setAddress(e.target.value)}
                     sx={{
@@ -755,7 +760,7 @@ function EditProperty(props) {
                     }}
                     placeholder={unit}
                     value={unit}
-                    size="small"
+                    size='small'
                     fullWidth
                   />
                 </Grid>
@@ -809,7 +814,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     onChange={(e) => setZip(e.target.value)}
                     value={zip}
                     disabled
@@ -824,7 +829,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     fullWidth
                     onChange={(e) => setPropertyType(e.target.value)}
                     value={propertyType}
@@ -848,7 +853,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     placeholder={squareFootage}
                     onChange={(e) => setSquareFootage(e.target.value)}
                     value={squareFootage}
@@ -866,7 +871,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     placeholder={bedrooms}
                     onChange={(e) => setBedrooms(e.target.value)}
                     value={bedrooms}
@@ -884,7 +889,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     placeholder={bathrooms}
                     onChange={(e) => setBathrooms(e.target.value)}
                     value={bathrooms}
@@ -901,9 +906,9 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                     }}
                     onChange={(e) => setPropertyValue(e.target.value)}
                     value={propertyValue}
@@ -920,7 +925,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     // InputProps={{
                     //     startAdornment: (
                     //         <InputAdornment position="start">$</InputAdornment>
@@ -941,7 +946,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={notes}
                     onChange={(e) => setNotes(e.target.value)}
@@ -950,8 +955,8 @@ function EditProperty(props) {
                 </Grid>
                 <Grid item xs={12}>
                   {page === "add_listing" || page === "edit_listing" ? (
-                    <Stack direction="column" justifyContent="left" padding="15px" width="85%">
-                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label="Available to rent" />
+                    <Stack direction='column' justifyContent='left' padding='15px' width='85%'>
+                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label='Available to rent' />
                     </Stack>
                   ) : (
                     <div></div>
@@ -976,7 +981,7 @@ function EditProperty(props) {
             paddingTop: "10px",
           }}
         >
-          <Stack direction="column" justifyContent="center" alignItems="center" padding="25px">
+          <Stack direction='column' justifyContent='center' alignItems='center' padding='25px'>
             <Grid container columnSpacing={12} rowSpacing={6}>
               <Grid item xs={12}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
@@ -989,7 +994,7 @@ function EditProperty(props) {
                     borderColor: "black",
                     borderRadius: "7px",
                   }}
-                  size="small"
+                  size='small'
                   placeholder={activeDate}
                   onChange={(e) => setActiveDate(e.target.value)}
                   value={activeDate}
@@ -1006,12 +1011,12 @@ function EditProperty(props) {
                     borderColor: "black",
                     borderRadius: "7px",
                   }}
-                  size="small"
+                  size='small'
                   placeholder={deposit}
                   onChange={(e) => setDeposit(e.target.value)}
                   value={deposit}
                   InputProps={{
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                    startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                   }}
                 />
               </Grid>
@@ -1024,12 +1029,12 @@ function EditProperty(props) {
                     borderColor: "black",
                     borderRadius: "7px",
                   }}
-                  size="small"
+                  size='small'
                   placeholder={listedRent}
                   onChange={(e) => setListedRent(e.target.value)}
                   value={listedRent}
                   InputProps={{
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                    startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                   }}
                 />
               </Grid>
@@ -1064,10 +1069,10 @@ function EditProperty(props) {
           }}
         >
           <Stack
-            direction="column"
-            justifyContent="left"
-            alignItems="left"
-            padding="25px"
+            direction='column'
+            justifyContent='left'
+            alignItems='left'
+            padding='25px'
             sx={{
               display: "flex",
             }}
@@ -1077,7 +1082,7 @@ function EditProperty(props) {
                 display: "flex",
               }}
               noValidate
-              autoComplete="off"
+              autoComplete='off'
             >
               <Grid container columnSpacing={12} rowSpacing={6}>
                 <Grid item xs={12}>
@@ -1099,21 +1104,21 @@ function EditProperty(props) {
                     </Grid>
                     <Grid item xs={6}>
                       <FormControlLabel
-                        value="owner"
+                        value='owner'
                         control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                        label="Owner"
+                        label='Owner'
                       />
                       <FormControlLabel
-                        value="tenant"
+                        value='tenant'
                         control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                        label="Tenant"
+                        label='Tenant'
                       />
                     </Grid>
                   </Fragment>
                 ))}
                 <Grid item xs={12}>
                   <Button
-                    variant="outlined"
+                    variant='outlined'
                     onClick={handleAddUtilityButtonClick}
                     sx={{
                       backgroundColor: "#3D5CAC",
@@ -1152,21 +1157,21 @@ function EditProperty(props) {
           }}
         >
           <Stack
-            direction="column"
-            justifyContent="left"
-            alignItems="left"
-            padding="25px"
+            direction='column'
+            justifyContent='left'
+            alignItems='left'
+            padding='25px'
             sx={{
               display: "flex",
             }}
           >
             <Box
-              component="form"
+              component='form'
               sx={{
                 display: "flex",
               }}
               noValidate
-              autoComplete="off"
+              autoComplete='off'
             >
               <Grid container columnSpacing={12} rowSpacing={6}>
                 <Grid item xs={12}>
@@ -1182,7 +1187,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -1202,7 +1207,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={unitAmenities}
                     onChange={(e) => setUnitAmenities(e.target.value)}
@@ -1222,7 +1227,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={communityAmenities}
                     onChange={(e) => setCommunityAmenities(e.target.value)}
@@ -1242,7 +1247,7 @@ function EditProperty(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={nearbyAmenities}
                     onChange={(e) => setNearbyAmenities(e.target.value)}
@@ -1271,9 +1276,9 @@ function EditProperty(props) {
                     :<div></div>}  */}
         {/* Submit Button */}
         <Stack
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
+          direction='column'
+          justifyContent='center'
+          alignItems='center'
           sx={{
             display: "flex",
           }}
@@ -1289,7 +1294,7 @@ function EditProperty(props) {
               <Grid item xs={12}>
                 {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
 
-                <Button variant="contained" type="submit" form="editPropertyForm" sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
+                <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
                   {page === "edit_property" && (
                     <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Property</Typography>
                   )}
