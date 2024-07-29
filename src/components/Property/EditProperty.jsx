@@ -351,13 +351,9 @@ function EditProperty(props) {
   };
 
   const handleBackButton = (e) => {
+    console.log('close clicked');
     e.preventDefault();
-    console.log("handleBackButton");
-    if (isDesktop == true) {
-      navigate('/properties', { state: { index: index } });
-    } else {
-      navigate(-1);
-    }
+    onBackClick();
   };
 
   const handleListedChange = (event) => {

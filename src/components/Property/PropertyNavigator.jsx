@@ -1233,7 +1233,11 @@ export default function PropertyNavigator({
                               width: '100%',
                             }}
                             size="small"
-                            onClick={() => onEditClick("edit_property")}
+                            onClick={() => {
+                              // console.log('typeof edit', typeof(onEditClick));
+                              onEditClick("edit_property");
+                            }
+                            }
                             // onClick={handleEditButton}
                           >
                             <PostAddIcon sx={{ color: '#FFFFFF', fontSize: '18px' }} />
