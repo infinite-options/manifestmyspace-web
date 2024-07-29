@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const RequestQuotes = () => {
+const RequestQuotes = ({requestQuotesState, setShowRequestQuotes}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId } = useUser();
@@ -34,7 +34,7 @@ const RequestQuotes = () => {
   const [announcementTitle, setAnnouncementTitle] = useState("");
   const [announcementMsg, setAnnouncementMsg] = useState("");
 
-  const { managerData, propertyData, index, isDesktop } = location.state || {};
+  const { managerData, propertyData, index, isDesktop } = location.state || requestQuotesState;
 
   useEffect(() => {
     if (propertyData && index !== undefined) {
@@ -139,7 +139,7 @@ const RequestQuotes = () => {
 
   const navigateToPrev = () => {
     if(isDesktop === true){
-      navigate('/properties', {state:{index:index}});
+      setShowRequestQuotes(false);
     }else{
       navigate(-1);
     }

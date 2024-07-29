@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // SearchManager Component
-const SearchManager = ({ searchManagerState }) => {
+const SearchManager = ({ searchManagerState, onShowRequestQuotes }) => {
   // State declarations
   const classes = useStyles();
   const navigate = useNavigate();
@@ -47,6 +47,10 @@ const SearchManager = ({ searchManagerState }) => {
   const { getProfileId } = useUser();
   const [ownerId, setOwnerId] = useState(getProfileId());
   const [showSpinner, setShowSpinner] = useState(false);
+
+  const handleRequestQuotes = async (managerData) => {
+    onShowRequestQuotes({ managerData, propertyData, index, isDesktop });
+  };
 
   // Function to fetch manager information
   const get_manager_info = async () => {
@@ -211,7 +215,7 @@ const SearchManager = ({ searchManagerState }) => {
                   }}
                 />
                 {displayed_managers.map((m) => (
-                  <DocumentCard data={m} ownerId={ownerId} propertyData={propertyData} index={index} />
+                  <DocumentCard data={m} ownerId={ownerId} propertyData={propertyData} index={index} onRequestQuotes={handleRequestQuotes}/>
                 ))}
               </Box>
             </Box>
@@ -231,6 +235,7 @@ function DocumentCard(props) {
   const propertyData = props.propertyData;
   const index = props.index;
   const isDesktop = props.isDesktop;
+  const onRequestQuotes = props.onRequestQuotes;
   const navigate = useNavigate();
 
   console.log("BUSINESS Locations - ", obj.business_locations);
@@ -300,7 +305,7 @@ function DocumentCard(props) {
                             color: theme.palette.background.default,
                             borderRadius: "10px 10px 10px 10px",
                         }}
-                        onClick={() => handleRequestQuotes(obj)}
+                        onClick={() => onRequestQuotes(obj)}
                     >
                         Request Quote
                     </Button>

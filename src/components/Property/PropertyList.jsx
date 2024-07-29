@@ -31,6 +31,7 @@ import PropertyDetail2 from './PropertyDetail2';
 // import PMRent from "../Rent/PMRent/PMRent";
 import PropertyForm from '../Property/PropertyForm';
 import SearchManager from '../Property/SearchManager';
+import RequestQuotes from '../Property/RequestQuotes';
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
 	const [searchTerm, setSearchTerm] = useState('');
@@ -212,6 +213,9 @@ export default function PropertyList({}) {
 	const [showSearchManager, setShowSearchManager] = useState(false);
 	const [searchManagerState, setSearchManagerState] = useState(null);
 
+  const [showRequestQuotes, setShowRequestQuotes] = useState(false);
+const [requestQuotesState, setRequestQuotesState] = useState(null);
+
   const handleShowSearchManager = async (state) => {
     console.log('----handleShowSearchManager---', state);
     setSearchManagerState(state);
@@ -219,10 +223,22 @@ export default function PropertyList({}) {
 
   useEffect(() => {
     if (searchManagerState !== null) {
-      console.log('----setting searchManagerState---', searchManagerState);
+      //console.log('----setting searchManagerState---', searchManagerState);
       setShowSearchManager(true);
     }
   }, [searchManagerState]);
+
+  const handleShowRequestQuotes = (state) => {
+    setRequestQuotesState(state);
+  };
+
+  useEffect(() => {
+    if (requestQuotesState !== null) {
+      console.log('----setting requestQuotesState---', requestQuotesState);
+      setShowSearchManager(false);
+      setShowRequestQuotes(true);
+    }
+  }, [requestQuotesState]);
 
 	function numberOfMaintenanceItems(maintenanceItems) {
 		console.log(maintenanceItems);
@@ -881,9 +897,11 @@ export default function PropertyList({}) {
 									/>
 								) : showSearchManager && searchManagerState ? (
                   (() => {
-                    return <SearchManager searchManagerState={searchManagerState} />;
+                    return <SearchManager searchManagerState={searchManagerState} onShowRequestQuotes={handleShowRequestQuotes} />;
                   })()
-								) : (
+								) : showRequestQuotes && requestQuotesState ? (
+                  <RequestQuotes requestQuotesState={requestQuotesState} setShowRequestQuotes={setShowRequestQuotes}/>
+                ): (
 									<PropertyDetail2
 										index={propertyIndex}
 										propertyList={displayedItems}
