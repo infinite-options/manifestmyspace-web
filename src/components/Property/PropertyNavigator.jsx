@@ -68,6 +68,7 @@ const getAppColor = (app) =>
 	app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
 
 export default function PropertyNavigator({
+	setTenantAppNavState,
 	setPmQuoteRequestedState,
 	setManagerDetailsState,
 	onShowSearchManager,
@@ -586,9 +587,11 @@ export default function PropertyNavigator({
 	};
 
 	const handleAppClick = (index) => {
-		navigate('/tenantApplicationNav', {
+		/* navigate('/tenantApplicationNav', {
 			state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop },
-		});
+		}); */
+		const state = { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop }
+		setTenantAppNavState(state);
 	};
 
 	const getRentStatus = () => {

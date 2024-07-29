@@ -930,7 +930,9 @@ useEffect(() => {
                   <ManagerDetails managerDetailsState={managerDetailsState} setCurrentView={setCurrentView}/>
                 ): currentView === 'pmquoterequested' && pmQuoteRequestedState ? (
                   <PMQuotesRequested pmQuoteRequestedState={pmQuoteRequestedState} setCurrentView={setCurrentView}/>
-                ):(
+                ):currentView === 'tenantappnav' && tenantAppNavState ? (
+					<TenantApplicationNav tenantAppNavState={tenantAppNavState} setCurrentView={setCurrentView}/>
+				  ):(
 									<PropertyDetail2
 										index={propertyIndex}
 										propertyList={displayedItems}
@@ -940,6 +942,7 @@ useEffect(() => {
 										onShowSearchManager={handleShowSearchManager}
                     setManagerDetailsState={setManagerDetailsState}
                     setPmQuoteRequestedState={setPmQuoteRequestedState}
+					setTenantAppNavState= {setTenantAppNavState}
 									/>
 								)}
 							</Grid>
