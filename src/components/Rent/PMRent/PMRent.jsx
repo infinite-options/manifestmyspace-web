@@ -77,7 +77,7 @@ function PMRent(props) {
   return (
     <MainContainer>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <RentTitle>Property Rent 456</RentTitle>
       <ViewOptionContainer>
@@ -119,6 +119,7 @@ function PMRent(props) {
           marginTop: "20px",
         }}
       >
+        {/* <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} /> */}
         <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} />
       </Box>
     </MainContainer>

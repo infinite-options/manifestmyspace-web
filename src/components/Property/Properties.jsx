@@ -40,7 +40,7 @@ function Properties(props) {
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
-  const [page, setPage] = useState(""); 
+  const [page, setPage] = useState("");
 
   // console.log("LEASE", propertyList[propertyIndex].lease_id)
   // useEffect(() => {
@@ -214,25 +214,27 @@ function Properties(props) {
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            {LHS === "List" && (
-              <PropertiesList 
-                index={propertyIndex} 
-                propertyList={propertyList} 
-                allRentStatus={allRentStatus} 
-                isDesktop={isDesktop} 
-                contracts={allContracts} 
+            {/* {LHS === "List" && (
+              <PropertiesList
+                index={propertyIndex}
+                propertyList={propertyList}
+                allRentStatus={allRentStatus}
+                isDesktop={isDesktop}
+                contracts={allContracts}
                 setPropertyIndex={setPropertyIndex}
               />
-            )}
+            )} */}
+            <PropertiesList index={propertyIndex} LHS={LHS} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
           </Grid>
+
           <Grid item xs={12} md={8}>
             {RHS === "PropertyNavigator" && (
-              <PropertyNavigator 
-                index={propertyIndex} 
-                propertyList={propertyList} 
-                allRentStatus={allRentStatus} 
-                isDesktop={isDesktop} 
-                contracts={allContracts} 
+              <PropertyNavigator
+                index={propertyIndex}
+                propertyList={propertyList}
+                allRentStatus={allRentStatus}
+                isDesktop={isDesktop}
+                contracts={allContracts}
                 onEditClick={handleEditClick}
                 onViewLeaseClick={handleViewLeaseClick}
               />
@@ -246,7 +248,7 @@ function Properties(props) {
                 page={page}
                 isDesktop={isDesktop}
                 allRentStatus={allRentStatus}
-                rawPropertyData={propertyList} 
+                rawPropertyData={propertyList}
                 onBackClick={handleBackClick}
               />
             )}
