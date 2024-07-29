@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const RequestQuotes = ({requestQuotesState, setShowRequestQuotes}) => {
+const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId } = useUser();
@@ -139,7 +139,7 @@ const RequestQuotes = ({requestQuotesState, setShowRequestQuotes}) => {
 
   const navigateToPrev = () => {
     if(isDesktop === true){
-      setShowRequestQuotes(false);
+      setCurrentView('deafultview');
     }else{
       navigate(-1);
     }

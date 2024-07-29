@@ -68,6 +68,7 @@ const getAppColor = (app) =>
   app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
 
 export default function PropertyNavigator({
+  setManagerDetailsState,
   onShowSearchManager,
   index,
   propertyList,
@@ -549,7 +550,7 @@ export default function PropertyNavigator({
 
   const handleManagerChange = (index) => {
     if (property && property.business_uid) {
-      navigate('/managerDetails', {
+      /* navigate('/managerDetails', {
         state: {
           ownerId: property.owner_uid,
           managerBusinessId: property.business_uid,
@@ -558,7 +559,17 @@ export default function PropertyNavigator({
           index: currentIndex,
           isDesktop: isDesktop,
         },
-      });
+      }); */
+      const state = {
+        ownerId: property.owner_uid,
+        managerBusinessId: property.business_uid,
+        managerData: property,
+        propertyData: propertyData,
+        index: currentIndex,
+        isDesktop: isDesktop,
+      };
+      console.log('---inside prop nav state---', state);
+      setManagerDetailsState(state);
     } else {
       // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
       const state = { index: currentIndex, propertyData , isDesktop };

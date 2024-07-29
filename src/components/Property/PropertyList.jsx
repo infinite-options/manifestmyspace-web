@@ -32,6 +32,8 @@ import PropertyDetail2 from './PropertyDetail2';
 import PropertyForm from '../Property/PropertyForm';
 import SearchManager from '../Property/SearchManager';
 import RequestQuotes from '../Property/RequestQuotes';
+import ManagerDetails from "../Property/ManagerDetails";
+
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
 	const [searchTerm, setSearchTerm] = useState('');
@@ -206,25 +208,34 @@ export default function PropertyList({}) {
 	const [isFromRentWidget, setFromRentWidget] = useState(false);
 	const { selectedRole } = useUser();
 	// console.log("getProfileId information", getProfileId());
+  const [currentView, setCurrentView] = useState('deafultview');
 	const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
 	const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
 	const [allContracts, setAllContracts] = useState([]);
 
-	const [showSearchManager, setShowSearchManager] = useState(false);
 	const [searchManagerState, setSearchManagerState] = useState(null);
 
-  const [showRequestQuotes, setShowRequestQuotes] = useState(false);
 const [requestQuotesState, setRequestQuotesState] = useState(null);
 
+const [managerDetailsState, setManagerDetailsState] = useState(null);
+
+const handleManagerDetails = async (state) => {
+  setManagerDetailsState(state);
+};
+
+useEffect(() => {
+  if (managerDetailsState !== null) {
+    setCurrentView('managerdetails');
+  }
+}, [managerDetailsState]);
+
   const handleShowSearchManager = async (state) => {
-    console.log('----handleShowSearchManager---', state);
     setSearchManagerState(state);
   };
 
   useEffect(() => {
     if (searchManagerState !== null) {
-      //console.log('----setting searchManagerState---', searchManagerState);
-      setShowSearchManager(true);
+      setCurrentView('searchmanager');
     }
   }, [searchManagerState]);
 
@@ -234,9 +245,7 @@ const [requestQuotesState, setRequestQuotesState] = useState(null);
 
   useEffect(() => {
     if (requestQuotesState !== null) {
-      console.log('----setting requestQuotesState---', requestQuotesState);
-      setShowSearchManager(false);
-      setShowRequestQuotes(true);
+      setCurrentView('requestquote');
     }
   }, [requestQuotesState]);
 
@@ -895,13 +904,15 @@ const [requestQuotesState, setRequestQuotesState] = useState(null);
 										onSubmit={handleFormSubmit}
 										property_endpoint_resp={rawPropertyData}
 									/>
-								) : showSearchManager && searchManagerState ? (
+								) : currentView === 'searchmanager' && searchManagerState ? (
                   (() => {
                     return <SearchManager searchManagerState={searchManagerState} onShowRequestQuotes={handleShowRequestQuotes} />;
                   })()
-								) : showRequestQuotes && requestQuotesState ? (
-                  <RequestQuotes requestQuotesState={requestQuotesState} setShowRequestQuotes={setShowRequestQuotes}/>
-                ): (
+								) : currentView === 'requestquote' && requestQuotesState ? (
+                  <RequestQuotes requestQuotesState={requestQuotesState} setCurrentView={setCurrentView}/>
+                ): currentView === 'managerdetails' && managerDetailsState ? (
+                  <ManagerDetails managerDetailsState={managerDetailsState} setCurrentView={setCurrentView}/>
+                ):(
 									<PropertyDetail2
 										index={propertyIndex}
 										propertyList={displayedItems}
@@ -909,6 +920,7 @@ const [requestQuotesState, setRequestQuotesState] = useState(null);
 										isDesktop={isDesktop}
 										allContracts={allContracts}
 										onShowSearchManager={handleShowSearchManager}
+                    setManagerDetailsState={setManagerDetailsState}
 									/>
 								)}
 							</Grid>
