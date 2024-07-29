@@ -34,6 +34,7 @@ import SearchManager from '../Property/SearchManager';
 import RequestQuotes from '../Property/RequestQuotes';
 import ManagerDetails from "../Property/ManagerDetails";
 import PMQuotesRequested from "../Property/PMQuotesRequested";
+import TenantApplicationNav from "../Applications/TenantApplicationNav";
 
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
@@ -220,6 +221,13 @@ const [requestQuotesState, setRequestQuotesState] = useState(null);
 
 const [managerDetailsState, setManagerDetailsState] = useState(null);
 const [pmQuoteRequestedState, setPmQuoteRequestedState] = useState(null);
+const [tenantAppNavState, setTenantAppNavState] = useState(null);
+
+useEffect(() => {
+  if (tenantAppNavState !== null) {
+    setCurrentView('tenantappnav');
+  }
+}, [tenantAppNavState]);
 
 useEffect(() => {
   if (pmQuoteRequestedState !== null) {
