@@ -40,10 +40,12 @@ function PropertiesList(props) {
   const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
   const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
+  // const [returnIndex, setReturnIndex] = useState(0);
 
   // console.log("In Property List - propertyList outside: ", propertyList);
   // console.log("In Property List - displayList outside: ", displayedItems);
   console.log("In Property List - propertyIndex outside: ", propertyIndex);
+  // console.log("In Property List - returnIndex outside: ", );
   console.log("In Property List - rentStatus outside: ", allRentStatus);
   console.log("In Property List - LHS outside: ", LHS);
 
@@ -201,15 +203,18 @@ function PropertiesList(props) {
   const onPropertyClick = (params) => {
     const property = params.row;
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
-    console.log("List Item Clicked", property, i, displayedItems);
+    // console.log("List Item Clicked", property, i, displayedItems);
     handlePropertyDetailNavigation(i, displayedItems);
     // setSelectedPropertyIndex(i);
+    setPropertyIndex(i);
+    props.onDataChange(i);
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {
     const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
     console.log("onPropertyInRentWidgetClicked Clicked", i, displayedItems);
     setPropertyIndex(i);
+    props.onDataChange(i);
   };
 
   function handlePropertyDetailNavigation(index, propertyList) {
@@ -640,11 +645,11 @@ function PropertiesList(props) {
                   }}
                   onRowClick={onPropertyClick}
                   rowSelectionModel={[propertyIndex]}
-                  onRowSelectionModelChange={(newSelection) => {
-                    if (newSelection.length > 0) {
-                      setPropertyIndex(newSelection[0]);
-                    }
-                  }}
+                  // onRowSelectionModelChange={(newSelection) => {
+                  //   if (newSelection.length > 0) {
+                  //     setPropertyIndex(newSelection[0]);
+                  //   }
+                  // }}
                   getRowSpacing={getRowSpacing}
                   sx={{
                     "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },

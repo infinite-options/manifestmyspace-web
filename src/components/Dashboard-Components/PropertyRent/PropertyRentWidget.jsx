@@ -234,7 +234,7 @@ function PropertyRentWidget(props) {
                   //   console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
                   //   navigate(`/propertiesPM`, { state: { index, propertyList, rawPropertyData } });
                   // }}
-                  onClick={() => navigate("/propertiesPM", { state: { index: { index }, showLHS: "Rent", showRHS: "PropertyNavigator" } })}
+                  onClick={() => navigate("/propertiesPM", { state: { showLHS: "Rent", showRHS: "PropertyNavigator" } })}
                 >
                   {`${property.property_address}${property.property_unit ? `, Unit ${property.property_unit}` : ""}`}
                 </MenuItem>

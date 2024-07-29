@@ -36,11 +36,15 @@ function Properties(props) {
   const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
+  const [returnIndex, setReturnIndex] = useState(0);
 
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
   const [page, setPage] = useState("");
+  console.log("View RETURN INDEX : ", returnIndex);
+
+  console.log("propertyIndex at the beginning 1: ", propertyIndex);
 
   // console.log("LEASE", propertyList[propertyIndex].lease_id)
   // useEffect(() => {
@@ -51,6 +55,8 @@ function Properties(props) {
   useEffect(() => {
     console.log("In Properties - LHS: ", LHS);
     console.log("In Properties - RHS: ", RHS);
+    console.log("propertyIndex at the beginning 2: ", propertyIndex);
+    console.log("Return Index: ", returnIndex);
   }, [LHS, RHS]);
 
   useEffect(() => {
@@ -74,18 +80,11 @@ function Properties(props) {
 
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
+      setPropertyIndex(0);
 
       const propertyRent = await propertyRentDetails();
       setAllRentStatus(propertyRent.RentStatus.result);
-      if (location.state) {
-        if (location.state.isBack === true) {
-          setPropertyIndex(propertyList.length - 1);
-          navigate(location.pathname, { replace: true, state: {} });
-        } else {
-          setPropertyIndex(location.state.index);
-          navigate(location.pathname, { replace: true, state: {} });
-        }
-      }
+
       if (propertyData.Property.code === 200 && propertyRent.RentStatus.code === 200) {
         setDataReady(true);
       }
@@ -198,16 +197,24 @@ function Properties(props) {
     setRHS("EditProperty");
   };
 
+  const handleListClick = (newData) => {
+    console.log("View leases New Data : ", newData);
+    setReturnIndex(newData);
+    console.log("View leases RETURN INDEX : ", returnIndex);
+  };
+
   const handleViewLeaseClick = () => {
     // setPage("ViewLease");
-    console.log("View leases", propertyList[propertyIndex].lease_uid)
+    console.log("View leases before before: ", propertyList);
+    console.log("View leases before before Index: ", propertyIndex);
+    console.log("View leases before: ", propertyList[propertyIndex]);
+    console.log("View leases", propertyList[propertyIndex].lease_uid);
     setRHS("ViewLease");
-  }
+  };
 
   const handleBackClick = () => {
     setRHS("PropertyNavigator");
   };
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -224,13 +231,22 @@ function Properties(props) {
                 setPropertyIndex={setPropertyIndex}
               />
             )} */}
-            <PropertiesList index={propertyIndex} LHS={LHS} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
+            <PropertiesList
+              index={propertyIndex}
+              LHS={LHS}
+              propertyList={propertyList}
+              allRentStatus={allRentStatus}
+              isDesktop={isDesktop}
+              contracts={allContracts}
+              onDataChange={handleListClick}
+            />
           </Grid>
 
           <Grid item xs={12} md={8}>
             {RHS === "PropertyNavigator" && (
               <PropertyNavigator
-                index={propertyIndex}
+                // index={propertyIndex}
+                index={returnIndex}
                 propertyList={propertyList}
                 allRentStatus={allRentStatus}
                 isDesktop={isDesktop}
@@ -252,14 +268,7 @@ function Properties(props) {
                 onBackClick={handleBackClick}
               />
             )}
-            {RHS === "ViewLease" && (
-              <ViewLease
-              lease_id = {propertyList[0].lease_uid}
-              index = {propertyIndex}
-              isDesktop = {isDesktop}
-              onBackClick = {handleBackClick}
-              />
-            )}
+            {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} index={propertyIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}
           </Grid>
         </Grid>
       </Container>
