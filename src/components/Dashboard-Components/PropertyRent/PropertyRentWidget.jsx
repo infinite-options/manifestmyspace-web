@@ -234,7 +234,7 @@ function PropertyRentWidget(props) {
                   //   console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
                   //   navigate(`/propertiesPM`, { state: { index, propertyList, rawPropertyData } });
                   // }}
-                  onClick={() => navigate("/propertiesPM", { state: { index: { index }, showLHS: "Rent", showRHS: "Details" } })}
+                  onClick={() => navigate("/propertiesPM", { state: { index: { index }, showLHS: "Rent", showRHS: "PropertyNavigator" } })}
                 >
                   {`${property.property_address}${property.property_unit ? `, Unit ${property.property_unit}` : ""}`}
                 </MenuItem>
@@ -345,7 +345,7 @@ function PropertyRentWidget(props) {
                 fontWeight: "bold",
               }}
               // onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true, rawPropertyData: rawPropertyData } })}
-              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "Details" } })}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
             >
               Add your first
               <tspan x={130} y={145}>
@@ -445,7 +445,7 @@ const CustomLegend = ({ data, navigate }) => {
       //     navigate("/propertiesPM");
       //   }
       // }}
-      onClick={() => navigate("/propertiesPM", { state: { showLHS: "Rent", showRHS: "Details" } })}
+      onClick={() => navigate("/propertiesPM", { state: { showLHS: "Rent", showRHS: "PropertyNavigator" } })}
     >
       {/* <h2 className="mt-widget-title">Maintenance</h2> */}
       <Box

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
@@ -37,12 +36,10 @@ function Properties(props) {
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
 
-  const [view, setView] = useState("navigator"); 
-  const [page, setPage] = useState(""); 
-
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
-  const [RHS, setRHS] = useState(location.state?.showLHS || "PropertyList");
+  const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
+  const [page, setPage] = useState(""); 
 
   // useEffect(() => {
   //   setLHS(props.showLHS);
@@ -195,57 +192,53 @@ function Properties(props) {
   }
 
   const handleEditClick = (editPage) => {
-    setPage(editPage)
-    setView("edit");
+    setPage(editPage);
+    setRHS("EditProperty");
   };
 
   const handleBackClick = () => {
-    setView("navigator");
+    setRHS("PropertyNavigator");
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
-        {/* {showSpinner || !dataReady ? (
-          <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
-            <CircularProgress color='inherit' />
-          </Backdrop>
-        ) : ( */}
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            <PropertiesList index={propertyIndex} LHS={LHS} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts} />
+            {LHS === "List" && (
+              <PropertiesList 
+                index={propertyIndex} 
+                propertyList={propertyList} 
+                allRentStatus={allRentStatus} 
+                isDesktop={isDesktop} 
+                contracts={allContracts} 
+                setPropertyIndex={setPropertyIndex}
+              />
+            )}
           </Grid>
           <Grid item xs={12} md={8}>
-            {/* <Typography
-              sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.largeFont,
-              }}
-            >
-              Proprty Navigator
-            </Typography> */}
-            {view == "navigator" ? (
-                <PropertyNavigator 
+            {RHS === "PropertyNavigator" && (
+              <PropertyNavigator 
                 index={propertyIndex} 
-                RHS={RHS} 
                 propertyList={propertyList} 
                 allRentStatus={allRentStatus} 
                 isDesktop={isDesktop} 
                 contracts={allContracts} 
                 onEditClick={handleEditClick}
               />
-            ):(
+            )}
+            {RHS === "EditProperty" && (
               <EditProperty
-              currentId={propertyList[propertyIndex].property_uid}
-              property={propertyList[propertyIndex]}
-              index={propertyIndex}
-              propertyList={propertyList}
-              page={page}
-              isDesktop={isDesktop}
-              allRentStatus={allRentStatus}
-              rawPropertyData={propertyList} 
-              onBackClick={handleBackClick}/>
+                currentId={propertyList[propertyIndex].property_uid}
+                property={propertyList[propertyIndex]}
+                index={propertyIndex}
+                propertyList={propertyList}
+                page={page}
+                isDesktop={isDesktop}
+                allRentStatus={allRentStatus}
+                rawPropertyData={propertyList} 
+                onBackClick={handleBackClick}
+              />
             )}
           </Grid>
         </Grid>
