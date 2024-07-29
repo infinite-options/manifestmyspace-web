@@ -3,7 +3,7 @@ import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Card, CardHeader, Sli
 import theme from "../../theme/theme";
 import PropertyNavigator from "../Property/PropertyNavigator";
 
-export default function PropertyDetail({ setTenantAppNavState, setPmQuoteRequestedState, setManagerDetailsState, onShowSearchManager, index, propertyList, allRentStatus, isDesktop, allContracts }) {
+export default function PropertyDetail({ setEditPropertyState, setTenantAppNavState, setPmQuoteRequestedState, setManagerDetailsState, onShowSearchManager, index, propertyList, allRentStatus, isDesktop, allContracts }) {
   console.log("In Property Detail Desktop", allContracts);
   return (
     <ThemeProvider theme={theme}>
@@ -16,7 +16,7 @@ export default function PropertyDetail({ setTenantAppNavState, setPmQuoteRequest
           height:"100%",
         }}
       >
-        <PropertyNavigator  setTenantAppNavState={setTenantAppNavState} setPmQuoteRequestedState={setPmQuoteRequestedState} setManagerDetailsState={setManagerDetailsState} onShowSearchManager={onShowSearchManager} index={index} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts}/>
+        <PropertyNavigator  setEditPropertyState= {setEditPropertyState} setTenantAppNavState={setTenantAppNavState} setPmQuoteRequestedState={setPmQuoteRequestedState} setManagerDetailsState={setManagerDetailsState} onShowSearchManager={onShowSearchManager} index={index} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} contracts={allContracts}/>
       </Box>
     </ThemeProvider>
   );

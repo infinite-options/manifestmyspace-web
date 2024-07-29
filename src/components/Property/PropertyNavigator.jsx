@@ -68,6 +68,7 @@ const getAppColor = (app) =>
 	app.lease_status !== 'REJECTED' ? (app.lease_status !== 'REFUSED' ? '#778DC5' : '#874499') : '#A52A2A';
 
 export default function PropertyNavigator({
+	setEditPropertyState,
 	setTenantAppNavState,
 	setPmQuoteRequestedState,
 	setManagerDetailsState,
@@ -1269,7 +1270,7 @@ export default function PropertyNavigator({
 														}}
 														size="small"
 														onClick={() => {
-															navigate('/editProperty', {
+															/* navigate('/editProperty', {
 																state: {
 																	currentId,
 																	property,
@@ -1280,7 +1281,18 @@ export default function PropertyNavigator({
 																	allRentStatus,
 																	rawPropertyData,
 																},
-															});
+															}); */
+															const state =  {
+																currentId,
+																property,
+																index: currentIndex,
+																propertyList: propertyData,
+																page: 'edit_property',
+																isDesktop,
+																allRentStatus,
+																rawPropertyData,
+															}
+															setEditPropertyState(state);
 														}}
 													>
 														<PostAddIcon sx={{ color: '#FFFFFF', fontSize: '18px' }} />

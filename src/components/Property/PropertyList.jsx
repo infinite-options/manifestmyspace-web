@@ -35,7 +35,7 @@ import RequestQuotes from '../Property/RequestQuotes';
 import ManagerDetails from "../Property/ManagerDetails";
 import PMQuotesRequested from "../Property/PMQuotesRequested";
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
-
+import EditProperty from "../Property/EditProperty";
 
 const SearchBar = ({ propertyList, setFilteredItems }) => {
 	const [searchTerm, setSearchTerm] = useState('');
@@ -222,6 +222,13 @@ const [requestQuotesState, setRequestQuotesState] = useState(null);
 const [managerDetailsState, setManagerDetailsState] = useState(null);
 const [pmQuoteRequestedState, setPmQuoteRequestedState] = useState(null);
 const [tenantAppNavState, setTenantAppNavState] = useState(null);
+const [editPropertyState, setEditPropertyState] = useState(null);
+
+useEffect(() => {
+	if (editPropertyState !== null) {
+	  setCurrentView('editproperty');
+	}
+  }, [editPropertyState]);
 
 useEffect(() => {
   if (tenantAppNavState !== null) {
@@ -932,6 +939,8 @@ useEffect(() => {
                   <PMQuotesRequested pmQuoteRequestedState={pmQuoteRequestedState} setCurrentView={setCurrentView}/>
                 ):currentView === 'tenantappnav' && tenantAppNavState ? (
 					<TenantApplicationNav tenantAppNavState={tenantAppNavState} setCurrentView={setCurrentView}/>
+				  ):currentView === 'editproperty' && editPropertyState ? (
+					<EditProperty editPropertyState={editPropertyState} setCurrentView={setCurrentView}/>
 				  ):(
 									<PropertyDetail2
 										index={propertyIndex}
@@ -943,6 +952,7 @@ useEffect(() => {
                     setManagerDetailsState={setManagerDetailsState}
                     setPmQuoteRequestedState={setPmQuoteRequestedState}
 					setTenantAppNavState= {setTenantAppNavState}
+					setEditPropertyState={setEditPropertyState}
 									/>
 								)}
 							</Grid>
