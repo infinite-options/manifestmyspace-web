@@ -30,16 +30,18 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import defaultMaintenanceImage from "../Property/maintenanceIcon.png";
 
-export default function TenantMaintenanceItemDetail() {
+export default function TenantMaintenanceItemDetail({tenantMaintenanceItemDetailState, setRightPane}) {
   console.log("In Tenant Maintenance Item Detail");
   // const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
 
   const location = useLocation();
   let navigate = useNavigate();
+  console.log("location.state---", location.state);
+  console.log("location.state---", tenantMaintenanceItemDetailState);
 
-  const color = location.state.color;
-  const item = location.state.item;
+  const color = "#FFFFF";
+  const item = location.state?.item || tenantMaintenanceItemDetailState?.item;
 
   function openDays(openday) {
     // Convert maintenance_request_created_date to a Date object
@@ -76,7 +78,8 @@ export default function TenantMaintenanceItemDetail() {
 
   function closeAddTenantMaintenanceItem() {
     // navigate("/tenantDashboard");
-    navigate("/tenantDashboard", { state: { propertyId: item.property_uid } });
+    //navigate("/tenantDashboard", { state: { propertyId: item.property_uid } });
+    setRightPane("");
   }
 
   // const images = [
@@ -97,7 +100,15 @@ export default function TenantMaintenanceItemDetail() {
   //     imgPath: maintenanceRequestImage,
   //   },
   // ];
-  let images = JSON.parse(item.maintenance_images);
+  let images = [];
+  if (item && item.maintenance_images) {
+    try {
+      images = JSON.parse(item.maintenance_images);
+    } catch (error) {
+      console.error("Failed to parse maintenance_images:", error);
+      images = [defaultMaintenanceImage];
+    }
+  }
 
   const statusTimeline = [
     {
@@ -159,27 +170,27 @@ export default function TenantMaintenanceItemDetail() {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "22px" }}>
-                  Maintenance Request {item.maintenance_request_uid}
+                  Maintenance Request {item?.maintenance_request_uid}
                 </Typography>
               </Grid>
 
               <Grid item xs={7}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item.maintenance_title}</Typography>
+                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item?.maintenance_title}</Typography>
               </Grid>
 
               <Grid item xs={5}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Status: {item.maintenance_request_status}</Typography>
+                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Status: {item?.maintenance_request_status}</Typography>
               </Grid>
 
               <Grid item xs={7}>
                 <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
-                  Reported: {item.maintenance_request_created_date}
+                  Reported: {item?.maintenance_request_created_date}
                 </Typography>
               </Grid>
 
               <Grid item xs={5}>
                 <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
-                  Open: {openDays(item.maintenance_request_created_date)} Days
+                  Open: {openDays(item?.maintenance_request_created_date)} Days
                 </Typography>
               </Grid>
 
@@ -192,7 +203,7 @@ export default function TenantMaintenanceItemDetail() {
                   display: "flex",
                 }}
               >
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item.maintenance_priority} Priority</Typography>
+                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item?.maintenance_priority} Priority</Typography>
               </Grid>
               <Grid item xs={12}>
                 <Card
@@ -266,7 +277,7 @@ export default function TenantMaintenanceItemDetail() {
                 </Card>
               </Grid>
               <Grid item xs={12}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{item.maintenance_desc}</Typography>
+                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{item?.maintenance_desc}</Typography>
               </Grid>
             </Grid>
           </Paper>
