@@ -17,6 +17,7 @@ import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
 import EditProperty from "./EditProperty";
 import ViewLease from "../Leases/ViewLease";
+import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManagementContract";
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
 
 function Properties(props) {
@@ -222,6 +223,15 @@ function Properties(props) {
     setRHS("ViewLease");
   };
 
+  const handleViewContractClick = () => {
+    // setPage("ViewLease");
+    console.log("View Contract before before: ", propertyList);
+    console.log("View Contract before before Index: ", propertyIndex);
+    console.log("View Contract before: ", propertyList[propertyIndex]);
+    console.log("View Contract", propertyList[propertyIndex].contract_uid);
+    setRHS("ViewContract");
+  };
+
   const handleBackClick = () => {
     setRHS("PropertyNavigator");
   };
@@ -268,6 +278,7 @@ function Properties(props) {
                 contracts={allContracts}
                 onEditClick={handleEditClick}
                 onViewLeaseClick={handleViewLeaseClick}
+                onViewContractClick={handleViewContractClick}
                 handleViewApplication={handleViewApplication}
               />
             )}
@@ -284,7 +295,8 @@ function Properties(props) {
                 onBackClick={handleBackClick}
               />
             )}
-            {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} index={propertyIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}
+            {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
+            {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
             {RHS === "Applications" && (
               <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
             )}
