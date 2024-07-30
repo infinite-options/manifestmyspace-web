@@ -41,7 +41,7 @@ import AddressAutocompleteInput from "./AddressAutocompleteInput";
 
 import APIConfig from "../../utils/APIConfig";
 
-function EditProperty({ editPropertyState, setCurrentView, props }) {
+function EditProperty(props) {
   console.log("In Edit Property2 - rename to Edit Property");
   const { state } = useLocation();
   let navigate = useNavigate();
@@ -52,7 +52,7 @@ function EditProperty({ editPropertyState, setCurrentView, props }) {
   // Check with Laysa
   // replaced with line below
   // let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state || editPropertyState;
-  let { index, propertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick } = props || state || editPropertyState;
+  let { index, propertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick } = props;
 
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   // console.log("Property Id", propertyId)
@@ -519,7 +519,7 @@ function EditProperty({ editPropertyState, setCurrentView, props }) {
         })
       );
       promises_added.push("postUtilitiesData");
-
+      onBackClick();
       setShowSpinner(false);
     };
 

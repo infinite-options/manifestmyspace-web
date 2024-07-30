@@ -17,6 +17,7 @@ import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
 import EditProperty from "./EditProperty";
 import ViewLease from "../Leases/ViewLease";
+import TenantApplicationNav from "../Applications/TenantApplicationNav";
 
 function Properties(props) {
   const [dataReady, setDataReady] = useState(false);
@@ -37,6 +38,7 @@ function Properties(props) {
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [returnIndex, setReturnIndex] = useState(0);
+  const [applicationIndex, setApplicationIndex] = useState(0);
 
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
@@ -216,6 +218,11 @@ function Properties(props) {
     setRHS("PropertyNavigator");
   };
 
+  const handleViewApplication = (index) => {
+    setApplicationIndex(index);
+    setRHS("Applications");
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
@@ -253,6 +260,7 @@ function Properties(props) {
                 contracts={allContracts}
                 onEditClick={handleEditClick}
                 onViewLeaseClick={handleViewLeaseClick}
+                handleViewApplication={handleViewApplication}
               />
             )}
             {RHS === "EditProperty" && (
@@ -269,6 +277,15 @@ function Properties(props) {
               />
             )}
             {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} index={propertyIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}
+            {RHS === "Applications" && (
+              <TenantApplicationNav
+                index={applicationIndex}
+                propertyIndex={returnIndex}
+                property={propertyList[returnIndex]}
+                isDesktop={isDesktop}
+                onBackClick={handleBackClick}
+              />
+            )}
           </Grid>
         </Grid>
       </Container>

@@ -80,6 +80,7 @@ export default function PropertyNavigator({
   setPmQuoteRequestedState,
   setManagerDetailsState,
   onShowSearchManager,
+  handleViewApplication,
   props,
 }) {
   // console.log('In Property Navigator');
@@ -569,8 +570,10 @@ export default function PropertyNavigator({
     /* navigate('/tenantApplicationNav', {
 			state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop },
 		}); */
+
+    handleViewApplication();
     const state = { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop };
-    setTenantAppNavState(state);
+    // setTenantAppNavState(state);
   };
 
   const getRentStatus = () => {
