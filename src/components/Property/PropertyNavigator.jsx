@@ -75,6 +75,7 @@ export default function PropertyNavigator({
   isDesktop = true,
   onEditClick,
   onViewLeaseClick,
+  onViewContractClick, 
   setEditPropertyState,
   setTenantAppNavState,
   setPmQuoteRequestedState,
@@ -723,6 +724,10 @@ export default function PropertyNavigator({
 
   const handleViewLeaseClick = () => {
     onViewLeaseClick("ViewLease");
+  };
+
+  const handleViewContractClick = () => {
+    onViewContractClick("ViewContract");
   };
 
   const handleDeleteClick = (id) => {
@@ -1569,7 +1574,7 @@ export default function PropertyNavigator({
                   >
                     Management Details
                   </Typography>
-                  {property?.lease_uid && (
+                  {property?.contract_uid && (
                     <Button
                       sx={{
                         padding: "0px",
@@ -1578,7 +1583,7 @@ export default function PropertyNavigator({
                         },
                       }}
                       className='.MuiButton-icon'
-                      onClick={handleViewLeaseClick}
+                      onClick={handleViewContractClick}
                       // onClick={() =>
                       //   navigate('/viewLease', {
                       //     state: {

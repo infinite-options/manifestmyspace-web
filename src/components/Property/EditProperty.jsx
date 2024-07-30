@@ -121,7 +121,7 @@ function EditProperty(props) {
   const [bedrooms, setBedrooms] = useState("");
   const [bathrooms, setBathrooms] = useState("");
   const [isListed, setListed] = useState(false);
-  const [utilities, setUtiltiies] = useState([]);
+  const [utilities, setUtilities] = useState(null);
   const [activeDate, setActiveDate] = useState(null);
   const [description, setDescription] = useState("");
   const [selectedImageList, setSelectedImageList] = useState("");
@@ -158,7 +158,7 @@ function EditProperty(props) {
     setBedrooms(property.property_num_beds);
     setBathrooms(property.property_num_baths);
     setListed(property.property_available_to_rent === 1 ? true : false);
-    setUtiltiies(property.property_utilities);
+    setUtilities(property.property_utilities);
     setActiveDate(property.property_active_date);
     setDescription(property.property_description);
     setSelectedImageList(JSON.parse(property.property_images));
@@ -247,7 +247,7 @@ function EditProperty(props) {
 
     return mappedResults;
   };
-
+  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // const utilitiesObject = JSON.parse(utilities);
   // console.log("UTILITIES OBJECT", utilitiesObject);
   // let utilitiesInUIDForm = {};
@@ -273,6 +273,75 @@ function EditProperty(props) {
   //   loadImages();
   //   console.log("****************************************EditProperty useEffect********************************************");
   // }, []);
+  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  
+  // useEffect(() => {
+  //   let utilitiesObject;    
+  //   let utilitiesInUIDForm = {};
+  //   let mappedUtilities2 = {};
+
+  //   if(utilities != undefined){
+  //     utilitiesObject = JSON.parse(utilities)
+  //     console.log("UTILITIES OBJECT", utilitiesObject);
+  //   }
+  //   if (utilitiesObject) {
+  //     console.log("***********************************EditProperty useEffect*************************************************");
+  //     for (const utility of utilitiesObject) {
+  //       console.log(utility.utility_type_id, utility.utility_payer_id);
+  //       utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+  //     }
+  //     console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+
+  //     // setUtilitiesPaidBy(utilitiesInUIDForm)
+  //     mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
+  //     console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+  //     console.log("   ", mappedUtilities2);
+  //     setMappedUtilitiesPaidBy(mappedUtilities2);
+  //   } else {
+  //     setMappedUtilitiesPaidBy(defaultUtilities);
+  //     setIsDefaultUtilities(true);
+  //   }
+  //   // loadImages();
+  //   console.log("****************************************EditProperty useEffect********************************************");
+  // }, [utilities]);
+
+  useEffect(() => {
+    let utilitiesObject;
+    let utilitiesInUIDForm = {};
+    let mappedUtilities2 = {};
+
+    console.log("ROHIT - utilities - ", utilities);
+    try {
+      if (utilities && utilities.length > 0) {
+        utilitiesObject = JSON.parse(utilities);
+        console.log("UTILITIES OBJECT", utilitiesObject);
+      }
+    } catch (error) {
+      console.error("Error parsing utilities JSON:", error);
+    }
+
+    if (utilitiesObject) {
+      console.log("***********************************utilities useEffect*************************************************");
+      for (const utility of utilitiesObject) {
+        console.log(utility.utility_type_id, utility.utility_payer_id);
+        utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+      }
+      console.log("UTILITIES IN UID FORM", utilitiesInUIDForm);
+
+      mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
+      console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+      console.log("   ", mappedUtilities2);
+      setMappedUtilitiesPaidBy(mappedUtilities2);
+      setIsDefaultUtilities(false);
+    } else {
+      setMappedUtilitiesPaidBy(defaultUtilities);
+      setIsDefaultUtilities(true);
+    }
+    console.log("****************************************utilities useEffect********************************************");
+  }, [utilities]);
+
+  //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   useEffect(() => {
     console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
@@ -1096,27 +1165,54 @@ function EditProperty(props) {
                     <Typography sx={{ fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.smallFont }}>{`<--Displaying Default Utilities-->`}</Typography>
                   </Grid>
                 )}
-                {Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
-                  <Fragment key={utility}>
-                    <Grid item xs={6}>
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                        {formatUtilityName(utility)}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <FormControlLabel
-                        value='owner'
-                        control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                        label='Owner'
-                      />
-                      <FormControlLabel
-                        value='tenant'
-                        control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                        label='Tenant'
-                      />
-                    </Grid>
-                  </Fragment>
-                ))}
+                {
+                  Object.entries(mappedUtilitiesPaidBy).length > 0 ?
+                
+                  Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
+                    <Fragment key={utility}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                          {formatUtilityName(utility)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                          value='owner'
+                          control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
+                          label='Owner'
+                        />
+                        <FormControlLabel
+                          value='tenant'
+                          control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
+                          label='Tenant'
+                        />
+                      </Grid>
+                    </Fragment>
+                  ))                  
+                  : 
+                  Object.entries(defaultUtilities).map(([utility, selectedValue]) => (
+                    <Fragment key={utility}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                          {formatUtilityName(utility)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                          value="owner"
+                          control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
+                          label="Owner"
+                        />
+                        <FormControlLabel
+                          value="tenant"
+                          control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
+                          label="Tenant"
+                        />
+                      </Grid>
+                    </Fragment>
+                  ))
+              
+                }
                 <Grid item xs={12}>
                   <Button
                     variant='outlined'

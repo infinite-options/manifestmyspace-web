@@ -77,7 +77,7 @@ const ViewLease = (props) => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [leaseFees, setLeaseFees] = useState([]);
   const [utilityString, setUtilityString] = useState("");
-  const [leaseData, setLeaseData] = useState([]);
+  const [leaseData, setLeaseData] = useState(null);
   const [tenantsData, setTenantsData] = useState([]);
   const [adultsData, setAdultsData] = useState([]);
   const [childrenData, setChildrenData] = useState([]);
@@ -91,6 +91,10 @@ const ViewLease = (props) => {
   // const [moveOutDate, setMoveOutDate] = useState(dayjs(new Date()));
   const [moveOutDate, setMoveOutDate] = useState(new Date());
   const [expanded, setExpanded] = useState(false);
+
+  const [ index, setIndex ] = useState(props.index);
+  const [ allLeases, setAllLeases ] = useState([]);
+  
 
   // const [leaseID, setLeaseID] = useState("");
 
@@ -173,20 +177,29 @@ const ViewLease = (props) => {
   // console.log("leaseID", leaseID)
   // console.log("propertyUID", propertyUID)
 
-  const leaseID = props.lease_id ? props.lease_id : location.state.lease_id;
+  
   const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
   const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
-  const index = props.lease_id ? props.index : location.state.index;
+  
 
-  useEffect(() => {
-    setShowSpinner(true);
-    // axios.get(`http://localhost:4000/leaseDetails/${getProfileId()}`).then((res) => {
+  const getLeaseDetails = async () => {
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
       const data = res.data["Lease_Details"].result;
       // console.log("FETCHING THE DATA ", data);
       // setFetchData(data);
+      setAllLeases(data);      
+      setShowSpinner(false);
+    });
+  }
 
-      data.forEach((lease) => {
+  useEffect(() => {
+    const index = props.index;
+    setIndex(index);
+    const propertyList = props.propertyList ? props.propertyList : [];
+    const leaseID = propertyList[index]?.lease_uid;
+
+    if(leaseID){
+      allLeases?.forEach((lease) => {
         if (lease.lease_uid === leaseID) {
           console.log(JSON.parse(lease.lease_fees));
           console.log(JSON.parse(lease.property_utilities));
@@ -211,8 +224,13 @@ const ViewLease = (props) => {
           // setDocument(lease.lease_documents);
         }
       });
-      setShowSpinner(false);
-    });
+    }
+
+  }, [props.index]);
+
+  useEffect(() => {
+    setShowSpinner(true);
+    getLeaseDetails();    
   }, []);
 
   function getDayText(day) {
@@ -375,6 +393,36 @@ const ViewLease = (props) => {
     );
   };
 
+  if(!leaseData){
+    return (
+      <Container maxWidth="xl" sx={{ paddingBottom: "25px" }}>      
+        <Box
+          style={{
+            display: "flex",
+            fontFamily: "Source Sans Pro",
+            justifyContent: "center",
+            width: "100%",
+            minHeight: "85vh",
+            marginTop: theme.spacing(2),
+          }}
+        >
+          <Grid container sx={{ paddingTop: "20px" }}>
+            <Grid item xs={12}>
+              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
+                <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>This Property is Vacant!</Typography>
+                <Box position="absolute" right={20}>
+                  <Button onClick={(e) => handleCloseButton(e)}>
+                    <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+                  </Button>
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>                  
+      </Container>
+    )
+  }
+
   return (
     <Container maxWidth="xl" sx={{ paddingBottom: "25px" }}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -393,7 +441,7 @@ const ViewLease = (props) => {
         <Grid container sx={{ paddingTop: "20px" }}>
           <Grid item xs={12}>
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
-              <Typography sx={{ fontSize: { xs: "36px", sm: "36px", md: "36px", lg: "36px" }, fontWeight: "bold", color: "#160449" }}>Lease</Typography>
+              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease</Typography>
               <Box position="absolute" right={20}>
                 <Button onClick={(e) => handleCloseButton(e)}>
                   <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
@@ -402,8 +450,20 @@ const ViewLease = (props) => {
             </Box>
           </Grid>
           <Grid item xs={12}>
+            <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "row", padding: "25px", borderRadius: "5px" }}>
+              <Grid item xs={6}>
+                <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Property Address</Typography>
+                <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {leaseData.property_address}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Unit</Typography>
+                <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {leaseData.property_unit}</Typography>
+              </Grid>
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
             <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-              <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Lease Details</Typography>
+              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease Details</Typography>
               <Grid container>
                 <Grid item xs={6}>
                   <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Start Date</Typography>
@@ -428,7 +488,7 @@ const ViewLease = (props) => {
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-              <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Rent Details</Typography>
+              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Rent Details</Typography>
               {leaseFees.map((item, index) => (
                 <Grid container direction={"row"} key={index} sx={{ paddingBottom: "10px" }}>
                   <Grid item xs={12} sx={{ paddingTop: "5px", paddingBottom: "5px" }}>
@@ -469,7 +529,7 @@ const ViewLease = (props) => {
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-              <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Occupancy Details</Typography>
+              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Occupancy Details</Typography>
               <Grid container>
                 <Grid item xs={12}>
                   <TenantsDataGrid data={tenantsData} />
@@ -558,7 +618,7 @@ const ViewLease = (props) => {
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-              <Typography sx={{ fontSize: { xs: "24px", sm: "28px", md: "32px", lg: "35px" }, fontWeight: "bold", color: "#160449" }}>Lease Documents</Typography>
+              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease Documents</Typography>
               {leaseDocuments.map((document, index) => (
                 <Box key={index} sx={{ cursor: "pointer", display: "flex", alignContent: "center", alignItems: "center" }} onClick={() => handleViewButton(document.link)}>
                   <img src={documentIcon} style={{ width: "20px", height: "25px", margin: "5px", paddingRight: "5px" }} />
