@@ -44,7 +44,6 @@ import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
-// import DashboardTab from "../TenantDashboard/NewDashboardTab";
 import APIConfig from "../../utils/APIConfig";
 
 import AdultOccupant from "../Leases/AdultOccupant";
@@ -65,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TenantOnBoardingForm({ profileData, setIsSave }) {
+export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   console.log("In TenenatOnBoardingForm  - profileData", profileData);
 
   const classes = useStyles();
@@ -171,127 +170,65 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
-    updateModifiedData({ key: "tenant_first_name", value: event.target.value });
+    updateModifiedData({ key: "owner_first_name", value: event.target.value });
   };
 
   const handleLastNameChange = (event) => {
     setLastName(event.target.value);
-    updateModifiedData({ key: "tenant_last_name", value: event.target.value });
+    updateModifiedData({ key: "owner_last_name", value: event.target.value });
   };
 
   const handleAddressSelect = (address) => {
     setAddress(address.street ? address.street : "");
-    updateModifiedData({ key: "tenant_address", value: address.street ? address.street : "" });    
+    updateModifiedData({ key: "owner_address", value: address.street ? address.street : "" });    
     setCity(address.city ? address.city : "");
-    updateModifiedData({ key: "tenant_city", value: address.city ? address.city : "" });  
+    updateModifiedData({ key: "owner_city", value: address.city ? address.city : "" });  
     setState(address.state ? address.state : "");
-    updateModifiedData({ key: "tenant_state", value: address.state ? address.state : "" });
+    updateModifiedData({ key: "owner_state", value: address.state ? address.state : "" });
     setZip(address.zip ? address.zip : "");
-    updateModifiedData({ key: "tenant_zip", value: address.zip ? address.zip : "" });
+    updateModifiedData({ key: "owner_zip", value: address.zip ? address.zip : "" });
   };
 
   const handleUnitChange = (event) => {
     setUnit(event.target.value);
-    updateModifiedData({ key: "tenant_unit", value: event.target.value });
+    updateModifiedData({ key: "owner_unit", value: event.target.value });
   };
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
-    updateModifiedData({ key: "tenant_email", value: event.target.value });
+    updateModifiedData({ key: "owner_email", value: event.target.value });
   };
 
   const handlePhoneNumberChange = (event) => {
     setPhoneNumber(formatPhoneNumber(event.target.value));
-    updateModifiedData({ key: "tenant_phone_number", value: formatPhoneNumber(event.target.value) });
+    updateModifiedData({ key: "owner_phone_number", value: formatPhoneNumber(event.target.value) });
   };
   
-  const handleLicenseChange = (event) => {
-    setLicense(event.target.value);
-    updateModifiedData({ key: "tenant_drivers_license_number", value: event.target.value });
-  };
-
-  const handleLicenseStateChange = (event) => {
-    setLicenseState(event.target.value);
-    updateModifiedData({ key: "tenant_drivers_license_state", value: event.target.value });
-  };
-
-  const handleLicenseExpChange = (event) => {
-    setLicenseExp(event.target.value);
-    updateModifiedData({ key: "tenant_drivers_license_exp", value: event.target.value });
-  };
-
   const handleSSNChange = (event) => { 
     let value = event.target.value;
     if (value.length > 11) return;
     setSsn(value);    
-    updateModifiedData({ key: "tenant_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });  
+    updateModifiedData({ key: "owner_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });  
   };
-
-  const handleJobTitleChange = (event) => {
-    setJobTitle(event.target.value);
-    updateModifiedData({ key: "tenant_current_job_title", value: event.target.value });
-  };
-
-  const handleCompanyChange = (event) => {
-    setCompanyName(event.target.value);
-    updateModifiedData({ key: "tenant_current_job_company", value: event.target.value });
-  };
-
-  const handleSalaryChange = (event) => {
-    setCurrentSalary(event.target.value);
-    updateModifiedData({ key: "tenant_current_salary", value: event.target.value });
-  };
-
-  const handleSalaryFrequencyChange = (event) => {
-    setSalaryFrequency(event.target.value);
-    updateModifiedData({ key: "tenant_salary_frequency", value: event.target.value });
-  };
-
-  
-
 
   const setProfileData = async () => {
     setShowSpinner(true);
     try {
       // const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
       // const profileData = profileResponse.data.profile.result[0];
-      setFirstName(profileData.tenant_first_name || "");
-      setLastName(profileData.tenant_last_name || "");
-      setEmail(profileData.tenant_email || "");
-      setPhoneNumber(formatPhoneNumber(profileData.tenant_phone_number || ""));
-      setPhoto(profileData.tenant_photo_url ? { image: profileData.tenant_photo_url } : null);
-      setSsn(profileData.tenant_ssn ? AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
-      setMask(profileData.tenant_ssn ? maskNumber(AES.decrypt(profileData.tenant_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
-      setAddress(profileData.tenant_address || "");
-      setUnit(profileData.tenant_unit || "");
-      setCity(profileData.tenant_city || "");
-      setState(profileData.tenant_state || "");
-      setZip(profileData.tenant_zip || "");
-      setCurrentSalary(profileData.tenant_current_salary || "");
-      setSalaryFrequency(profileData.tenant_salary_frequency || "");
-      setJobTitle(profileData.tenant_current_job_title || "");
-      setCompanyName(profileData.tenant_current_job_company || "");
-
-      setLicense(profileData.tenant_drivers_license_number || "");
-      setLicenseState(profileData.tenant_drivers_license_state || "");
-      setLicenseExp(profileData.tenant_drivers_license_exp || "");
-
-      setAdults(JSON.parse(profileData.tenant_adult_occupants) || []);
-      setChildren(JSON.parse(profileData.tenant_children_occupants) || []);
-      setPets(JSON.parse(profileData.tenant_pet_occupants) || []);
-      setVehicles(JSON.parse(profileData.tenant_vehicle_info) || []);
-
-      const parsedDocs = JSON.parse(profileData.tenant_documents);
-      console.log("ROHIT - parsedDocs - ", parsedDocs);
-      const docs = parsedDocs?.map((doc, index) => ({
-          ...doc,
-          id: index
-      }));
-      // console.log('initial docs', docs);
-      setDocuments(docs);
-      documentsRef.current = parsedDocs;
-
-
+      setFirstName(profileData.owner_first_name || "");
+      setLastName(profileData.owner_last_name || "");
+      setEmail(profileData.owner_email || "");
+      setPhoneNumber(formatPhoneNumber(profileData.owner_phone_number || ""));
+      setPhoto(profileData.owner_photo_url ? { image: profileData.owner_photo_url } : null);
+      setSsn(profileData.owner_ssn ? AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+      setMask(profileData.owner_ssn ? maskNumber(AES.decrypt(profileData.owner_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+      setAddress(profileData.owner_address || "");
+      setUnit(profileData.owner_unit || "");
+      setCity(profileData.owner_city || "");
+      setState(profileData.owner_state || "");
+      setZip(profileData.owner_zip || "");
+    
       const paymentMethods = JSON.parse(profileData.paymentMethods);
       const updatedPaymentMethods = {
         paypal: { value: "", checked: false, uid: "" },
@@ -334,7 +271,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
     setProfileData();
 
-    getListDetails();
+    // getListDetails();
   }, []);
 
   useEffect(() => {
@@ -393,9 +330,8 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         } */}
         
         <Grid container alignContent='center' item xs={1}>
-          <img src={method.icon} alt={method.name} />
-        </Grid>
-        
+            <img src={method.icon} alt={method.name} />
+        </Grid>        
         
         {method.name === "Bank Account" ? (
           <>
@@ -479,93 +415,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     }
   };
 
-  const getPayload = () => {
-    return {
-      tenant_user_id: user.user_uid,
-      tenant_uid: getProfileId(),
-      tenant_first_name: firstName,
-      tenant_last_name: lastName,
-      tenant_phone_number: phoneNumber,
-      tenant_email: email,
-      tenant_ssn: AES.encrypt(ssn, process.env.REACT_APP_ENKEY).toString(),
-      tenant_address: address,
-      tenant_unit: unit,
-      tenant_city: city,
-      tenant_state: state,
-      tenant_zip: zip,
-      tenant_photo_url: photo,
-      tenant_adult_occupants: JSON.stringify(
-        adults.map((adult) => ({
-          name: adult.name,
-          last_name: adult.last_name,
-          relationship: adult.relationship,
-          dob: adult.dob,
-          email: adult.email,
-          phone_number: adult.phone_number,          
-        }))
-      ),
-      tenant_children_occupants: JSON.stringify(
-        children.map((child) => ({
-          name: child.name,
-          last_name: child.last_name,
-          relationship: child.relationship,
-          dob: child.dob,
-          email: child.email,
-          phone_number: child.phone_number,          
-        }))
-      ),
-      tenant_pet_occupants: JSON.stringify(
-        pets.map((pet) => ({
-          name: pet.name,
-          last_name: pet.last_name,
-          breed: pet.breed,
-          type: pet.type,
-          weight: pet.weight,
-          owner: pet.owner,
-        }))
-      ),
-      tenant_vehicle_info: JSON.stringify(
-        vehicles.map((vehicle) => ({
-          make: vehicle.make,
-          model: vehicle.model,
-          year: vehicle.year,
-          license: vehicle.license,
-          state: vehicle.state,
-          owner: vehicle.owner,
-        }))
-      ),
-      tenant_current_salary: currentSalary,
-      tenant_salary_frequency: salaryFrequency,
-      tenant_current_job_title: jobTitle,
-      tenant_current_job_company: companyName,
-
-      tenant_drivers_license_number: license,
-      tenant_drivers_license_state: licenseState,
-      tenant_drivers_license_exp: licenseExp,
-
-    };
-  };
-
-  const encodeForm = (payload) => {
-    const form = new FormData();
-    for (let key in payload) {
-      if (photoFields.has(key)) {
-        if (payload[key] && payload[key].file instanceof File) {
-          form.append(key, payload[key].file);
-        }
-      } else {
-        form.append(key, payload[key]);
-      }
-    }
-    return form;
-  };
-
-  // const saveProfile = async (form) => {
-  //   const profileApi = "/profile";
-  //   const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
-  //   setIsSave(true);
-  //   return data;
-  // };
+  
 
   const handlePaymentStep = async () => {
     setShowSpinner(true);
@@ -674,8 +524,8 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     setIsSave(true);
 }
 
-  const editOrUpdateTenant = async () => {
-    console.log('inside editOrUpdateTenant', modifiedData);
+  const editOrUpdateOwner = async () => {
+    console.log('inside editOrUpdateOwner', modifiedData);
     try {
         if (modifiedData.length > 0) {
             setShowSpinner(true);
@@ -692,30 +542,10 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
             // leaseApplicationFormData.append("lease_fees", feesJSON);
             // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
             modifiedData.forEach(item => {
-                console.log(`Key: ${item.key}`);
-                if (item.key === "uploadedFiles") {
-                    console.log('uploadedFiles', item.value);
-                    if (item.value.length) {
-                        const documentsDetails = [];
-                        [...item.value].forEach((file, i) => {
-                          profileFormData.append(`file-${i}`, file.file, file.name);
-                            const fileType = 'pdf';
-                            const documentObject = {
-                                // file: file,
-                                fileIndex: i,
-                                fileName: file.name,
-                                fileType: file.type,
-                                type: file.type,
-                            };
-                            documentsDetails.push(documentObject);
-                        });
-                        profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
-                    }
-                } else {
-                  profileFormData.append(item.key, JSON.stringify(item.value));
-                }
+                console.log(`Key: ${item.key}`);                
+                  profileFormData.append(item.key, JSON.stringify(item.value));                
             });
-            profileFormData.append('tenant_uid', profileData.tenant_uid);
+            profileFormData.append('owner_uid', profileData.owner_uid);
             
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
             .then((response) => {
@@ -764,7 +594,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
               console.log(`Key: ${item.key}`);                
               profileFormData.append(item.key, item.value);                
             });
-            profileFormData.append('tenant_uid', profileData.tenant_uid);
+            profileFormData.append('owner_uid', profileData.owner_uid);
             
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
             .then((response) => {
@@ -801,7 +631,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
       >
         <Grid item xs={12}>
           <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f" }}>
-            Tenant Profile Information
+            Owner Profile Information
           </Typography>
           <Grid container item xs={12}>
             <Grid container alignContent='center' item xs={3}>
@@ -822,7 +652,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                   <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
                 )}
               </Grid>
-              <Grid  container justifyContent='center' item xs={12} sx={{ marginTop: '20px', }}>
+              <Grid  container justifyContent='center' item xs={12} sx={{ marginTop: '20px',}}>
                 <Button
                   component="label"
                   variant="contained"
@@ -830,9 +660,9 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     backgroundColor: "#3D5CAC",
                     width: "193px",
                     height: "35px",
-                    color: '#FFFFFF',
                     textTransform: 'none',
                     fontWeight: 'bold',
+                    color: '#FFFFFF',
                   }}
                 >
                   {" "}
@@ -842,8 +672,8 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
               </Grid>
             </Grid>
-            <Grid item xs={9}>
-              <Grid item xs={12}>
+            <Grid container item xs={9}  columnSpacing={2}>
+              <Grid item xs={6}>
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -851,7 +681,18 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     width: "100%",
                   }}
                 >
-                  {"Display Name"}
+                  {"First Name"}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    width: "100%",
+                  }}
+                >
+                  {"Last Name"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} columnSpacing={2}>
@@ -989,61 +830,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                   </Grid>
                   
                 </Grid>                
-              </Grid>
-
-              <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={6}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Drivers License"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField fullWidth value={license} onChange={ handleLicenseChange } variant="filled" placeholder="License Number" className={classes.root}></TextField>
-                  </Grid>
-                  
-                </Grid>
-                <Grid container item xs={3}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"State"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField fullWidth value={licenseState} onChange={ handleLicenseStateChange } variant="filled" placeholder="License State" className={classes.root}></TextField>
-                  </Grid>
-                  
-                </Grid>                
-                <Grid container item xs={3}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Exp Date"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField fullWidth value={licenseExp} onChange={handleLicenseExpChange} variant="filled" placeholder="License Exp" className={classes.root}></TextField>
-                  </Grid>
-                  
-                </Grid>                
-              </Grid>
+              </Grid>              
 
               <Grid container item xs={12} columnSpacing={4}>
                 <Grid container item xs={6}>
@@ -1084,7 +871,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
       <Grid        
         container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px', }}
+        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px',}}
       >
         <Grid item xs={12}>
           <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
@@ -1096,203 +883,6 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
           {renderPaymentMethods()}
         </Grid>
         
-      </Grid>
-
-      <Grid        
-        container
-        justifyContent='center'
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: '10px', marginBottom: '10px', }}
-      >
-        <Grid item xs={12}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
-            Employment Information
-          </Typography>
-
-        </Grid>
-        <Grid container item xs={12} columnSpacing={2}>           
-          <Grid container item xs={6} columnSpacing={2}>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  width: "100%",
-                }}
-              >
-                {"Job Title"}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField name="jobTitle" value={jobTitle} onChange={handleJobTitleChange} variant="filled" fullWidth placeholder="Job Title" className={classes.root} />
-            </Grid>                        
-          </Grid>
-
-          <Grid container item xs={6} columnSpacing={2}>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  width: "100%",
-                }}
-              >
-                {"Company"}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField name="company" value={companyName} onChange={ handleCompanyChange } variant="filled" fullWidth placeholder="Company Name" className={classes.root} />
-            </Grid>                        
-          </Grid>            
-          
-        </Grid>
-
-        <Grid container item xs={12} columnSpacing={2}>           
-          <Grid container item xs={6} columnSpacing={2}>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  width: "100%",
-                }}
-              >
-                {"Current Salary"}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment>,}} name="salary" value={currentSalary} onChange={ handleSalaryChange } variant="filled" fullWidth placeholder="Current Salary" className={classes.root} />
-            </Grid>                        
-          </Grid>
-
-          <Grid container item xs={6} columnSpacing={2}>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  width: "100%",
-                }}
-              >
-                {"Frequency"}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Select 
-                name="salaryFrequency"
-                value={salaryFrequency}
-                onChange={ handleSalaryFrequencyChange }
-                variant="filled"
-                fullWidth 
-                className={classes.root}
-                sx={{
-                  height: '30px', // Set your desired height
-                  borderRadius: '8px', // Set your desired border radius
-                  '.MuiFilledInput-root': {
-                    padding: '0 12px', // Adjust padding if necessary
-                  },
-                  '.MuiSelect-filled.MuiSelect-filled': {
-                    height: '30px', // Ensure the inner input matches the desired height
-                    borderRadius: '8px', // Ensure the inner input matches the desired border radius
-                  },
-                }}
-              >
-                <MenuItem value="Bi-weekly">Bi-weekly</MenuItem>
-                <MenuItem value="Semi-monthly">Semi-monthly</MenuItem>
-                <MenuItem value="Hourly">Hourly</MenuItem>
-                <MenuItem value="Daily">Daily</MenuItem>
-                <MenuItem value="Weekly">Weekly</MenuItem>
-                <MenuItem value="Monthly">Monthly</MenuItem>
-                <MenuItem value="Yearly">Yearly</MenuItem>
-              </Select>
-            </Grid>                        
-          </Grid>            
-          
-        </Grid>
-
-
-
-        
-        
-      </Grid>
-
-      <Grid        
-        container
-        justifyContent='center'
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: '10px', marginBottom: '10px',}}
-      >
-
-        <Grid item xs={12}>          
-          <Accordion sx={{ backgroundColor: '#F0F0F0', boxShadow: 'none', }}>
-              <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="occupants-content"
-                  id="occupants-header"
-
-
-              >
-                  <Grid container>
-                      <Grid item md={11.2}>
-                          <Typography
-                              sx={{
-                                  color: "#160449",
-                                  fontWeight: theme.typography.primary.fontWeight,
-                                  fontSize: '24px', 
-                                  textAlign: 'center',
-                                  paddingBottom: "10px",
-                                  paddingTop: "5px",
-                                  flexGrow: 1,
-                                  paddingLeft: "50px",
-                              }}
-                              paddingTop="5px"
-                              paddingBottom="10px"
-                          >
-                              Occupancy Details
-                          </Typography>
-                      </Grid>
-                      <Grid item md={0.5} />
-                  </Grid>
-
-              </AccordionSummary>
-              <AccordionDetails>
-                  {adults &&
-                      <AdultOccupant leaseAdults={adults} setLeaseAdults={setAdults} relationships={relationships} editOrUpdateLease={ editOrUpdateTenant } adultsRef={adultsRef} modifiedData={modifiedData} setModifiedData={setModifiedData} dataKey={'tenant_adult_occupants'}/>
-                  }
-                  {children &&
-                      <ChildrenOccupant leaseChildren={children} setLeaseChildren={setChildren} relationships={relationships} editOrUpdateLease={ editOrUpdateTenant } childrenRef={childrenRef} modifiedData={modifiedData} setModifiedData={setModifiedData} dataKey={'tenant_children_occupants'}/>
-                  }
-                  {pets &&
-                      <PetsOccupant leasePets={pets} setLeasePets={setPets} editOrUpdateLease={ editOrUpdateTenant } petsRef={petsRef} modifiedData={modifiedData} setModifiedData={setModifiedData} dataKey={'tenant_pet_occupants'}/>
-                  }
-                  {vehicles &&
-                      <VehiclesOccupant leaseVehicles={vehicles} setLeaseVehicles={setVehicles} states={states} editOrUpdateLease={ editOrUpdateTenant } vehiclesRef={vehiclesRef} modifiedData={modifiedData} setModifiedData={setModifiedData} dataKey={'tenant_vehicle_info'}/>
-                  }
-              </AccordionDetails>
-          </Accordion>          
-        </Grid>
-      </Grid>
-
-      <Grid        
-        container
-        justifyContent='center'
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: '10px', marginBottom: '10px', }}
-      >
-        <Grid item xs={12} md={12}>            
-          <Documents 
-            documents={documents}
-            setDocuments={setDocuments}            
-            setuploadedFiles={setuploadedFiles}
-            editOrUpdateLease={ editOrUpdateTenant }
-            documentsRef={documentsRef}
-            setDeletedFiles={setDeletedFiles}
-            modifiedData={modifiedData}
-            setModifiedData={setModifiedData}
-            dataKey={"tenant_documents"}
-          />            
-        </Grid>
       </Grid>
 
       <Grid container justifyContent='center' item xs={12}>

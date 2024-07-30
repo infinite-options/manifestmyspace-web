@@ -16,7 +16,9 @@ import ManagerOnboardingForm from "../Onboarding/ManagerOnboardingForm";
 import TenantOnBoardDesktopForm from "../Onboarding/TenantOnBoardDesktopForm";
 import TenantOnBoardingForm from "../Onboarding/TenantOnBoardingForm";
 import OwnerOnBoardDeskTopForm from "../Onboarding/OwnerOnBoardDesktopForm";
+import OwnerOnboardingForm from "../Onboarding/OwnerOnboardingForm";
 import MaintenanceOnBoardDesktopForm from "../Onboarding/MaintenanceOnBoardDesktopForm";
+import MaintenanceOnboardingForm from "../Onboarding/MaintenanceOnboardingForm";
 import PMEmpOnBoardDesktopForm from "../Onboarding/PMEmpOnBoardDesktopForm";
 import MaintEmpOnBoardDesktopForm from "../Onboarding/MaintEmpOnBoardDesktopForm";
 
@@ -173,11 +175,11 @@ function ProfileEditor() {
         case "PM_EMPLOYEE":
           return <PMEmpOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
         case "OWNER":
-          return <OwnerOnBoardDeskTopForm profileData={profileData} setIsSave={setIsSave} />;
+          return <OwnerOnboardingForm profileData={profileData} setIsSave={setIsSave} />;
         case "TENANT":
           return <TenantOnBoardingForm profileData={profileData} setIsSave={setIsSave} />;
         case "MAINTENANCE":
-          return <MaintenanceOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
+          return <MaintenanceOnboardingForm profileData={profileData} setIsSave={setIsSave} />;
         case "MAINT_EMPLOYEE":
           return <MaintEmpOnBoardDesktopForm profileData={profileData} setIsSave={setIsSave} />;
         default:

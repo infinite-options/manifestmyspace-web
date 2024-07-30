@@ -54,7 +54,6 @@ import PetsOccupant from "../Leases/PetsOccupant";
 import VehiclesOccupant from "../Leases/VehiclesOccupant";
 import Documents from "../Leases/Documents";
 import { add } from "date-fns";
-import { changeSectionValueFormat } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,8 +67,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ManagerOnboardingForm({ profileData, setIsSave }) {
-  console.log("In ManagerOnboardingForm  - profileData", profileData);
+export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
+  console.log("In MaintenanceOnboardingForm  - profileData", profileData);
 
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
@@ -153,6 +152,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   useEffect(() => {
     console.log("ROHIT - modifiedData - ", modifiedData);    
   }, [modifiedData]);
+
+  useEffect(() => {
+    console.log("ROHIT - documents - ", documents);    
+  }, [documents]);
 
 
   const updateModifiedData = (updatedItem) => {
@@ -270,16 +273,25 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     setState(profileData.business_state || "");
     setZip(profileData.business_zip || "");
     if(profileData.business_services_fees){
-      const parsedFees = JSON.parse(profileData.business_services_fees);
-      const feesWithId = parsedFees.map((fee, index) => ({
-        ...fee,
+      const parsedServices = JSON.parse(profileData.business_services_fees);
+      const servicesWithId = parsedServices.map((service, index) => ({
+        ...service,
         id: index, // You can use index as an id, or generate a unique id if necessary
       }));
-      setFees(feesWithId);
+      setServices(servicesWithId);
     }
     if(profileData.business_locations){
         setLocations(JSON.parse(profileData.business_locations));
     }
+
+    const parsedDocs = JSON.parse(profileData.business_documents);
+      console.log("ROHIT - parsedDocs - ", parsedDocs);
+      const docs = parsedDocs?.map((doc, index) => ({
+          ...doc,
+          id: index
+      }));
+      // console.log('initial docs', docs);
+      setDocuments(docs || []);      
    
 
     const paymentMethodsData = JSON.parse(profileData.paymentMethods);
@@ -411,59 +423,53 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   };  
 
   const addFeeRow = () => {
-    const updatedFees = [...fees, { id: fees.length + 1, fee_name: "", frequency: "", charge: "", of: "" }]
-    // setFees((prev) => [...prev, { id: prev.length + 1, fee_name: "", frequency: "", charge: "", of: "" }]);
-
-    setFees(updatedFees);
-
-    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedFees)});
+    setFees((prev) => [...prev, { id: prev.length + 1, fee_name: "", frequency: "", charge: "", of: "" }]);
   };
 
   const removeFeeRow = (id) => {
-    const updatedFees = fees.filter((fee) => fee.id !== id);
-    setFees(updatedFees);
-
-    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedFees)});
+    setFees(fees.filter((fee) => fee.id !== id));
   };
-
-  // const handleFeeChange = (event, index) => {
-  //   const { name, value } = event.target;
-  //   // setFees((prevFees) =>
-  //   //   prevFees.map((fee) =>
-  //   //     fee.id === id ? { ...fee, [name]: value } : fee
-  //   //   )
-  //   // );
-  //   const list = [...fees];
-  //   console.log("ROHIT - list - ", list);
-  //   console.log("ROHIT - handleFeeChange - name - ", name);
-  //   list[index][name] = value;
-  //   console.log("ROHIT - list - ", list);
-  //   setFees(list);
-  // };
   
-  const handleFeeChange = (event, id) => {
+  const handleServiceChange = (event, id) => {
     const { name, value } = event.target;
   
-    const updatedFees = fees.map(fee => {
-      if (fee.id === id) {        
-        const updatedFee = { ...fee, [name]: value };
+    const updatedServices = services.map(service => {
+      if (service.id === id) {        
+        const updatedService = { ...service, [name]: value };
 
-        if (name === "fee_type") {
-          updatedFee.of = null;
-          updatedFee.charge = null;
+        if (name === "charge" || name === "hours") {
+            if(updatedService.hours &&  updatedService.hours > 0 && value > 0){
+                updatedService.total_cost = updatedService.hours * updatedService.charge;                
+            }          
         }
   
-        return updatedFee;
+        return updatedService;
       }
-      return fee;
+      return service;
     });
   
     // Update the state with the modified fees array
-    setFees(updatedFees);
+    setServices(updatedServices);
 
-    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedFees)});
+    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedServices)});
   };
 
+  const addServiceRow = () => {
+    // setServices((prev) => [...prev, { id: prev.length + 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
+
+    const updatedServices = [...services, { id: services.length + 1, service_name: "", hours: "", charge: "", total_cost: ""  }]    
+
+    setServices(updatedServices);
+
+    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedServices)});
+  };
+
+  const removeServiceRow = (id) => {
+    const updatedServices = services.filter((service) => service.id !== id);
+    setServices(updatedServices);
+
+    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedServices)});
+  };
   
 
   const handleFrequencyChange = (event, id) => {
@@ -475,8 +481,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     );
   };
 
-  const renderManagementFees = () => {
-    return fees.map((row, index) => (
+  const renderMaintenanceServices = () => {
+    return services.map((row, index) => (
       <>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
           <Grid item xs={3}>
@@ -487,44 +493,19 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                   fontWeight: theme.typography.primary.fontWeight,
                 }}
               >
-                {"Fee Name"}
+                {"Service"}
               </Typography>
               <TextField
-                name="fee_name"
-                value={row.fee_name}
+                name="service_name"
+                value={row.service_name}
                 variant="filled"
                 fullWidth
-                placeholder="Service Charge"
-                className={classes.root}
-                // onChange={(e) => handleFeeChange(e, row.id)}
-                onChange={(e) => handleFeeChange(e, row.id)}
+                placeholder="Service Name"
+                className={classes.root}                
+                onChange={(e) => handleServiceChange(e, row.id)}
               />
             </Stack>
-          </Grid>
-          <Grid item xs={2.5}>
-            <Stack spacing={-2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"Fee Type"}
-              </Typography>
-              <Select
-                name="fee_type"
-                value={row.fee_type}
-                size="small"
-                fullWidth
-                onChange={(e) => handleFeeChange(e, row.id)}
-                placeholder="Select Type"
-                className={classes.select}
-              >
-                <MenuItem value="PERCENT">Percentage</MenuItem>
-                <MenuItem value="FLAT-RATE">Flat-Rate</MenuItem>                
-              </Select>
-            </Stack>
-          </Grid>
+          </Grid>          
           <Grid item xs={2}>
             <Stack spacing={-2} m={2}>
               <Typography
@@ -533,107 +514,62 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                   fontWeight: theme.typography.primary.fontWeight,
                 }}
               >
-                {"Frequency"}
+                {"# of Hours"}
               </Typography>
-              <Select
-                name="frequency"
-                value={row.frequency}
-                size="small"
+              <TextField
+                name="hours"
+                value={row.hours}
+                variant="filled"
                 fullWidth
-                onChange={(e) => handleFeeChange(e, row.id)}
-                placeholder="Select frequency"
-                className={classes.select}
+                placeholder="Hours"
+                className={classes.root}                
+                onChange={(e) => handleServiceChange(e, row.id)}
+              />
+            </Stack>
+          </Grid>          
+          <Grid item xs={3}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
               >
-                <MenuItem value="hourly">Hourly</MenuItem>
-                <MenuItem value="daily">Daily</MenuItem>
-                <MenuItem value="weekly">Weekly</MenuItem>
-                <MenuItem value="bi-weekly">Biweekly</MenuItem>
-                <MenuItem value="monthly">Monthly</MenuItem>
-                <MenuItem value="annually">Annually</MenuItem>
-              </Select>
+                {"Charge / Hr "}
+              </Typography>
+              <TextField
+                name="charge"
+                value={row.charge}
+                variant="filled"
+                fullWidth
+                placeholder="Service Charge"
+                className={classes.root}                
+                onChange={(e) => handleServiceChange(e, row.id)}
+              />
+            </Stack>
+          </Grid>          
+          <Grid item xs={3}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"Total Cost"}
+              </Typography>
+              <TextField
+                disabled
+                name="total_cost"
+                value={row.total_cost}
+                variant="filled"
+                fullWidth
+                placeholder="Total Cost"
+                className={classes.root}                
+                // onChange={(e) => handleServiceChange(e, row.id)}
+              />
             </Stack>
           </Grid>
-          {
-            row.fee_type === "PERCENT" && (          
-              <>              
-                <Grid item xs={1.5}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                      }}
-                    >
-                      {"Percent"}
-                    </Typography>
-                    <TextField
-                      name="charge"
-                      value={row.charge}
-                      variant="filled"
-                      fullWidth
-                      placeholder="15%"
-                      className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                      }}
-                    />                              
-                  </Stack>
-                </Grid>
-                <Grid item xs={2}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                      }}
-                    >
-                      {"Of"}
-                    </Typography>
-                    <TextField
-                      name="of"
-                      value={row.of}
-                      variant="filled"
-                      fullWidth
-                      placeholder="Rent"
-                      className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
-                    />
-                  </Stack>
-                </Grid>
-              </>
-            )
-          }
-          {
-            row.fee_type === "FLAT-RATE" && (          
-              <>                              
-                <Grid item xs={2}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                      }}
-                    >
-                      {"Amount"}
-                    </Typography>
-                    <TextField
-                      name="charge"
-                      value={row.charge}
-                      variant="filled"
-                      fullWidth
-                      placeholder="Rent"
-                      className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
-                    />
-                  </Stack>
-                </Grid>
-                <Grid item xs={1.5}>
-
-                </Grid>
-              </>
-            )
-          }
           <Grid container justifyContent='center' alignContent='center' item xs={1}>
             <Button
               aria-label="delete"
@@ -644,21 +580,11 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                   color: "#FFFFFF",
                 }
               }}
-              onClick={() => removeFeeRow(row.id)}
+              onClick={() => removeServiceRow(row.id)}
             >
               <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
             </Button>
-          </Grid>
-        
-        {index !== 0 && (
-          <IconButton
-            aria-label="delete"
-            sx={{ position: 'absolute', top: 0, right: 0 }}
-            onClick={() => removeFeeRow(row.id)}
-          >
-            <CloseIcon />
-          </IconButton>
-        )}
+          </Grid>          
         </Grid>        
       </>
     ));
@@ -689,13 +615,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
             </Grid>
           )
         } */}
-
-        <Grid container alignContent='center' item xs={1}>
-          <img src={method.icon} alt={method.name} />
-        </Grid>
-
-
-
+        
+            <Grid container alignContent='center' item xs={1}>
+              <img src={method.icon} alt={method.name} />
+            </Grid>        
         
         {method.name === "Bank Account" ? (
           <>
@@ -884,7 +807,77 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     // setIsUpdate( prevState => !prevState);
     console.log('handleUpdate called');
     setIsSave(true);
-}
+}  
+
+  const saveProfile = async () => {
+    console.log('inside saveProfile', modifiedData);
+    try {
+        if (modifiedData.length > 0) {
+            setShowSpinner(true);
+            const headers = {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Credentials": "*",
+            };
+
+            const profileFormData = new FormData();
+
+            // const feesJSON = JSON.stringify(leaseFees)
+            // leaseApplicationFormData.append("lease_fees", feesJSON);
+            // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+            let hasEmployeeKey = false;
+            let hasBusinessKey = false;
+            modifiedData.forEach(item => {
+              console.log(`Key: ${item.key}`);              
+              profileFormData.append(item.key, item.value);                
+
+            if (item.key.startsWith("employee_")) {
+              hasEmployeeKey = true;
+            }            
+            if (item.key.startsWith("business_")) {
+              hasBusinessKey = true;
+            }            
+        });
+
+        if (hasBusinessKey) {
+          profileFormData.append('business_uid', profileData.business_uid);
+        }
+            
+
+        if (hasEmployeeKey) {
+          profileFormData.append('employee_uid', profileData.employee_uid);
+        }
+            
+            
+        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
+        // axios.put('http://localhost:4000/profile', profileFormData, headers)
+            .then((response) => {
+                console.log('Data updated successfully', response);
+                showSnackbar("Your profile has been successfully updated.", "success");                
+                handleUpdate();
+                setShowSpinner(false);
+            })
+            .catch((error) => {
+                setShowSpinner(false);
+                showSnackbar("Cannot update your profile. Please try again", "error");
+                if (error.response) {
+                    console.log(error.response.data);
+                }
+            });
+        setShowSpinner(false);
+        setModifiedData([]);
+    }
+    // else {
+    //     showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+    // }
+    } catch (error) {
+        showSnackbar("Cannot update your profile. Please try again", "error");
+        console.log("Cannot Update your profile", error);
+        setShowSpinner(false);
+    }
+  }
+
 
   const editOrUpdateProfile = async () => {
     console.log('inside editOrUpdateProfile', modifiedData);
@@ -921,13 +914,18 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                             };
                             documentsDetails.push(documentObject);
                         });
-                        profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
+                        profileFormData.append("business_documents_details", JSON.stringify(documentsDetails));
                     }
                 } else {
                   profileFormData.append(item.key, JSON.stringify(item.value));
                 }
             });
-            profileFormData.append('pm_employee_id', profileData.tenant_uid);
+            profileFormData.append('business_uid', profileData.business_uid);
+
+            console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
+            for (var pair of profileFormData.entries()) {
+              console.log(pair[0]+ ', ' + pair[1]); 
+            }
             
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
             .then((response) => {
@@ -955,85 +953,16 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     }
   }
 
-  const saveProfile = async () => {
-    console.log('inside saveProfile', modifiedData);
-    try {
-        if (modifiedData.length > 0) {
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
-
-            const profileFormData = new FormData();
-
-            // const feesJSON = JSON.stringify(leaseFees)
-            // leaseApplicationFormData.append("lease_fees", feesJSON);
-            // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-            let hasEmployeeKey = false;
-            let hasBusinessKey = false;
-            modifiedData.forEach(item => {
-              console.log(`Key: ${item.key}`);                
-              profileFormData.append(item.key, item.value);    
-
-              if (item.key.startsWith("employee_")) {
-                hasEmployeeKey = true;
-              }            
-              if (item.key.startsWith("business_")) {
-                hasBusinessKey = true;
-              }            
-            });
-
-            if (hasBusinessKey) {
-              profileFormData.append('business_uid', profileData.business_uid);
-            }
-            
-
-            if (hasEmployeeKey) {
-              profileFormData.append('employee_uid', profileData.employee_uid);
-            }
-            
-            
-        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
-        // axios.put('http://localhost:4000/profile', profileFormData, headers)
-            .then((response) => {
-                console.log('Data updated successfully', response);
-                showSnackbar("Your profile has been successfully updated.", "success");                
-                handleUpdate();
-                setShowSpinner(false);
-            })
-            .catch((error) => {
-                setShowSpinner(false);
-                showSnackbar("Cannot update your profile. Please try again", "error");
-                if (error.response) {
-                    console.log(error.response.data);
-                }
-            });
-        setShowSpinner(false);
-        setModifiedData([]);
-    }
-    // else {
-    //     showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
-    // }
-    } catch (error) {
-        showSnackbar("Cannot update the lease. Please try again", "error");
-        console.log("Cannot Update the lease", error);
-        setShowSpinner(false);
-    }
-  }
-
 
   return (
     <>
       <Grid        
         container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: '10px', padding: '10px',}}
+        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: '10px', padding: '10px', }}
       >
         <Grid item xs={12}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
-            Property Manager Profile Information
+          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f" }}>
+            Maintenance Profile Information
           </Typography>
           <Grid container item xs={12}>
             <Grid container alignContent='center' item xs={3}>
@@ -1054,7 +983,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                   <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
                 )}
               </Grid>
-              <Grid  container justifyContent='center' item xs={12}>
+              <Grid  container justifyContent='center' item xs={12} sx={{ marginTop: '20px', }}>
                 <Button
                   component="label"
                   variant="contained"
@@ -1063,9 +992,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     width: "193px",
                     height: "35px",
                     color: '#FFFFFF',
-                    fontWeight: 'bold',
                     textTransform: 'none',
-                    marginTop: '10px',
+                    fontWeight: 'bold',
                   }}
                 >
                   {" "}
@@ -1261,41 +1189,41 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
       <Grid        
         container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px',  }}
+        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px' }}
       >
         <Grid container item xs={12} sx={{marginBottom: '10px', }}>
+        <Grid item xs={1}></Grid>
 
-          <Grid item xs={1}></Grid>
-          <Grid container justifyContent='center' alignItems='center' item xs={10}>
-            <Typography sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
-              Management Fees
+        <Grid container justifyContent='center' alignItems='center' item xs={10}>
+          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
+            Maintenance Services
+          </Typography>
+        </Grid>
+        <Grid container justifyContent='center' alignItems='center' item xs={1}>
+          <Button
+            onClick={() => addServiceRow()}
+            sx={{
+              color: "#1f1f1f", 
+              "&:hover": {
+                color: '#FFFFFF',
+              }
+            }}
+          >
+            <Typography sx={{fontWeight: 'bold',}}>
+              +
             </Typography>
+          </Button>
+        </Grid>
 
-          </Grid>
-          <Grid container justifyContent='center' alignItems='center' item xs={1}>
-            <Button
-              onClick={() => addFeeRow()}
-              sx={{
-                color: "#1f1f1f", 
-                "&:hover": {
-                  color: '#FFFFFF',
-                }
-              }}
-            >
-              <Typography sx={{fontWeight: 'bold',}}>
-                +
-              </Typography>
-            </Button>
-          </Grid>
         </Grid>
         <Grid container item xs={12}>          
-          {renderManagementFees()}
+          {renderMaintenanceServices()}
         </Grid>        
       </Grid>
 
       <Grid        
         container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px', }}
+        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px',  }}
       >
         <Grid item xs={12}>
           <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
@@ -1309,9 +1237,9 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
         
       </Grid>
 
-      <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px',}}>
+      <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px', }}>
           <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f" }}>
-            Property Manager Personal Information
+            Maintenance Personal Information
           </Typography>
           <Grid container item xs={12}>
             <Grid container alignContent='center' item xs={3}>
@@ -1332,7 +1260,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                   <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
                 )}
               </Grid>
-              <Grid  container justifyContent='center' item xs={12}>
+              <Grid  container justifyContent='center' item xs={12} sx={{ marginTop: '20px', }}>
                 <Button
                   component="label"
                   variant="contained"
@@ -1341,9 +1269,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     width: "193px",
                     height: "35px",
                     color: '#FFFFFF',
-                    fontWeight: 'bold',
                     textTransform: 'none',
-                    marginTop: '10px',
+                    fontWeight: 'bold',
                   }}
                 >
                   {" "}
@@ -1353,18 +1280,29 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
               </Grid>
             </Grid>
-            <Grid item xs={9}>
-              <Grid item xs={12}>
-                <Typography
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    width: "100%",
-                  }}
-                >
-                  {"Display Name"}
-                </Typography>
-              </Grid>
+            <Grid container item xs={9} columnSpacing={2}>
+                <Grid item xs={6}>
+                    <Typography
+                    sx={{
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        width: "100%",
+                    }}
+                    >
+                    {"First Name"}
+                    </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                    <Typography
+                    sx={{
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        width: "100%",
+                    }}
+                    >
+                    {"Last Name"}
+                    </Typography>
+                </Grid>
               <Grid container item xs={12} columnSpacing={2}>
                 <Grid item xs={6}>
                   <TextField name="emp_first_name" value={empFirstName} onChange={(e) => handleEmpFirstNameChange(e)} variant="filled" fullWidth placeholder="First name" className={classes.root} />
@@ -1536,6 +1474,24 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
           </Grid>
         </Grid>
 
+      <Grid        
+          container
+          justifyContent='center'
+          sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: '10px', marginBottom: '10px', }}
+      >
+          <Grid item xs={12} md={12}>            
+          <Documents 
+              documents={documents}
+              setDocuments={setDocuments}            
+              setuploadedFiles={setuploadedFiles}
+              editOrUpdateLease={ editOrUpdateProfile }              
+              setDeletedFiles={setDeletedFiles}
+              modifiedData={modifiedData}
+              setModifiedData={setModifiedData}
+              dataKey={"business_documents"}
+          />            
+          </Grid>
+      </Grid>
       <Grid container justifyContent='center' item xs={12}>
         <Button variant="contained" color="primary" onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC", }}>
           <Typography sx={{ fontWeight: 'bold', color: '#FFFFFF', textTransform: 'none', }}>
