@@ -960,6 +960,9 @@ const AccountBalanceWidget = ({
         // property_uid: propertyId,
       },
     });
+    const state = {
+      lease_id: lease_uid,
+    };
   }
 
   return (
