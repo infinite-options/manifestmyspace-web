@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 
 const libraries = ['places'];
@@ -8,6 +8,12 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
   console.log('In address autocomplete, checking address', defaultValue);
   console.log('In address autocomplete, checking gray', gray);
   const autocomplete = useRef(null);
+
+  const [ address, setAddress ] = useState(defaultValue? defaultValue : "");
+
+  useEffect(() => {
+    setAddress(defaultValue);
+  }, [defaultValue]);
 
   const extractAddress = (components) => {
     const address = {
@@ -84,8 +90,9 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
       {gray ? (
         <input
           type="text"
-          defaultValue={defaultValue ? defaultValue : "x"}
-          value={defaultValue ? defaultValue : "x"}
+          // defaultValue={defaultValue ? defaultValue : ""}
+          // value={defaultValue ? defaultValue : "x"}
+          value={address}
           style={{
             backgroundColor: "#D6D5DA",
             borderRadius: 10,
@@ -96,13 +103,15 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
             outline: 'none',
             border: 'none'
           }}
+          onChange={(e) => setAddress(e.target.value)}
           onKeyDown={handleKeyDown}
         />
       ) : (
         <input
           type="text"
-          defaultValue={defaultValue ? defaultValue : "y"}
-          value={defaultValue ? defaultValue : "y"}
+          // defaultValue={defaultValue ? defaultValue : ""}
+          // value={defaultValue ? defaultValue : "y"}
+          value={address}
           style={{
             boxSizing: 'border-box',
             border: '1px solid transparent',
@@ -115,6 +124,7 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
             outline: 'none',
             textOverflow: 'ellipses'
           }}
+          onChange={(e) => setAddress(e.target.value)}
           onKeyDown={handleKeyDown}
         />
       )}
