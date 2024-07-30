@@ -70,32 +70,46 @@ function Properties(props) {
   }
 
   useEffect(() => {
-    // console.log("PropertyList useEffect");
-    // console.log(propertyList);
+    console.log("In Properties Endpoint Call");
     const fetchData = async () => {
-      //   console.log("Profile: ", profileId);
-      //   console.log("GetProfile: ", getProfileId);
       setShowSpinner(true);
-      // const response = await fetch(`http://localhost:4000/properties/${profileId}`)
+
+      // PROPERTIES ENDPOINT
+      const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
       //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
-      const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
-
-      const propertyData = await response.json();
-      // console.log("In Property List >> Property Data: ", propertyData); // This has Applications, MaintenanceRequests, NewPMRequests and Property info from endpoint
-      const propertyList = getPropertyList(propertyData);
-      console.log("In Property List >> Property List: ", propertyList);
-      // console.log("Testing Property Data", propertyData.Property.result);
-      setRawPropertyData(propertyData);
-      // console.log("New Set PM Requests: ", rawPropertyData);
-
+      if (!property_response.ok) {
+        console.log("Error fetching Property Details data");
+      }
+      const propertyData = await property_response.json();
+      const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
+      console.log("In Properties > Property Endpoint: ", propertyList);
+      setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
       setPropertyIndex(0);
 
-      const propertyRent = await propertyRentDetails();
-      setAllRentStatus(propertyRent.RentStatus.result);
+      // RENT ENDPOINT
+      const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${profileId}`);
+      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+      if (!rent_response.ok) {
+        console.log("Error fetching Rent Details data");
+      }
+      const rentResponse = await rent_response.json();
+      console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
+      setAllRentStatus(rentResponse.RentStatus.result);
 
-      if (propertyData.Property.code === 200 && propertyRent.RentStatus.code === 200) {
+      // CONTRACTS ENDPOINT
+      const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
+      // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+      if (!contract_response.ok) {
+        console.log("Error fetching Contract Details data");
+      }
+      const contractsResponse = await contract_response.json();
+      console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
+      setAllContracts(contractsResponse.result);
+
+      if (propertyData.Property.code === 200 && rentResponse.RentStatus.code === 200 && contractsResponse.code === 200) {
+        console.log("Endpoint Data is Ready");
         setDataReady(true);
       }
       if (selectedRole === "MANAGER" && sessionStorage.getItem("isrent") === "true") {
@@ -106,47 +120,40 @@ function Properties(props) {
       }
     };
     fetchData();
-    // Check screen size on initial load
-    // handleResize();
     setShowSpinner(false);
-    // Optionally, add a resize event listener
-    // window.addEventListener("resize", handleResize);
-    // return () => {
-    //   window.removeEventListener("resize", handleResize);
-    // };
   }, []);
 
-  useEffect(() => {
-    const getContractsForOwner = async () => {
-      try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-        // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-        if (!response.ok) {
-          console.log("Error fetching contracts data");
-        }
-        const contractsResponse = await response.json();
-        // console.log('contractsResponse--', contractsResponse.result);
-        await setAllContracts(contractsResponse.result);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getContractsForOwner();
-  }, []);
+  // useEffect(() => {
+  //   const getContractsForOwner = async () => {
+  //     try {
+  //       const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
+  //       // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+  //       if (!response.ok) {
+  //         console.log("Error fetching contracts data");
+  //       }
+  //       const contractsResponse = await response.json();
+  //       // console.log('contractsResponse--', contractsResponse.result);
+  //       await setAllContracts(contractsResponse.result);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   getContractsForOwner();
+  // }, []);
 
-  const propertyRentDetails = async () => {
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
-      if (!response.ok) {
-        console.log("Error fetching rent Details data");
-      }
-      const rentResponse = await response.json();
-      return rentResponse;
-    } catch (error) {
-      console.error("Failed to fetch rent details:", error);
-    }
-  };
+  // const propertyRentDetails = async () => {
+  //   try {
+  //     const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
+  //     //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+  //     if (!response.ok) {
+  //       console.log("Error fetching rent Details data");
+  //     }
+  //     const rentResponse = await response.json();
+  //     return rentResponse;
+  //   } catch (error) {
+  //     console.error("Failed to fetch rent details:", error);
+  //   }
+  // };
 
   useEffect(() => {
     console.log("dataReady", dataReady);
