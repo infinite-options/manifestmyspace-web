@@ -817,6 +817,7 @@ export default function PropertyNavigator({
           height: "100%",
         }}
       >
+        {/* Property Navigator Header Including Address and x of y Properties */}
         <Grid container sx={{ marginTop: "15px", alignItems: "center", justifyContent: "center" }}>
           <Grid item md={1} xs={2} sx={{ display: "flex", justifyContent: "center" }}>
             <Button onClick={handlePreviousCard} disabled={currentIndex === 0 || !propertyData || propertyData.length === 0}>
@@ -872,6 +873,7 @@ export default function PropertyNavigator({
             </Button>
           </Grid>
         </Grid>
+        {/* End Property Navigator Header Including Address and x of y Properties */}
 
         <Box
           sx={{
@@ -881,6 +883,7 @@ export default function PropertyNavigator({
           }}
         >
           <Grid container rowSpacing={4} columnSpacing={4} justify='space-between' alignItems='stretch'>
+            {/* Top Card */}
             <Grid item xs={12} md={12}>
               <Card
                 sx={{
@@ -890,7 +893,9 @@ export default function PropertyNavigator({
                   padding: "16px",
                 }}
               >
+                {/* Top Container */}
                 <Grid container spacing={2}>
+                  {/* Image with Image Arrows */}
                   <Grid item xs={12} md={3}>
                     <Card
                       sx={{
@@ -925,6 +930,7 @@ export default function PropertyNavigator({
                             width: "100%",
                           }}
                         >
+                          {/* Image */}
                           <CardMedia
                             component='img'
                             image={images[activeStep]}
@@ -937,6 +943,7 @@ export default function PropertyNavigator({
                               height: "100px",
                             }}
                           />
+                          {/* End Image */}
                           <MobileStepper
                             steps={maxSteps}
                             position='static'
@@ -966,7 +973,9 @@ export default function PropertyNavigator({
                       </CardContent>
                     </Card>
                   </Grid>
+                  {/* End Image with Image Arrows */}
                   <Grid item xs={0} md={0.5} />
+                  {/* Middle Column with Property Details */}
                   <Grid item xs={12} md={5}>
                     <Grid container spacing={2} sx={{ height: "100%" }}>
                       <Grid item xs={6}>
@@ -1123,6 +1132,8 @@ export default function PropertyNavigator({
                       </Grid>
                     </Grid>
                   </Grid>
+                  {/* End Middle Column with Property Details */}
+                  {/* Buttons */}
                   <Grid item xs={12} md={3.5}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
@@ -1292,11 +1303,14 @@ export default function PropertyNavigator({
                       )}
                     </Grid>
                   </Grid>
+                  {/* End Buttons */}
                 </Grid>
+                {/* End Top Container */}
               </Card>
             </Grid>
+            {/* End Top Card */}
 
-            {/* Lease Detais grid */}
+            {/* Lease Details and Management Details Cards */}
             {/* Left component */}
             <Grid item xs={12} md={6}>
               <Card sx={{ backgroundColor: color, height: "100%" }}>
@@ -1909,6 +1923,7 @@ export default function PropertyNavigator({
                 </CardContent>
               </Card>
             </Grid>
+            {/* End Lease Details and Management Details Cards */}
           </Grid>
 
           {/* Rent history grid */}
@@ -1977,7 +1992,9 @@ export default function PropertyNavigator({
               </CardContent>
             </Card>
           </Grid>
+          {/* End Rent history grid */}
 
+          {/* Appliances grid */}
           <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
               <Box sx={{ width: "100%" }}>
@@ -2320,6 +2337,7 @@ export default function PropertyNavigator({
               </Box>
             </Card>
           </Grid>
+          {/* End Appliances grid */}
         </Box>
       </Box>
     </Paper>
