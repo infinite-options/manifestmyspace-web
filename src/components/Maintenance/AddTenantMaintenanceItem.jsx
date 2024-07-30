@@ -244,10 +244,10 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     return(
         <Paper
             style={{
-                margin: '30px',
+                margin: '3px',
                 padding: theme.spacing(2),
                 backgroundColor: theme.palette.primary.main,
-                paddingTop: '10px',
+                paddingTop: '5px',
             }}
         >
             <Backdrop
