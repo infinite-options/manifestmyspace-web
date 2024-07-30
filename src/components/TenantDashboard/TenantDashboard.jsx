@@ -23,6 +23,7 @@ import TenantProfileEdit from "../Profile/TenantProfile/TenantProfileEdit";
 import Announcements from "../Announcement/Announcements";
 import { Announcement } from "@mui/icons-material";
 import TenantMaintenanceItemDetail from "../Maintenance/TenantMaintenanceItemDetail";
+import AddTenantMaintenanceItem from "../Maintenance/AddTenantMaintenanceItem";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -66,6 +67,8 @@ function TenantDashboard(props) {
 
 
   const [tenantMaintenanceItemDetailState, setTenantMaintenanceItemDetailState] = useState(null);
+  const [newTenantMaintenanceState, setnewTenantMaintenanceState] = useState(null);
+
   const open = Boolean(anchorEl);
 
   const { user } = useUser();
@@ -167,8 +170,16 @@ function TenantDashboard(props) {
   }, []);
 
   useEffect(() => {
-    setRightPane({ type: "tenantmaintenanceitem" });
-  }, [tenantMaintenanceItemDetailState]); 
+    if (tenantMaintenanceItemDetailState) {
+        setRightPane({ type: "tenantmaintenanceitem" });
+    }
+}, [tenantMaintenanceItemDetailState]);
+
+useEffect(() => {
+    if (newTenantMaintenanceState) {
+        setRightPane({ type: "addtenantmaintenance" });
+    }
+}, [newTenantMaintenanceState]);
 
 
   useEffect(() => {
@@ -267,7 +278,9 @@ function TenantDashboard(props) {
         return <Announcements setRightPane={setRightPane} />
       case "tenantmaintenanceitem":
         return <TenantMaintenanceItemDetail tenantMaintenanceItemDetailState = {tenantMaintenanceItemDetailState} setRightPane={setRightPane}/>
-      default:
+      case "addtenantmaintenance":
+          return <AddTenantMaintenanceItem newTenantMaintenanceState = {newTenantMaintenanceState} setRightPane={setRightPane}/>
+        default:
         return null;
     }
   };
@@ -276,9 +289,11 @@ function TenantDashboard(props) {
     let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address);
     const propertyLeaseData = leaseDetails.find((item) => item.lease_property_id === selectedProperty.lease_property_id);
     console.log("Navigating to /addTenantMaintenanceItem - propertyLeaseData - ", propertyLeaseData);
-    navigate("/addTenantMaintenanceItem", {
+    /* navigate("/addTenantMaintenanceItem", {
       state: { propertyData: navPropertyData, leaseData: propertyLeaseData },
-    });
+    }); */
+    const state = { propertyData: navPropertyData, leaseData: propertyLeaseData };
+    setnewTenantMaintenanceState(state);
     setAddMaintenance(true);
   }
 

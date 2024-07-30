@@ -42,13 +42,14 @@ import ReturnButtonIcon from '../Property/refundIcon.png';
 
 import APIConfig from '../../utils/APIConfig';
 
-export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}){    
+export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane}){   
+    console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem); 
     const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId, dashboardRoutingBasedOnSelectedRole } = useUser();
     const [selectedImageList, setSelectedImageList] = useState([]);
-    const [property, setProperty] = useState(location.state.propertyData);
-    const [lease, setLease] = useState(location.state.leaseData);
+    const [property, setProperty] = useState(location.state?.propertyData || newTenantMaintenanceState?.propertyData);
+    const [lease, setLease] = useState(location.state?.leaseData || newTenantMaintenanceState?.leaseData);
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('left');
@@ -118,7 +119,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
 
     const handleBackButton = () => {
         console.log("handleBackButton")
-        navigate(-1);
+        setRightPane("");
     }
 
     const handleSubmit = (event) => {
@@ -234,8 +235,9 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem}
         setPhoneNumber('')
         setTitle('')
         setDescription('')
-        navigate('/tenantDashboard');
-        navigate(dashboardRoutingBasedOnSelectedRole(), {state: {refresh: true, propertyId: property.property_uid}})
+        setRightPane("")
+        //navigate('/tenantDashboard');
+        //navigate(dashboardRoutingBasedOnSelectedRole(), {state: {refresh: true, propertyId: property.property_uid}})
     }
 
     
