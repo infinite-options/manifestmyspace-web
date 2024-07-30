@@ -411,7 +411,8 @@ export default function AddProperty({}) {
     setActiveStep(0);
     setShowSpinner(false);
     if (selectedRole === "OWNER") {
-      navigate("/properties", { state: { isBack: true } });
+      // navigate("/properties", { state: { isBack: true } }); - PM CHanged
+      navigate("/propertiesPM", { state: { isBack: true } });
     }
   };
 
@@ -425,7 +426,7 @@ export default function AddProperty({}) {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Stack
         style={{
@@ -454,30 +455,30 @@ export default function AddProperty({}) {
             paddingTop: "10px",
           }}
         >
-          <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
-            <Box direction="row" justifyContent="center" alignItems="center">
+          <Stack direction='row' justifyContent='center' alignItems='center' position='relative'>
+            <Box direction='row' justifyContent='center' alignItems='center'>
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                 Add Property
               </Typography>
             </Box>
-            <Box position="absolute" right={0}>
+            <Box position='absolute' right={0}>
               <Button onClick={() => handleBackButton()}>
                 <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>
           </Stack>
 
-          <Stack direction="column" justifyContent="center" alignItems="center" padding="25px" onSubmit={handleSubmit}>
+          <Stack direction='column' justifyContent='center' alignItems='center' padding='25px' onSubmit={handleSubmit}>
             <Box
-              component="form"
+              component='form'
               sx={
                 {
                   // '& .MuiTextField-root': { m: 1, width: '25ch' },
                 }
               }
               noValidate
-              autoComplete="off"
-              id="addPropertyForm"
+              autoComplete='off'
+              id='addPropertyForm'
             >
               <Grid container columnSpacing={12} rowSpacing={6}>
                 {/* Select Field for Property */}
@@ -492,11 +493,11 @@ export default function AddProperty({}) {
                       width: "100%",
                     }}
                   >
-                    <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                    <Button size='small' onClick={handleBack} disabled={activeStep === 0}>
                       {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
                     </Button>
                     <CardMedia
-                      component="img"
+                      component='img'
                       image={selectedImageList.length === 0 ? coverImage : selectedImageList[activeStep].image}
                       sx={{
                         elevation: "0",
@@ -512,7 +513,7 @@ export default function AddProperty({}) {
                         justifyContent: "center",
                       }}
                     />
-                    <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                    <Button size='small' onClick={handleNext} disabled={activeStep === maxSteps - 1}>
                       {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                     </Button>
                   </div>
@@ -555,7 +556,7 @@ export default function AddProperty({}) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     fullWidth
                   />
                 </Grid>
@@ -572,7 +573,7 @@ export default function AddProperty({}) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     disabled
                   />
                 </Grid>
@@ -586,7 +587,7 @@ export default function AddProperty({}) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     fullWidth
                     // onChange={handleUnitChange}
                   >
@@ -610,7 +611,7 @@ export default function AddProperty({}) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                   />
                 </Grid>
 
@@ -626,7 +627,7 @@ export default function AddProperty({}) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                   />
                 </Grid>
 
@@ -642,7 +643,7 @@ export default function AddProperty({}) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -656,9 +657,9 @@ export default function AddProperty({}) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                     }}
                     onChange={handleCostChange}
                   />
@@ -677,7 +678,7 @@ export default function AddProperty({}) {
                     InputProps={{
                       readOnly: readOnlyNotes,
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     onChange={handleNotesChange}
                   />
@@ -694,13 +695,13 @@ export default function AddProperty({}) {
                           borderColor: "black",
                           borderRadius: "7px",
                         }}
-                        size="small"
+                        size='small'
                         fullWidth
                         value={selectedOwner}
                         onChange={handleOwnerChange}
                         displayEmpty
                       >
-                        <MenuItem value="" disabled>
+                        <MenuItem value='' disabled>
                           Select Owner
                         </MenuItem>
                         {ownerList.map((option, index) => (
@@ -717,7 +718,7 @@ export default function AddProperty({}) {
                 <Grid item xs={12}>
                   {selectedRole === "MANAGER" ? (
                     <div>
-                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label="Available to rent" />
+                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label='Available to rent' />
                     </div>
                   ) : (
                     <div></div>
@@ -729,9 +730,9 @@ export default function AddProperty({}) {
         </Paper>
         {/* Submit Button */}
         <Stack
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
+          direction='column'
+          justifyContent='center'
+          alignItems='center'
           sx={{
             display: "flex",
           }}
@@ -741,11 +742,11 @@ export default function AddProperty({}) {
               display: "flex",
             }}
             noValidate
-            autoComplete="off"
+            autoComplete='off'
           >
             <Grid container columnSpacing={12} rowSpacing={6} sx={{ display: "flex" }}>
               <Grid item xs={12}>
-                <Button variant="contained" type="submit" form="addPropertyForm" sx={{ backgroundColor: "#9EAED6", "&:hover, &:focus, &:active": { background: "#9EAED6" } }}>
+                <Button variant='contained' type='submit' form='addPropertyForm' sx={{ backgroundColor: "#9EAED6", "&:hover, &:focus, &:active": { background: "#9EAED6" } }}>
                   <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Save Property
                   </Typography>

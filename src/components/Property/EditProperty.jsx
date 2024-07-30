@@ -555,7 +555,8 @@ function EditProperty(props) {
 
       console.log("propertyList after autoUpdate - ", propertyList);
       if (isDesktop == true) {
-        navigate("/properties", { state: { index: index } });
+        // navigate("/properties", { state: { index: index } }); - PM Changed
+        navigate("/propertiesPM", { state: { index: index } });
       } else {
         navigate("/propertyDetail", { state: { index: index, propertyList: propertyList, allRentStatus: allRentStatus, isDesktop: isDesktop, rawPropertyData: rawPropertyData } });
       }

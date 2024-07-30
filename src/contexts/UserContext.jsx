@@ -187,7 +187,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
       sessionStorage.removeItem("isrent");
       return "/propertiesPM";
     } else if (role === "Owner") {
-      return "/properties";
+      return "/propertiesPM";
     }
   };
 

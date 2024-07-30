@@ -28,7 +28,7 @@ import APIConfig from "../../utils/APIConfig";
 export function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+    <div role='tabpanel' hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
       {value === index && (
         <Box sx={{ p: 3 }}>
           <Typography>{children}</Typography>
@@ -51,9 +51,14 @@ function a11yProps(index) {
   };
 }
 
-export default function MaintenanceRequestDetailNew({ maintenance_request_index, status: initialStatus, maintenanceItemsForStatus: initialMaintenanceItemsForStatus, allMaintenanceData }) {
+export default function MaintenanceRequestDetailNew({
+  maintenance_request_index,
+  status: initialStatus,
+  maintenanceItemsForStatus: initialMaintenanceItemsForStatus,
+  allMaintenanceData,
+}) {
   // console.log('----inside request detail----', maintenance_request_index, initialStatus);
- 
+
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
   let navigate = useNavigate();
@@ -101,7 +106,8 @@ export default function MaintenanceRequestDetailNew({ maintenance_request_index,
   function handleBackButton() {
     if (fromProperty) {
       if (isDesktop === true) {
-        navigate("/properties", { state: { index: propertyIndex } });
+        // navigate("/properties", { state: { index: propertyIndex } }); - PM Changed
+        navigate("/propertiesPM", { state: { index: propertyIndex } });
       } else {
         navigate(-1);
       }
@@ -165,10 +171,9 @@ export default function MaintenanceRequestDetailNew({ maintenance_request_index,
     });
   }, [maintenanceRequestIndex, currentStatus]);
 
-  
   useEffect(() => {
     var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex]?.maintenance_request_uid);
- 
+
     quotesFilteredById.sort((a, b) => {
       if (a.quote_status === "SENT") {
         return -1;
@@ -298,23 +303,23 @@ export default function MaintenanceRequestDetailNew({ maintenance_request_index,
           }}
         >
           {isMobile && (
-            <Box position="absolute">
+            <Box position='absolute'>
               <Button onClick={() => handleBackButton()}>
                 <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>
           )}
           <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
+            direction='row'
+            justifyContent='center'
+            alignItems='center'
             sx={{
               paddingBottom: "20px",
               paddingLeft: "0px",
               paddingRight: "0px",
             }}
           >
-            <Box direction="row" justifyContent="center" alignItems="center">
+            <Box direction='row' justifyContent='center' alignItems='center'>
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
@@ -340,7 +345,7 @@ export default function MaintenanceRequestDetailNew({ maintenance_request_index,
               }}
             >
               <Tabs
-                variant="fullWidth"
+                variant='fullWidth'
                 value={value}
                 onChange={handleChange}
                 TabIndicatorProps={{
@@ -474,7 +479,7 @@ MaintenanceRequestDetailNew.propTypes = {
 
 MaintenanceRequestDetailNew.defaultProps = {
   maintenance_request_index: 0,
-  status: '',
+  status: "",
   maintenanceItemsForStatus: [],
   allMaintenanceData: {},
 };

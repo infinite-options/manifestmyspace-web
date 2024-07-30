@@ -79,7 +79,7 @@ export default function OwnerPropertyRentWidget(props) {
   return (
     <Grid container style={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%" }}>
       <Grid item xs={12} style={{ display: "flex", justifyContent: "center" }}>
-        <Typography variant="h5" sx={{ fontWeight: "bold", paddingTop: "15px", color: "#160449" }}>
+        <Typography variant='h5' sx={{ fontWeight: "bold", paddingTop: "15px", color: "#160449" }}>
           Property Rent 589
         </Typography>
       </Grid>
@@ -93,10 +93,11 @@ export default function OwnerPropertyRentWidget(props) {
               innerRadius={55}
               outerRadius={80}
               paddingAngle={0}
-              dataKey="number"
-              filter="url(#shadow)"
+              dataKey='number'
+              filter='url(#shadow)'
               // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
-              onClick={() => navigate("/properties", { state: { showPropertyForm: true } })}
+              // onClick={() => navigate("/properties", { state: { showPropertyForm: true } })} - PM Changed
+              onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true } })}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -105,24 +106,25 @@ export default function OwnerPropertyRentWidget(props) {
 
             <Legend
               height={36}
-              iconType="circle"
-              layout="vertical"
-              align="right"
-              verticalAlign="top"
+              iconType='circle'
+              layout='vertical'
+              align='right'
+              verticalAlign='top'
               iconSize={15}
               padding={5}
               formatter={renderColorfulLegendText}
               // onClick={() => navigate("/pmRent")}
-              onClick={() => navigate("/properties")}
+              // onClick={() => navigate("/properties")} - PM Changed
+              onClick={() => navigate("/propertiesPM")}
               // onClick={() => navigate("/properties", { state: { showRentForm: true } })}
             />
 
             <text
               x={120}
               y={113}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              cursor="pointer"
+              textAnchor='middle'
+              dominantBaseline='middle'
+              cursor='pointer'
               style={{
                 fontFamily: "Source Sans Pro",
                 fontSize: "14px",
@@ -139,25 +141,26 @@ export default function OwnerPropertyRentWidget(props) {
           </PieChart>
         ) : (
           <PieChart width={400} height={250} margin={{ top: 40, right: 30, left: 50, bottom: 40 }}>
-            <Pie data={defaultData} cx={70} cy={78} innerRadius={55} outerRadius={80} paddingAngle={0} dataKey="number" filter="url(#shadow)">
+            <Pie data={defaultData} cx={70} cy={78} innerRadius={55} outerRadius={80} paddingAngle={0} dataKey='number' filter='url(#shadow)'>
               {defaultData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
               ))}
             </Pie>
-            <Legend height={36} iconType="circle" layout="vertical" align="right" verticalAlign="top" iconSize={15} padding={5} formatter={renderDefaultLegendText} />
+            <Legend height={36} iconType='circle' layout='vertical' align='right' verticalAlign='top' iconSize={15} padding={5} formatter={renderDefaultLegendText} />
             <text
               x={120}
               y={113}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              cursor="pointer"
+              textAnchor='middle'
+              dominantBaseline='middle'
+              cursor='pointer'
               style={{
                 fontFamily: "Source Sans Pro",
                 fontSize: "14px",
                 fill: "#160449",
                 fontWeight: "800",
               }}
-              onClick={() => navigate("/properties", { state: { showPropertyForm: true } })}
+              // onClick={() => navigate("/properties", { state: { showPropertyForm: true } })} - PM Changed
+              onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true } })}
             >
               Add your first
               <tspan x={120} y={125}>

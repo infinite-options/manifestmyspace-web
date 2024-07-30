@@ -83,7 +83,7 @@ export default function PropertyNavigator({
   handleViewApplication,
   props,
 }) {
-  // console.log('In Property Navigator');
+  console.log("In Property Navigator", onEditClick);
   // console.log(index, propertyList);
   console.log("props contracts", contracts);
   const navigate = useNavigate();
@@ -874,7 +874,7 @@ export default function PropertyNavigator({
           </Grid>
         </Grid>
         {/* End Property Navigator Header Including Address and x of y Properties */}
-
+        {/* Property Detail Cards */}
         <Box
           sx={{
             alignItems: "center",
@@ -1205,6 +1205,7 @@ export default function PropertyNavigator({
                       </Grid>
                       <Grid item xs={12}>
                         <Box>
+                          {/* Edit Property Button */}
                           <Button
                             variant='outlined'
                             sx={{
@@ -2339,6 +2340,7 @@ export default function PropertyNavigator({
           </Grid>
           {/* End Appliances grid */}
         </Box>
+        {/* End Property Detail Cards */}
       </Box>
     </Paper>
   );

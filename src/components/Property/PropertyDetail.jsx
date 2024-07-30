@@ -1,4 +1,4 @@
-import { ThemeProvider, Typography, Box, Paper, Stack, Button,} from "@mui/material";
+import { ThemeProvider, Typography, Box, Paper, Stack, Button } from "@mui/material";
 
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -17,18 +17,16 @@ export default function PropertyDetail({}) {
   // const contracts = location.state.contracts;
   const propertyList = location.state?.propertyList; // list of Property Details + Applications + Maintenance from /properties endpoint
   const index = location.state?.index;
-  const allRentStatus = location.state.allRentStatus?location.state.allRentStatus: [];
-  const rawPropertyData = location.state.rawPropertyData?location.state.rawPropertyData: [];
-  const isDesktop = location.state.isDesktop?location.state.isDesktop: true;
+  const allRentStatus = location.state.allRentStatus ? location.state.allRentStatus : [];
+  const rawPropertyData = location.state.rawPropertyData ? location.state.rawPropertyData : [];
+  const isDesktop = location.state.isDesktop ? location.state.isDesktop : true;
 
-  
-
-  console.log("LOCATION STATE", location.state)
-  console.log("all rentStatus", allRentStatus)
+  console.log("LOCATION STATE", location.state);
+  console.log("all rentStatus", allRentStatus);
 
   // useEffect(() => {
   //   console.log("all rentStatus", allRentStatus)
-	// }, [allRentStatus]); 
+  // }, [allRentStatus]);
 
   //   const [index, setIndex] = useState(location.state.index);
 
@@ -48,12 +46,13 @@ export default function PropertyDetail({}) {
 
   function handleBackButton() {
     console.log("handleBackButton");
-    navigate('/properties', { state: { index: index } });
+    // navigate('/properties', { state: { index: index } }); - PM Changed
+    navigate("/propertiesPM", { state: { index: index } });
   }
 
   function navigateToAddProperty() {
     console.log("navigateToAddProperty");
-    navigate("/addProperty", {state:{property_endpoint_resp: rawPropertyData}});
+    navigate("/addProperty", { state: { property_endpoint_resp: rawPropertyData } });
   }
 
   function navigateToAddListing() {
@@ -80,8 +79,8 @@ export default function PropertyDetail({}) {
             backgroundColor: theme.palette.primary.main,
           }}
         >
-          <Stack direction="column" alignItems="center">
-            <Box display="flex" justifyContent="center" width="100%" position="relative">
+          <Stack direction='column' alignItems='center'>
+            <Box display='flex' justifyContent='center' width='100%' position='relative'>
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
@@ -115,7 +114,7 @@ export default function PropertyDetail({}) {
               }}
             >
               <Box
-                component="img"
+                component='img'
                 src={refundIcon}
                 sx={{
                   width: "25px",
@@ -132,13 +131,7 @@ export default function PropertyDetail({}) {
                 width: "100%",
               }}
             >
-              <PropertyNavigator
-                index={index}
-                propertyList={propertyList}
-                allRentStatus={allRentStatus}
-                isDesktop={isDesktop}
-                rawPropertyData={rawPropertyData}
-              />
+              <PropertyNavigator index={index} propertyList={propertyList} allRentStatus={allRentStatus} isDesktop={isDesktop} rawPropertyData={rawPropertyData} />
             </Box>
           </Stack>
         </Paper>

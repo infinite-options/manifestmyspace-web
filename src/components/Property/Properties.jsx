@@ -57,9 +57,17 @@ function Properties(props) {
   useEffect(() => {
     console.log("In Properties - LHS: ", LHS);
     console.log("In Properties - RHS: ", RHS);
+    console.log("Current Profile ID: ", getProfileId);
+    console.log("Current Selected Role: ", selectedRole);
     console.log("propertyIndex at the beginning 2: ", propertyIndex);
     console.log("Return Index: ", returnIndex);
   }, [LHS, RHS]);
+
+  if (selectedRole === "MANAGER") {
+    console.log("Manager Selected");
+  } else {
+    console.log("Owner Selected");
+  }
 
   useEffect(() => {
     // console.log("PropertyList useEffect");
@@ -221,7 +229,7 @@ function Properties(props) {
   const handleViewApplication = (index) => {
     setApplicationIndex(index);
     setRHS("Applications");
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -278,13 +286,7 @@ function Properties(props) {
             )}
             {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} index={propertyIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}
             {RHS === "Applications" && (
-              <TenantApplicationNav
-                index={applicationIndex}
-                propertyIndex={returnIndex}
-                property={propertyList[returnIndex]}
-                isDesktop={isDesktop}
-                onBackClick={handleBackClick}
-              />
+              <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
             )}
           </Grid>
         </Grid>
