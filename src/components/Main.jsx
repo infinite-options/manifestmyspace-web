@@ -230,7 +230,7 @@ function Main() {
           {/* Private Routes */}
           <Route path='/' element={<PrivateRoutes />}>
             <Route path='tt' element={<ProfileManager />} />
-            <Route path='pe' element={<ProfileEditor />} />
+            <Route path='profileEditor' element={<ProfileEditor />} />
             <Route path='addNewRole' element={<AddNewRole />} />
             <Route path='dashboard' element={<MaintenanceWidget />} />
             <Route path='cashflow' element={<Cashflow />} />

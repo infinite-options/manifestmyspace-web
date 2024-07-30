@@ -60,7 +60,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
 
   useEffect(() => {
     console.log("inside documents mod", modifiedData);
-    if (modifiedData && modifiedData.length > 0) {
+    if (modifiedData && modifiedData?.length > 0) {
       editOrUpdateLease();
       handleClose();
       setIsUpdated(false);
@@ -112,7 +112,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
       const curr = { ...currentRow, filename: e.target.files[0].name };
       setcurrentRow(curr);
     } else {
-      const curr = { ...currentRow, filename: e.target.files[0].name, id: documents.length };
+      const curr = { ...currentRow, filename: e.target.files[0].name, id: documents?.length };
       console.log("curr", curr);
       setcurrentRow(curr);
     }
