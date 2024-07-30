@@ -7,7 +7,6 @@ import { Typography, Button, Checkbox, Grid, TextField } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import { useUser } from "../../contexts/UserContext";
 import ReturnArrow from "../../images/refund_back.png";
-
 import APIConfig from "../../utils/APIConfig";
 
 const useStyles = makeStyles((theme) => ({
@@ -24,23 +23,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const RequestQuotes = () => {
+const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
   const navigate = useNavigate();
-  const [properties, setProperties] = useState([]);
   const location = useLocation();
-  const managerData = location.state.managerData;
-  const propertyData = location.state.propertyData;
-  const index = location.state.index;
-  const isDesktop = location.state.isDesktop;
-
-  const requestingPropertyId = propertyData[index].property_uid;
-
   const { getProfileId } = useUser();
   const profileId = getProfileId();
   const [ownerId, setOwnerId] = useState(getProfileId());
-
+  const [properties, setProperties] = useState([]);
+  const [selectedProperties, setSelectedProperties] = useState([]);
   const [announcementTitle, setAnnouncementTitle] = useState("");
   const [announcementMsg, setAnnouncementMsg] = useState("");
+
+  const { managerData, propertyData, index, isDesktop } = location.state || requestQuotesState;
+
+  useEffect(() => {
+    if (propertyData && index !== undefined) {
+      setSelectedProperties([propertyData[index].property_uid]);
+    }
+  }, [propertyData, index]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,9 +49,7 @@ const RequestQuotes = () => {
       setProperties([...propertyData["Property"].result]);
     };
     fetchData();
-  }, []);
-
-  const [selectedProperties, setSelectedProperties] = useState([requestingPropertyId]); // Set initial value to requestingPropertyId
+  }, [profileId]);
 
   const handlePropertyCheck = (event) => {
     const checkedProperty = event.target.name;
@@ -72,7 +70,6 @@ const RequestQuotes = () => {
   };
 
   const handleRequestQuotes = async () => {
-    // Check if at least one property is selected
     if (selectedProperties.length === 0) {
       alert("Please select at least one property.");
       return;
@@ -109,13 +106,8 @@ const RequestQuotes = () => {
       console.log(error);
     }
 
-    // Prepare form data for contracts endpoint
     const formData = new FormData();
-
-    // Stringify the array and append it as a single value
     formData.append("contract_property_ids", JSON.stringify(selectedProperties));
-
-    // Append other required fields
     formData.append("contract_business_id", managerData.business_uid);
     formData.append("contract_start_date", formattedDate);
     formData.append("contract_status", "NEW");
@@ -137,8 +129,6 @@ const RequestQuotes = () => {
     navigateToPrev();
   };
 
-  let propertyDisplayValue = "";
-
   const handleTitleChange = (event) => {
     setAnnouncementTitle(event.target.value);
   };
@@ -149,7 +139,7 @@ const RequestQuotes = () => {
 
   const navigateToPrev = () => {
     if(isDesktop === true){
-      navigate('/properties', {state:{index:index}});
+      setCurrentView('deafultview');
     }else{
       navigate(-1);
     }
@@ -222,7 +212,7 @@ const RequestQuotes = () => {
                   color: "text.darkblue",
                 }}
               >
-                Send a Quote Request to <u>{managerData.business_name}</u>
+                Send a Quote Request to <u>{managerData?.business_name}</u>
               </Box>
             </Box>
 
@@ -305,7 +295,7 @@ const RequestQuotes = () => {
                         }}
                       >
                         <Checkbox sx={{ color: theme.typography.common.blue }} name={property.property_uid} onChange={handlePropertyCheck} checked={determineChecked(property)} />
-                        <Typography sx={{ paddingTop: "2%" }}>{(propertyDisplayValue = property.property_address + " #" + property.property_unit)}</Typography>
+                        <Typography sx={{ paddingTop: "2%" }}>{property.property_address + " #" + property.property_unit}</Typography>
                       </Box>
                     </Box>
                   ))}
@@ -325,7 +315,7 @@ const RequestQuotes = () => {
                 borderRadius: "10px 10px 10px 10px",
               }}
               onClick={handleRequestQuotes}
-              disabled={selectedProperties.length === 0} // Disable button when no property is selected
+              disabled={selectedProperties.length === 0}
             >
               Request Quote
             </Button>

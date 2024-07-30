@@ -18,10 +18,10 @@ import PhoneIcon from "../Property/phoneIconDark.png";
 import AES from "crypto-js/aes";
 import CloseIcon from "@mui/icons-material/Close";
 
-const TenantApplicationNav = () => {
+const TenantApplicationNav = ({tenantAppNavState, setCurrentView}) => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { index, property, isDesktop, propertyIndex } = state;
+  const { index, property, isDesktop, propertyIndex } = state || tenantAppNavState;
   const { applications } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applications[currentIndex]);
@@ -133,7 +133,8 @@ const TenantApplicationNav = () => {
   const handleCloseButton = (e) => {
     e.preventDefault();
     if (isDesktop === true) {
-      navigate('/properties', { state: { index: propertyIndex } });
+      //navigate('/properties', { state: { index: propertyIndex } });
+      setCurrentView('defaultview');
     } else {
       navigate(-1);
     }

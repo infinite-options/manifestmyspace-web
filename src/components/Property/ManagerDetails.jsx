@@ -20,10 +20,10 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useUser } from "../../contexts/UserContext";
 
-const ManagerDetails = () => {
+const ManagerDetails = ({managerDetailsState, setCurrentView}) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = location.state;
+  const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = location.state || managerDetailsState;
   const { user, selectedRole } = useUser();
 
   console.log("ownerId", ownerId);
@@ -133,7 +133,7 @@ const ManagerDetails = () => {
 
   const navigateToPrev = () => {
     if(isDesktop === true){
-      navigate('/properties', {state:{index:index}});
+      setCurrentView('defaultview');
     }else{
       navigate(-1);
     }
