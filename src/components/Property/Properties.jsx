@@ -155,17 +155,15 @@ function Properties(props) {
   //   }
   // };
 
-  useEffect(() => {
-    console.log("dataReady", dataReady);
-    console.log("showSpinner", showSpinner);
-  }, []);
+  // useEffect(() => {
+  //   console.log("dataReady", dataReady);
+  //   console.log("showSpinner", showSpinner);
+  // }, [dataReady, showSpinner]);
 
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
     const applications = data["Applications"]?.result;
     const maintenance = data["MaintenanceRequests"]?.result;
-    //   const newContracts = data["NewPMRequests"].result;
-    //   console.log(maintenance);
 
     const appsMap = new Map();
     applications.forEach((a) => {
@@ -177,10 +175,8 @@ function Properties(props) {
     const maintMap = new Map();
     if (maintenance) {
       maintenance.forEach((m) => {
-        // console.log("before", m);
         const maintByProperty = maintMap.get(m.maintenance_property_id) || [];
         maintByProperty.push(m);
-        // console.log("after", maintByProperty);
         maintMap.set(m.maintenance_property_id, maintByProperty);
       });
     }
@@ -202,9 +198,6 @@ function Properties(props) {
       p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
       // p.newContracts = contractsMap.get(p.property_uid) || [];
       // p.newContractsCount = [...p.newContracts].filter((m) => m.contract_status === "NEW").length;
-      console.log("P:", p);
-      console.log("P:", p.applications);
-      console.log("P:", p.applicationsCount);
       return p;
     });
   }
@@ -222,10 +215,10 @@ function Properties(props) {
 
   const handleViewLeaseClick = () => {
     // setPage("ViewLease");
-    console.log("View leases before before: ", propertyList);
-    console.log("View leases before before Index: ", propertyIndex);
-    console.log("View leases before: ", propertyList[propertyIndex]);
-    console.log("View leases", propertyList[propertyIndex].lease_uid);
+    // console.log("View leases before before: ", propertyList);  // Shows entire Property List with Appliances and Maintenance
+    // console.log("View leases before before Index: ", propertyIndex);  // Shows the selected Property
+    // console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
+    // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
     setRHS("ViewLease");
   };
 

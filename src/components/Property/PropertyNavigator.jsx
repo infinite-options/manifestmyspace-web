@@ -626,7 +626,7 @@ export default function PropertyNavigator({
       field: "cf_monthName",
       headerName: "Month",
       sortable: isDesktop,
-      // flex: 0.8,
+      flex: 1,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
@@ -645,7 +645,7 @@ export default function PropertyNavigator({
       field: "pur_amount_due",
       headerName: "Amount",
       sortable: isDesktop,
-      // flex: 1,
+      flex: 1,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
@@ -655,7 +655,7 @@ export default function PropertyNavigator({
       field: "rent_status",
       headerName: "Rent Status",
       sortable: isDesktop,
-      // flex: 1,
+      flex: 1,
       renderCell: (params) => {
         return (
           <Box
@@ -679,7 +679,7 @@ export default function PropertyNavigator({
       field: "fees",
       headerName: "Late Fees",
       sortable: isDesktop,
-      // flex: 0.5,
+      flex: 1,
       renderCell: (params) => {
         // return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
         // return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.row.lf_pur_amount_due}</Box>;
@@ -690,29 +690,29 @@ export default function PropertyNavigator({
       field: "pur_description",
       headerName: "pur_description",
       sortable: isDesktop,
-      // flex: 3,
+      flex: 2,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
     // {
-    //  field: 'rent_detail_index',
-    //  headerName: 'rent_detail_index',
-    //  sortable: isDesktop,
-    //  flex: 3,
-    //  renderCell: (params) => {
-    //    return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
-    //  },
+    //   field: "rent_detail_index",
+    //   headerName: "rent_detail_index",
+    //   sortable: isDesktop,
+    //   flex: 3,
+    //   renderCell: (params) => {
+    //     return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+    //   },
     // },
-    // {
-    //  field: 'property_uid',
-    //  headerName: 'property_uid',
-    //  sortable: isDesktop,
-    //  // flex: 0.5,
-    //  renderCell: (params) => {
-    //    return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
-    //  },
-    // },
+    {
+      field: "property_uid",
+      headerName: "property_uid",
+      sortable: isDesktop,
+      flex: 1,
+      renderCell: (params) => {
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+      },
+    },
   ];
 
   const handleEditClick = (row) => {
