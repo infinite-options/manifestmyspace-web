@@ -203,7 +203,7 @@ const ViewLease = (props) => {
     const index = props.index ? props.index : 0;
     setIndex(index);
     
-    const leaseID = propertyList[index]?.lease_uid;
+    const leaseID = propertyList[index]?.lease_uid || props.lease_id;
 
     console.log("ROHIT - index useEffect -  const leaseID - ", leaseID);
 
@@ -449,7 +449,7 @@ const ViewLease = (props) => {
      
   //   )
   // }
-
+  console.log('---leaseData before return---', leaseData);
   return (
     leaseData !== null? 
     (
