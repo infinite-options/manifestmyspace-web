@@ -24,6 +24,7 @@ import Announcements from "../Announcement/Announcements";
 import { Announcement } from "@mui/icons-material";
 import TenantMaintenanceItemDetail from "../Maintenance/TenantMaintenanceItemDetail";
 import AddTenantMaintenanceItem from "../Maintenance/AddTenantMaintenanceItem";
+import ViewLease from "../Leases/ViewLease";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -67,6 +68,7 @@ function TenantDashboard(props) {
 
   const [tenantMaintenanceItemDetailState, setTenantMaintenanceItemDetailState] = useState(null);
   const [newTenantMaintenanceState, setnewTenantMaintenanceState] = useState(null);
+  const [viewLeaseState, setViewLeaseState] = useState(null);
 
   const open = Boolean(anchorEl);
 
@@ -182,6 +184,12 @@ function TenantDashboard(props) {
   }, [newTenantMaintenanceState]);
 
   useEffect(() => {
+    if (viewLeaseState) {
+      setRightPane({ type: "viewlease" });
+    }
+  }, [viewLeaseState]);
+
+  useEffect(() => {
     const navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
     console.log("Nav Property Data that will be used to setSelectedProperty: ", navPropertyData);
 
@@ -280,6 +288,8 @@ function TenantDashboard(props) {
         return <TenantMaintenanceItemDetail tenantMaintenanceItemDetailState={tenantMaintenanceItemDetailState} setRightPane={setRightPane} />;
       case "addtenantmaintenance":
         return <AddTenantMaintenanceItem newTenantMaintenanceState={newTenantMaintenanceState} setRightPane={setRightPane} />;
+      case "viewlease":
+          return <ViewLease property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
       default:
         return null;
     }
@@ -379,6 +389,7 @@ function TenantDashboard(props) {
               setSelectedProperty={setSelectedProperty}
               setSelectedLease={setSelectedLease}
               setTotal={setTotal}
+              setViewLeaseState={setViewLeaseState}
             />
           </Grid>
 
@@ -914,8 +925,13 @@ const AccountBalanceWidget = ({
   setTotal,
   setSelectedProperty,
   setSelectedLease,
+  setViewLeaseState,
 }) => {
   const navigate = useNavigate();
+  console.log("---selectedProperty in acc---", selectedProperty);
+  console.log("---selectedLease in acc---", selectedLease);
+  console.log("---propertyData in acc---", propertyData);
+
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -961,15 +977,19 @@ const AccountBalanceWidget = ({
   };
 
   function handleViewLeaseNavigate(lease_uid) {
-    navigate("/viewLease", {
+    /* navigate("/viewLease", {
       state: {
         lease_id: lease_uid,
         // property_uid: propertyId,
       },
-    });
+    }); */
     const state = {
       lease_id: lease_uid,
+      property_uid: selectedProperty.property_uid,
+      isDesktop: true,
     };
+    console.log('---state to be passed---', state);
+    setViewLeaseState(state);
   }
 
   return (
