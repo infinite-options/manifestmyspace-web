@@ -183,8 +183,8 @@ const ViewLease = (props) => {
   // console.log("propertyUID", propertyUID)
 
   
-  //const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
-  //const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
+  // const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
+  // const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
 
   const propertyList = props.propertyList ? props.propertyList : [];
   
@@ -449,7 +449,6 @@ const ViewLease = (props) => {
      
   //   )
   // }
-  console.log('---leaseData before return---', leaseData);
   return (
     leaseData !== null? 
     (

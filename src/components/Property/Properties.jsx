@@ -19,6 +19,7 @@ import EditProperty from "./EditProperty";
 import ViewLease from "../Leases/ViewLease";
 import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManagementContract";
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
+import PropertyForm from "./PropertyForm";
 
 function Properties(props) {
   const [dataReady, setDataReady] = useState(false);
@@ -223,6 +224,16 @@ function Properties(props) {
     setRHS("ViewLease");
   };
 
+  const handleAddPropertyClick = () => {
+    // setPage("ViewLease");
+    // console.log("View leases before before: ", propertyList);  // Shows entire Property List with Appliances and Maintenance
+    // console.log("View leases before before Index: ", propertyIndex);  // Shows the selected Property
+    // console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
+    // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
+    setRHS("AddProperty");
+  };  
+  
+
   const handleViewContractClick = () => {
     // setPage("ViewLease");
     console.log("View Contract before before: ", propertyList);
@@ -264,6 +275,7 @@ function Properties(props) {
               isDesktop={isDesktop}
               contracts={allContracts}
               onDataChange={handleListClick}
+              onAddPropertyClick={handleAddPropertyClick}
             />
           </Grid>
 
@@ -300,6 +312,14 @@ function Properties(props) {
             {RHS === "Applications" && (
               <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
             )}
+            {
+              RHS === "AddProperty" && 
+                <PropertyForm
+                  onBack={handleBackClick}
+                  onSubmit={handleBackClick}
+                  property_endpoint_resp={rawPropertyData}
+                />
+            }
           </Grid>
         </Grid>
       </Container>

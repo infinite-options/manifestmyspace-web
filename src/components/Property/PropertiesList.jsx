@@ -561,7 +561,7 @@ function PropertiesList(props) {
                 All Properties PM
               </Typography>
             </Box>
-            <Button position='absolute' right={0} sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }} onClick={() => setShowPropertyForm(true)}>
+            <Button position='absolute' right={0} sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }} onClick={props.onAddPropertyClick}>
               <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
             </Button>
           </Stack>
