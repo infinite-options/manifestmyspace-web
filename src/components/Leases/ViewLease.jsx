@@ -453,7 +453,7 @@ const ViewLease = (props) => {
     leaseData !== null? 
     (
       <>
-      <Container maxWidth='xl' sx={{ backgroundColor: "#F2F2F2",paddingBottom: "20px", borderRadius: "10px"}}>
+      <Container maxWidth='xl' sx={{ backgroundColor: "#F2F2F2", padding: '0px', borderRadius: "10px", marginTop: "7px",marginBottom: "7px", boxShadow: "0px 2px 4px #00000040",  }}>
           <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
             <CircularProgress color="inherit" />
           </Backdrop>
