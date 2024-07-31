@@ -24,7 +24,7 @@ function PMRent(props) {
   const [rentData, setRentData] = useState({});
   const [showSpinner, setShowSpinner] = useState(false);
   const [rentDetailIndexList, setRentDetailIndexList] = useState([]);
-  console.log("checking", props.onPropertyInRentWidgetClicked);
+  // console.log("checking", props.onPropertyInRentWidgetClicked);
 
   // useEffect(() => {
   //   console.log("rentDetailIndexList - ", rentDetailIndexList);
@@ -73,7 +73,7 @@ function PMRent(props) {
       setShowSpinner(false);
     });
   }, []);
-  console.log("Rent Data: ", rentData);
+  console.log("Rent Data: ", rentData, rentDetailIndexList);
   return (
     <MainContainer>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -120,7 +120,7 @@ function PMRent(props) {
         }}
       >
         {/* <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} /> */}
-        <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} />
+        <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} setInitialPropInRent={props.setInitialPropInRent}/>
       </Box>
     </MainContainer>
   );
