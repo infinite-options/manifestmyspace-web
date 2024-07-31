@@ -1,4 +1,5 @@
 import { Box, Container, Grid, Paper, ThemeProvider, Typography } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import axios from "axios";
 
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
@@ -48,6 +49,8 @@ function ProfileEditor() {
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(["user"]);
   const { user, logout, selectedRole, isLoggedIn, getProfileId, getRoleId } = useUser();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.down("md"));
   const [isSave, setIsSave] = useState(false);
   const [activeForm, setActiveForm] = useState("");
   const [newRole, setNewRole] = useState("");
@@ -212,9 +215,31 @@ function ProfileEditor() {
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+        <Grid item xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                justifyContent: isMobile ? "center" : "left",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                alignText: "center",
+                alignContent: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                  fontWeight: "600",
+                }}
+              >
+                Welcome, {user.first_name}!
+              </Typography>
+            </Box>
+        </Grid>
         <Grid container spacing={6}>
           <Grid item xs={12} md={3}>
-            <ApplicationSettings />
+            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick}/>
           </Grid>
           <Grid item xs={12} md={9}>
             {renderForm()}
