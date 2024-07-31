@@ -41,7 +41,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ApplicationSettings() {
+export default function ApplicationSettings({ handleChangePasswordClick }) {
   console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId, user } = useUser(); // Ensure user is destructured from useUser
@@ -72,10 +72,10 @@ export default function ApplicationSettings() {
     console.log("Selected role:", event.target.value);
   };
 
-  const handleChangePasswordClick = () => {
-    // Handle password change logic here
-    console.log("Change password clicked");
-  };
+  // const handleChangePasswordClick = () => {
+  //   // Handle password change logic here
+  //   console.log("Change password clicked");
+  // };
 
   const logout = () => {
     // Handle logout logic here
