@@ -44,7 +44,7 @@ const useStyles = makeStyles({
 export default function ApplicationSettings({ handleChangePasswordClick }) {
   console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getProfileId, user } = useUser(); // Ensure user is destructured from useUser
+  const { getProfileId, user, logout } = useUser(); // Ensure user is destructured from useUser
   const classes = useStyles();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState(user.notifications === "true");
@@ -77,10 +77,11 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
   //   console.log("Change password clicked");
   // };
 
-  const logout = () => {
+  const handleLogout = () => {
     // Handle logout logic here
     console.log("User logged out");
-    navigate("/login");
+    logout();
+    // navigate("/login");
   };
 
   return (
@@ -163,7 +164,7 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
           </Link>
         </Grid>
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{ marginTop: '5px', }}>
-          <Button variant="contained" onClick={logout} sx={{ width: '100%', marginTop: '20px', backgroundColor: '#3D5CAC', color: '#FFFFFF', fontWeight: 'bold', textTransform: 'none', }}>
+          <Button variant="contained" onClick={handleLogout} sx={{ width: '100%', marginTop: '20px', backgroundColor: '#3D5CAC', color: '#FFFFFF', fontWeight: 'bold', textTransform: 'none', }}>
             Sign Out
           </Button>
         </Grid>
