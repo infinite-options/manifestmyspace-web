@@ -70,7 +70,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const ownerUID = location.state.ownerUID;
   console.log("In Owner Contact Details - Owner ID: ", ownerUID);
 
-  const cashflowData = location.state?.cashflowData;
+  const [ cashflowData, setCashflowData ] = useState(location.state?.cashflowData);
   console.log("In the beginning: ", cashflowData);
   const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
   const cashflowDetails = happinessData?.delta_cashflow_details?.result;
@@ -146,16 +146,18 @@ const OwnerContactDetailsHappinessMatrix = () => {
   useEffect(() => {
     // console.log("ROHIT - contactDetails - ", contactDetails);
     // console.log("ROHIT - index - ", index);
-    if(contactDetails) console.log("ROHIT - contactDetails[index].owner_uid - ", contactDetails[index]?.owner_uid);
+    if(contactDetails) {console.log("ROHIT - contactDetails[index].owner_uid - ", contactDetails[index]?.owner_uid);}
     console.log("ROHIT - cashflowDetails[0].owner_uid - ", cashflowDetails[0].owner_uid);
     // console.log("ROHIT - setting filteredCashflowDetails to - ", cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid))
-    if (contactDetails && cashflowData) {       
+    if (contactDetails) {       
+      const filteredCFData = cashflowDetails?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid);
+      console.log("ROHIT - filteredCFData - ", filteredCFData);
       setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
       setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
       setFilteredCashflowDetailsByPropertyByMonth(
         contactDetails != null ? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []
       );
-      setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+      // setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     }
   }, [contactDetails, index]);
 
