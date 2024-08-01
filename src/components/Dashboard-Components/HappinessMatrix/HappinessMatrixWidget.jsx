@@ -14,32 +14,146 @@ function HappinessMatrixWidget(props) {
   const { happinessData, contactDetails } = props;
   const [data, setData] = useState([]);
 
-  // console.log("happiness data initial", happinessData);
+  console.log("happiness data initial", happinessData);
   // console.log("happiness data initial1", happinessData.matrix_data);
   // console.log("happiness data initial2", happinessData.matrix_data.result[0]);
+
+  const getBorderColor = (x, y) => {
+    let quarter;      
+    if (x < -50 && y > -50) {
+      return "#FF8A00" //orange
+    } else if (x < -50 && y < -50) {
+      return "#D22B2B";
+    } else if (x > -50 && y < -50) {
+      return "#FFC85C";    
+    } else if (x > -50 && y > -50) {
+      return "#006400"
+    }
+    else{
+      return "#000000";
+    }
+      
+      // orange - upper left
+      // red - lower left
+      // yellow - lower right
+      // green - upper right
+            
+  }
+
+  useEffect(() => {
+
+  });
 
   useEffect(() => {
     // console.log("In UseEffect: ", happinessData.matrix_data.result);
     setData(happinessData.matrix_data.result);
 
+    const matrixData = happinessData.matrix_data.result;
+
     const points = [];
-    data?.forEach((owner) => {
+    matrixData?.forEach((owner) => {
       // console.log("In get points: ", owner.vacancy_perc, owner.percent_delta_cashflow);
       let x = Number(owner.vacancy_perc);
       let y = Number(owner.percent_delta_cashflow);
+
+      let quarter;
+      let vacancy_perc = parseFloat(owner.vacancy_perc);
+      let delta_cf_perc = -1 * parseFloat(owner.percent_delta_cashflow);
+
+      if (delta_cf_perc > -50 && vacancy_perc < -50) {
+        quarter = 1;
+      } else if (delta_cf_perc > 50 && vacancy_perc < -50) {
+        quarter = 2;
+      } else if (delta_cf_perc < 50 && vacancy_perc > -50) {
+        quarter = 3;
+      } else if (delta_cf_perc > -0.5 && vacancy_perc < -50) {
+        quarter = 40;
+      }
+
+      // console.log("delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
+      // console.log("quarter - ", fullName, quarter);
+
+      // orange - upper left
+      // red - lower left
+      // yellow - lower right
+      // green - upper right
+
+      let borderColor;
+
+      switch (quarter) {
+        case 1:
+          // borderColor = "#006400"; // Green
+          borderColor = "#FF8A00"; // Orange color
+          break;
+        case 2:
+          // borderColor = "#FF8A00"; // Orange color
+          // borderColor = "#006400"; // Green
+          borderColor = "#D22B2B"; // Red color
+          break;
+        case 3:
+          // borderColor = "#D22B2B"; // Red color
+          borderColor = "#FFC85C"; // Yellow color
+          break;
+        case 4:
+          borderColor = "#FFC85C"; // Yellow color
+          break;
+        default:
+          borderColor = "#000000"; // Black color
+      }
 
       let pointObject = {
         x: x,
         y: -y,
         ...owner,
+        // color: borderColor,
+        color: getBorderColor(x, -y),
+        photo: owner.owner_photo_url? owner.owner_photo_url : null,
+        name: `${owner.owner_first_name} ${owner.owner_last_name}`
       };
 
       points.push(pointObject);
     });
 
+    let testPoint1 = {
+      x: -100,
+      y: -100,      
+      color: getBorderColor(-100,-100),
+      // photo: owner.owner_photo_url? owner.owner_photo_url : null,
+      name: `point1`
+    };
+    // points.push(testPoint1);
+
+    let testPoint2 = {
+      x: 0,
+      y: 0,      
+      color: getBorderColor(0,0),
+      // photo: owner.owner_photo_url? owner.owner_photo_url : null,
+      name: `point2`
+    };
+    // points.push(testPoint2);
+
+    let testPoint3 = {
+      x: -60,
+      y: -60,      
+      color: getBorderColor(-60, -60),
+      // photo: owner.owner_photo_url? owner.owner_photo_url : null,
+      name: `point3`
+    };
+    // points.push(testPoint3);
+
+    let testPoint4 = {
+      x: -40,
+      y: -60,      
+      color: getBorderColor(-40, -60),
+      // photo: owner.owner_photo_url? owner.owner_photo_url : null,
+      name: `point3`
+    };
+    // points.push(testPoint4);
+
     // console.log("points to plot", points);
     setPointsToPlot(points);
-  }, [happinessData.matrix_data.result]);
+  // }, [happinessData.matrix_data.result]);
+}, [props.happinessData]);
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
 
@@ -54,7 +168,7 @@ function HappinessMatrixWidget(props) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const handlePointClick = (payload) => {
-    // console.log("In handlePointClick - payload: ", payload);
+    console.log("In handlePointClick - payload: ", payload);
     let { index } = payload;
     if (clickedIndex === index) {
       // setHiddenPoints((prevHiddenPoints) => [...prevHiddenPoints, index]);
@@ -110,7 +224,8 @@ function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  domain={[-1.1, 0.1]}
+                  domain={[-100, 0]}
+                  // domain={[0, -100]}
                   // ticks={[-1.1, -0.5, 0.1]}
                   tick={false}
                 />
@@ -123,6 +238,7 @@ function HappinessMatrixWidget(props) {
                   tickLine={false}
                   style={axisLabelStyle}
                   domain={[-100, 0]}
+                  // domain={[0, -100]}
                   // ticks={[-100, -50, 0]} // Add this line
                   tick={false}
                 />

@@ -53,15 +53,15 @@ import CryptoJS from "crypto-js";
 import AES from "crypto-js/aes";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const OwnerContactDetailsHappinessMatrix = (props) => {
-  console.log("In Owner Contact Details - Happiness Matrix", props);
+const OwnerContactDetailsHappinessMatrix = () => {
+  console.log("In Owner Contact Details Happiness Matrix");
   const { selectedRole, getProfileId } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const navigatingFrom = location.state.navigatingFrom;
-  const happinessData = location.state?.happinessData;
+  const [ happinessData, setHappinessData ] = useState(location.state?.happinessData);
 
   const [contactDetails, setContactDetails] = useState();
   const [contactsTab, setContactsTab] = useState("");
@@ -74,6 +74,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   console.log("In the beginning: ", cashflowData);
   const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
   const cashflowDetails = happinessData?.delta_cashflow_details?.result;
+  console.log("ROHIT - OwnerContactDetailsHappinessMatrix - cashflowDetails - ", cashflowDetails);
   const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
   const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
   const [filteredCashflowDetails, setFilteredCashflowDetails] = useState(cashflowDetails);
@@ -93,9 +94,9 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
-  // }, [filteredCashflowDetails]);
+  useEffect(() => {
+    console.log("ROHIT - filteredCashflowDetailsHere - ", filteredCashflowDetails);
+  }, [filteredCashflowDetails]);
 
   // useEffect(() => {
   //   console.log("filteredCashflowDetailsByProperty", filteredCashflowDetailsByProperty)
@@ -104,6 +105,10 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   // useEffect(() => {
   //   console.log("filteredCashflowDetailsByPropertyByMonth", filteredCashflowDetailsByPropertyByMonth)
   // }, [filteredCashflowDetailsByPropertyByMonth]);
+
+  useEffect(() => {
+    console.log("OwnerContactDetailsHappinessMatrix - happinessData - ", happinessData);
+  }, [happinessData]);
 
   useEffect(() => {
     const getDataFromAPI = async () => {
@@ -139,7 +144,12 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
   }, []);
 
   useEffect(() => {
-    if (contactDetails && cashflowData) {
+    // console.log("ROHIT - contactDetails - ", contactDetails);
+    // console.log("ROHIT - index - ", index);
+    if(contactDetails) console.log("ROHIT - contactDetails[index].owner_uid - ", contactDetails[index]?.owner_uid);
+    console.log("ROHIT - cashflowDetails[0].owner_uid - ", cashflowDetails[0].owner_uid);
+    // console.log("ROHIT - setting filteredCashflowDetails to - ", cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid))
+    if (contactDetails && cashflowData) {       
       setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
       setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
       setFilteredCashflowDetailsByPropertyByMonth(
@@ -147,7 +157,7 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
       );
       setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     }
-  }, [index]);
+  }, [contactDetails, index]);
 
   const setting_matrix_data = (happiness_response) => {
     console.log("setting_matrix_data - happiness_response - ", happiness_response);
@@ -387,10 +397,33 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   );
 };
 
-const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails, filteredCashflowDetailsByProperty, filteredCashflowDetailsByPropertyByMonth }) => {
+const OwnerContactDetail = ( props ) => {
+  console.log("ROHIT - OwnerContactDetail - props - ", props);
   const { selectedRole, getProfileId } = useUser();
   const [propertiesData, setPropertiesData] = useState([]);
-  const [contractsData, setContractsData] = useState([]);
+  const [contractsData, setContractsData] = useState([]);  
+
+  const contactDetails = props.contactDetails;
+  const index = props.index;
+  const setIndex = props.setIndex;
+
+  const [ filteredCashflowDetails, setFilteredCashflowDetails ] = useState(props.filteredCashflowDetails)
+  const [ filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty ] = useState(props.filteredCashflowDetailsByProperty);
+  const [ filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth ] = useState(props.filteredCashflowDetailsByPropertyByMonth);
+
+  useEffect(() => {
+    console.log("ROHIT - OwnerContactDetail - useEffect - props.filteredCashflowDetails - ", props.filteredCashflowDetails);
+    setFilteredCashflowDetails(props.filteredCashflowDetails);
+  }, [props.filteredCashflowDetails]);
+
+  useEffect(() => {
+    setFilteredCashflowDetailsByProperty(props.filteredCashflowDetailsByProperty);
+  }, [props.filteredCashflowDetailsByProperty]);
+
+  useEffect(() => {
+    setFilteredCashflowDetailsByPropertyByMonth(props.filteredCashflowDetailsByPropertyByMonth);
+  }, [props.filteredCashflowDetailsByPropertyByMonth]);
+
 
   // const getPropertiesData = async () => {
   //   const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;
@@ -888,9 +921,10 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   );
 };
 
-const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth }) => {
+const CashflowDataGrid = ( props ) => {
+  console.log("ROHIT - CashflowDataGrid - props - ", props);
   const [data, setData] = useState(
-    cashflowDetails.map((row, index) => {
+    props.cashflowDetails.map((row, index) => {
       return { ...row, index };
     })
   );
@@ -899,24 +933,28 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
   useEffect(() => {
     if (tab === "by_month") {
       setData(
-        cashflowDetails.map((row, index) => {
+        props.cashflowDetails.map((row, index) => {
           return { ...row, index };
         })
       );
     } else if (tab === "by_property") {
       setData(
-        cashflowDetailsByProperty.map((row, index) => {
+        props.cashflowDetailsByProperty.map((row, index) => {
           return { ...row, index };
         })
       );
     } else if (tab === "by_property_by_month") {
       setData(
-        cashflowDetailsByPropertyByMonth.map((row, index) => {
+        props.cashflowDetailsByPropertyByMonth.map((row, index) => {
           return { ...row, index };
         })
       );
     }
-  }, [tab, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth]);
+  }, [tab, props.cashflowDetails, props.cashflowDetailsByProperty, props.cashflowDetailsByPropertyByMonth]);
+
+  useEffect(() => {
+    console.log("ROHIT - CashflowDataGrid - data - ", data);
+  }, [data])
 
   const columns = [
     {
