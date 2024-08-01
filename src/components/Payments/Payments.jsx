@@ -52,7 +52,7 @@ export default function Payments(props) {
   const { user, getProfileId, roleName, selectedRole } = useUser();
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
-  const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
+  const accountBalanceWidgetData = location.state?.accountBalanceWidgetData ;
   console.log("ROHIT - managerCashflowWidgetData - ", managerCashflowWidgetData);
 
   console.log("ROHIT - selectedRole - ", selectedRole);
@@ -253,7 +253,7 @@ export default function Payments(props) {
 
         <Container maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
           <Grid container spacing={6} sx={{height: '90%'}}>          
-            <Grid item xs={12} md={4}>
+            {/* <Grid item xs={12} md={4}>
               {
                 selectedRole === "MANAGER" && (
                   <ManagerCashflowWidget propsMonth={managerCashflowWidgetData?.propsMonth} propsYear={managerCashflowWidgetData?.propsYear} profitsTotal={managerCashflowWidgetData?.profitsTotal} rentsTotal={managerCashflowWidgetData?.rentsTotal} payoutsTotal={managerCashflowWidgetData?.payoutsTotal} graphData={managerCashflowWidgetData?.graphData}/>
@@ -266,9 +266,9 @@ export default function Payments(props) {
                 )
               }
               
-            </Grid>
+            </Grid> */}
 
-            <Grid container item xs={12} md={8} columnSpacing={6}>
+            <Grid container item xs={12} md={12} columnSpacing={6}>
               <Paper
                 component={Stack}
                 direction="column"
