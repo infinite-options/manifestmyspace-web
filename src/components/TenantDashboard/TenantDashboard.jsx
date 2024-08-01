@@ -21,10 +21,11 @@ import TenantApplication from "../Applications/TenantApplication";
 import TenantProfileEdit from "../Profile/TenantProfile/TenantProfileEdit";
 // import AccountBalanceWidget from "../Payments/AccountBalanceWidget";
 import Announcements from "../Announcement/Announcements";
-import { Announcement } from "@mui/icons-material";
+import { Announcement, Payment } from "@mui/icons-material";
 import TenantMaintenanceItemDetail from "../Maintenance/TenantMaintenanceItemDetail";
 import AddTenantMaintenanceItem from "../Maintenance/AddTenantMaintenanceItem";
 import ViewLease from "../Leases/ViewLease";
+import Payments from "../Payments/Payments";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -69,6 +70,7 @@ function TenantDashboard(props) {
   const [tenantMaintenanceItemDetailState, setTenantMaintenanceItemDetailState] = useState(null);
   const [newTenantMaintenanceState, setnewTenantMaintenanceState] = useState(null);
   const [viewLeaseState, setViewLeaseState] = useState(null);
+  const [paymentState, setPaymentState] = useState(null);
 
   const open = Boolean(anchorEl);
 
@@ -187,6 +189,12 @@ function TenantDashboard(props) {
   }, [newTenantMaintenanceState]);
 
   useEffect(() => {
+    if (paymentState) {
+      setRightPane({ type: "payment" });
+    }
+  }, [paymentState]);
+
+  useEffect(() => {
     if (viewLeaseState) {
       setRightPane({ type: "viewlease" });
     }
@@ -293,7 +301,9 @@ function TenantDashboard(props) {
         return <AddTenantMaintenanceItem newTenantMaintenanceState={newTenantMaintenanceState} setRightPane={setRightPane} />;
       case "viewlease":
           return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
-      default:
+      case "payment":
+          return <Payments accountBalanceWidgetData={paymentState} setRightPane={setRightPane} />;
+       default:
         return null;
     }
   };
@@ -394,6 +404,7 @@ function TenantDashboard(props) {
               setTotal={setTotal}
               setViewLeaseState={setViewLeaseState}
               rightPane = {rightPane.type}
+              setPaymentState={setPaymentState}
             />
           </Grid>
 
@@ -931,6 +942,7 @@ const AccountBalanceWidget = ({
   setSelectedLease,
   setViewLeaseState,
   rightPane,
+  setPaymentState,
 }) => {
   const navigate = useNavigate();
   console.log("---selectedProperty in acc---", selectedProperty);
@@ -995,6 +1007,21 @@ const AccountBalanceWidget = ({
     };
     console.log('---state to be passed---', state);
     setViewLeaseState(state);
+  }
+
+  function handlePaymentNavigate() {
+    /*navigate("/payments", 
+    { state: { accountBalanceWidgetData: 
+      { selectedProperty, selectedLease, 
+        propertyAddr, propertyData, total,
+         rentFees, lateFees, utilityFees } } }); */
+          
+    const state =  
+          { selectedProperty, selectedLease, 
+            propertyAddr, propertyData, total,
+             rentFees, lateFees, utilityFees } 
+    console.log('---state to be passed in handlePaymentNavigate---', state);
+    setPaymentState(state);
   }
 
   function handlePropertyChange(item) {
@@ -1143,8 +1170,7 @@ const AccountBalanceWidget = ({
             textAlign: "center",
           }}
           onClick={() => {
-            navigate("/payments", { state: { accountBalanceWidgetData: { selectedProperty, selectedLease, propertyAddr, propertyData, total, rentFees, lateFees, utilityFees } } });
-          }}
+            handlePaymentNavigate(); }}
         >
           Make a Payment
         </Box>
