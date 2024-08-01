@@ -41,6 +41,8 @@ function PropertiesList(props) {
   const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   // const [returnIndex, setReturnIndex] = useState(0);
+  const [initialPropInRent, setInitialPropInRent] = useState("");
+  const [isDataReady, setIsDataReady] = useState(false);
 
   // console.log("In Property List - propertyList outside: ", propertyList);
   // console.log("In Property List - displayList outside: ", displayedItems);
@@ -55,6 +57,7 @@ function PropertiesList(props) {
     setPropertyIndex(props.index || 0);
     setAllRentStatus(props.allRentStatus);
     setLHS(props.LHS);
+    setIsDataReady(true);
   }, [props.LHS, props.allRentStatus, props.index, props.propertyList]);
 
   useEffect(() => {
@@ -64,6 +67,12 @@ function PropertiesList(props) {
     console.log("In Property List - allRentStatus: ", allRentStatus);
     console.log("In Property List - LHS: ", LHS);
   }, [LHS, allRentStatus, displayedItems, propertyIndex, propertyList]);
+
+  useEffect(() => {
+    if(LHS === "Rent"){
+      onPropertyInRentWidgetClicked(initialPropInRent);
+    }
+  }, [displayedItems])
 
   // ENDPOINT CALLS
   // CALL PROPERTIES ENDPOINT
@@ -211,10 +220,13 @@ function PropertiesList(props) {
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {
-    const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
-    console.log("onPropertyInRentWidgetClicked Clicked", i, displayedItems);
-    setPropertyIndex(i);
-    props.onDataChange(i);
+    console.log("onPropertyInRentWidgetClicked Clicked", property_uid, displayedItems);
+    if (displayedItems.length > 0) {
+      const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
+      console.log("onPropertyInRentWidgetClicked Clicked", property_uid, i, displayedItems);
+      setPropertyIndex(i);
+      props.onDataChange(i);
+    }
   };
 
   function handlePropertyDetailNavigation(index, propertyList) {
@@ -620,13 +632,11 @@ function PropertiesList(props) {
           <Box sx={{ padding: "10px" }}>
             <PropertiesSearch propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
 
-            {LHS === "Rent" ? (
+            {LHS === "Rent" && isDataReady === true ? (
               <Box sx={{ marginTop: "20px" }}>
-                (
                 <Grid item xs={12} md={12}>
-                  <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} />
+                  <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent}/>
                 </Grid>
-                )
               </Box>
             ) : (
               <Box sx={{ marginTop: "20px" }}>
