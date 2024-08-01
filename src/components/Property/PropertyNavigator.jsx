@@ -1853,9 +1853,9 @@ export default function PropertyNavigator({
                                 state: {
                                   ownerUID: property.owner_uid,
                                   navigatingFrom: "PropertyNavigator",
-                                  index: index,
+                                  // index: index,
                                   happinessData: happinessData,
-                                  happinessMatrixData: dataforhappiness,
+                                  // happinessMatrixData: dataforhappiness,
                                 },
                               })
                             }
