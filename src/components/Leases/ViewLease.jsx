@@ -68,6 +68,7 @@ function formatDate(date) {
 }
 
 const ViewLease = (props) => {
+  console.log('---props in viewlease---', props);
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -92,7 +93,7 @@ const ViewLease = (props) => {
   const [moveOutDate, setMoveOutDate] = useState(new Date());
   const [expanded, setExpanded] = useState(false);
 
-  const [ index, setIndex ] = useState(props.index);
+  const [ index, setIndex ] = useState(props.index ? props.index : 0);
   const [ allLeases, setAllLeases ] = useState([]);
   
 
@@ -182,8 +183,8 @@ const ViewLease = (props) => {
   // console.log("propertyUID", propertyUID)
 
   
-  const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
-  const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
+  // const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
+  // const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
 
   const propertyList = props.propertyList ? props.propertyList : [];
   
@@ -199,10 +200,10 @@ const ViewLease = (props) => {
   }
 
   useEffect(() => {
-    const index = props.index;
+    const index = props.index ? props.index : 0;
     setIndex(index);
     
-    const leaseID = propertyList[index]?.lease_uid;
+    const leaseID = propertyList[index]?.lease_uid || props.lease_id;
 
     console.log("ROHIT - index useEffect -  const leaseID - ", leaseID);
 
@@ -305,7 +306,8 @@ const ViewLease = (props) => {
 
   const handleCloseButton = (e) => {
     e.preventDefault();
-    props.onBackClick();
+    props.onBackClick?.();
+    props.setRightPane?.('');
   };
 
   const handleToggleAccordion = () => {
@@ -447,12 +449,11 @@ const ViewLease = (props) => {
      
   //   )
   // }
-
   return (
     leaseData !== null? 
     (
       <>
-        <Container maxWidth="xl" sx={{ paddingBottom: "25px" }}>
+      <Container maxWidth='xl' sx={{ backgroundColor: "#F2F2F2", padding: '0px', borderRadius: "10px", marginTop: "7px",marginBottom: "7px", boxShadow: "0px 2px 4px #00000040",  }}>
           <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
             <CircularProgress color="inherit" />
           </Backdrop>
@@ -467,17 +468,16 @@ const ViewLease = (props) => {
             }}
           >
             <Grid container sx={{ paddingTop: "20px" }}>
-              <Grid item xs={12}>
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
-                  <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease</Typography>
-                  <Box position="absolute" right={20}>
-                    <Button onClick={(e) => handleCloseButton(e)}>
-                      <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
-                    </Button>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
+            <Grid item xs={12} sx={{ position: 'relative' }}> 
+  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
+    <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease</Typography>
+    <Box sx={{ position: "absolute", top: 0, right: 0 }}> 
+      <Button onClick={(e) => handleCloseButton(e)}>
+        <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+      </Button>
+    </Box>
+  </Box>
+</Grid><Grid item xs={12}>
                 <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "row", padding: "25px", borderRadius: "5px" }}>
                   <Grid item xs={6}>
                     <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Property Address</Typography>
@@ -802,6 +802,7 @@ const ViewLease = (props) => {
             setEndLeaseAnnouncement={setEndLeaseAnnouncement}
           />
         </Container>
+        
       </>
     ) : (
       <Container maxWidth="xl" sx={{ paddingBottom: "25px" }}>      
