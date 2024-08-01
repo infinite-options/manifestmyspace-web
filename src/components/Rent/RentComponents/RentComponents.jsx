@@ -225,6 +225,18 @@ export function RentAccordionView(props) {
       setLate(rentData.late);
       setPaid(rentData.paid);
       setVacant(rentData.vacant);
+      if(rentData.unpaid && rentData.unpaid.length > 0){
+        console.log('checking widget');
+        props.setInitialPropInRent(rentData.unpaid[0].property_uid);
+      } else if(rentData.partial && rentData.partial.length > 0){
+        props.setInitialPropInRent(rentData.partial[0].property_uid);
+      } else if(rentData.late && rentData.late.length > 0){
+        props.setInitialPropInRent(rentData.late[0].property_uid);
+      } else if(rentData.paid && rentData.paid.length > 0){
+        props.setInitialPropInRent(rentData.paid[0].property_uid);
+      } else if(rentData.vacant && rentData.vacant.length > 0){
+        props.setInitialPropInRent(rentData.vacant[0].property_uid);
+      }
     }
   }, [rentData]);
 
