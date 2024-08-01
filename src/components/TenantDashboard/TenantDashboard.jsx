@@ -166,7 +166,8 @@ function TenantDashboard(props) {
     setRefresh(false);
   
     // List all dependencies in the dependency array
-  }, [getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance, tenantId]);
+  }, []);
+  //[getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance, tenantId]);
   // End Main UseEffect
 
   useEffect(() => {
