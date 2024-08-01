@@ -291,7 +291,7 @@ function TenantDashboard(props) {
       case "addtenantmaintenance":
         return <AddTenantMaintenanceItem newTenantMaintenanceState={newTenantMaintenanceState} setRightPane={setRightPane} />;
       case "viewlease":
-          return <ViewLease property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
+          return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
       default:
         return null;
     }
@@ -392,6 +392,7 @@ function TenantDashboard(props) {
               setSelectedLease={setSelectedLease}
               setTotal={setTotal}
               setViewLeaseState={setViewLeaseState}
+              rightPane = {rightPane.type}
             />
           </Grid>
 
@@ -928,6 +929,7 @@ const AccountBalanceWidget = ({
   setSelectedProperty,
   setSelectedLease,
   setViewLeaseState,
+  rightPane,
 }) => {
   const navigate = useNavigate();
   console.log("---selectedProperty in acc---", selectedProperty);
@@ -992,6 +994,18 @@ const AccountBalanceWidget = ({
     };
     console.log('---state to be passed---', state);
     setViewLeaseState(state);
+  }
+
+  function handlePropertyChange(item) {
+    setPropertyAddr(item.property_address + " " + item.property_unit);
+    setPropertyId(item.property_uid);
+    setTotal(item.balance);
+    setSelectedProperty(item);
+    setSelectedLease(propertyData.find((lease) => lease.lease_uid === item.lease_uid));
+    if(rightPane=="viewlease"){
+      handleViewLeaseNavigate(item.lease_uid)
+    }
+    handleClose();
   }
 
   return (
@@ -1074,12 +1088,7 @@ const AccountBalanceWidget = ({
                         <MenuItem
                           key={index}
                           onClick={() => {
-                            setPropertyAddr(item.property_address + " " + item.property_unit);
-                            setPropertyId(item.property_uid);
-                            setTotal(item.balance);
-                            setSelectedProperty(item);
-                            setSelectedLease(propertyData.find((lease) => lease.lease_uid === item.lease_uid));
-                            handleClose();
+                            handlePropertyChange(item);
                           }}
                           disableRipple
                         >
