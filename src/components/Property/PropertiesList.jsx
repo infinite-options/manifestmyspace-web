@@ -23,6 +23,7 @@ import PMRent from "../Rent/PMRent/PMRent";
 function PropertiesList(props) {
   console.log("In Property List: ", props.propertyList);
   const location = useLocation();
+  let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
@@ -212,7 +213,7 @@ function PropertiesList(props) {
   const onPropertyClick = (params) => {
     const property = params.row;
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
-    // console.log("List Item Clicked", property, i, displayedItems);
+    console.log("List Item Clicked", property, i, displayedItems);
     handlePropertyDetailNavigation(i, displayedItems);
     // setSelectedPropertyIndex(i);
     setPropertyIndex(i);
@@ -469,25 +470,25 @@ function PropertiesList(props) {
               }}
               onClick={(e) => {
                 console.log("selected in", params);
-                // if (numOfMaintenanceReqs > 0) {
-                //   if (selectedRole === "OWNER") {
-                //     navigate("/ownerMaintenance", {
-                //       state: {
-                //         fromProperty: true,
-                //         index: params.id,
-                //         propertyId: displayedItems[params.id].property_uid,
-                //       },
-                //     });
-                //   } else {
-                //     navigate("/managerMaintenance", {
-                //       state: {
-                //         fromProperty: true,
-                //         index: params.id,
-                //         propertyId: displayedItems[params.id].property_uid,
-                //       },
-                //     });
-                //   }
-                // }
+                if (numOfMaintenanceReqs > 0) {
+                  if (selectedRole === "OWNER") {
+                    navigate("/ownerMaintenance", {
+                      state: {
+                        fromProperty: true,
+                        index: params.id,
+                        propertyId: displayedItems[params.id].property_uid,
+                      },
+                    });
+                  } else {
+                    navigate("/managerMaintenance", {
+                      state: {
+                        fromProperty: true,
+                        index: params.id,
+                        propertyId: displayedItems[params.id].property_uid,
+                      },
+                    });
+                  }
+                }
               }}
             >
               <img src={maintenanceIcon} alt='maintenance icon' style={{ width: "35px", height: "35px" }} />
@@ -508,8 +509,10 @@ function PropertiesList(props) {
   function sortByAddress() {
     let items = [...displayedItems];
     items.sort((property1, property2) => property1.property_address.localeCompare(property2.property_address));
-    setDisplayedItems(addressSortOrder === "asc" ? items : items.reverse());
+    const sortedList = addressSortOrder === "asc" ? items : items.reverse();
+    setDisplayedItems(sortedList);
     setAddressSortOrder(addressSortOrder === "asc" ? "desc" : "asc");
+    props.handleSorting(sortedList);
   }
 
   function sortByState() {
@@ -522,8 +525,10 @@ function PropertiesList(props) {
   function sortByZip() {
     let items = [...displayedItems];
     items.sort((property1, property2) => property1.property_zip - property2.property_zip);
-    setDisplayedItems(zipSortOrder === "asc" ? items : items.reverse());
+    const sortedList = zipSortOrder === "asc" ? items : items.reverse();
+    setDisplayedItems(sortedList);
     setZipSortOrder(zipSortOrder === "asc" ? "desc" : "asc");
+    props.handleSorting(sortedList);
   }
 
   function sortByStatus() {
@@ -537,8 +542,10 @@ function PropertiesList(props) {
         return property1.rent_status.localeCompare(property2.rent_status);
       }
     });
-    setDisplayedItems(statusSortOrder === "asc" ? items : items.reverse());
+    const sortedList = statusSortOrder === "asc" ? items : items.reverse();
+    setDisplayedItems(sortedList);
     setStatusSortOrder(statusSortOrder === "asc" ? "desc" : "asc");
+    props.handleSorting(sortedList);
   }
 
   return (

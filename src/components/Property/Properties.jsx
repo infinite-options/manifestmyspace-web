@@ -39,7 +39,7 @@ function Properties(props) {
   const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
-  const [returnIndex, setReturnIndex] = useState(0);
+  const [returnIndex, setReturnIndex] = useState(location.state?.index || 0);
   const [applicationIndex, setApplicationIndex] = useState(0);
 
   // LHS , RHS
@@ -120,6 +120,7 @@ function Properties(props) {
         setFromRentWidget(false);
         sessionStorage.removeItem("isrent");
       }
+      navigate(location.pathname, { replace: true, state: {} });
     };
     fetchData();
     setShowSpinner(false);
@@ -231,8 +232,8 @@ function Properties(props) {
     // console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
     // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
     setRHS("AddProperty");
-  };  
-  
+  };
+
 
   const handleViewContractClick = () => {
     // setPage("ViewLease");
@@ -252,6 +253,10 @@ function Properties(props) {
     setRHS("Applications");
   };
 
+  const handleSorting = (propertyList) => {
+    setPropertyList(propertyList);
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
@@ -268,7 +273,7 @@ function Properties(props) {
               />
             )} */}
             <PropertiesList
-              index={propertyIndex}
+              index={returnIndex}
               LHS={LHS}
               propertyList={propertyList}
               allRentStatus={allRentStatus}
@@ -276,6 +281,7 @@ function Properties(props) {
               contracts={allContracts}
               onDataChange={handleListClick}
               onAddPropertyClick={handleAddPropertyClick}
+              handleSorting={handleSorting}
             />
           </Grid>
 
@@ -307,18 +313,18 @@ function Properties(props) {
                 onBackClick={handleBackClick}
               />
             )}
-            {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
-            {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
+            {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}
+            {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}
             {RHS === "Applications" && (
               <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
             )}
             {
-              RHS === "AddProperty" && 
-                <PropertyForm
-                  onBack={handleBackClick}
-                  onSubmit={handleBackClick}
-                  property_endpoint_resp={rawPropertyData}
-                />
+              RHS === "AddProperty" &&
+              <PropertyForm
+                onBack={handleBackClick}
+                onSubmit={handleBackClick}
+                property_endpoint_resp={rawPropertyData}
+              />
             }
           </Grid>
         </Grid>
