@@ -78,93 +78,96 @@ function TenantDashboard(props) {
   useEffect(() => {
     console.log("In Tenant Dashboard UseEffect");
     console.log("Tenant ID: ", tenantId, "   Property ID: ", propertyId ? propertyId : "Not Selected");
+  
+    // Reset addMaintenance to false
     setAddMaintenance(false);
-
+  
+    // Check if the profile ID is available
     if (!getProfileId()) {
       console.log("profile id is ***", getProfileId());
       let newRole = "TENANT";
       navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
       return;
     }
-
+  
+    // Function to fetch tenant data
     const getTenantData = async () => {
       if (!getProfileId()) return;
+  
       setShowSpinner(true);
+  
       try {
         console.log("Call endpoints");
+  
+        // Fetch data from multiple endpoints
         const tenantRequests = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
         const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
         const paymentsReponse = await fetch(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
-
+  
+        // Parse the response data
         const tenantRequestsData = await tenantRequests.json();
         const announcementsResponseData = await announcementsResponse.json();
         const paymentsResponseData = await paymentsReponse.json();
-
-        let propertyData = tenantRequestsData?.property?.result;
-        let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result;
-        let leaseDetailsData = tenantRequestsData?.leaseDetails?.result;
-        let announcementsReceivedData = announcementsResponseData?.received?.result;
+  
+        // Extract the necessary data
+        let propertyData = tenantRequestsData?.property?.result || [];
+        let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result || [];
+        let leaseDetailsData = tenantRequestsData?.leaseDetails?.result || [];
+        let announcementsReceivedData = announcementsResponseData?.received?.result || [];
+        let paymentsReceivedData = paymentsResponseData?.MoneyPaid?.result || [];
+        let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result || [];
+  
         console.log("[DEBUG] announcementsReceivedData", announcementsReceivedData);
-        let paymentsReceivedData = paymentsResponseData?.MoneyPaid?.result;
-        let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result;
-
-        // Returns TRUE only if every Lease is Not Active
+  
+        // Check if all leases are not active
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
-        // console.log("All Leases: ", propertyData);
         console.log("Non Active Leases: ", allNonActiveLease);
-
-        // sort propertyData by lease_status so that active lease is first
-        propertyData.sort((a, b) => {
-          if (a.lease_status === "ACTIVE") {
-            return -1;
-          }
-          if (b.lease_status === "ACTIVE") {
-            return 1;
-          }
-          return 0;
-        });
-        // console.log("Property Data after sorting: ", propertyData);
-
-        // Routes User to Listings Page if there are no active Leases
-        // if (!propertyData || propertyData.length === 0 || allNonActiveLease) {
-        //   navigate("/listings");
-        // }
-
-        setPropertyData(propertyData || []);
-        setLeaseDetails(leaseDetailsData || []);
+  
+        // Sort propertyData by lease_status so that active lease is first
+        propertyData.sort((a, b) => (a.lease_status === "ACTIVE" ? -1 : b.lease_status === "ACTIVE" ? 1 : 0));
+  
+        // Set the state with the fetched data
+        setPropertyData(propertyData);
+        setLeaseDetails(leaseDetailsData);
         setAllMaintenanceRequests(maintenanceRequestsData);
-        setMaintenanceRequests(maintenanceRequestsData || []);
-        console.log("---paymentsReceivedData----", paymentsReceivedData);
-        setPaymentHistory(paymentsReceivedData || []);
-        setPaymentExpected(paymentsExpectedData || []);
-        setAllAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
-
-        let propertyAddress = propertyData[0] !== undefined ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data";
+        setMaintenanceRequests(maintenanceRequestsData);
+        setPaymentHistory(paymentsReceivedData);
+        setPaymentExpected(paymentsExpectedData);
+        setAllAnnouncementsData(announcementsReceivedData);
+  
+        // Determine the property address and set it
+        let propertyAddress = propertyData[0] ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data";
         setPropertyAddr(propertyAddress);
         setFirstName(user.first_name);
-
-        setTotal(propertyData[0] !== undefined ? propertyData[0].balance : "0.00");
-
+  
+        // Set the total balance
+        setTotal(propertyData[0] ? propertyData[0].balance : "0.00");
+  
+        // Set the selected property based on the location state
         if (location.state?.propertyId) {
           console.log("Property ID exists: ", propertyId);
-          let navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
+          let navPropertyData = propertyData.find((item) => item.property_uid === location.state.propertyId);
           console.log("navProperty Data set to: ", navPropertyData);
           setSelectedProperty(navPropertyData);
           setPropertyAddr(navPropertyData.property_address + " " + navPropertyData.property_unit);
         } else {
-          console.log("Property ID does NOT exists: ", propertyData);
-          console.log("Setting selectProperty to : ", propertyData[0]);
-          setSelectedProperty(propertyData[0] !== undefined ? propertyData[0] : null);
+          console.log("Property ID does NOT exist: ", propertyData);
+          console.log("Setting selectedProperty to : ", propertyData[0]);
+          setSelectedProperty(propertyData[0] || null);
         }
       } catch (error) {
         console.error("Error fetching tenant data:", error);
       }
+  
       setShowSpinner(false);
     };
+  
     getTenantData();
     setRefresh(false);
-    // }, [getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance]);
-  }, [getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance, tenantId, propertyId]);
+  
+    // List all dependencies in the dependency array
+  }, []);
+  //[getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance, tenantId]);
   // End Main UseEffect
 
   useEffect(() => {
@@ -289,7 +292,7 @@ function TenantDashboard(props) {
       case "addtenantmaintenance":
         return <AddTenantMaintenanceItem newTenantMaintenanceState={newTenantMaintenanceState} setRightPane={setRightPane} />;
       case "viewlease":
-          return <ViewLease property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
+          return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
       default:
         return null;
     }
@@ -390,6 +393,7 @@ function TenantDashboard(props) {
               setSelectedLease={setSelectedLease}
               setTotal={setTotal}
               setViewLeaseState={setViewLeaseState}
+              rightPane = {rightPane.type}
             />
           </Grid>
 
@@ -926,6 +930,7 @@ const AccountBalanceWidget = ({
   setSelectedProperty,
   setSelectedLease,
   setViewLeaseState,
+  rightPane,
 }) => {
   const navigate = useNavigate();
   console.log("---selectedProperty in acc---", selectedProperty);
@@ -990,6 +995,18 @@ const AccountBalanceWidget = ({
     };
     console.log('---state to be passed---', state);
     setViewLeaseState(state);
+  }
+
+  function handlePropertyChange(item) {
+    setPropertyAddr(item.property_address + " " + item.property_unit);
+    setPropertyId(item.property_uid);
+    setTotal(item.balance);
+    setSelectedProperty(item);
+    setSelectedLease(propertyData.find((lease) => lease.lease_uid === item.lease_uid));
+    if(rightPane=="viewlease"){
+      handleViewLeaseNavigate(item.lease_uid)
+    }
+    handleClose();
   }
 
   return (
@@ -1072,12 +1089,7 @@ const AccountBalanceWidget = ({
                         <MenuItem
                           key={index}
                           onClick={() => {
-                            setPropertyAddr(item.property_address + " " + item.property_unit);
-                            setPropertyId(item.property_uid);
-                            setTotal(item.balance);
-                            setSelectedProperty(item);
-                            setSelectedLease(propertyData.find((lease) => lease.lease_uid === item.lease_uid));
-                            handleClose();
+                            handlePropertyChange(item);
                           }}
                           disableRipple
                         >
