@@ -50,12 +50,26 @@ import ProfileInformation from "../ContactDetail/ProfileInformation";
 import PaymentsInformation from "../ContactDetail/PaymentsInformation";
 
 const PMContacts = () => {
+
   const { getProfileId, selectedRole } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [contactsTab, setContactsTab] = useState("Owner");
-  const [ contactsData, setContactsData ] = useState([]);
+  const [contactsData, setContactsData] = useState([]);
 
-  const [ currentIndex, setCurrentIndex ] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const location = useLocation();
+  const role_id = location.state && location.state.tenant_id ? location.state.tenant_id : null;
+  const tab = location.state && location.state.tab ? location.state.tab : "Owner";
+
+  console.log("location state is set to", location.state)
+
+  useEffect(() => {
+    console.log("$$$ tab is set to", tab)
+    if (tab) {
+      setContactsTab(tab);
+    }
+  }, []);
 
   // useEffect(() => {
   //   console.log("contactsData - ", contactsData);
@@ -68,7 +82,7 @@ const PMContacts = () => {
   //   console.log("contactsTab", contactsTab)
   //   setCurrentIndex(0); 
   // }, [contactsTab]);
-  
+
 
   const fetchData = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
@@ -80,6 +94,7 @@ const PMContacts = () => {
       .get(url)
       .then((resp) => {
         const data = resp.data["management_contacts"];
+        console.log("###Data set to", data)
         setContactsData(data);
         setShowSpinner(false);
       })
@@ -87,38 +102,54 @@ const PMContacts = () => {
         console.error(e);
         setShowSpinner(false);
       });
+
+
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  return (    
-      <Container disableGutters maxWidth="lg">
-        <Grid container>
-          <Grid container item xs={12} md={4}>
-            <Grid item xs={12} sx={{padding: '5px', height: '100%', }}>                            
-                <ContactsList data={contactsData} tab={"Owner"} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-            </Grid>
-          </Grid>
-          <Grid container item xs={12} md={8} >
-            <Grid item xs={12} sx={{padding: '5px',}}>
-              {
-                contactsTab === "Owner" && <OwnerContactDetail data={contactsData?.owners} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-              }
-              {
-                contactsTab === "Tenant" && <TenantContactDetail data={contactsData?.tenants} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-              }
-              {
-                contactsTab === "Maintenance" && <MaintenanceContactDetail data={contactsData?.maintenance} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-              }
-              {
-                contactsTab === "Employee" && <EmployeeContactDetail data={contactsData?.employees} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-              }
-            </Grid>                  
+  return (
+    <Container disableGutters maxWidth="lg">
+      <Grid container>
+        <Grid container item xs={12} md={4}>
+          <Grid item xs={12} sx={{ padding: '5px', height: '100%', }}>
+            <ContactsList data={contactsData} tab={tab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} role_id={role_id} />
           </Grid>
         </Grid>
-      </Container>    
+        <Grid container item xs={12} md={8} >
+          <Grid item xs={12} sx={{ padding: '5px', }}>
+            {
+              contactsTab === "Owner" && <OwnerContactDetail data={contactsData?.owners} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+            }
+            {
+             
+              contactsTab === "Tenant" &&
+               
+              <TenantContactDetail
+                
+                data={contactsData?.tenants}
+                contacsTab={contactsTab}
+                currentIndex={contactsData?.tenants && role_id
+                  ? contactsData.tenants.findIndex(tenant => tenant.tenant_uid === role_id) !== -1
+                    ? contactsData.tenants.findIndex(tenant => tenant.tenant_uid === role_id)
+                    : 0
+                  : currentIndex}
+                setCurrentIndex={setCurrentIndex}
+              />
+
+            }
+            {
+              contactsTab === "Maintenance" && <MaintenanceContactDetail data={contactsData?.maintenance} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+            }
+            {
+              contactsTab === "Employee" && <EmployeeContactDetail data={contactsData?.employees} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+            }
+          </Grid>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 

@@ -302,8 +302,9 @@ export default function PropertyNavigator({
       }
     }
   }, [currentIndex, propertyId]);
-
+ 
   const tenant_detail = property && property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
+  const tenant_id= property && property.lease_start && property.tenant_uid ? `${property.tenant_uid}` : "No Tenant";
   const manager_detail = property && property.business_uid ? `${property.business_name}` : "No Manager";
   const [arrowButton1_color, set_arrow1_color] = useState(
     tenant_detail === "No Tenant" && manager_detail === "No Manager" ? theme.typography.common.gray : theme.typography.common.blue
@@ -770,6 +771,11 @@ export default function PropertyNavigator({
     }
   };
 
+  const handleCallTenant=()=>{
+     if(tenant_id!="No Tenant"){
+      navigate('/PMContacts',{ state: { tenant_id: tenant_id, tab: "Tenant" } })
+     }
+  }
   const applnColumns = [
     { field: "appliance_uid", headerName: "UID", width: 80 },
     { field: "appliance_type", headerName: "Appliance", width: 80 },
@@ -1478,6 +1484,7 @@ export default function PropertyNavigator({
                           fontWeight: theme.typography.light.fontWeight,
                           fontSize: theme.typography.smallFont,
                         }}
+                        onClick={handleCallTenant}
                       >
                         {tenant_detail}
                       </Typography>

@@ -44,16 +44,16 @@ import ContactsList from "../ContactsList";
 import ProfileInformation from "./ProfileInformation";
 
 const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
-
+   
     const { selectedRole, getProfileId } = useUser();
     const [ propertiesData, setPropertiesData ] = useState([]);
     const [ contractsData, setContractsData ] = useState([]);
     const [ contactDetails, setContactDetails ] = useState([]);
-  
+    
     useEffect(() => {
+    
       setContactDetails(data)
     }, [data]);
-  
   
     const getPropertiesData = async () => {
       const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;    
@@ -102,6 +102,8 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
   
   
     return (
+     <div>
+      {
       <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px', height: '85dvh', overflow: 'auto',  }}>                
           <Grid item xs={12} container justifyContent="center" sx={{ height: '50px',  }}>
               <Typography sx={{fontSize: '35px', fontWeight: 'bold', color: '#160449' }}>
@@ -245,8 +247,8 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                   </Paper>
               </Grid>                     
           </Grid>                     
-      </Grid>    
-    
+      </Grid>  }  
+      </div>
     );
   }
   
