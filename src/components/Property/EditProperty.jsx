@@ -53,7 +53,7 @@ function EditProperty(props) {
   
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   // console.log("Property Id", propertyId)
-  console.log("Property Data in Edit Property", propertyData);
+  console.log("Property Data in Edit Property", index, propertyList[index]);
   const { user, selectedRole, selectRole, Name } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());
@@ -142,6 +142,15 @@ function EditProperty(props) {
   const [unitAmenities, setUnitAmenities] = useState(propertyData.property_amenities_unit);
   const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
   // const [page, setPage] = useState("Edit");
+
+  useEffect(() => {
+    setPropertyData(propertyList[index]);
+    console.log("2nd time address", propertyList[index]);
+    setAddress(propertyList[index].property_address);
+    console.log("adress 2", propertyList[index].property_address);
+    console.log("address 3", address);
+  }, [index])
+
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -320,7 +329,7 @@ function EditProperty(props) {
     e.preventDefault();
     console.log("handleBackButton");
     if(isDesktop == true){
-      navigate('/properties', {state:{index:index}});
+      navigate('/propertiesPM', {state:{index:index}}); // check here propertiesPM back
     }else{
       navigate(-1);
     }
@@ -490,22 +499,22 @@ function EditProperty(props) {
       setShowSpinner(false);
     };
 
-    const autoUpdate = async () => {
-      const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
-      console.log('---updateResponse---',updateResponse);
-      // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
-      const updatedJson = await updateResponse.json();
-      console.log('---updatedJson---',updatedJson);
-      const updatedProperty = updatedJson.Property.result[0];
-      console.log('---updatedProperty---',updatedProperty);
-      propertyList = propertyList.map((property) => {
-        if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
-        return property;
-      });
-      console.log('---index---',index);
-      console.log("updatedPropertyList - ", propertyList);
-      setPropertyData(propertyList[index]);
-    };
+    // const autoUpdate = async () => {
+    //   const updateResponse = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`);
+    //   console.log('---updateResponse---',updateResponse);
+    //   // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
+    //   const updatedJson = await updateResponse.json();
+    //   console.log('---updatedJson---',updatedJson);
+    //   const updatedProperty = updatedJson.Property.result[0];
+    //   console.log('---updatedProperty---',updatedProperty);
+    //   propertyList = propertyList.map((property) => {
+    //     if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
+    //     return property;
+    //   });
+    //   console.log('---index---',index);
+    //   console.log("updatedPropertyList - ", propertyList);
+    //   setPropertyData(propertyList[index]);
+    // };
 
     putData();
     if (isDefaultUtilities) {
@@ -514,21 +523,21 @@ function EditProperty(props) {
       updateUtilitiesData();
     }
 
-    try {
-      // console.log("promises added - ", promises_added);
-      await Promise.all(promises);
-      console.log("All Changes saved to the Database", promises);
-      await autoUpdate();
+    // try {
+    //   // console.log("promises added - ", promises_added);
+    //   await Promise.all(promises);
+    //   console.log("All Changes saved to the Database", promises);
+    //   // await autoUpdate();
 
-      console.log("propertyList after autoUpdate - ", propertyList);
-      if(isDesktop == true){
-        navigate('/properties', {state:{index:index}});
-      }else{
-        navigate("/propertyDetail", { state: { index:index, propertyList:propertyList, allRentStatus:allRentStatus, isDesktop:isDesktop, rawPropertyData:rawPropertyData } });
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    //   console.log("propertyList after autoUpdate - ", propertyList);
+    //   if(isDesktop == true){
+    //     navigate('/properties', {state:{index:index}});
+    //   }else{
+    //     navigate("/propertyDetail", { state: { index:index, propertyList:propertyList, allRentStatus:allRentStatus, isDesktop:isDesktop, rawPropertyData:rawPropertyData } });
+    //   }
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
   };
 
   const formatUtilityName = (utility) => {

@@ -259,7 +259,7 @@ function Properties(props) {
               <EditProperty
                 currentId={propertyList[propertyIndex].property_uid}
                 property={propertyList[propertyIndex]}
-                index={propertyIndex}
+                index={returnIndex}
                 propertyList={propertyList}
                 page={page}
                 isDesktop={isDesktop}
