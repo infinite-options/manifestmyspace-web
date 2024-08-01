@@ -53,8 +53,8 @@ import CryptoJS from "crypto-js";
 import AES from "crypto-js/aes";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const OwnerContactDetailsHappinessMatrix = (props) => {
-  console.log("In Owner Contact Details - Happiness Matrix", props);
+const OwnerContactDetailsHappinessMatrix = () => {
+  console.log("In Owner Contact Details - Happiness Matrix");
   const { selectedRole, getProfileId } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,36 +62,39 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
 
   const navigatingFrom = location.state.navigatingFrom;
   const happinessData = location.state?.happinessData;
-
-  const [contactDetails, setContactDetails] = useState();
-  const [contactsTab, setContactsTab] = useState("");
-
-  const [index, setIndex] = useState(location.state.index);
-  const ownerUID = location.state.ownerUID;
-  console.log("In Owner Contact Details - Owner ID: ", ownerUID);
-
-  const cashflowData = location.state?.cashflowData;
-  console.log("In the beginning: ", cashflowData);
-  const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
   const cashflowDetails = happinessData?.delta_cashflow_details?.result;
   const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
   const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
+
   const [filteredCashflowDetails, setFilteredCashflowDetails] = useState(cashflowDetails);
   const [filteredCashflowDetailsByProperty, setFilteredCashflowDetailsByProperty] = useState(cashflowDetailsByProperty);
   const [filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth] = useState(cashflowDetailsByPropertyByMonth);
 
-  const [happinessMatrixData, setHappinessMatrixData] = useState([]);
-  let [matrixData, setMatrixData] = useState([]);
+  const [contactDetails, setContactDetails] = useState();
+  const [contactsTab, setContactsTab] = useState("");
 
-  useEffect(() => {
-    if (location.state?.happinessMatrixData) {
-      try {
-        setHappinessMatrixData(setting_matrix_data(location.state?.happinessMatrixData));
-      } catch (error) {
-        console.error("Error in setting_matrix_data:", error);
-      }
-    }
-  }, []);
+  // const [index, setIndex] = useState(location.state.index);
+  const [index, setIndex] = useState(0);
+  const ownerUID = location.state.ownerUID;
+  console.log("In Owner Contact Details - Owner ID: ", ownerUID);
+
+  // const cashflowData = location.state?.cashflowData;
+  // console.log("In the beginning: ", cashflowData);
+  // const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
+  
+
+  // const [happinessMatrixData, setHappinessMatrixData] = useState([]);
+  // let [matrixData, setMatrixData] = useState([]);
+
+  // useEffect(() => {
+  //   if (location.state?.happinessMatrixData) {
+  //     try {
+  //       setHappinessMatrixData(setting_matrix_data(location.state?.happinessMatrixData));
+  //     } catch (error) {
+  //       console.error("Error in setting_matrix_data:", error);
+  //     }
+  //   }
+  // }, []);
 
   // useEffect(() => {
   //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
@@ -130,98 +133,98 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
 
     if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom === "PropertyNavigator") {
       getDataFromAPI();
-      setContactsTab("Owner");
+      // setContactsTab("Owner");
     } else if (navigatingFrom === "PMContacts") {
       setContactDetails(location.state.dataDetails);
       console.log("Set Contact Details 2");
-      setContactsTab(location.state.tab);
+      // setContactsTab(location.state.tab);
     }
   }, []);
 
   useEffect(() => {
-    if (contactDetails && cashflowData) {
+    if (contactDetails) {
       setFilteredCashflowDetails(contactDetails != null ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
       setFilteredCashflowDetailsByProperty(contactDetails != null ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
       setFilteredCashflowDetailsByPropertyByMonth(
         contactDetails != null ? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []
       );
-      setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+      // setFilteredCashflowData(contactDetails != null ? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     }
   }, [index]);
 
-  const setting_matrix_data = (happiness_response) => {
-    console.log("setting_matrix_data - happiness_response - ", happiness_response);
-    console.log("NAVIGATING FROM", navigatingFrom);
+  // const setting_matrix_data = (happiness_response) => {
+  //   console.log("setting_matrix_data - happiness_response - ", happiness_response);
+  //   console.log("NAVIGATING FROM", navigatingFrom);
 
-    return happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
-      const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
-      let fullName = "";
-      let ownerUID = "";
-      let percent_delta_cashflow = 0;
-      let owner_photo_url = "";
-      let cashflow = 0;
-      let expected_cashflow = 0;
-      let actual_cashflow = 0;
+  //   return happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
+  //     const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
+  //     let fullName = "";
+  //     let ownerUID = "";
+  //     let percent_delta_cashflow = 0;
+  //     let owner_photo_url = "";
+  //     let cashflow = 0;
+  //     let expected_cashflow = 0;
+  //     let actual_cashflow = 0;
 
-      if (deltaCashflowItem) {
-        fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
-        ownerUID = deltaCashflowItem.owner_uid;
-        percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
-        owner_photo_url = deltaCashflowItem.owner_photo_url;
-        cashflow = deltaCashflowItem.cashflow;
-        expected_cashflow = deltaCashflowItem.expected_cashflow;
-        actual_cashflow = deltaCashflowItem.actual_cashflow;
-      }
+  //     if (deltaCashflowItem) {
+  //       fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
+  //       ownerUID = deltaCashflowItem.owner_uid;
+  //       percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
+  //       owner_photo_url = deltaCashflowItem.owner_photo_url;
+  //       cashflow = deltaCashflowItem.cashflow;
+  //       expected_cashflow = deltaCashflowItem.expected_cashflow;
+  //       actual_cashflow = deltaCashflowItem.actual_cashflow;
+  //     }
 
-      let quarter;
-      let vacancy_perc = parseFloat(vacancyItem.vacancy_perc);
-      let delta_cf_perc = -1 * parseFloat(percent_delta_cashflow);
+  //     let quarter;
+  //     let vacancy_perc = parseFloat(vacancyItem.vacancy_perc);
+  //     let delta_cf_perc = -1 * parseFloat(percent_delta_cashflow);
 
-      if (delta_cf_perc > -0.5 && vacancy_perc > -50) {
-        quarter = 1;
-      } else if (delta_cf_perc < -0.5 && vacancy_perc > -50) {
-        quarter = 2;
-      } else if (delta_cf_perc < -0.5 && vacancy_perc < -50) {
-        quarter = 3;
-      } else if (delta_cf_perc > -0.5 && vacancy_perc < -50) {
-        quarter = 4;
-      }
+  //     if (delta_cf_perc > -0.5 && vacancy_perc > -50) {
+  //       quarter = 1;
+  //     } else if (delta_cf_perc < -0.5 && vacancy_perc > -50) {
+  //       quarter = 2;
+  //     } else if (delta_cf_perc < -0.5 && vacancy_perc < -50) {
+  //       quarter = 3;
+  //     } else if (delta_cf_perc > -0.5 && vacancy_perc < -50) {
+  //       quarter = 4;
+  //     }
 
-      let borderColor;
-      switch (quarter) {
-        case 1:
-          borderColor = "#006400"; // Green
-          break;
-        case 2:
-          borderColor = "#FF8A00"; // Orange color
-          break;
-        case 3:
-          borderColor = "#D22B2B"; // Red color
-          break;
-        case 4:
-          borderColor = "#FFC85C"; // Yellow color
-          break;
-        default:
-          borderColor = "#000000"; // Black color
-      }
+  //     let borderColor;
+  //     switch (quarter) {
+  //       case 1:
+  //         borderColor = "#006400"; // Green
+  //         break;
+  //       case 2:
+  //         borderColor = "#FF8A00"; // Orange color
+  //         break;
+  //       case 3:
+  //         borderColor = "#D22B2B"; // Red color
+  //         break;
+  //       case 4:
+  //         borderColor = "#FFC85C"; // Yellow color
+  //         break;
+  //       default:
+  //         borderColor = "#000000"; // Black color
+  //     }
 
-      return {
-        owner_uid: ownerUID,
-        name: fullName.trim(),
-        photo: owner_photo_url,
-        vacancy_perc: parseFloat(vacancyItem.vacancy_perc).toFixed(2),
-        delta_cashflow_perc: percent_delta_cashflow || 0,
-        vacancy_num: vacancyItem.vacancy_num || 0,
-        cashflow: cashflow || 0,
-        expected_cashflow: expected_cashflow || 0,
-        actual_cashflow: actual_cashflow || 0,
-        delta_cashflow: actual_cashflow - expected_cashflow,
-        index: i,
-        color: borderColor,
-        total_properties: vacancyItem.total_properties || 0,
-      };
-    });
-  };
+  //     return {
+  //       owner_uid: ownerUID,
+  //       name: fullName.trim(),
+  //       photo: owner_photo_url,
+  //       vacancy_perc: parseFloat(vacancyItem.vacancy_perc).toFixed(2),
+  //       delta_cashflow_perc: percent_delta_cashflow || 0,
+  //       vacancy_num: vacancyItem.vacancy_num || 0,
+  //       cashflow: cashflow || 0,
+  //       expected_cashflow: expected_cashflow || 0,
+  //       actual_cashflow: actual_cashflow || 0,
+  //       delta_cashflow: actual_cashflow - expected_cashflow,
+  //       index: i,
+  //       color: borderColor,
+  //       total_properties: vacancyItem.total_properties || 0,
+  //     };
+  //   });
+  // };
 
   const handleBackBtn = () => {
     // navigate('/PMContacts');
@@ -246,11 +249,12 @@ const OwnerContactDetailsHappinessMatrix = (props) => {
                   >
                     <HappinessMatrixWidget
                       page={"OwnerContactDetails"}
-                      data={happinessMatrixData}
+                      // data={happinessMatrixData}
                       happinessData={happinessData}
                       setIndex={setIndex}
                       contactDetails={contactDetails}
                     />
+                    {/* <HappinessMatrixWidget happinessData={happinessData} /> */}
                   </Paper>
                 </Grid>
                 <Grid item xs={12}>
@@ -392,40 +396,40 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
   const [propertiesData, setPropertiesData] = useState([]);
   const [contractsData, setContractsData] = useState([]);
 
-  // const getPropertiesData = async () => {
-  //   const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;
+  const getPropertiesData = async () => {
+    const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;
 
-  //   await axios
-  //     .get(url)
-  //     .then((resp) => {
-  //       const data = resp.data;
-  //       setPropertiesData(data);
-  //     })
-  //     .catch((e) => {
-  //       console.error(e);
-  //     });
-  // };
+    await axios
+      .get(url)
+      .then((resp) => {
+        const data = resp.data;
+        setPropertiesData(data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
-  // const getContractsData = async () => {
-  //   // const url = `http://localhost:4000/contracts/${getProfileId()}`;
-  //   console.log("Calling contRacts endpoint");
-  //   const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;
+  const getContractsData = async () => {
+    // const url = `http://localhost:4000/contracts/${getProfileId()}`;
+    console.log("Calling contRacts endpoint");
+    const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;
 
-  //   await axios
-  //     .get(url)
-  //     .then((resp) => {
-  //       const data = resp.data?.result;
-  //       setContractsData(data);
-  //     })
-  //     .catch((e) => {
-  //       console.error(e);
-  //     });
-  // };
+    await axios
+      .get(url)
+      .then((resp) => {
+        const data = resp.data?.result;
+        setContractsData(data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
-  // // useEffect(() => {
-  // //   getPropertiesData();
-  // //   getContractsData();
-  // // }, []);
+  useEffect(() => {
+    getPropertiesData();
+    getContractsData();
+  }, []);
 
   return (
     <Grid container sx={{ backgroundColor: theme.palette.primary.main, borderRadius: "10px", padding: "10px" }}>

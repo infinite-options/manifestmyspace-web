@@ -18,12 +18,36 @@ function HappinessMatrixWidget(props) {
   // console.log("happiness data initial1", happinessData.matrix_data);
   // console.log("happiness data initial2", happinessData.matrix_data.result[0]);
 
+  const getBorderColor = (x, y) => {
+    let quarter;      
+    if (x < -50 && y > -50) {
+      return "#FF8A00" //orange
+    } else if (x < -50 && y < -50) {
+      return "#D22B2B";
+    } else if (x > -50 && y < -50) {
+      return "#FFC85C";    
+    } else if (x > -50 && y > -50) {
+      return "#006400"
+    }
+    else{
+      return "#000000";
+    }
+
+      // orange - upper left
+      // red - lower left
+      // yellow - lower right
+      // green - upper right
+
+  }
+
   useEffect(() => {
     // console.log("In UseEffect: ", happinessData.matrix_data.result);
     setData(happinessData.matrix_data.result);
 
+    const matrixData = happinessData.matrix_data.result;
+
     const points = [];
-    data?.forEach((owner) => {
+    matrixData?.forEach((owner) => {
       // console.log("In get points: ", owner.vacancy_perc, owner.percent_delta_cashflow);
       let x = Number(owner.vacancy_perc);
       let y = Number(owner.percent_delta_cashflow);
@@ -32,6 +56,9 @@ function HappinessMatrixWidget(props) {
         x: x,
         y: -y,
         ...owner,
+        color: getBorderColor(x, -y),
+        photo: owner.owner_photo_url? owner.owner_photo_url : null,
+        name: `${owner.owner_first_name} ${owner.owner_last_name}`,
       };
 
       points.push(pointObject);
@@ -39,7 +66,7 @@ function HappinessMatrixWidget(props) {
 
     // console.log("points to plot", points);
     setPointsToPlot(points);
-  }, [happinessData.matrix_data.result]);
+  }, [props.happinessData]);
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
 
@@ -110,7 +137,8 @@ function HappinessMatrixWidget(props) {
                   axisLine={false}
                   tickLine={false}
                   style={axisLabelStyle}
-                  domain={[-1.1, 0.1]}
+                  // domain={[-1.1, 0.1]}
+                  domain={[-100, 0]}
                   // ticks={[-1.1, -0.5, 0.1]}
                   tick={false}
                 />
