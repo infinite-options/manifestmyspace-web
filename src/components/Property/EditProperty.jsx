@@ -456,10 +456,10 @@ function EditProperty(props) {
 
     console.log("EditProperty - handleSubmit - coordinates - ", coordinates);
 
-    if (coordinates) {
-      formData.append("property_latitude", coordinates.latitude);
-      formData.append("property_longitude", coordinates.longitude);
-    }
+    // if (coordinates) {
+    //   formData.append("property_latitude", coordinates.latitude);
+    //   formData.append("property_longitude", coordinates.longitude);
+    // }
 
     formData.append("property_uid", propertyData.property_uid);
     formData.append("property_address", address);
@@ -472,25 +472,25 @@ function EditProperty(props) {
     formData.append("property_num_baths", bathrooms); // Double
     formData.append("property_area", squareFootage);
     formData.append("property_listed_rent", listedRent); // Int
-    formData.append("property_deposit", deposit); // Int
-    formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
-    formData.append("property_deposit_for_rent", depositForRent ? 1 : 0); // Int
-    formData.append("property_taxes", taxes);
-    formData.append("property_mortgages", mortgages);
-    formData.append("property_insurance", insurance);
-    formData.append("property_featured", 0);
-    formData.append("property_description", description);
+    //formData.append("property_deposit", deposit); // Int
+    //formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
+    //formData.append("property_deposit_for_rent", depositForRent ? 1 : 0); // Int
+    //formData.append("property_taxes", taxes);
+    //formData.append("property_mortgages", mortgages);
+    //formData.append("property_insurance", insurance);
+    //formData.append("property_featured", 0);
+    //formData.append("property_description", description);
     formData.append("property_notes", notes);
     if (page === "add_listing" || page === "edit_listing") {
       formData.append("property_available_to_rent", isListed ? 1 : 0);
     }
     formData.append("property_value", propertyValue);
     formData.append("property_value_year", assessmentYear);
-    formData.append("property_active_date", activeDate);
+    //formData.append("property_active_date", activeDate);
     // formData.append('property_utilities', utilities);
-    formData.append("property_amenities_community", communityAmenities);
-    formData.append("property_amenities_unit", unitAmenities);
-    formData.append("property_amenities_nearby", nearbyAmenities);
+    //formData.append("property_amenities_community", communityAmenities);
+    //formData.append("property_amenities_unit", unitAmenities);
+    //formData.append("property_amenities_nearby", nearbyAmenities);
 
     //utilities form data
     const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
@@ -509,6 +509,7 @@ function EditProperty(props) {
     addedUtilitiesFormData.append("property_utility", addedUtilitiesJSONString);
 
     console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
+    formData.append("property_images", propertyData.property_images);
 
     const files = imageState;
     let i = 0;
@@ -631,6 +632,7 @@ function EditProperty(props) {
       console.log("propertyList after autoUpdate - ", propertyList);
       if (isDesktop == true) {
         // navigate("/properties", { state: { index: index } }); - PM Changed
+        props.setRHS("PropertyNavigator");
         navigate("/propertiesPM", { state: { index: index } });
       } else {
         navigate("/propertyDetail", { state: { index: index, propertyList: propertyList, allRentStatus: allRentStatus, isDesktop: isDesktop, rawPropertyData: rawPropertyData } });

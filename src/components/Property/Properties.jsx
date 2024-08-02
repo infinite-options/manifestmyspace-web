@@ -305,6 +305,7 @@ function Properties(props) {
                 allRentStatus={allRentStatus}
                 rawPropertyData={propertyList}
                 onBackClick={handleBackClick}
+                setRHS={setRHS}
               />
             )}
             {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
