@@ -500,7 +500,7 @@ export default function PropertiesList(props) {
             {LHS === "Rent" && isDataReady === true ? (
               <Box sx={{ marginTop: "20px" }}>
                 <Grid item xs={12} md={12}>
-                  <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent} />
+                  <PMRent setLHS={setLHS} onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent} />
                 </Grid>
               </Box>
             ) : (
