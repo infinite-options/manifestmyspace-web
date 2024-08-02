@@ -22,7 +22,7 @@ import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 
-function Properties(props) {
+function Properties() {
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
 
@@ -47,11 +47,11 @@ function Properties(props) {
   const [newContractPropertyUID, setNewContractPropertyUID] = useState(null);
 
   useEffect(() => {
-    console.log("ROHIT - newContractUID - ", newContractUID);
+    // console.log("ROHIT - newContractUID - ", newContractUID);
   }, [newContractUID]);
 
   useEffect(() => {
-    console.log("ROHIT - newContractPropertyUID - ", newContractPropertyUID);
+    // console.log("ROHIT - newContractPropertyUID - ", newContractPropertyUID);
   }, [newContractPropertyUID]);
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
