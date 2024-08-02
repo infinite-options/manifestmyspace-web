@@ -46,9 +46,9 @@ function Properties(props) {
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
   const [page, setPage] = useState("");
-  console.log("View RETURN INDEX : ", returnIndex);
+  // console.log("View RETURN INDEX : ", returnIndex);
 
-  console.log("propertyIndex at the beginning 1: ", propertyIndex);
+  // console.log("propertyIndex at the beginning 1: ", propertyIndex);
 
   // console.log("LEASE", propertyList[propertyIndex].lease_id)
   // useEffect(() => {
@@ -56,23 +56,23 @@ function Properties(props) {
   //   setRHS(props.showRHS);
   // }, []);
 
-  useEffect(() => {
-    console.log("In Properties - LHS: ", LHS);
-    console.log("In Properties - RHS: ", RHS);
-    console.log("Current Profile ID: ", getProfileId);
-    console.log("Current Selected Role: ", selectedRole);
-    console.log("propertyIndex at the beginning 2: ", propertyIndex);
-    console.log("Return Index: ", returnIndex);
-  }, [LHS, RHS]);
+  // useEffect(() => {
+  //   console.log("In Properties - LHS: ", LHS);
+  //   console.log("In Properties - RHS: ", RHS);
+  //   console.log("Current Profile ID: ", getProfileId);
+  //   console.log("Current Selected Role: ", selectedRole);
+  //   console.log("propertyIndex at the beginning 2: ", propertyIndex);
+  //   console.log("Return Index: ", returnIndex);
+  // }, [LHS, RHS]);
 
-  if (selectedRole === "MANAGER") {
-    console.log("Manager Selected");
-  } else {
-    console.log("Owner Selected");
-  }
+  // if (selectedRole === "MANAGER") {
+  //   console.log("Manager Selected");
+  // } else {
+  //   console.log("Owner Selected");
+  // }
 
   useEffect(() => {
-    console.log("In Properties Endpoint Call");
+    // console.log("In Properties Endpoint Call");
     const fetchData = async () => {
       setShowSpinner(true);
 
@@ -80,11 +80,11 @@ function Properties(props) {
       const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
       //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
       if (!property_response.ok) {
-        console.log("Error fetching Property Details data");
+        // console.log("Error fetching Property Details data");
       }
       const propertyData = await property_response.json();
       const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
-      console.log("In Properties > Property Endpoint: ", propertyList);
+      // console.log("In Properties > Property Endpoint: ", propertyList);
       setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
@@ -94,24 +94,24 @@ function Properties(props) {
       const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${profileId}`);
       //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
       if (!rent_response.ok) {
-        console.log("Error fetching Rent Details data");
+        // console.log("Error fetching Rent Details data");
       }
       const rentResponse = await rent_response.json();
-      console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
+      // console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
       setAllRentStatus(rentResponse.RentStatus.result);
 
       // CONTRACTS ENDPOINT
       const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
       // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
       if (!contract_response.ok) {
-        console.log("Error fetching Contract Details data");
+        // console.log("Error fetching Contract Details data");
       }
       const contractsResponse = await contract_response.json();
-      console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
+      // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
       setAllContracts(contractsResponse.result);
 
       if (propertyData.Property.code === 200 && rentResponse.RentStatus.code === 200 && contractsResponse.code === 200) {
-        console.log("Endpoint Data is Ready");
+        // console.log("Endpoint Data is Ready");
         setDataReady(true);
       }
       if (selectedRole === "MANAGER" && sessionStorage.getItem("isrent") === "true") {
@@ -124,43 +124,6 @@ function Properties(props) {
     fetchData();
     setShowSpinner(false);
   }, []);
-
-  // useEffect(() => {
-  //   const getContractsForOwner = async () => {
-  //     try {
-  //       const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
-  //       // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-  //       if (!response.ok) {
-  //         console.log("Error fetching contracts data");
-  //       }
-  //       const contractsResponse = await response.json();
-  //       // console.log('contractsResponse--', contractsResponse.result);
-  //       await setAllContracts(contractsResponse.result);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   getContractsForOwner();
-  // }, []);
-
-  // const propertyRentDetails = async () => {
-  //   try {
-  //     const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-  //     //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
-  //     if (!response.ok) {
-  //       console.log("Error fetching rent Details data");
-  //     }
-  //     const rentResponse = await response.json();
-  //     return rentResponse;
-  //   } catch (error) {
-  //     console.error("Failed to fetch rent details:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   console.log("dataReady", dataReady);
-  //   console.log("showSpinner", showSpinner);
-  // }, [dataReady, showSpinner]);
 
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
@@ -183,15 +146,6 @@ function Properties(props) {
       });
     }
 
-    //   const contractsMap = new Map();
-    //   newContracts.forEach((c) => {
-    //     // console.log("before", m);
-    //     const contractsByProperty = maintMap.get(c.property_id) || [];
-    //     contractsByProperty.push(c);
-    //     // console.log("after", maintByProperty);
-    //     contractsMap.set(c.property_id, contractsByProperty);
-    //   });
-
     //   console.log(maintMap);
     return propertyList.map((p) => {
       p.applications = appsMap.get(p.property_uid) || [];
@@ -210,9 +164,9 @@ function Properties(props) {
   };
 
   const handleListClick = (newData) => {
-    console.log("View leases New Data : ", newData);
+    // console.log("View leases New Data : ", newData);
     setReturnIndex(newData);
-    console.log("View leases RETURN INDEX : ", returnIndex);
+    // console.log("View leases RETURN INDEX : ", returnIndex);
   };
 
   const handleViewLeaseClick = () => {
@@ -231,15 +185,14 @@ function Properties(props) {
     // console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
     // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
     setRHS("AddProperty");
-  };  
-  
+  };
 
   const handleViewContractClick = () => {
     // setPage("ViewLease");
-    console.log("View Contract before before: ", propertyList);
-    console.log("View Contract before before Index: ", propertyIndex);
-    console.log("View Contract before: ", propertyList[propertyIndex]);
-    console.log("View Contract", propertyList[propertyIndex].contract_uid);
+    // console.log("View Contract before before: ", propertyList);
+    // console.log("View Contract before before Index: ", propertyIndex);
+    // console.log("View Contract before: ", propertyList[propertyIndex]);
+    // console.log("View Contract", propertyList[propertyIndex].contract_uid);
     setRHS("ViewContract");
   };
 
@@ -307,19 +260,14 @@ function Properties(props) {
                 onBackClick={handleBackClick}
               />
             )}
-            {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
-            {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
+            {RHS === "ViewLease" && (
+              <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />
+            )}
+            {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}
             {RHS === "Applications" && (
               <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
             )}
-            {
-              RHS === "AddProperty" && 
-                <PropertyForm
-                  onBack={handleBackClick}
-                  onSubmit={handleBackClick}
-                  property_endpoint_resp={rawPropertyData}
-                />
-            }
+            {RHS === "AddProperty" && <PropertyForm onBack={handleBackClick} onSubmit={handleBackClick} property_endpoint_resp={rawPropertyData} />}
           </Grid>
         </Grid>
       </Container>

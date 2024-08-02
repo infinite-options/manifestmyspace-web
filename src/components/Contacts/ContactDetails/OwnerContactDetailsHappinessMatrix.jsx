@@ -54,7 +54,7 @@ import AES from "crypto-js/aes";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const OwnerContactDetailsHappinessMatrix = () => {
-  console.log("In Owner Contact Details - Happiness Matrix");
+  // console.log("In Owner Contact Details - Happiness Matrix");
   const { selectedRole, getProfileId } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,12 +76,11 @@ const OwnerContactDetailsHappinessMatrix = () => {
   // const [index, setIndex] = useState(location.state.index);
   const [index, setIndex] = useState(0);
   const ownerUID = location.state.ownerUID;
-  console.log("In Owner Contact Details - Owner ID: ", ownerUID);
+  // console.log("In Owner Contact Details - Owner ID: ", ownerUID);
 
   // const cashflowData = location.state?.cashflowData;
   // console.log("In the beginning: ", cashflowData);
   // const [filteredCashflowData, setFilteredCashflowData] = useState(cashflowData);
-  
 
   // const [happinessMatrixData, setHappinessMatrixData] = useState([]);
   // let [matrixData, setMatrixData] = useState([]);
@@ -111,7 +110,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   useEffect(() => {
     const getDataFromAPI = async () => {
       // const url = `http://localhost:4000/contacts/${getProfileId()}`;
-      console.log("Calling contacts endpoint");
+      // console.log("Calling contacts endpoint");
       const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
 
       await axios
@@ -119,11 +118,11 @@ const OwnerContactDetailsHappinessMatrix = () => {
         .then((resp) => {
           const data = resp.data["management_contacts"];
           const ownerContacts = data["owners"];
-          console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
+          // console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
           setContactDetails(ownerContacts);
-          console.log("Set Contact Details 1", ownerContacts);
+          // console.log("Set Contact Details 1", ownerContacts);
           const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
-          console.log("Owner Index: ", index);
+          // console.log("Owner Index: ", index);
           setIndex(index);
         })
         .catch((e) => {
@@ -136,7 +135,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
       // setContactsTab("Owner");
     } else if (navigatingFrom === "PMContacts") {
       setContactDetails(location.state.dataDetails);
-      console.log("Set Contact Details 2");
+      // console.log("Set Contact Details 2");
       // setContactsTab(location.state.tab);
     }
   }, []);
@@ -301,9 +300,9 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
         entities: contact.entities != null ? JSON.parse(contact.entities) : [],
       };
     });
-    console.log("AllContacts - processedData -", processedData);
+    // console.log("AllContacts - processedData -", processedData);
     setContactsData(processedData);
-    console.log("Set FilteredContactsData 1");
+    // console.log("Set FilteredContactsData 1");
     setFilteredContactsData(processedData);
   }, [data]);
 
@@ -311,7 +310,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
     const filteredValues = contactsData?.filter((item) => {
       return item.owner_first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.owner_last_name.toLowerCase().includes(searchTerm.toLowerCase());
     });
-    console.log("Set FilteredContactsData 2");
+    // console.log("Set FilteredContactsData 2");
     setFilteredContactsData(filteredValues);
   }, [searchTerm]);
 
@@ -412,7 +411,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
 
   const getContractsData = async () => {
     // const url = `http://localhost:4000/contracts/${getProfileId()}`;
-    console.log("Calling contRacts endpoint");
+    // console.log("Calling contRacts endpoint");
     const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;
 
     await axios
@@ -452,7 +451,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
         <Grid item xs={1}>
           <Box
             onClick={() => {
-              console.log("Previous button clicked", index, contactDetails.length);
+              // console.log("Previous button clicked", index, contactDetails.length);
               index > 0 ? setIndex(index - 1) : setIndex(contactDetails.length - 1);
             }}
             sx={{
@@ -502,7 +501,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
         <Grid item xs={1} container justifyContent='flex-end'>
           <Box
             onClick={() => {
-              console.log("Next button clicked");
+              // console.log("Next button clicked");
               index < contactDetails.length - 1 ? setIndex(index + 1) : setIndex(0);
             }}
             sx={{
@@ -574,7 +573,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
 };
 
 const OwnerInformation = ({ contactDetails, index }) => {
-  console.log("In OwnerInformation: ", index, contactDetails);
+  // console.log("In OwnerInformation: ", index, contactDetails);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
   useEffect(() => {
@@ -740,7 +739,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 
 const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   const navigate = useNavigate();
-  console.log("PropertiesDataGrid - data -   ", data);
+  // console.log("PropertiesDataGrid - data -   ", data);
   const paymentStatusColorMap = {
     "Paid On Time": theme.palette.priority.clear,
     "Partially Paid": theme.palette.priority.medium,
@@ -992,7 +991,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
   ];
 
   const handleSelectTab = (tabName) => {
-    console.log("tabName - ", tabName);
+    // console.log("tabName - ", tabName);
     setTab(tabName);
   };
 
