@@ -22,11 +22,15 @@ import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 
-function Properties(props) {
+function Properties() {
+  const location = useLocation();
+  console.log("In Properties");
+  console.log("In Properties LHS: ", location.state?.showLHS);
+  console.log("In Properties RHS: ", location.state?.showRHS);
+
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
 
-  const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
@@ -47,11 +51,11 @@ function Properties(props) {
   const [newContractPropertyUID, setNewContractPropertyUID] = useState(null);
 
   useEffect(() => {
-    console.log("ROHIT - newContractUID - ", newContractUID);
+    // console.log("ROHIT - newContractUID - ", newContractUID);
   }, [newContractUID]);
 
   useEffect(() => {
-    console.log("ROHIT - newContractPropertyUID - ", newContractPropertyUID);
+    // console.log("ROHIT - newContractPropertyUID - ", newContractPropertyUID);
   }, [newContractPropertyUID]);
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
@@ -82,6 +86,7 @@ function Properties(props) {
   //   console.log("Owner Selected");
   // }
 
+  // ENDPOINT CALLS IN PROPERTIES
   useEffect(() => {
     // console.log("In Properties Endpoint Call");
     const fetchData = async () => {

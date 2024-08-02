@@ -95,7 +95,13 @@ function PMRent({ setLHS, onPropertyInRentWidgetClicked, setInitialPropInRent })
           View All {dataNum} Properties
         </ViewAllButton>
       </Box>
-      <Box sx={{ marginTop: "20px" }}>
+
+      <Box
+        sx={{
+          marginTop: "20px",
+        }}
+      >
+        {/* <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} /> */}
         <RentAccordionView
           data={rentData}
           rentDetailIndexList={rentDetailIndexList}
