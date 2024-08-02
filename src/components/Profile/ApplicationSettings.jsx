@@ -7,6 +7,7 @@ import { useUser } from "../../contexts/UserContext.jsx";
 import { makeStyles } from "@material-ui/core";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import theme from "../../theme/theme.js";
+import { styled } from '@mui/system';
 
 const useStyles = makeStyles({
   button: {
@@ -54,6 +55,28 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [newRole, setNewRole] = useState("");
 
+  const CustomSwitch = styled(Switch)(({ theme }) => ({
+    '& .MuiSwitch-switchBase.Mui-checked': {
+      '&:hover': {
+        backgroundColor: 'rgba(61, 92, 172, 0.08)', // Hover effect color when checked
+      },
+      '& + .MuiSwitch-track': {
+        backgroundColor: 'gray', // Track color when checked
+        opacity: 1,
+      },
+    },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track:before': {
+      backgroundColor: 'gray',
+    },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track:after': {
+      backgroundColor: 'gray',
+    },
+    '& .MuiSwitch-track': {
+      backgroundColor: 'gray', // Track color when not checked
+      opacity: 1,
+    },
+  }));
+
   useEffect(() => {
     if (settingsChanged) {
       // Handle the settings changes here, e.g., save them to the server or local storage
@@ -93,7 +116,7 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
             <Typography>Allow notifications</Typography>
           </Grid>
           
-          <Switch
+          <CustomSwitch
             checked={notifications}
             onChange={(e) => {
               setNotifications(e.target.checked);
@@ -105,7 +128,7 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
           <Grid container item xs={9} alignContent= 'center'>
             <Typography>Dark mode</Typography>
           </Grid>
-          <Switch
+          <CustomSwitch
             checked={darkMode}
             onChange={(e) => {
               setDarkMode(e.target.checked);
@@ -117,7 +140,7 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
           <Grid container item xs={9} alignContent= 'center'>
             <Typography>Allow Cookies</Typography>
           </Grid>
-          <Switch
+          <CustomSwitch
             checked={allowCookies}
             onChange={(e) => {
               setAllowCookies(e.target.checked);
