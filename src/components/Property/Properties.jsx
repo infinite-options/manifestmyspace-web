@@ -21,6 +21,7 @@ import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManag
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
+import PMQuotesRequested from "./PMQuotesRequested";
 
 function Properties() {
   const location = useLocation();
@@ -226,6 +227,10 @@ function Properties() {
     setRHS("Applications");
   };
 
+  const handleViewPMQuotesRequested = () => {
+    setRHS("ViewPMQuotesRequested");
+  };
+
   const handleSorting = (propertyList) => {
     setPropertyList(propertyList);
   };
@@ -271,6 +276,7 @@ function Properties() {
                 onViewLeaseClick={handleViewLeaseClick}
                 onViewContractClick={handleViewContractClick}
                 handleViewApplication={handleViewApplication}
+                handleViewPMQuotesRequested={handleViewPMQuotesRequested}
               />
             )}
             {RHS === "EditProperty" && (
@@ -306,6 +312,17 @@ function Properties() {
               />
             )}
             {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData} />}
+            {RHS === "ViewPMQuotesRequested" && (
+              <PMQuotesRequested
+                index={returnIndex}
+                propertyData={propertyList}
+                contracts={allContracts}
+                handleBackClick={handleBackClick}
+
+                // pmQuoteRequestedState={pmQuoteRequestedState}
+                // setCurrentView={setCurrentView}
+              />
+            )}
           </Grid>
         </Grid>
       </Container>
