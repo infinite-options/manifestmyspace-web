@@ -20,8 +20,8 @@ import PropertyForm from "../Property/PropertyForm";
 import PropertiesSearch from "./PropertiesSearch";
 import PMRent from "../Rent/PMRent/PMRent";
 
-function PropertiesList(props) {
-  // console.log("In Property List: ", props.propertyList);
+export default function PropertiesList(props) {
+  console.log("In Property List: ", props.propertyList);
   const location = useLocation();
   const { getProfileId, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
@@ -563,5 +563,3 @@ function PropertiesList(props) {
     </Grid>
   );
 }
-
-export default PropertiesList;

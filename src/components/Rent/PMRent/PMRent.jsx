@@ -17,8 +17,11 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
-function PMRent(props) {
+export default function PMRent(props) {
   console.log("In PMRent --> Consider renaming", props);
+  console.log("In PM Rent onPropertyInRentWidgetClicked: ", props.onPropertyInRentWidgetClicked);
+  console.log("In PM Rent setInitialPropInRent: ", props.setInitialPropInRent);
+
   const { getProfileId } = useUser();
   const [dataNum, setDataNum] = useState(0);
   const [rentData, setRentData] = useState({});
@@ -73,7 +76,8 @@ function PMRent(props) {
       setShowSpinner(false);
     });
   }, []);
-  console.log("Rent Data: ", rentData, rentDetailIndexList);
+  console.log("Rent Data: ", rentData);
+  console.log("Detailed Data: ", rentDetailIndexList);
   return (
     <MainContainer>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -120,9 +124,14 @@ function PMRent(props) {
         }}
       >
         {/* <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} /> */}
-        <RentAccordionView data={rentData} rentDetailIndexList={rentDetailIndexList} link={"/pmRentDetail"} onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked} setInitialPropInRent={props.setInitialPropInRent}/>
+        <RentAccordionView
+          data={rentData}
+          rentDetailIndexList={rentDetailIndexList}
+          link={"/pmRentDetail"}
+          onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}
+          setInitialPropInRent={props.setInitialPropInRent}
+        />
       </Box>
     </MainContainer>
   );
 }
-export default PMRent;

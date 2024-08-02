@@ -23,10 +23,14 @@ import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 
 function Properties() {
+  const location = useLocation();
+  console.log("In Properties");
+  console.log("In Properties LHS: ", location.state?.showLHS);
+  console.log("In Properties RHS: ", location.state?.showRHS);
+
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
 
-  const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
@@ -82,6 +86,7 @@ function Properties() {
   //   console.log("Owner Selected");
   // }
 
+  // ENDPOINT CALLS IN PROPERTIES
   useEffect(() => {
     // console.log("In Properties Endpoint Call");
     const fetchData = async () => {
