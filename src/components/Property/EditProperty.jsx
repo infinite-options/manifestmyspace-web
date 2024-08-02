@@ -524,7 +524,7 @@ function EditProperty(props) {
         formData.append(key, file.image);
       }
       if (file.coverPhoto) {
-        formData.append("img_favorite", key);
+        formData.append("property_favorite_image", key);
       }
     }
 
