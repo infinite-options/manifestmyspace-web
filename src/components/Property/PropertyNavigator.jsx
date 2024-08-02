@@ -1952,38 +1952,43 @@ export default function PropertyNavigator({
                             </Box>
                           </Box>
                         </Grid>
-                        <Grid item xs={1.3} md={1.3}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              padding: "0px 0px 0px 8px",
-                            }}
-                          >
-                            <KeyboardArrowRightIcon
-                              sx={{ color: arrowButton1_color, cursor: "pointer" }}
-                              onClick={() => {
-                                /* navigate('/pmQuotesRequested', {
-                                  state: {
-                                    index: currentIndex,
-                                    propertyData: propertyData,
-                                    contracts: contractsData,
-                                    isDesktop: isDesktop,
-                                  },
-                                }); */
-                                // const state = {
-                                //   index: currentIndex,
-                                //   propertyData: propertyData,
-                                //   contracts: contractsData,
-                                //   isDesktop: isDesktop,
-                                // };
-                                // setPmQuoteRequestedState(state);
-                                handleViewPMQuotesRequested();
-                              }}
-                            />
-                          </Box>
-                        </Grid>
+                        { contractsNewSent ? (
+                            <Grid item xs={1.3} md={1.3}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  padding: "0px 0px 0px 8px",
+                                }}
+                              >
+                                <KeyboardArrowRightIcon
+                                  sx={{ color: arrowButton1_color, cursor: "pointer" }}
+                                  onClick={() => {
+                                    /* navigate('/pmQuotesRequested', {
+                                      state: {
+                                        index: currentIndex,
+                                        propertyData: propertyData,
+                                        contracts: contractsData,
+                                        isDesktop: isDesktop,
+                                      },
+                                    }); */
+                                    // const state = {
+                                    //   index: currentIndex,
+                                    //   propertyData: propertyData,
+                                    //   contracts: contractsData,
+                                    //   isDesktop: isDesktop,
+                                    // };
+                                    // setPmQuoteRequestedState(state);
+                                    handleViewPMQuotesRequested();
+                                  }}
+                                />
+                              </Box>
+                            </Grid>
+                          ) : (
+                            <></>
+                          )
+                        }
                       </>
                     ) : null}
                     {property && property.applications.length > 0 && (

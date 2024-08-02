@@ -8,6 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useUser } from "../../contexts/UserContext";
 import ReturnArrow from "../../images/refund_back.png";
 import APIConfig from "../../utils/APIConfig";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
+// const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
+const RequestQuotes = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId } = useUser();
@@ -34,13 +36,19 @@ const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
   const [announcementTitle, setAnnouncementTitle] = useState("");
   const [announcementMsg, setAnnouncementMsg] = useState("");
 
-  const { managerData, propertyData, index, isDesktop } = location.state || requestQuotesState;
+  const {  propertyData, index } = location.state || props;
+  const [ managerData, setManagerData ] = useState(props.managerData);
+  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+  const onShowSearchManager = props.onShowSearchManager;
 
   useEffect(() => {
+    const propertyData = props.propertyData;
+    const index = props.index;
+    console.log("ROHIT - RequestQuotes - props.index - ", props.index);
     if (propertyData && index !== undefined) {
       setSelectedProperties([propertyData[index].property_uid]);
     }
-  }, [propertyData, index]);
+  }, [props.propertyData, props.index]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,7 +147,7 @@ const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
 
   const navigateToPrev = () => {
     if(isDesktop === true){
-      setCurrentView('deafultview');
+      onShowSearchManager();
     }else{
       navigate(-1);
     }
@@ -152,6 +160,7 @@ const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
           fontFamily: "Source Sans Pro",
           color: "text.darkblue",
           padding: "15px",
+          height: '100%',
         }}
       >
         <Box
@@ -161,6 +170,7 @@ const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
             padding: "10px",
             paddingLeft: "15px",
             paddingRight: "15px",
+            height: '100%',
           }}
         >
           <Box
@@ -183,7 +193,7 @@ const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
                   alignItems: "center",
                   paddingLeft: "5px",
                 }}
-                onClick={() => navigate(-1)}
+                onClick={() => navigateToPrev()}
               >
                 <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt="back" />
                 <Typography
@@ -269,7 +279,7 @@ const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
               <Box sx={{ padding: "10px" }}></Box>
               <Box
                 sx={{
-                  height: "195px",
+                  height: "295px",
                   overflow: "auto",
                   paddingBottom: "20px",
                 }}

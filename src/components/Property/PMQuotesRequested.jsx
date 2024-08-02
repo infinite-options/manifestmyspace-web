@@ -18,7 +18,10 @@ export default function PMQuotesRequested(props) {
   const { getProfileId } = useUser();
   // console.log("--debug location.state--", location.state || pmQuoteRequestedState);
   console.log('----pmQuoteRequestedState.contracts---', props.contracts);
-  const PMQuotesDetails = location.state || props;
+  // const PMQuotesDetails = location.state || props;
+  const PMQuotesDetails = props;
+  console.log('ROHIT - PMQuotesDetails -', PMQuotesDetails);
+  console.log('ROHIT - PMQuotesDetails props -', props);
   const handleBackClick = props.handleBackClick;
 
   const [contracts, setContracts] = useState(PMQuotesDetails.contracts);
