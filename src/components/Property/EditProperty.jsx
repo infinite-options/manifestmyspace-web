@@ -152,28 +152,60 @@ function EditProperty(props) {
   const [nearbyAmenities, setNearbyAmenities] = useState("");
   // const [page, setPage] = useState("Edit");
 
+
+  const [initaddress, setInitAddress] = useState("");
+  const [initcity, setInitCity] = useState("");
+  const [initpropertyState, setInitPropertyState] = useState("");
+  const [initzip, setInitZip] = useState("");
+  const [initpropertyType, setInitPropertyType] = useState("");
+  const [initsquareFootage, setInitSquareFootage] = useState("");
+  const [initbedrooms, setInitBedrooms] = useState("");
+  const [initbathrooms, setInitBathrooms] = useState("");
+  const [initisListed, setInitListed] = useState(false);
+  const [initnotes, setInitNotes] = useState("");
+  const [initunit, setInitUnit] = useState("");
+  const [initpropertyValue, setInitPropertyValue] = useState("");
+  const [initassessmentYear, setInitAssessmentYear] = useState("");
+  const [initselectedImageList, setInitSelectedImageList] = useState("");
+  const [initfavImage, setInitFavImage] = useState("");
+
   useEffect(() => {
     const property = propertyList[index];
     setPropertyData(property);
     setAddress(property.property_address);
+    setInitAddress(property.property_address);
     setCity(property.property_city);
+    setInitCity(property.property_city);
     setPropertyState(property.property_state);
+    setInitPropertyState(property.property_state);
     setZip(property.property_zip);
+    setInitZip(property.property_zip);
     setPropertyType(property.property_type);
+    setInitPropertyType(property.property_type);
     setSquareFootage(property.property_area);
+    setInitSquareFootage(property.property_area);
     setBedrooms(property.property_num_beds);
+    setInitBedrooms(property.property_num_beds);
     setBathrooms(property.property_num_baths);
+    setInitBathrooms(property.property_num_baths);
     setListed(property.property_available_to_rent === 1 ? true : false);
+    setInitListed(property.property_available_to_rent === 1 ? true : false);
     setUtilities(property.property_utilities);
     setActiveDate(property.property_active_date);
     setDescription(property.property_description);
     setSelectedImageList(JSON.parse(property.property_images));
+    setInitSelectedImageList(JSON.parse(property.property_images));
     setFavImage(property.property_favorite_image);
+    setInitFavImage(property.property_favorite_image);
     setMaxSteps(selectedImageList.length);
     setNotes(property.property_notes);
+    setInitNotes(property.property_notes);
     setUnit(property.property_unit);
+    setInitUnit(property.property_unit);
     setPropertyValue(property.property_value);
+    setInitPropertyValue(property.property_value);
     setAssessmentYear(property.property_value_year);
+    setInitAssessmentYear(property.property_value_year);
     setDeposit(property.property_deposit);
     setListedRent(property.property_listed_rent);
     setPetsAllowed(property.property_pets_allowed === 1 ? true : false);
@@ -461,18 +493,19 @@ function EditProperty(props) {
     //   formData.append("property_longitude", coordinates.longitude);
     // }
 
+
     formData.append("property_uid", propertyData.property_uid);
-    formData.append("property_address", address);
-    formData.append("property_unit", unit);
-    formData.append("property_city", city);
-    formData.append("property_state", propertyState);
-    formData.append("property_zip", zip);
-    formData.append("property_type", propertyType);
-    formData.append("property_num_beds", bedrooms); // Double
-    formData.append("property_num_baths", bathrooms); // Double
-    formData.append("property_area", squareFootage);
-    formData.append("property_listed_rent", listedRent); // Int
-    //formData.append("property_deposit", deposit); // Int
+    if (address !== initaddress) formData.append("property_address", address);
+if (unit !== initunit) formData.append("property_unit", unit);
+if (city !== initcity) formData.append("property_city", city);
+if (propertyState !== initpropertyState) formData.append("property_state", propertyState);
+if (zip !== initzip) formData.append("property_zip", zip);
+if (propertyType !== initpropertyType) formData.append("property_type", propertyType);
+if (bedrooms !== initbedrooms) formData.append("property_num_beds", bedrooms); // Double
+if (bathrooms !== initbathrooms) formData.append("property_num_baths", bathrooms); // Double
+if (squareFootage !== initsquareFootage) formData.append("property_area", squareFootage);
+//formData.append("property_listed_rent", listedRent);
+//formData.append("property_deposit", deposit); // Int
     //formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
     //formData.append("property_deposit_for_rent", depositForRent ? 1 : 0); // Int
     //formData.append("property_taxes", taxes);
@@ -480,12 +513,10 @@ function EditProperty(props) {
     //formData.append("property_insurance", insurance);
     //formData.append("property_featured", 0);
     //formData.append("property_description", description);
-    formData.append("property_notes", notes);
-    if (page === "add_listing" || page === "edit_listing") {
-      formData.append("property_available_to_rent", isListed ? 1 : 0);
-    }
-    formData.append("property_value", propertyValue);
-    formData.append("property_value_year", assessmentYear);
+    if (notes !== initnotes) formData.append("property_notes", notes);
+    if ((page === "add_listing" || page === "edit_listing") && isListed !== initisListed) formData.append("property_available_to_rent", isListed ? 1 : 0);
+    if (propertyValue !== initpropertyValue) formData.append("property_value", propertyValue);
+    if (assessmentYear !== initassessmentYear) formData.append("property_value_year", assessmentYear);
     //formData.append("property_active_date", activeDate);
     // formData.append('property_utilities', utilities);
     //formData.append("property_amenities_community", communityAmenities);
@@ -494,21 +525,21 @@ function EditProperty(props) {
 
     //utilities form data
     const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
-    console.log("----- Submitted uitilitiesPaidBy JSON string");
+    //console.log("----- Submitted uitilitiesPaidBy JSON string");
     console.log(utilitiesJSONString);
 
     utilitiesFormData.append("property_uid", propertyData.property_uid);
     utilitiesFormData.append("property_utility", utilitiesJSONString);
 
     const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
-    console.log("----- addedUtilitiesJSONString");
+    //console.log("----- addedUtilitiesJSONString");
     console.log(addedUtilitiesJSONString);
 
     const addedUtilitiesFormData = new FormData();
     addedUtilitiesFormData.append("property_uid", propertyData.property_uid);
     addedUtilitiesFormData.append("property_utility", addedUtilitiesJSONString);
 
-    console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
+    //console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
     formData.append("property_images", propertyData.property_images);
 
     const files = imageState;
