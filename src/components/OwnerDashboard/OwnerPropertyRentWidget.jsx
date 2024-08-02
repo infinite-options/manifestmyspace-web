@@ -6,11 +6,11 @@ import { useUser } from "../../contexts/UserContext.jsx";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function OwnerPropertyRentWidget(props) {
-  console.log("In Owner Property Rent Widget ");
+  // console.log("In Owner Property Rent Widget ");
   const navigate = useNavigate();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
-  console.log("In OwnerPropertyRentWidget Selected Role: ", selectedRole);
-  console.log("In OwnerPropertyRentWidget: Routing Based on Role", propertyRoutingBasedOnSelectedRole);
+  // console.log("In OwnerPropertyRentWidget Selected Role: ", selectedRole);
+  // console.log("In OwnerPropertyRentWidget: Routing Based on Role", propertyRoutingBasedOnSelectedRole);
   // console.log(props.rentData);
 
   // console.log("Role: ", user);

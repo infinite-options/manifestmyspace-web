@@ -31,8 +31,9 @@ const useStyles = makeStyles({
   },
 });
 
-function PropertyRentWidget(props) {
+export default function PropertyRentWidget(props) {
   console.log("In Property Rent Widget ");
+  console.log("In Property Rent Widget - PM Contracts: ", props.contractRequests);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = useStyles();
@@ -43,13 +44,13 @@ function PropertyRentWidget(props) {
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
+  // console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
   // console.log("Selected Role: ", selectedRole);
   // console.log("Role: ", user);
   // console.log("Is it in mobile", isMobile);
   // console.log("PropertyRentWidget - props for rentData", props.rentData);
   // console.log("PropertyRentWidget - props for contract requests- ", props.contractRequests);
-  console.log("PropertyRentWidget - props for propertyData", props.propertyData);
+  // console.log("PropertyRentWidget - props for propertyData", props.propertyData);
 
   useEffect(() => {
     setRawPropertyData(props.propertyData);
@@ -124,7 +125,7 @@ function PropertyRentWidget(props) {
   const handleSelectPropertyClick = async (event) => {
     setAnchorEl(event.currentTarget);
     if (propertyList?.length > 0) {
-      console.log("Properties in List: ", propertyList);
+      // console.log("Properties in List: ", propertyList);
       return;
     }
     // try {
@@ -198,7 +199,7 @@ function PropertyRentWidget(props) {
               borderRadius: "5px",
             }}
             onClick={() => {
-              console.log("Clicked 1");
+              // console.log("Clicked 1");
               navigate(propertyRoutingBasedOnSelectedRole());
             }}
           >
@@ -279,7 +280,7 @@ function PropertyRentWidget(props) {
               paddingAngle={0}
               dataKey='number'
               filter='url(#shadow)'
-              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -297,7 +298,7 @@ function PropertyRentWidget(props) {
                 fill: "#160449",
                 fontWeight: "bold",
               }}
-              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
             >
               View all {totalPropertiesCount}
               <tspan x={130} y={145}>
@@ -326,7 +327,7 @@ function PropertyRentWidget(props) {
               paddingAngle={0}
               dataKey='number'
               filter='url(#shadow)'
-              onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
             >
               {defaultData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -370,9 +371,10 @@ function PropertyRentWidget(props) {
             marginTop: "25px",
             borderRadius: "5px",
           }}
-          onClick={() => {
-            navigate(propertyRoutingBasedOnSelectedRole());
-          }}
+          // onClick={() => {
+          //   navigate(propertyRoutingBasedOnSelectedRole());
+          // }}
+          onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
         >
           View {vacantCount} Property Listings
         </Button>
@@ -389,8 +391,8 @@ function PropertyRentWidget(props) {
             borderRadius: "5px",
           }}
           onClick={() => {
-            console.log("New Request Clicked");
-            navigate("/pmQuotesList");
+            // console.log("New Request Clicked");
+            navigate("/pmQuotesList", { state: { property_endpoint_resp: contractRequests } });
           }}
         >
           <Box
@@ -491,5 +493,3 @@ const CustomLegend = ({ data, navigate }) => {
     </Box>
   );
 };
-
-export default PropertyRentWidget;

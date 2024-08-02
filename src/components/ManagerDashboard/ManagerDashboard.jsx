@@ -35,7 +35,7 @@ const useStyles = makeStyles({
 });
 
 function ManagerDashboard() {
-  console.log("In Manager Dashboard function");
+  // console.log("In Manager Dashboard function");
 
   const navigate = useNavigate();
   const { getProfileId, user, selectedRole } = useUser();
@@ -56,7 +56,7 @@ function ManagerDashboard() {
   //
   //
   // Check if No Profile ID or if Employee Profile ID or if some other Role
-  console.log("User Info: ", getProfileId(), selectedRole, user);
+  // console.log("User Info: ", getProfileId(), selectedRole, user);
 
   let dashboard_id = getProfileId();
   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
@@ -102,15 +102,15 @@ function ManagerDashboard() {
   //
   // Console Logs for useState variables
   useEffect(() => {
-    console.log("RentStatus check --", rentStatus);
+    // console.log("RentStatus check --", rentStatus);
   }, [rentStatus]);
 
   useEffect(() => {
-    console.log("Contract requests - ", contractRequests);
+    // console.log("Contract requests - ", contractRequests);
   }, [contractRequests]);
 
   useEffect(() => {
-    console.log("Happiness Matrix Info - ", happinessData);
+    // console.log("Happiness Matrix Info - ", happinessData);
   }, [happinessData]);
 
   useEffect(() => {
@@ -127,7 +127,7 @@ function ManagerDashboard() {
 
       try {
         const jsonData = await response.json();
-        console.log("Manager Dashboard jsonData: ", jsonData);
+        // console.log("Manager Dashboard jsonData: ", jsonData);
 
         // RENT Status
         setRentStatus(jsonData.RentStatus.result);

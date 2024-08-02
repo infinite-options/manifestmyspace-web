@@ -14,9 +14,12 @@ import Backdrop from "@mui/material/Backdrop";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function PMQuotesList({}) {
+export default function PMQuotesList() {
   let navigate = useNavigate();
   const location = useLocation();
+  console.log("In PMQuoteList");
+  console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
+
   const property_endpoint_resp = location.state.property_endpoint_resp;
   const { getProfileId } = useUser();
   const [contractRequests, setContractRequests] = useState([]);
@@ -30,13 +33,17 @@ export default function PMQuotesList({}) {
       try {
         const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
         const contractsResponse = await response.json();
+        console.log("contractResponse: ", contractsResponse);
         const contractsData = contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE");
+        console.log("contractData: ", contractsData);
         setContractRequests(contractsData);
         setShowSpinner(false);
       } catch (error) {
         console.error(error);
       }
     };
+
+    console.log("ContractRequests: ", contractRequests);
 
     const getProperties = async () => {
       setShowSpinner(true);
@@ -46,7 +53,8 @@ export default function PMQuotesList({}) {
         // Assuming property_endpoint_resp is an object with the 'Property' and 'NewPMRequests' properties
         // const properties = property_endpoint_resp.Property.result;
         // console.log("Properties: ", properties);
-        const newPMRequests = property_endpoint_resp.NewPMRequests.result;
+        // const newPMRequests = property_endpoint_resp.NewPMRequests.result;
+        const newPMRequests = property_endpoint_resp;
         console.log("NewPMRequests: ", newPMRequests);
 
         // Correct the announcements field for each property
@@ -71,12 +79,12 @@ export default function PMQuotesList({}) {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Stack
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
+        direction='column'
+        alignItems='center'
+        justifyContent='center'
         sx={{
           width: "100%", // Take up full screen width
           minHeight: "100vh", // Set the Box height to full height
@@ -152,13 +160,13 @@ function ContractCard(props) {
         })
       }
     >
-      <Grid container alignItems="center">
+      <Grid container alignItems='center'>
         <Grid item xs={3}></Grid>
 
         <Grid item xs={6} style={{ display: "flex", justifyContent: "center" }}>
           <img
             src={contract.owner_photo_url}
-            alt="Business Photo"
+            alt='Business Photo'
             style={{
               borderRadius: "50%",
               width: "40px",
@@ -182,7 +190,7 @@ function ContractCard(props) {
           {announcements?.length && (
             <img
               src={Bell_fill}
-              alt="Bell Icon"
+              alt='Bell Icon'
               style={{ display: "block", cursor: "pointer", marginTop: "5px", marginLeft: "100px", marginRight: "40px" }}
               onClick={(e) => {
                 e.stopPropagation();

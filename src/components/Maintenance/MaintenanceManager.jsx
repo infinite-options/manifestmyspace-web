@@ -337,8 +337,8 @@ export default function MaintenanceManager() {
     }
   };
   const handleBackButton = () => {
-    const { fromProperty, index } = location.state;
-    if (location.state && fromProperty === true) {
+    if (location.state && location.state.fromProperty === true) {
+      const { fromProperty, index } = location.state;
       // navigate('/properties', { state: { index } }); - PM Changed
       navigate("/propertiesPM", { state: { index } });
     } else {
