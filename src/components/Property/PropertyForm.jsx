@@ -100,7 +100,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp}) => {
+const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID,}) => {
 	const classes = useStyles();
     let navigate = useNavigate();
     const { getProfileId } = useUser();
@@ -317,6 +317,7 @@ console.log("Address city set to 23", city)
           const data = await response.json();
           console.log("response data", data);
           responsePropertyUID = data.property_UID;
+		  setNewContractPropertyUID(responsePropertyUID);
           console.log("response data - property UID: ", responsePropertyUID);
         } catch (error) {
           console.log("Error posting data:", error);
@@ -360,18 +361,19 @@ console.log("Address city set to 23", city)
             console.log("contracts - POST - response data = ", data);
     
             responseContractUID = data.contract_UID;
+			setNewContractUID(responseContractUID);
             console.log("response data - contract UID: ", responseContractUID);
     
-            // console.log('navigating to /managementContractDetails', responseContractUID, getProfileId(), responsePropertyUID);
+            console.log('navigating to /managementContractDetails', responseContractUID, getProfileId(), responsePropertyUID);
     
-            navigate("/managementContractDetails", {
-              state: {
-                contract_uid: responseContractUID,
-                contract_business_id: getProfileId(),
-                contract_property_id: responsePropertyUID,
-                property_endpoint_resp: property_endpoint_resp,
-              },
-            });
+            // navigate("/managementContractDetails", {
+            //   state: {
+            //     contract_uid: responseContractUID,
+            //     contract_business_id: getProfileId(),
+            //     contract_property_id: responsePropertyUID,
+            //     property_endpoint_resp: property_endpoint_resp,
+            //   },
+            // });			
           } catch (error) {
             console.error("Error:", error);
           }

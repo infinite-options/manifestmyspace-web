@@ -12,16 +12,16 @@ import theme from "../../theme/theme";
 import { darken, lighten } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import UserNavBar from "./UserNavBar";
-import { ThemeProvider } from "@mui/material/styles";  // Correct import for ThemeProvider
+import { ThemeProvider } from "@mui/material/styles"; // Correct import for ThemeProvider
 
 function Header(props) {
-  console.log("In Header.jsx");
+  // console.log("In Header.jsx");
   const { user, selectedRole, selectRole, roleName, isLoggedIn } = useUser();
-  const [cookie] = useCookies(["user"]);  // Removed setCookie since it is unused
+  const [cookie] = useCookies(["user"]); // Removed setCookie since it is unused
   const cookiesData = cookie["user"];
   const userRoles = user && cookiesData?.role ? cookiesData.role.split(",") : [];
-  console.log("cookiesData ", cookiesData);
-  console.log("Current User Roles: ", userRoles);
+  // console.log("cookiesData ", cookiesData);
+  // console.log("Current User Roles: ", userRoles);
 
   const navigate = useNavigate();
 
@@ -36,21 +36,20 @@ function Header(props) {
   const handleButtonClick = (role) => {
     selectRole(role);
     const { dashboardUrl } = roleMap[role];
-    if (role === 'MAINTENANCE') {
-      sessionStorage.removeItem('workerselectedRequestIndex');
-      sessionStorage.removeItem('workerselectedStatus');
-      sessionStorage.removeItem('workermaintenanceItemsForStatus');
-      sessionStorage.removeItem('workerallMaintenanceData');
-      sessionStorage.removeItem('workermaintenance_request_uid');
-      sessionStorage.removeItem('workerMaintenanceView');
+    if (role === "MAINTENANCE") {
+      sessionStorage.removeItem("workerselectedRequestIndex");
+      sessionStorage.removeItem("workerselectedStatus");
+      sessionStorage.removeItem("workermaintenanceItemsForStatus");
+      sessionStorage.removeItem("workerallMaintenanceData");
+      sessionStorage.removeItem("workermaintenance_request_uid");
+      sessionStorage.removeItem("workerMaintenanceView");
 
-      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new Event("storage"));
       // Dispatch the custom event
       setTimeout(() => {
-          window.dispatchEvent(new Event('removeworkermaintenanceRequestSelected'));
+        window.dispatchEvent(new Event("removeworkermaintenanceRequestSelected"));
       }, 0);
-
-  }
+    }
     navigate(dashboardUrl);
     handleClose();
   };
@@ -78,7 +77,7 @@ function Header(props) {
       <Box>
         {isLoggedIn ? (
           <>
-            <AppBar position="static" style={{ backgroundColor: "#160449", paddingTop: "10px", paddingBottom: "10px" }}>
+            <AppBar position='static' style={{ backgroundColor: "#160449", paddingTop: "10px", paddingBottom: "10px" }}>
               <Toolbar style={{ justifyContent: "space-between", padding: "0 20px" }}>
                 <div
                   onClick={() => navigate("/")}
@@ -95,7 +94,7 @@ function Header(props) {
                 </div>
                 {!isMobile && <UserNavBar isMobile={isMobile} />}
                 {isMobile && (
-                  <IconButton size="large" edge="end" color="inherit" aria-label="menu" sx={{ ml: 2 }} onClick={handleMenuToggle}>
+                  <IconButton size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2 }} onClick={handleMenuToggle}>
                     <MenuIcon />
                   </IconButton>
                 )}
@@ -106,7 +105,7 @@ function Header(props) {
                 {userRoles.map((role) => (
                   <Button
                     key={role}
-                    color="inherit"
+                    color='inherit'
                     style={{
                       fontWeight: selectedRole === role ? 800 : 300,
                       fontSize: "18px",
@@ -149,7 +148,7 @@ function Header(props) {
           </>
         ) : (
           <Box>
-            <AppBar position="static" style={{ backgroundColor: "#160449", paddingTop: "10px", paddingBottom: "10px" }}>
+            <AppBar position='static' style={{ backgroundColor: "#160449", paddingTop: "10px", paddingBottom: "10px" }}>
               <Toolbar style={{ justifyContent: "space-between", padding: "0 20px" }}>
                 <div
                   onClick={() => navigate("/")}
@@ -167,10 +166,10 @@ function Header(props) {
                 <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                   <Box sx={{ display: { xs: "none", md: "flex" }, gap: "25px" }}>
                     <Button
-                      variant="contained"
+                      variant='contained'
                       // onClick={() => navigate("/returningUser")}
 
-                      onClick={() => navigate("/", {state: { showLogin: true}})}
+                      onClick={() => navigate("/", { state: { showLogin: true } })}
                       sx={{ background: "#FFFFFF", color: theme.palette.primary.main, "&:hover": { backgroundColor: darken("#FFFFFF", 0.3) } }}
                     >
                       <Typography
@@ -183,7 +182,7 @@ function Header(props) {
                       </Typography>
                     </Button>
                     <Button
-                      variant="contained"
+                      variant='contained'
                       onClick={() => navigate("/newUser")}
                       sx={{ background: "#3D5CAC", color: theme.palette.background.default, "&:hover": { backgroundColor: lighten("#3D5CAC", 0.3) } }}
                     >
@@ -197,7 +196,7 @@ function Header(props) {
                       </Typography>
                     </Button>
                   </Box>
-                  <IconButton size="large" edge="end" color="inherit" aria-label="menu" sx={{ ml: 2, display: { xs: "flex", md: "none" } }} onClick={handleClick}>
+                  <IconButton size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2, display: { xs: "flex", md: "none" } }} onClick={handleClick}>
                     <MenuIcon onClick={handleMenuToggle} />
                   </IconButton>
                 </div>
@@ -205,10 +204,10 @@ function Header(props) {
             </AppBar>
             {isMenuOpen && (
               <Box sx={{ position: "absolute", top: "64px", right: "10px", backgroundColor: "white", borderRadius: "4px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", zIndex: "1000" }}>
-                <Button variant="outlined" sx={{ display: "block", width: "100%", color: "#000000" }} onClick={() => navigate("/returningUser")}>
+                <Button variant='outlined' sx={{ display: "block", width: "100%", color: "#000000" }} onClick={() => navigate("/returningUser")}>
                   Login
                 </Button>
-                <Button variant="outlined" sx={{ width: "100%", color: "#000000" }} onClick={() => navigate("/newUser")}>
+                <Button variant='outlined' sx={{ width: "100%", color: "#000000" }} onClick={() => navigate("/newUser")}>
                   Create Account
                 </Button>
               </Box>

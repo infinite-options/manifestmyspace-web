@@ -225,16 +225,16 @@ export function RentAccordionView(props) {
       setLate(rentData.late);
       setPaid(rentData.paid);
       setVacant(rentData.vacant);
-      if(rentData.unpaid && rentData.unpaid.length > 0){
-        console.log('checking widget');
+      if (rentData.unpaid && rentData.unpaid.length > 0) {
+        console.log("checking widget");
         props.setInitialPropInRent(rentData.unpaid[0].property_uid);
-      } else if(rentData.partial && rentData.partial.length > 0){
+      } else if (rentData.partial && rentData.partial.length > 0) {
         props.setInitialPropInRent(rentData.partial[0].property_uid);
-      } else if(rentData.late && rentData.late.length > 0){
+      } else if (rentData.late && rentData.late.length > 0) {
         props.setInitialPropInRent(rentData.late[0].property_uid);
-      } else if(rentData.paid && rentData.paid.length > 0){
+      } else if (rentData.paid && rentData.paid.length > 0) {
         props.setInitialPropInRent(rentData.paid[0].property_uid);
-      } else if(rentData.vacant && rentData.vacant.length > 0){
+      } else if (rentData.vacant && rentData.vacant.length > 0) {
         props.setInitialPropInRent(rentData.vacant[0].property_uid);
       }
     }
@@ -292,9 +292,9 @@ export function RentAccordion(props) {
   const rentDetailUrl = props.link;
   const rentDetailIndexList = props.rentDetailIndexList;
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  console.log("In Rent Accordian: ", props.data);
-  console.log("In Rent Accordian Links: ", props.link);
-  console.log("In Rent Accordian Status: ", props.status);
+  // console.log("In Rent Accordian: ", props.data);
+  // console.log("In Rent Accordian Links: ", props.link);
+  // console.log("In Rent Accordian Status: ", props.status);
   const StatusText = () => {
     switch (status) {
       case "UNPAID":

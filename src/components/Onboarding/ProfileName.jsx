@@ -53,13 +53,13 @@ const ProfileName = () => {
 
   const { user, isLoggedIn, isBusiness, isEmployee, roleName, isManagementEmployee, selectedRole } = useUser();
   // Print out the values
-  console.log("User:", user);
-  console.log("Is Logged In:", isLoggedIn);
+  // console.log("User:", user);
+  // console.log("Is Logged In:", isLoggedIn);
   // console.log("Is Business:", isBusiness);
   // console.log("Is Employee:", isEmployee);
   // console.log("Role Name:", roleName);
   // console.log("Is Management Employee:", isManagementEmployee);
-  console.log("Selected Role:", selectedRole);
+  // console.log("Selected Role:", selectedRole);
 
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
 
@@ -74,7 +74,7 @@ const ProfileName = () => {
   const personalInfoPage = isLoggedIn ? "/privatePersonalInfo" : "/personalInfo";
   const profileInfoPage = isLoggedIn ? "/privateProfileInfo" : "/profileInfo";
 
-  console.log("User Info: ", user);
+  // console.log("User Info: ", user);
 
   const validate_form = () => {
     if (["PM_EMPLOYEE", "MAINT_EMPLOYEE"].includes(selectedRole)) {
@@ -186,7 +186,7 @@ const ProfileName = () => {
   };
 
   useEffect(() => {
-    console.log("Data in Cookies: ", cookiesData);
+    // console.log("Data in Cookies: ", cookiesData);
     setFirstName(cookiesData?.firstName ?? "");
     setLastName(cookiesData?.lastName ?? "");
     setBusinessName(cookiesData?.businessName ?? "");
@@ -216,17 +216,17 @@ const ProfileName = () => {
             width: "85%",
           }}
         >
-          <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" flexDirection="column">
-            <Stack direction="row" justifyContent="center">
+          <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' flexDirection='column'>
+            <Stack direction='row' justifyContent='center'>
               <Box
                 sx={{
                   paddingTop: "10%",
                 }}
               >
-                <img src={statusImg} alt="status" />
+                <img src={statusImg} alt='status' />
               </Box>
             </Stack>
-            <Stack direction="row" justifyContent="center">
+            <Stack direction='row' justifyContent='center'>
               <Typography
                 sx={{
                   color: theme.typography.propertyPage.color,
@@ -251,9 +251,9 @@ const ProfileName = () => {
               </Box>
             )}
           </Box>
-          <Stack direction="row">
+          <Stack direction='row'>
             {isBusiness() ? (
-              <TextField name="businessName" value={businessName} onChange={handleNameChange} variant="filled" fullWidth placeholder="Business name" className={classes.root} />
+              <TextField name='businessName' value={businessName} onChange={handleNameChange} variant='filled' fullWidth placeholder='Business name' className={classes.root} />
             ) : isEmployee() ? (
               <Stack spacing={2} sx={{ width: "100%", padding: "10px 10px" }}>
                 <Typography
@@ -264,7 +264,7 @@ const ProfileName = () => {
                 >
                   {"Select Business"}
                 </Typography>
-                <Select value={selectedBusiness} onChange={handleBusinessChange} size="small" fullWidth className={classes.select}>
+                <Select value={selectedBusiness} onChange={handleBusinessChange} size='small' fullWidth className={classes.select}>
                   {businesses.map((row) => (
                     <MenuItem value={row}>{row.business_name}</MenuItem>
                   ))}
@@ -277,19 +277,19 @@ const ProfileName = () => {
                 >
                   {"Role"}
                 </Typography>
-                <Select value={selectedBizRole} onChange={handleBizRoleChange} size="small" fullWidth className={classes.select}>
-                  <MenuItem value="EMPLOYEE">{"Employee"}</MenuItem>
+                <Select value={selectedBizRole} onChange={handleBizRoleChange} size='small' fullWidth className={classes.select}>
+                  <MenuItem value='EMPLOYEE'>{"Employee"}</MenuItem>
                 </Select>
               </Stack>
             ) : (
               <>
-                <TextField name="firstName" value={firstName} onChange={handleFirstNameChange} variant="filled" fullWidth placeholder="First name" className={classes.root} />
-                <TextField name="lastName" value={lastName} onChange={handleLastNameChange} variant="filled" fullWidth placeholder="Last name" className={classes.root} />
+                <TextField name='firstName' value={firstName} onChange={handleFirstNameChange} variant='filled' fullWidth placeholder='First name' className={classes.root} />
+                <TextField name='lastName' value={lastName} onChange={handleLastNameChange} variant='filled' fullWidth placeholder='Last name' className={classes.root} />
               </>
             )}
           </Stack>
           <Box sx={{ paddingTop: "8%" }} />
-          <Stack direction="row" justifyContent="center">
+          <Stack direction='row' justifyContent='center'>
             {photo && photo.image ? (
               <img
                 key={Date.now()}
@@ -300,10 +300,10 @@ const ProfileName = () => {
                   objectFit: "cover",
                   borderRadius: "50%",
                 }}
-                alt="profile"
+                alt='profile'
               />
             ) : (
-              <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+              <img src={DefaultProfileImg} alt='default' style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
             )}
           </Stack>
           <Box sx={{ paddingTop: "8%" }} />
@@ -315,8 +315,8 @@ const ProfileName = () => {
             }}
           >
             <Button
-              component="label"
-              variant="contained"
+              component='label'
+              variant='contained'
               sx={{
                 backgroundImage: `url(${addPhotoImg})`,
                 width: "193px",
@@ -326,12 +326,12 @@ const ProfileName = () => {
                 },
               }}
             >
-              <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
+              <input type='file' hidden accept='image/*' onChange={handlePhotoChange} />
             </Button>
           </Box>
-          <Box component="span" display="flex" justifyContent="center" position="relative" flexDirection="column" height="15.2vh">
+          <Box component='span' display='flex' justifyContent='center' position='relative' flexDirection='column' height='15.2vh'>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 background: "#3D5CAC",
                 color: theme.palette.background.default,

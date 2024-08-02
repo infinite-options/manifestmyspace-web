@@ -14,7 +14,7 @@ async function fetchCashflow2(userProfileId, month, year) {
     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
     const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
-    console.log("Endpoint returns: ", cashflow.data);
+    // console.log("Endpoint returns: ", cashflow.data);
     return cashflow.data;
   } catch (error) {
     console.error("Error fetching cashflow data:", error);
@@ -25,14 +25,14 @@ function getRevenueList(data) {
   // return data.response_revenue.result;
   // console.log("getRevenueList - data - ", data);
   // console.log("revenueList - ",data?.result?.filter(item => item.pur_cf_type === "revenue"));
-  return data?.result?.filter(item => item.pur_cf_type === "revenue");
+  return data?.result?.filter((item) => item.pur_cf_type === "revenue");
 }
 
 function getExpenseList(data) {
-  // return data.response_expense.result;  
+  // return data.response_expense.result;
   // console.log("getExpenseList - data - ", data);
   // console.log("expenseList - ",data?.result?.filter(item => item.pur_cf_type === "expense"));
-  return data?.result?.filter(item => item.pur_cf_type === "expense");
+  return data?.result?.filter((item) => item.pur_cf_type === "expense");
 }
 
 function getPast12MonthsCashflow(data, month, year) {
@@ -73,7 +73,7 @@ function getPast12MonthsCashflow(data, month, year) {
       currentMonth = months[months.indexOf(currentMonth) - 1];
     }
   }
-  console.log("Past 12 months: ", pastTwelveMonths);
+  // console.log("Past 12 months: ", pastTwelveMonths);
 
   pastTwelveMonths.reverse();
 
@@ -145,7 +145,7 @@ function getPast12MonthsExpectedCashflow(data, month, year) {
       cashflow: currentMonthRevenue - currentMonthExpense,
 
       expected_revenue: expectedMonthRevenue,
-      revenue:currentMonthRevenue,
+      revenue: currentMonthRevenue,
       expected_expense: expectedMonthExpense,
       expense: currentMonthExpense,
 
@@ -169,15 +169,15 @@ function getPast12MonthsExpectedCashflow(data, month, year) {
 }
 
 function getRevenueByMonth(data) {
-  console.log("revenue by month", data);
+  // console.log("revenue by month", data);
 }
 
 function getExpenseByMonth(data) {
-  console.log("expense by month", data);
+  // console.log("expense by month", data);
 }
 
 function revenueCashflowByMonth(data) {
-  console.log("revenueCashflowByMonth", data);
+  // console.log("revenueCashflowByMonth", data);
 }
 
 function getExpectedRevenueByType(data, month, year) {
@@ -335,13 +335,13 @@ function getTotalExpenseByType(data, month, year, expected) {
 }
 
 function getTotalRevenueByMonthYear(data, month, year) {
-  console.log("In getTotalRevenueByMonthYear: ", data, month, year);
+  // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
   let revenueItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
-  console.log("After filter revenueItems: ", revenueItems);
+  // console.log("After filter revenueItems: ", revenueItems);
   let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
   }, 0.0);
-  console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
+  // console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
   return totalRevenue;
 }
 

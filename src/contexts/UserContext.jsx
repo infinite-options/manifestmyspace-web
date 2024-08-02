@@ -27,8 +27,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   useEffect(() => {
-    console.log("$user set to", user);
-    console.log("cookies set to", cookies);
+    // console.log("$user set to", user);
+    // console.log("cookies set to", cookies);
   }, [user]);
 
   const selectRole = (role) => {
@@ -127,7 +127,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     if (selectedRole === "OWNER") return user.owner_id;
   };
   const logout = () => {
-    console.log("In logout as ", user);
+    // console.log("In logout as ", user);
     cookiesObj.remove("user");
     cookiesObj.remove("token");
     cookiesObj.remove("selectedRole");

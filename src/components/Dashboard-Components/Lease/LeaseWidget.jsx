@@ -12,7 +12,7 @@ import { nextMonday } from "date-fns";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function LeaseWidget(props) {
-  console.log("In Lease Widget", props);
+  // console.log("In Lease Widget", props);
   const navigate = useNavigate();
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
   // const { leaseRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
@@ -110,12 +110,12 @@ export default function LeaseWidget(props) {
           rowSpacing={6}
         >
           <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2, color: "#160449" }}>
+            <Typography variant='h5' sx={{ fontWeight: "bold", mb: 2, color: "#160449" }}>
               Leases Expiring: Next 12 Months
             </Typography>
           </Grid>
           <Grid item container xs={12}>
-            <Grid item container justifyContent="center" alignItems="center" xs={12} md={9} rowSpacing={4}>
+            <Grid item container justifyContent='center' alignItems='center' xs={12} md={9} rowSpacing={4}>
               {[...Array(12)].map((_, index) => (
                 <Grid item key={index} xs={2} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                   <Box
@@ -138,8 +138,8 @@ export default function LeaseWidget(props) {
             <Grid
               container
               item
-              justifyContent="space-evenly"
-              alignItems="center"
+              justifyContent='space-evenly'
+              alignItems='center'
               xs={12}
               md={3}
               rowSpacing={3}
@@ -217,7 +217,7 @@ export default function LeaseWidget(props) {
         </Grid>
       </Grid>
       <Snackbar open={forLeaseBar} onClose={handleLeaseBar} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-        <Alert onClose={handleLeaseBar} severity="info" sx={{ width: "100%", height: "100%" }}>
+        <Alert onClose={handleLeaseBar} severity='info' sx={{ width: "100%", height: "100%" }}>
           <AlertTitle>No Leases Found</AlertTitle>
           No Leases Available
         </Alert>
