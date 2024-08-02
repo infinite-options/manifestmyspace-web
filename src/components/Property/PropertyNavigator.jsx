@@ -329,6 +329,8 @@ export default function PropertyNavigator({
         setAppliances(propertyApplicances);
 
         //   console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
+      } else {
+        setAppliances([]);
       }
     }
   }, [currentIndex, propertyId, allRentStatus]);
