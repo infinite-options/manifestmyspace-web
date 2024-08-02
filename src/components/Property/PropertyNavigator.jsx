@@ -82,6 +82,7 @@ export default function PropertyNavigator({
   setManagerDetailsState,
   onShowSearchManager,
   handleViewApplication,
+  handleViewPMQuotesRequested,
   props,
 }) {
   // console.log("In Property Navigator", onEditClick);
@@ -204,7 +205,7 @@ export default function PropertyNavigator({
 
   const [activeStep, setActiveStep] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [contractsData, setContractsData] = useState([]);
+  const [contractsData, setContractsData] = useState(contracts);
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
@@ -303,11 +304,13 @@ export default function PropertyNavigator({
       //   getContractsForOwner();
       var count = 0;
       const filtered = contractsData.filter((contract) => contract.property_id === propertyId);
+      console.log("ROHIT - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
         if (contract.contract_status === "SENT" || contract.contract_status === "NEW") {
           count++;
         }
       });
+      console.log("ROHIT - PropertyNavigator - contract count - ", count);
       setContractsNewSent(count);
       setContractsData(contracts);
 
@@ -333,7 +336,8 @@ export default function PropertyNavigator({
         setAppliances([]);
       }
     }
-  }, [currentIndex, propertyId, allRentStatus]);
+  }, [currentIndex, propertyId, allRentStatus, index, propertyList, contracts, propertyData,]);
+// }, [currentIndex, propertyId, allRentStatus]);
 
   const tenant_detail = property && property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
   const manager_detail = property && property.business_uid ? `${property.business_name}` : "No Manager";
@@ -1968,13 +1972,14 @@ export default function PropertyNavigator({
                                     isDesktop: isDesktop,
                                   },
                                 }); */
-                                const state = {
-                                  index: currentIndex,
-                                  propertyData: propertyData,
-                                  contracts: contractsData,
-                                  isDesktop: isDesktop,
-                                };
-                                setPmQuoteRequestedState(state);
+                                // const state = {
+                                //   index: currentIndex,
+                                //   propertyData: propertyData,
+                                //   contracts: contractsData,
+                                //   isDesktop: isDesktop,
+                                // };
+                                // setPmQuoteRequestedState(state);
+                                handleViewPMQuotesRequested();
                               }}
                             />
                           </Box>

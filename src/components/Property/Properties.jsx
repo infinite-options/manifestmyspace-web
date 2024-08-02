@@ -21,6 +21,7 @@ import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManag
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
+import PMQuotesRequested from "./PMQuotesRequested";
 
 function Properties() {
   const location = useLocation();
@@ -225,6 +226,12 @@ function Properties() {
     setRHS("Applications");
   };
 
+  const handleViewPMQuotesRequested = () => {
+    setRHS("ViewPMQuotesRequested");
+  }  
+
+  
+
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
@@ -261,10 +268,11 @@ function Properties() {
                 allRentStatus={allRentStatus}
                 isDesktop={isDesktop}
                 contracts={allContracts}
-                onEditClick={handleEditClick}
+                onEditClick={handleEditClick}                
                 onViewLeaseClick={handleViewLeaseClick}
                 onViewContractClick={handleViewContractClick}
                 handleViewApplication={handleViewApplication}
+                handleViewPMQuotesRequested={handleViewPMQuotesRequested}
               />
             )}
             {RHS === "EditProperty" && (
@@ -287,18 +295,39 @@ function Properties() {
             {RHS === "Applications" && (
               <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
             )}
-            {RHS === "AddProperty" && (
-              <PropertyForm
-                onBack={handleBackClick}
-                // onSubmit={handleBackClick}
-                onSubmit={showNewContract}
-                property_endpoint_resp={rawPropertyData}
-                setNewContractUID={setNewContractUID}
-                setNewContractPropertyUID={setNewContractPropertyUID}
-                // showNewContract={showNewContract}
+            {
+              RHS === "AddProperty" && 
+                <PropertyForm
+                  onBack={handleBackClick}
+                  // onSubmit={handleBackClick}
+                  onSubmit={showNewContract}
+                  property_endpoint_resp={rawPropertyData}
+                  setNewContractUID={setNewContractUID}
+                  setNewContractPropertyUID={setNewContractPropertyUID}
+                  // showNewContract={showNewContract}
+                />
+            }
+            {
+              RHS === "CreateContract" && 
+                <ManagementContractDetails
+                  contractUID={newContractUID}
+                  contractPropertyUID={newContractPropertyUID}
+                  properties={rawPropertyData}
+                  
+                />
+            }
+            {
+              RHS === "ViewPMQuotesRequested" && 
+              <PMQuotesRequested 
+                index={returnIndex}
+                propertyData={propertyList}
+                contracts={allContracts}
+                handleBackClick={handleBackClick}
+
+                // pmQuoteRequestedState={pmQuoteRequestedState}
+                // setCurrentView={setCurrentView}
               />
-            )}
-            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData} />}
+            }
           </Grid>
         </Grid>
       </Container>
