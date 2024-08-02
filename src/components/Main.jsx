@@ -192,7 +192,7 @@ import PublicProfile from "./Profile/PublicProfile";
 import OwnerFirstProperty from "./OwnerDashboard/OwnerFirstProperty";
 
 function Main() {
-  console.log("In Main Page");
+  // console.log("In Main Page");
   const { roleName, selectedRole } = useUser();
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>

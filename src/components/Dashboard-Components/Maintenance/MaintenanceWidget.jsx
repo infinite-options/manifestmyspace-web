@@ -8,7 +8,7 @@ import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
 
 export default function MaintenanceWidget({ maintenanceData }) {
-  console.log("In MaintenanceWidget");
+  // console.log("In MaintenanceWidget");
   const navigate = useNavigate();
   const { maintenanceRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 
@@ -21,7 +21,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
   // TODO: We need to make the /maintenanceRequests endpoint return the data in the format we need for the Status component
   useEffect(() => {
     const dataObject = {};
-    console.log("maintenanceData", maintenanceData);
+    // console.log("maintenanceData", maintenanceData);
     for (const item of maintenanceData) {
       // console.log(item)
       if (!dataObject[item.maintenance_status]) {
@@ -53,7 +53,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
   return (
     <Grid
       container
-      justifyContent="center"
+      justifyContent='center'
       //   alignItems="center"
       style={{ padding: "15px" }}
       sx={{
@@ -69,7 +69,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
       <Grid item container xs={12}>
         <Grid item xs={2}></Grid>
         <Grid item xs={8} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "flex-start" }}>
-          <Typography variant="h5" sx={{ fontWeight: "bold", color: "#160449" }}>
+          <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
             Maintenance
           </Typography>
         </Grid>
@@ -85,7 +85,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
                 backgroundColor: "#F2F2F2",
               },
             }}
-            variant="outlined"
+            variant='outlined'
             onClick={(e) => {
               e.stopPropagation();
               navigate("/addMaintenanceItem");
@@ -98,8 +98,8 @@ export default function MaintenanceWidget({ maintenanceData }) {
       <Grid item container xs={12}>
         <Grid item xs={6} container sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "flex-start" }}>
           <Button
-            variant="outlined"
-            id="revenue"
+            variant='outlined'
+            id='revenue'
             // className={classes.button}
             style={{
               // height: "100%",
@@ -114,14 +114,14 @@ export default function MaintenanceWidget({ maintenanceData }) {
               // navigate(propertyRoutingBasedOnSelectedRole());
             }}
           >
-            <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: "4px" }} />
+            <CalendarIcon stroke='#3D5CAC' width='20' height='20' style={{ marginRight: "4px" }} />
             Last 30 days
           </Button>
         </Grid>
         <Grid item xs={6} container sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-start" }}>
           <Button
-            variant="outlined"
-            id="revenue"
+            variant='outlined'
+            id='revenue'
             // className={classes.button}
             style={{
               // height: "100%",
@@ -134,7 +134,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
             }}
             // onClick={handleSelectPropertyClick}
           >
-            <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: "4px" }} />
+            <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "4px" }} />
             Select Property
           </Button>
         </Grid>
@@ -165,10 +165,10 @@ export default function MaintenanceWidget({ maintenanceData }) {
                 marginBottom: "0px",
               }}
             >
-              <Grid container justifyContent="space-between" alignItems="center">
+              <Grid container justifyContent='space-between' alignItems='center'>
                 <Grid item>{item.status}</Grid>
                 <Grid item>
-                  <Typography variant="body2" align="right">
+                  <Typography variant='body2' align='right'>
                     {maintenanceRequestCounts[item.mapping] ? maintenanceRequestCounts[item.mapping] : "0"}
                   </Typography>
                 </Grid>
