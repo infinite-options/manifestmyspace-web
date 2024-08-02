@@ -23,6 +23,7 @@ import PMRent from "../Rent/PMRent/PMRent";
 function PropertiesList(props) {
   console.log("In Property List: ", props.propertyList);
   const location = useLocation();
+  let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
@@ -212,7 +213,7 @@ function PropertiesList(props) {
   const onPropertyClick = (params) => {
     const property = params.row;
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
-    // console.log("List Item Clicked", property, i, displayedItems);
+    console.log("List Item Clicked", property, i, displayedItems);
     handlePropertyDetailNavigation(i, displayedItems);
     // setSelectedPropertyIndex(i);
     setPropertyIndex(i);
@@ -468,26 +469,26 @@ function PropertiesList(props) {
                 color: "#000000",
               }}
               onClick={(e) => {
-                console.log("selected in", params);
-                // if (numOfMaintenanceReqs > 0) {
-                //   if (selectedRole === "OWNER") {
-                //     navigate("/ownerMaintenance", {
-                //       state: {
-                //         fromProperty: true,
-                //         index: params.id,
-                //         propertyId: displayedItems[params.id].property_uid,
-                //       },
-                //     });
-                //   } else {
-                //     navigate("/managerMaintenance", {
-                //       state: {
-                //         fromProperty: true,
-                //         index: params.id,
-                //         propertyId: displayedItems[params.id].property_uid,
-                //       },
-                //     });
-                //   }
-                // }
+                console.log("selected in 6666", params);
+                if (numOfMaintenanceReqs > 0) {
+                  if (selectedRole === "OWNER") {
+                    navigate("/ownerMaintenance", {
+                      state: {
+                        fromProperty: true,
+                        index: params.id,
+                        propertyId: displayedItems[params.id].property_uid,
+                      },
+                    });
+                  } else {
+                    navigate("/managerMaintenance", {
+                      state: {
+                        fromProperty: true,
+                        index: params.id,
+                        propertyId: displayedItems[params.id].property_uid,
+                      },
+                    });
+                  }
+                }
               }}
             >
               <img src={maintenanceIcon} alt='maintenance icon' style={{ width: "35px", height: "35px" }} />
@@ -635,7 +636,7 @@ function PropertiesList(props) {
             {LHS === "Rent" && isDataReady === true ? (
               <Box sx={{ marginTop: "20px" }}>
                 <Grid item xs={12} md={12}>
-                  <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent}/>
+                  <PMRent setLHS={setLHS} onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent}/>
                 </Grid>
               </Box>
             ) : (

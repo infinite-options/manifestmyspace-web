@@ -169,19 +169,19 @@ export function HomeIcon(props) {
 export function ViewAllButton(props) {
   return (
     <Box
+      onClick={props.onClick}
       sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-
         borderRadius: "10px",
         padding: "5px",
         boxShadow: "0px 4px 4px #00000040",
-
         backgroundColor: "#9EAED6",
         color: "#160449",
         fontSize: "20px",
         fontWeight: "600",
+        cursor: "pointer", // Add pointer cursor to indicate clickability
       }}
     >
       {props.children}

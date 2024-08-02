@@ -139,16 +139,32 @@ const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp}) => {
     setIsModalOpen(false);
   };
 
-	const handleAddressSelect = async (address) => {
-		setAddress(address.street ? address.street : '');
-		setCity(address.city ? address.city : '');
-		setState(address.state ? address.state : '');
-		setZip(address.zip ? address.zip : '');
+  
+  const handleAddressSelect = (address) => {
 
-	const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.zip}`;
-    const coords = await getLatLongFromAddress(fullAddress);
-    setCoordinates(coords);
-	};
+	setAddress(address.street ? address.street : "");
+	setCity(address.city ? address.city : "");
+	setState(address.state ? address.state : "");
+	setZip(address.zip ? address.zip : "");
+};
+
+useEffect( () => {
+	
+console.log("Address set to 23", address)
+console.log("Address city set to 23", city)
+}, [ address, unit, city, state, zip]);
+
+
+	// const handleAddressSelect = async (address) => {
+	// 	setAddress(address.street ? address.street : '');
+	// 	setCity(address.city ? address.city : '');
+	// 	setState(address.state ? address.state : '');
+	// 	setZip(address.zip ? address.zip : '');
+
+	// const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.zip}`;
+    // const coords = await getLatLongFromAddress(fullAddress);
+    // setCoordinates(coords);
+	// };
 
 	const handleUnitChange = (event) => {
 		setUnit(event.target.value);
@@ -377,6 +393,8 @@ const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp}) => {
         
       };
 
+	
+
       useEffect(() => {
         //This runs for a manager who wants to select an owner while adding a property
         if (selectedRole === "MANAGER") {
@@ -407,7 +425,7 @@ const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp}) => {
           };
           getOwnerContacts();
         }
-      }, []);
+      }, [setAddress, setUnit, setCity, setState, setZip,]);
 
 	  useEffect(() => {
         const fetchAppliances = async () => {
@@ -457,13 +475,14 @@ const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp}) => {
 											fontSize: 14,
 										}}
 									>
-										Address
+										Address 
 									</Typography>
 								</Grid>
 								<Grid item xs={10}>
 									<AddressAutocompleteInput
 										className={classes.autocompleteInput}
 										onAddressSelect={handleAddressSelect}
+										defaultValue={address}
 									/>
 								</Grid>
 								<Grid item xs={2}>
