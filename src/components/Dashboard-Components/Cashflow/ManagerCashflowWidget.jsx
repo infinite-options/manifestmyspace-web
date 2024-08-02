@@ -444,7 +444,7 @@ function ManagerCashflowWidget({ profitsTotal, rentsTotal, payoutsTotal, propsMo
                   onClose={handleClose}                  
                 >
                 {/* <Select value={selectedProperty} onChange={handlePropertyChange} variant="filled" displayEmpty> */}
-                  {propertyList.map((property, index) => {
+                  {propertyList?.map((property, index) => {
                     return (
                       <MenuItem
                         key={property.property_uid}
