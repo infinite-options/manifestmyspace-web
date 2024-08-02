@@ -240,15 +240,18 @@ export default function EditMaintenanceItem() {
 		editFormData.append('maintenance_request_created_date', formattedDate); // Convert to ISO string format
 		editFormData.append('maintenance_request_closed_date', null);
 		editFormData.append('maintenance_request_adjustment_date', null);
-
+		
+		console.log('---edit maintainance---', selectedImageList);
 		for (let i = 0; i < selectedImageList.length; i++) {
 			try {
 				let key = i === 0 ? 'img_cover' : `img_${i - 1}`;
 
 				if (selectedImageList[i].startsWith('data:image')) {
+					console.log('is it in if', selectedImageList[i]);
 					const imageBlob = dataURItoBlob(selectedImageList[i]);
 					editFormData.append(key, imageBlob);
 				} else {
+					console.log('is it in else', selectedImageList[i]);
 					editFormData.append(key, selectedImageList[i]);
 				}
 			} catch (error) {
