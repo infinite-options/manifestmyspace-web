@@ -484,7 +484,7 @@ console.log("Address city set to 23", city)
 									<AddressAutocompleteInput
 										className={classes.autocompleteInput}
 										onAddressSelect={handleAddressSelect}
-										defaultValue={address}
+										
 									/>
 								</Grid>
 								<Grid item xs={2}>
