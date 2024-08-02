@@ -17,10 +17,10 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
-export default function PMRent(props) {
-  console.log("In PMRent --> Consider renaming", props);
-  console.log("In PM Rent onPropertyInRentWidgetClicked: ", props.onPropertyInRentWidgetClicked);
-  console.log("In PM Rent setInitialPropInRent: ", props.setInitialPropInRent);
+export default function PMRent({ setLHS, onPropertyInRentWidgetClicked, setInitialPropInRent }) {
+  // console.log("In PMRent --> Consider renaming", props);
+  // console.log("In PM Rent onPropertyInRentWidgetClicked: ", props.onPropertyInRentWidgetClicked);
+  // console.log("In PM Rent setInitialPropInRent: ", props.setInitialPropInRent);
 
   const { getProfileId } = useUser();
   const [dataNum, setDataNum] = useState(0);
@@ -32,6 +32,10 @@ export default function PMRent(props) {
   // useEffect(() => {
   //   console.log("rentDetailIndexList - ", rentDetailIndexList);
   // }, [rentDetailIndexList]);
+
+  const handleViewAllClick = () => {
+    setLHS("List"); 
+  };
 
   useEffect(() => {
     setShowSpinner(true);
@@ -115,7 +119,7 @@ export default function PMRent(props) {
           marginTop: "10px",
         }}
       >
-        <ViewAllButton>View All {dataNum} Properties</ViewAllButton>
+        <ViewAllButton onClick={handleViewAllClick}>View All {dataNum} Properties</ViewAllButton>
       </Box>
 
       <Box
@@ -128,8 +132,8 @@ export default function PMRent(props) {
           data={rentData}
           rentDetailIndexList={rentDetailIndexList}
           link={"/pmRentDetail"}
-          onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}
-          setInitialPropInRent={props.setInitialPropInRent}
+          onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked}
+          setInitialPropInRent={setInitialPropInRent}
         />
       </Box>
     </MainContainer>
