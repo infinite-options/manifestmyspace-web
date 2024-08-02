@@ -43,13 +43,13 @@ function PropertyRentWidget(props) {
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
+  // console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
   // console.log("Selected Role: ", selectedRole);
   // console.log("Role: ", user);
   // console.log("Is it in mobile", isMobile);
   // console.log("PropertyRentWidget - props for rentData", props.rentData);
   // console.log("PropertyRentWidget - props for contract requests- ", props.contractRequests);
-  console.log("PropertyRentWidget - props for propertyData", props.propertyData);
+  // console.log("PropertyRentWidget - props for propertyData", props.propertyData);
 
   useEffect(() => {
     setRawPropertyData(props.propertyData);
@@ -64,7 +64,7 @@ function PropertyRentWidget(props) {
   let rentStatusData = props.rentData;
 
   const contractRequests = props?.contractRequests;
-  // console.log("PropertyRentWidget - contractRequests - ", contractRequests);
+  console.log("PropertyRentWidget - contractRequests - ", contractRequests);
 
   let unpaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "UNPAID") : 0;
   // console.log(unpaidCount);
@@ -124,7 +124,7 @@ function PropertyRentWidget(props) {
   const handleSelectPropertyClick = async (event) => {
     setAnchorEl(event.currentTarget);
     if (propertyList?.length > 0) {
-      console.log("Properties in List: ", propertyList);
+      // console.log("Properties in List: ", propertyList);
       return;
     }
     // try {
@@ -198,7 +198,7 @@ function PropertyRentWidget(props) {
               borderRadius: "5px",
             }}
             onClick={() => {
-              console.log("Clicked 1");
+              // console.log("Clicked 1");
               navigate(propertyRoutingBasedOnSelectedRole());
             }}
           >
@@ -388,10 +388,12 @@ function PropertyRentWidget(props) {
             fontSize: "15px",
             borderRadius: "5px",
           }}
-          onClick={() => {
-            console.log("New Request Clicked");
-            navigate("/pmQuotesList");
-          }}
+          // onClick={() => {
+          //   console.log("New Request Clicked");
+          //   // navigate("/pmQuotesList");
+          // }}
+          // onClick={() => navigate("/propertiesPM", { state: { showLHS: "Rent", showRHS: "PropertyNavigator", pmRequests: { contractRequests } } })}
+          onClick={() => navigate("/propertiesPM", { state: { showLHS: "pmRequest", showRHS: "PropertyNavigator" } })}
         >
           <Box
             sx={{

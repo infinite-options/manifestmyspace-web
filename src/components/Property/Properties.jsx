@@ -20,8 +20,9 @@ import ViewLease from "../Leases/ViewLease";
 import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManagementContract";
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
+import PMQuotesList from "./PMQuotesList";
 
-function Properties(props) {
+export default function Properties() {
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
 
@@ -37,6 +38,7 @@ function Properties(props) {
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
   const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
   const [allContracts, setAllContracts] = useState([]);
+  const [pmRequests, setPMRequests] = useState([]);
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [returnIndex, setReturnIndex] = useState(0);
@@ -63,6 +65,7 @@ function Properties(props) {
     console.log("Current Selected Role: ", selectedRole);
     console.log("propertyIndex at the beginning 2: ", propertyIndex);
     console.log("Return Index: ", returnIndex);
+    console.log("PM Requests: ", pmRequests);
   }, [LHS, RHS]);
 
   if (selectedRole === "MANAGER") {
@@ -71,6 +74,7 @@ function Properties(props) {
     console.log("Owner Selected");
   }
 
+  // ENDPOINT CALLS
   useEffect(() => {
     console.log("In Properties Endpoint Call");
     const fetchData = async () => {
@@ -109,7 +113,10 @@ function Properties(props) {
       const contractsResponse = await contract_response.json();
       console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
       setAllContracts(contractsResponse.result);
+      setPMRequests(contractsResponse.result);
+      // setPMRequests(contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE")); //Set data for PM Requests
 
+      // CHECK IF ALL DATA HAS BEEN RECEIVED
       if (propertyData.Property.code === 200 && rentResponse.RentStatus.code === 200 && contractsResponse.code === 200) {
         console.log("Endpoint Data is Ready");
         setDataReady(true);
@@ -125,42 +132,8 @@ function Properties(props) {
     setShowSpinner(false);
   }, []);
 
-  // useEffect(() => {
-  //   const getContractsForOwner = async () => {
-  //     try {
-  //       const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
-  //       // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-  //       if (!response.ok) {
-  //         console.log("Error fetching contracts data");
-  //       }
-  //       const contractsResponse = await response.json();
-  //       // console.log('contractsResponse--', contractsResponse.result);
-  //       await setAllContracts(contractsResponse.result);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   getContractsForOwner();
-  // }, []);
-
-  // const propertyRentDetails = async () => {
-  //   try {
-  //     const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-  //     //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
-  //     if (!response.ok) {
-  //       console.log("Error fetching rent Details data");
-  //     }
-  //     const rentResponse = await response.json();
-  //     return rentResponse;
-  //   } catch (error) {
-  //     console.error("Failed to fetch rent details:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   console.log("dataReady", dataReady);
-  //   console.log("showSpinner", showSpinner);
-  // }, [dataReady, showSpinner]);
+  //
+  console.log("PM Request data: ", pmRequests);
 
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
@@ -231,8 +204,7 @@ function Properties(props) {
     // console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
     // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
     setRHS("AddProperty");
-  };  
-  
+  };
 
   const handleViewContractClick = () => {
     // setPage("ViewLease");
@@ -257,16 +229,6 @@ function Properties(props) {
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            {/* {LHS === "List" && (
-              <PropertiesList
-                index={propertyIndex}
-                propertyList={propertyList}
-                allRentStatus={allRentStatus}
-                isDesktop={isDesktop}
-                contracts={allContracts}
-                setPropertyIndex={setPropertyIndex}
-              />
-            )} */}
             <PropertiesList
               index={propertyIndex}
               LHS={LHS}
@@ -274,6 +236,7 @@ function Properties(props) {
               allRentStatus={allRentStatus}
               isDesktop={isDesktop}
               contracts={allContracts}
+              pmRequests={pmRequests}
               onDataChange={handleListClick}
               onAddPropertyClick={handleAddPropertyClick}
             />
@@ -307,24 +270,18 @@ function Properties(props) {
                 onBackClick={handleBackClick}
               />
             )}
-            {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
-            {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}            
+            {RHS === "ViewLease" && (
+              <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />
+            )}
+            {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}
             {RHS === "Applications" && (
               <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
             )}
-            {
-              RHS === "AddProperty" && 
-                <PropertyForm
-                  onBack={handleBackClick}
-                  onSubmit={handleBackClick}
-                  property_endpoint_resp={rawPropertyData}
-                />
-            }
+            {RHS === "AddProperty" && <PropertyForm onBack={handleBackClick} onSubmit={handleBackClick} property_endpoint_resp={rawPropertyData} />}
+            {RHS === "PMQuote" && <PMQuotesList onBack={handleBackClick} onSubmit={handleBackClick} pmRequests={pmRequests} />}
           </Grid>
         </Grid>
       </Container>
     </ThemeProvider>
   );
 }
-
-export default Properties;

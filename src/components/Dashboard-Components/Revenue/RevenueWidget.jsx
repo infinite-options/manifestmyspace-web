@@ -2,7 +2,7 @@ import { Box, Typography, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export default function RevenueWidget({ revenueData }) {
-  console.log("In Revenue Widget ", revenueData);
+  // console.log("In Revenue Widget ", revenueData);
 
   const navigate = useNavigate();
   const revenue = revenueData?.revenue?.result[0]?.received_expected;
@@ -14,10 +14,10 @@ export default function RevenueWidget({ revenueData }) {
 
   return (
     <>
-      <Grid 
-        onClick={() => navigate("/managerCashflow", { state: { currentWindow: "PROFITABILITY"}})}
-        container 
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: 'pointer' }}
+      <Grid
+        onClick={() => navigate("/managerCashflow", { state: { currentWindow: "PROFITABILITY" } })}
+        container
+        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer" }}
       >
         <Grid container item xs={12} md={9} spacing={2} sx={{ padding: "20px" }}>
           <Grid
@@ -92,10 +92,10 @@ export default function RevenueWidget({ revenueData }) {
           </Grid>
         </Grid>
 
-        <Grid container item xs={12} md={3} direction="row" justifyContent="center" alignItems="center" sx={{ padding: "10px" }}>
+        <Grid container item xs={12} md={3} direction='row' justifyContent='center' alignItems='center' sx={{ padding: "10px" }}>
           <Grid item xs={6} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 width: "60%",
                 // marginTop: '10px',
@@ -110,7 +110,7 @@ export default function RevenueWidget({ revenueData }) {
               onClick={(e) => {
                 e.stopPropagation();
                 // navigate("/payments")
-                navigate("/managerCashflow", { state: { currentWindow: 'PAYMENTS'}});
+                navigate("/managerCashflow", { state: { currentWindow: "PAYMENTS" } });
               }}
             >
               Pay Bills
@@ -120,9 +120,9 @@ export default function RevenueWidget({ revenueData }) {
             <Button
               onClick={(e) => {
                 e.stopPropagation();
-                navigate("/managerCashflow", { state: { currentWindow: "TRANSACTIONS"}});
+                navigate("/managerCashflow", { state: { currentWindow: "TRANSACTIONS" } });
               }}
-              variant="contained"
+              variant='contained'
               sx={{
                 width: "60%",
                 // marginTop: '10px',

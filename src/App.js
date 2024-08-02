@@ -7,7 +7,7 @@ import { OnboardingProvider } from "./contexts/OnboardingContext";
 import { CookiesProvider } from "react-cookie";
 
 function App() {
-  console.log("In App.js");
+  // console.log("In App.js");
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <UserProvider>

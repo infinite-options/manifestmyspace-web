@@ -13,11 +13,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop";
 
 import APIConfig from "../../utils/APIConfig";
+import { AllInbox } from "@mui/icons-material";
 
-export default function PMQuotesList({}) {
+export default function PMQuotesList({ props }) {
   let navigate = useNavigate();
   const location = useLocation();
-  const property_endpoint_resp = location.state.property_endpoint_resp;
+  // const property_endpoint_resp = location.state.property_endpoint_resp;
+  const allContracts = props.allContracts;
   const { getProfileId } = useUser();
   const [contractRequests, setContractRequests] = useState([]);
   const [properties, setProperties] = useState([]);
@@ -25,58 +27,20 @@ export default function PMQuotesList({}) {
   const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
-    const getContractsForPM = async () => {
-      setShowSpinner(true);
-      try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-        const contractsResponse = await response.json();
-        const contractsData = contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE");
-        setContractRequests(contractsData);
-        setShowSpinner(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    setContractRequests(props.pmRequests);
+  }, [props.pmRequests]);
 
-    const getProperties = async () => {
-      setShowSpinner(true);
-      try {
-        console.log("In getProperties:", property_endpoint_resp);
-
-        // Assuming property_endpoint_resp is an object with the 'Property' and 'NewPMRequests' properties
-        // const properties = property_endpoint_resp.Property.result;
-        // console.log("Properties: ", properties);
-        const newPMRequests = property_endpoint_resp.NewPMRequests.result;
-        console.log("NewPMRequests: ", newPMRequests);
-
-        // Correct the announcements field for each property
-        // properties.forEach((property) => {
-        //   if (property.announcements) {
-        //     property.announcements = property.announcements.replace(/\\"/g, '"');
-        //     property.announcements = JSON.parse(property.announcements);
-        //   }
-        // });
-
-        // setProperties(properties);
-        setContractRequests(newPMRequests);
-        setShowSpinner(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getProperties();
-  }, [refresh]);
+  console.log("In PMQuotes: ", props.pmRequests);
 
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Stack
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
+        direction='column'
+        alignItems='center'
+        justifyContent='center'
         sx={{
           width: "100%", // Take up full screen width
           minHeight: "100vh", // Set the Box height to full height
@@ -102,8 +66,8 @@ export default function PMQuotesList({}) {
           >
             All Property Management Requests
           </Typography>
-          {contractRequests.map((contract, index) => (
-            <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} />
+          {contractRequests?.map((contract, index) => (
+            <ContractCard key={index} contract={contract} property_endpoint_resp={contractRequests} />
           ))}
         </Stack>
       </Stack>
@@ -152,13 +116,13 @@ function ContractCard(props) {
         })
       }
     >
-      <Grid container alignItems="center">
+      <Grid container alignItems='center'>
         <Grid item xs={3}></Grid>
 
         <Grid item xs={6} style={{ display: "flex", justifyContent: "center" }}>
           <img
             src={contract.owner_photo_url}
-            alt="Business Photo"
+            alt='Business Photo'
             style={{
               borderRadius: "50%",
               width: "40px",
@@ -182,7 +146,7 @@ function ContractCard(props) {
           {announcements?.length && (
             <img
               src={Bell_fill}
-              alt="Bell Icon"
+              alt='Bell Icon'
               style={{ display: "block", cursor: "pointer", marginTop: "5px", marginLeft: "100px", marginRight: "40px" }}
               onClick={(e) => {
                 e.stopPropagation();

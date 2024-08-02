@@ -75,7 +75,7 @@ export default function PropertyNavigator({
   isDesktop = true,
   onEditClick,
   onViewLeaseClick,
-  onViewContractClick, 
+  onViewContractClick,
   setEditPropertyState,
   setTenantAppNavState,
   setPmQuoteRequestedState,
@@ -115,7 +115,7 @@ export default function PropertyNavigator({
 
   const [applianceList, setApplianceList] = useState([]);
 
-  console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
+  // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
@@ -133,17 +133,16 @@ export default function PropertyNavigator({
     }
   };
 
-//   const fetchApplianceList = async () => {
-//     try {
-//         const response = await fetch(`${APIConfig.baseURL.dev}/lists?list_category=appliances`);
-//         const data = await response.json();
-//         const validAppliances = data.result.filter(item => item.list_item.trim() !== "");
-//         setApplianceList(validAppliances);
-//     } catch (error) {
-//         console.error("Error fetching appliances:", error);
-//     }
-// };
-
+  //   const fetchApplianceList = async () => {
+  //     try {
+  //         const response = await fetch(`${APIConfig.baseURL.dev}/lists?list_category=appliances`);
+  //         const data = await response.json();
+  //         const validAppliances = data.result.filter(item => item.list_item.trim() !== "");
+  //         setApplianceList(validAppliances);
+  //     } catch (error) {
+  //         console.error("Error fetching appliances:", error);
+  //     }
+  // };
 
   useEffect(() => {
     getDataFromAPI();
@@ -152,20 +151,16 @@ export default function PropertyNavigator({
   }, []);
 
   useEffect(() => {
-    console.log("ROHIT - appliances - ", appliances);        
+    console.log("ROHIT - appliances - ", appliances);
   }, [appliances]);
 
   useEffect(() => {
-    console.log("ROHIT - currentApplRow - ", currentApplRow);        
+    console.log("ROHIT - currentApplRow - ", currentApplRow);
   }, [currentApplRow]);
 
   useEffect(() => {
-    console.log("ROHIT - modifiedApplRow - ", modifiedApplRow);        
+    console.log("ROHIT - modifiedApplRow - ", modifiedApplRow);
   }, [modifiedApplRow]);
-
-  
-
-  
 
   useEffect(() => {
     console.log("PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
@@ -332,10 +327,9 @@ export default function PropertyNavigator({
       console.log("Appliances", propertyApplicances);
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
-        
+
         //   console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
       }
-
     }
   }, [currentIndex, propertyId, allRentStatus]);
 
@@ -753,7 +747,7 @@ export default function PropertyNavigator({
   ];
 
   const handleEditClick = (row) => {
-    console.log("ROHIT - handleEditClick - row - ", row);    
+    console.log("ROHIT - handleEditClick - row - ", row);
     setcurrentApplRow(row);
     setModifiedApplRow({ appliance_uid: row.appliance_uid });
     setIsEditing(true);
@@ -773,122 +767,116 @@ export default function PropertyNavigator({
   };
 
   const addAppliance = async (appliance) => {
-    console.log('inside editOrUpdateAppliance', appliance);    
-    try {        
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
+    console.log("inside editOrUpdateAppliance", appliance);
+    try {
+      setShowSpinner(true);
+      const headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Credentials": "*",
+      };
 
-            const applianceFormData = new FormData();
+      const applianceFormData = new FormData();
 
-            
-            Object.keys(appliance).forEach(key => {
-                  // console.log(`Key: ${key}`);
-                
-                  applianceFormData.append(key, appliance[key]);
-                
-            });
-            // applianceFormData.append('appiliance_uid', appliance.uid);
+      Object.keys(appliance).forEach((key) => {
+        // console.log(`Key: ${key}`);
 
-            // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
-            // for (var pair of profileFormData.entries()) {
-            //   console.log(pair[0]+ ', ' + pair[1]); 
-            // }
-            
-        axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances', applianceFormData, headers)
-            .then((response) => {
-                console.log('Data updated successfully', response);
-                // showSnackbar("Your profile has been successfully updated.", "success");                
-                // handleUpdate();
-                setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid }]);
-                setShowSpinner(false);
-            })
-            .catch((error) => {
-                setShowSpinner(false);
-                // showSnackbar("Cannot update your profile. Please try again", "error");
-                if (error.response) {
-                    console.log(error.response.data);
-                }
-            });
-        setShowSpinner(false);
-        // setModifiedData([]);
-    
+        applianceFormData.append(key, appliance[key]);
+      });
+      // applianceFormData.append('appiliance_uid', appliance.uid);
+
+      // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
+      // for (var pair of profileFormData.entries()) {
+      //   console.log(pair[0]+ ', ' + pair[1]);
+      // }
+
+      axios
+        .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+        .then((response) => {
+          console.log("Data updated successfully", response);
+          // showSnackbar("Your profile has been successfully updated.", "success");
+          // handleUpdate();
+          setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid }]);
+          setShowSpinner(false);
+        })
+        .catch((error) => {
+          setShowSpinner(false);
+          // showSnackbar("Cannot update your profile. Please try again", "error");
+          if (error.response) {
+            console.log(error.response.data);
+          }
+        });
+      setShowSpinner(false);
+      // setModifiedData([]);
     } catch (error) {
-        // showSnackbar("Cannot update the lease. Please try again", "error");
-        console.log("Cannot Update Appliances", error);
-        setShowSpinner(false);
+      // showSnackbar("Cannot update the lease. Please try again", "error");
+      console.log("Cannot Update Appliances", error);
+      setShowSpinner(false);
     }
-  }
+  };
 
   const editAppliance = async (appliance) => {
-    console.log('inside editAppliance', appliance);        
-    try {        
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
+    console.log("inside editAppliance", appliance);
+    try {
+      setShowSpinner(true);
+      const headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Credentials": "*",
+      };
 
-            const applianceFormData = new FormData();
+      const applianceFormData = new FormData();
 
-            
-            Object.keys(appliance).forEach(key => {
-                  // console.log(`Key: ${key}`);
-                
-                  applianceFormData.append(key, appliance[key]);
-                
-            });
-            // applianceFormData.append('appiliance_uid', appliance.uid);
+      Object.keys(appliance).forEach((key) => {
+        // console.log(`Key: ${key}`);
 
-            // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
-            // for (var pair of profileFormData.entries()) {
-            //   console.log(pair[0]+ ', ' + pair[1]); 
-            // }
-            
-        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances', applianceFormData, headers)
-            .then((response) => {
-                console.log('Data updated successfully', response);
-                // showSnackbar("Your profile has been successfully updated.", "success");                
-                // handleUpdate();
-                // setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid }]);
-                // setAppliances([...appliances, { ...currentApplRow }]);
-                setAppliances((prevAppliances) => {
-                  const index = prevAppliances.findIndex(appliance => appliance.appliance_uid === currentApplRow.appliance_uid);
-                  
-                  if (index !== -1) {
-                    // Update existing item
-                    return prevAppliances.map((appliance, i) => 
-                      i === index ? { ...appliance, ...currentApplRow } : appliance
-                    );
-                  } else {
-                    // Add new item
-                    return [...prevAppliances, { ...currentApplRow }];
-                  }
-                });
-                setShowSpinner(false);
-            })
-            .catch((error) => {
-                setShowSpinner(false);
-                // showSnackbar("Cannot update your profile. Please try again", "error");
-                if (error.response) {
-                    console.log(error.response.data);
-                }
-            });
-        setShowSpinner(false);
-        // setModifiedData([]);
-    
+        applianceFormData.append(key, appliance[key]);
+      });
+      // applianceFormData.append('appiliance_uid', appliance.uid);
+
+      // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
+      // for (var pair of profileFormData.entries()) {
+      //   console.log(pair[0]+ ', ' + pair[1]);
+      // }
+
+      axios
+        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+        .then((response) => {
+          console.log("Data updated successfully", response);
+          // showSnackbar("Your profile has been successfully updated.", "success");
+          // handleUpdate();
+          // setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid }]);
+          // setAppliances([...appliances, { ...currentApplRow }]);
+          setAppliances((prevAppliances) => {
+            const index = prevAppliances.findIndex((appliance) => appliance.appliance_uid === currentApplRow.appliance_uid);
+
+            if (index !== -1) {
+              // Update existing item
+              return prevAppliances.map((appliance, i) => (i === index ? { ...appliance, ...currentApplRow } : appliance));
+            } else {
+              // Add new item
+              return [...prevAppliances, { ...currentApplRow }];
+            }
+          });
+          setShowSpinner(false);
+        })
+        .catch((error) => {
+          setShowSpinner(false);
+          // showSnackbar("Cannot update your profile. Please try again", "error");
+          if (error.response) {
+            console.log(error.response.data);
+          }
+        });
+      setShowSpinner(false);
+      // setModifiedData([]);
     } catch (error) {
-        // showSnackbar("Cannot update the lease. Please try again", "error");
-        console.log("Cannot Update Appliances", error);
-        setShowSpinner(false);
+      // showSnackbar("Cannot update the lease. Please try again", "error");
+      console.log("Cannot Update Appliances", error);
+      setShowSpinner(false);
     }
-  }
+  };
 
   const handleAddAppln = () => {
     const newError = {};
@@ -897,15 +885,14 @@ export default function PropertyNavigator({
     setError(newError);
     if (Object.keys(newError).length === 0) {
       if (isEditing) {
-        // setAppliances(appliances.map((appliance) => (appliance.appliance_uid === currentApplRow.appliance_uid ? currentApplRow : appliance)));                
+        // setAppliances(appliances.map((appliance) => (appliance.appliance_uid === currentApplRow.appliance_uid ? currentApplRow : appliance)));
         // editOrUpdateAppliance(currentApplRow)
 
         // editAppliance(modifiedApplRow)
-        editAppliance(currentApplRow)
-
+        editAppliance(currentApplRow);
       } else {
         // setAppliances([...appliances, { ...currentApplRow, appliance_uid: uuidv4() }]);
-        addAppliance(currentApplRow)
+        addAppliance(currentApplRow);
       }
       handleClose();
     } else {
@@ -940,7 +927,6 @@ export default function PropertyNavigator({
       }, {});
       console.log("ROHIT - appliance UIDs to categories- ", listUidToItemMapping);
       setApplianceUIDToCategoryMap(listUidToItemMapping);
-      
     } catch (error) {
       console.log(error);
     }
@@ -2162,7 +2148,7 @@ export default function PropertyNavigator({
                       width: "100%",
                     },
                     "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                    "@media (max-width: 600px)": {
+                    "@media (maxWidth: 600px)": {
                       "& .MuiDataGrid-columnHeaderTitle": {
                         width: "100%",
                         margin: "0px",
@@ -2271,30 +2257,28 @@ export default function PropertyNavigator({
                         fullWidth
                         required
                         variant='outlined'
-                        value={currentApplRow?.appliance_type? applianceUIDToCategoryMap[currentApplRow?.appliance_type] : "range"}
+                        value={currentApplRow?.appliance_type ? applianceUIDToCategoryMap[currentApplRow?.appliance_type] : "range"}
                         // value={currentApplRow?.appliance_type || ""}
                         onChange={(e) => {
-                            if(isEditing){
-                              // fix - send only updated fields 
-                              // setModifiedApplRow({
-                              //   ...modifiedApplRow,
-                              //   appliance_type: applianceCategoryToUIDMap[e.target.value],
-                              // })
-                              console.log("ROHIT - setting appliance type to - ", e.target.value)
-                              setcurrentApplRow({
-                                ...currentApplRow,
-                                appliance_type: applianceCategoryToUIDMap[e.target.value],
-                              })
-                            }
-                            else{
-                              console.log("ROHIT - setting appliance type to - ", applianceCategoryToUIDMap[e.target.value])
-                              setcurrentApplRow({
-                                ...currentApplRow,
-                                appliance_type: applianceCategoryToUIDMap[e.target.value],
-                              })
-                            }
+                          if (isEditing) {
+                            // fix - send only updated fields
+                            // setModifiedApplRow({
+                            //   ...modifiedApplRow,
+                            //   appliance_type: applianceCategoryToUIDMap[e.target.value],
+                            // })
+                            console.log("ROHIT - setting appliance type to - ", e.target.value);
+                            setcurrentApplRow({
+                              ...currentApplRow,
+                              appliance_type: applianceCategoryToUIDMap[e.target.value],
+                            });
+                          } else {
+                            console.log("ROHIT - setting appliance type to - ", applianceCategoryToUIDMap[e.target.value]);
+                            setcurrentApplRow({
+                              ...currentApplRow,
+                              appliance_type: applianceCategoryToUIDMap[e.target.value],
+                            });
                           }
-                        }
+                        }}
                       >
                         {applianceCategories &&
                           applianceCategories.map((appln) => (
@@ -2349,13 +2333,12 @@ export default function PropertyNavigator({
                         //   })
                         // }
                         onChange={(date) => {
-                            const formattedDate = dayjs(date).format('MM-DD-YYYY');
-                            setcurrentApplRow({
-                              ...currentApplRow,
-                              appliance_purchased: formattedDate,
-                            })
-                          }
-                        }
+                          const formattedDate = dayjs(date).format("MM-DD-YYYY");
+                          setcurrentApplRow({
+                            ...currentApplRow,
+                            appliance_purchased: formattedDate,
+                          });
+                        }}
                         textField={(params) => (
                           <TextField
                             {...params}
@@ -2395,13 +2378,12 @@ export default function PropertyNavigator({
                         label='Installed On'
                         value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
                         onChange={(date) => {
-                            const formattedDate = dayjs(date).format('MM-DD-YYYY');
-                            setcurrentApplRow({
-                              ...currentApplRow,
-                              appliance_installed: formattedDate,
-                            })
-                          }
-                        }
+                          const formattedDate = dayjs(date).format("MM-DD-YYYY");
+                          setcurrentApplRow({
+                            ...currentApplRow,
+                            appliance_installed: formattedDate,
+                          });
+                        }}
                         textField={(params) => (
                           <TextField
                             {...params}
@@ -2464,13 +2446,12 @@ export default function PropertyNavigator({
                         label='Warranty Till'
                         value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
                         onChange={(date) => {
-                            const formattedDate = dayjs(date).format('MM-DD-YYYY');
-                            setcurrentApplRow({
-                              ...currentApplRow,
-                              appliance_warranty_till: formattedDate,
-                            })
-                          }
-                        }
+                          const formattedDate = dayjs(date).format("MM-DD-YYYY");
+                          setcurrentApplRow({
+                            ...currentApplRow,
+                            appliance_warranty_till: formattedDate,
+                          });
+                        }}
                         textField={(params) => (
                           <TextField
                             {...params}
