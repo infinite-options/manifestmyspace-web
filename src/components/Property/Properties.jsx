@@ -45,7 +45,7 @@ function Properties() {
   const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
-  const [returnIndex, setReturnIndex] = useState(0);
+  const [returnIndex, setReturnIndex] = useState(location.state?.index || 0);
   const [applicationIndex, setApplicationIndex] = useState(0);
 
   const [newContractUID, setNewContractUID] = useState(null);
@@ -137,6 +137,7 @@ function Properties() {
         setFromRentWidget(false);
         sessionStorage.removeItem("isrent");
       }
+      navigate(location.pathname, { replace: true, state: {} });
     };
     fetchData();
     setShowSpinner(false);
@@ -228,9 +229,11 @@ function Properties() {
 
   const handleViewPMQuotesRequested = () => {
     setRHS("ViewPMQuotesRequested");
-  }  
+  };
 
-  
+  const handleSorting = (propertyList) => {
+    setPropertyList(propertyList);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -248,7 +251,7 @@ function Properties() {
               />
             )} */}
             <PropertiesList
-              index={propertyIndex}
+              index={returnIndex}
               LHS={LHS}
               propertyList={propertyList}
               allRentStatus={allRentStatus}
@@ -256,6 +259,7 @@ function Properties() {
               contracts={allContracts}
               onDataChange={handleListClick}
               onAddPropertyClick={handleAddPropertyClick}
+              handleSorting={handleSorting}
             />
           </Grid>
 
@@ -268,7 +272,7 @@ function Properties() {
                 allRentStatus={allRentStatus}
                 isDesktop={isDesktop}
                 contracts={allContracts}
-                onEditClick={handleEditClick}                
+                onEditClick={handleEditClick}
                 onViewLeaseClick={handleViewLeaseClick}
                 onViewContractClick={handleViewContractClick}
                 handleViewApplication={handleViewApplication}
@@ -295,30 +299,20 @@ function Properties() {
             {RHS === "Applications" && (
               <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
             )}
-            {
-              RHS === "AddProperty" && 
-                <PropertyForm
-                  onBack={handleBackClick}
-                  // onSubmit={handleBackClick}
-                  onSubmit={showNewContract}
-                  property_endpoint_resp={rawPropertyData}
-                  setNewContractUID={setNewContractUID}
-                  setNewContractPropertyUID={setNewContractPropertyUID}
-                  // showNewContract={showNewContract}
-                />
-            }
-            {
-              RHS === "CreateContract" && 
-                <ManagementContractDetails
-                  contractUID={newContractUID}
-                  contractPropertyUID={newContractPropertyUID}
-                  properties={rawPropertyData}
-                  
-                />
-            }
-            {
-              RHS === "ViewPMQuotesRequested" && 
-              <PMQuotesRequested 
+            {RHS === "AddProperty" && (
+              <PropertyForm
+                onBack={handleBackClick}
+                // onSubmit={handleBackClick}
+                onSubmit={showNewContract}
+                property_endpoint_resp={rawPropertyData}
+                setNewContractUID={setNewContractUID}
+                setNewContractPropertyUID={setNewContractPropertyUID}
+                // showNewContract={showNewContract}
+              />
+            )}
+            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData} />}
+            {RHS === "ViewPMQuotesRequested" && (
+              <PMQuotesRequested
                 index={returnIndex}
                 propertyData={propertyList}
                 contracts={allContracts}
@@ -327,7 +321,7 @@ function Properties() {
                 // pmQuoteRequestedState={pmQuoteRequestedState}
                 // setCurrentView={setCurrentView}
               />
-            }
+            )}
           </Grid>
         </Grid>
       </Container>

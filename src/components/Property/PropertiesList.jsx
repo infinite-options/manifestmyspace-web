@@ -23,6 +23,7 @@ import PMRent from "../Rent/PMRent/PMRent";
 export default function PropertiesList(props) {
   console.log("In Property List: ", props.propertyList);
   const location = useLocation();
+  let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
   const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
@@ -77,7 +78,7 @@ export default function PropertiesList(props) {
   const onPropertyClick = (params) => {
     const property = params.row;
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
-    // console.log("List Item Clicked", property, i, displayedItems);
+    console.log("List Item Clicked", property, i, displayedItems);
     handlePropertyDetailNavigation(i, displayedItems);
     // setSelectedPropertyIndex(i);
     setPropertyIndex(i);
@@ -333,26 +334,26 @@ export default function PropertiesList(props) {
                 color: "#000000",
               }}
               onClick={(e) => {
-                // console.log("selected in", params);
-                // if (numOfMaintenanceReqs > 0) {
-                //   if (selectedRole === "OWNER") {
-                //     navigate("/ownerMaintenance", {
-                //       state: {
-                //         fromProperty: true,
-                //         index: params.id,
-                //         propertyId: displayedItems[params.id].property_uid,
-                //       },
-                //     });
-                //   } else {
-                //     navigate("/managerMaintenance", {
-                //       state: {
-                //         fromProperty: true,
-                //         index: params.id,
-                //         propertyId: displayedItems[params.id].property_uid,
-                //       },
-                //     });
-                //   }
-                // }
+                console.log("selected in", params);
+                if (numOfMaintenanceReqs > 0) {
+                  if (selectedRole === "OWNER") {
+                    navigate("/ownerMaintenance", {
+                      state: {
+                        fromProperty: true,
+                        index: params.id,
+                        propertyId: displayedItems[params.id].property_uid,
+                      },
+                    });
+                  } else {
+                    navigate("/managerMaintenance", {
+                      state: {
+                        fromProperty: true,
+                        index: params.id,
+                        propertyId: displayedItems[params.id].property_uid,
+                      },
+                    });
+                  }
+                }
               }}
             >
               <img src={maintenanceIcon} alt='maintenance icon' style={{ width: "35px", height: "35px" }} />
@@ -363,32 +364,24 @@ export default function PropertiesList(props) {
     },
   ];
 
-  function sortByCity() {
-    let items = [...displayedItems];
-    items.sort((property1, property2) => property1.property_city.localeCompare(property2.property_city));
-    setDisplayedItems(citySortOrder === "asc" ? items : items.reverse());
-    setCitySortOrder(citySortOrder === "asc" ? "desc" : "asc");
-  }
-
   function sortByAddress() {
     let items = [...displayedItems];
     items.sort((property1, property2) => property1.property_address.localeCompare(property2.property_address));
-    setDisplayedItems(addressSortOrder === "asc" ? items : items.reverse());
+    const sortedList = addressSortOrder === "asc" ? items : items.reverse();
+    setDisplayedItems(sortedList);
     setAddressSortOrder(addressSortOrder === "asc" ? "desc" : "asc");
-  }
-
-  function sortByState() {
-    let items = [...displayedItems];
-    items.sort((property1, property2) => property1.property_state.localeCompare(property2.property_state));
-    setDisplayedItems(stateSortOrder === "asc" ? items : items.reverse());
-    setStateSortOrder(stateSortOrder === "asc" ? "desc" : "asc");
+    props.handleSorting(sortedList);
+    props.onDataChange(0);
   }
 
   function sortByZip() {
     let items = [...displayedItems];
     items.sort((property1, property2) => property1.property_zip - property2.property_zip);
-    setDisplayedItems(zipSortOrder === "asc" ? items : items.reverse());
+    const sortedList = zipSortOrder === "asc" ? items : items.reverse();
+    setDisplayedItems(sortedList);
     setZipSortOrder(zipSortOrder === "asc" ? "desc" : "asc");
+    props.handleSorting(sortedList);
+    props.onDataChange(0);
   }
 
   function sortByStatus() {
@@ -402,8 +395,11 @@ export default function PropertiesList(props) {
         return property1.rent_status.localeCompare(property2.rent_status);
       }
     });
-    setDisplayedItems(statusSortOrder === "asc" ? items : items.reverse());
+    const sortedList = statusSortOrder === "asc" ? items : items.reverse();
+    setDisplayedItems(sortedList);
     setStatusSortOrder(statusSortOrder === "asc" ? "desc" : "asc");
+    props.handleSorting(sortedList);
+    props.onDataChange(0);
   }
 
   return (
@@ -500,7 +496,7 @@ export default function PropertiesList(props) {
             {LHS === "Rent" && isDataReady === true ? (
               <Box sx={{ marginTop: "20px" }}>
                 <Grid item xs={12} md={12}>
-                  <PMRent onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent} />
+                  <PMRent setLHS={setLHS} onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent} />
                 </Grid>
               </Box>
             ) : (
