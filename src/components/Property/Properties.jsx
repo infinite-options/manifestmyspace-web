@@ -21,6 +21,7 @@ import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManag
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
+import PMQuoteList from "./PMQuotesList";
 
 function Properties() {
   const location = useLocation();
@@ -46,6 +47,7 @@ function Properties() {
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [returnIndex, setReturnIndex] = useState(0);
   const [applicationIndex, setApplicationIndex] = useState(0);
+  const [pmRequests, setPMRequests] = useState([]);
 
   const [newContractUID, setNewContractUID] = useState(null);
   const [newContractPropertyUID, setNewContractPropertyUID] = useState(null);
@@ -125,6 +127,14 @@ function Properties() {
       const contractsResponse = await contract_response.json();
       // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
       setAllContracts(contractsResponse.result);
+      // setPMRequests(contractsResponse.result);
+      console.log("UnFiltered List: ", contractsResponse.result);
+      console.log("Filtered List");
+      console.log(
+        "Filtered List: ",
+        contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE")
+      );
+      setPMRequests(contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE"));
 
       if (propertyData.Property.code === 200 && rentResponse.RentStatus.code === 200 && contractsResponse.code === 200) {
         // console.log("Endpoint Data is Ready");
@@ -140,6 +150,8 @@ function Properties() {
     fetchData();
     setShowSpinner(false);
   }, []);
+
+  console.log("PM Requests: ", pmRequests);
 
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
@@ -299,6 +311,17 @@ function Properties() {
               />
             )}
             {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData} />}
+            {RHS === "PMRequests" && (
+              <PMQuoteList
+                onBack={handleBackClick}
+                // onSubmit={handleBackClick}
+                onSubmit={showNewContract}
+                property_endpoint_resp={pmRequests}
+                setNewContractUID={setNewContractUID}
+                setNewContractPropertyUID={setNewContractPropertyUID}
+                // showNewContract={showNewContract}
+              />
+            )}
           </Grid>
         </Grid>
       </Container>

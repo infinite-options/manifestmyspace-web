@@ -14,67 +14,78 @@ import Backdrop from "@mui/material/Backdrop";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function PMQuotesList() {
+export default function PMQuotesList(props) {
   let navigate = useNavigate();
   const location = useLocation();
   console.log("In PMQuoteList");
-  console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
+  // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
+  console.log("In PMQuoteList Replacement property_endpoint_resp: ", props?.property_endpoint_resp);
 
-  const property_endpoint_resp = location.state.property_endpoint_resp;
+  // const property_endpoint_resp = location.state.property_endpoint_resp;
+  const property_endpoint_resp = props?.property_endpoint_resp;
   const { getProfileId } = useUser();
   const [contractRequests, setContractRequests] = useState([]);
   const [properties, setProperties] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
+  // useEffect(() => {
+  //   // const getContractsForPM = async () => {
+  //   //   setShowSpinner(true);
+  //   //   try {
+  //   //     console.log("In UseEffect: ", getProfileId);
+  //   //     const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
+  //   //     const contractsResponse = await response.json();
+  //   //     console.log("contractResponse: ", contractsResponse);
+  //   //     const contractsData = contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE");
+  //   //     console.log("contractData: ", contractsData);
+  //   //     setContractRequests(contractsData);
+  //   //     setShowSpinner(false);
+  //   //   } catch (error) {
+  //   //     console.error(error);
+  //   //   }
+  //   // };
+
+  //   // console.log("ContractRequests: ", contractRequests);
+
+  //   const getProperties = async () => {
+  //     setShowSpinner(true);
+  //     try {
+  //       console.log("In getProperties:", props.property_endpoint_resp);
+
+  //       // Assuming property_endpoint_resp is an object with the 'Property' and 'NewPMRequests' properties
+  //       // const properties = property_endpoint_resp.Property.result;
+  //       // console.log("Properties: ", properties);
+  //       // const newPMRequests = property_endpoint_resp.NewPMRequests.result;
+  //       const newPMRequests = props.property_endpoint_resp;
+  //       console.log("NewPMRequests: ", newPMRequests);
+
+  //       // Correct the announcements field for each property
+  //       // properties.forEach((property) => {
+  //       //   if (property.announcements) {
+  //       //     property.announcements = property.announcements.replace(/\\"/g, '"');
+  //       //     property.announcements = JSON.parse(property.announcements);
+  //       //   }
+  //       // });
+
+  //       // setProperties(properties);
+  //       setContractRequests(newPMRequests);
+  //       setShowSpinner(false);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   getProperties();
+  // }, []);
+
   useEffect(() => {
-    const getContractsForPM = async () => {
-      setShowSpinner(true);
-      try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-        const contractsResponse = await response.json();
-        console.log("contractResponse: ", contractsResponse);
-        const contractsData = contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE");
-        console.log("contractData: ", contractsData);
-        setContractRequests(contractsData);
-        setShowSpinner(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    setShowSpinner(true);
+    setContractRequests(property_endpoint_resp);
+    setShowSpinner(false);
+  }, []);
 
-    console.log("ContractRequests: ", contractRequests);
-
-    const getProperties = async () => {
-      setShowSpinner(true);
-      try {
-        console.log("In getProperties:", property_endpoint_resp);
-
-        // Assuming property_endpoint_resp is an object with the 'Property' and 'NewPMRequests' properties
-        // const properties = property_endpoint_resp.Property.result;
-        // console.log("Properties: ", properties);
-        // const newPMRequests = property_endpoint_resp.NewPMRequests.result;
-        const newPMRequests = property_endpoint_resp;
-        console.log("NewPMRequests: ", newPMRequests);
-
-        // Correct the announcements field for each property
-        // properties.forEach((property) => {
-        //   if (property.announcements) {
-        //     property.announcements = property.announcements.replace(/\\"/g, '"');
-        //     property.announcements = JSON.parse(property.announcements);
-        //   }
-        // });
-
-        // setProperties(properties);
-        setContractRequests(newPMRequests);
-        setShowSpinner(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getProperties();
-  }, [refresh]);
+  console.log("Contract Requests: ", contractRequests);
 
   return (
     <ThemeProvider theme={theme}>
@@ -120,6 +131,10 @@ export default function PMQuotesList() {
 }
 
 function ContractCard(props) {
+  console.log("In ContractCard");
+  console.log("In ContractCard - key: ", props.key);
+  console.log("In ContractCard - contract: ", props.contract);
+  console.log("In ContractCard - property_endpoint_resp: ", props.property_endpoint_resp);
   let navigate = useNavigate();
 
   const contract = props.contract;
@@ -134,8 +149,8 @@ function ContractCard(props) {
 
   // Determine text color based on contract_status or use default blue
   const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
-  let announcements = JSON.parse(contract.announcements);
-  if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
+  // let announcements = JSON.parse(contract.announcements);
+  // if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
   return (
     <Box
@@ -176,7 +191,7 @@ function ContractCard(props) {
           />
         </Grid>
 
-        <Grid item xs={3} sx={{ textAlign: "center" }}>
+        {/* <Grid item xs={3} sx={{ textAlign: "center" }}>
           <Typography
             sx={{
               color: textColor,
@@ -198,15 +213,15 @@ function ContractCard(props) {
               }}
             />
           )}
-        </Grid>
+        </Grid> */}
       </Grid>
 
-      <Typography sx={{ color: "#160449", fontSize: "11px", marginBottom: "5px", marginTop: "5px" }}>
+      {/* <Typography sx={{ color: "#160449", fontSize: "11px", marginBottom: "5px", marginTop: "5px" }}>
         <span style={{ fontWeight: "bold" }}>Title:</span> {`${announcements?.length ? announcements[0]?.announcement_title : "No title"}`}
       </Typography>
       <Typography sx={{ color: "#160449", fontSize: "11px", marginBottom: "5px", marginTop: "5px" }}>
         <span style={{ fontWeight: "bold" }}>Message:</span> {`${announcements?.length ? announcements[0]?.announcement_msg : "No message"}`}
-      </Typography>
+      </Typography> */}
 
       <Typography sx={{ color: "#160449", fontSize: "11px", marginBottom: "5px", marginTop: "5px" }}>
         <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.owner_first_name} ${contract.owner_last_name}`}

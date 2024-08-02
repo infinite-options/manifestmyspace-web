@@ -390,10 +390,11 @@ export default function PropertyRentWidget(props) {
             fontSize: "15px",
             borderRadius: "5px",
           }}
-          onClick={() => {
-            // console.log("New Request Clicked");
-            navigate("/pmQuotesList", { state: { property_endpoint_resp: contractRequests } });
-          }}
+          // onClick={() => {
+          //   // console.log("New Request Clicked");
+          //   navigate("/pmQuotesList", { state: { property_endpoint_resp: contractRequests } });
+          // }}
+          onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PMRequests" } })}
         >
           <Box
             sx={{
