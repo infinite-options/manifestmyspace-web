@@ -499,13 +499,6 @@ function PropertiesList(props) {
     },
   ];
 
-  function sortByCity() {
-    let items = [...displayedItems];
-    items.sort((property1, property2) => property1.property_city.localeCompare(property2.property_city));
-    setDisplayedItems(citySortOrder === "asc" ? items : items.reverse());
-    setCitySortOrder(citySortOrder === "asc" ? "desc" : "asc");
-  }
-
   function sortByAddress() {
     let items = [...displayedItems];
     items.sort((property1, property2) => property1.property_address.localeCompare(property2.property_address));
@@ -513,13 +506,7 @@ function PropertiesList(props) {
     setDisplayedItems(sortedList);
     setAddressSortOrder(addressSortOrder === "asc" ? "desc" : "asc");
     props.handleSorting(sortedList);
-  }
-
-  function sortByState() {
-    let items = [...displayedItems];
-    items.sort((property1, property2) => property1.property_state.localeCompare(property2.property_state));
-    setDisplayedItems(stateSortOrder === "asc" ? items : items.reverse());
-    setStateSortOrder(stateSortOrder === "asc" ? "desc" : "asc");
+    props.onDataChange(0);
   }
 
   function sortByZip() {
@@ -529,6 +516,7 @@ function PropertiesList(props) {
     setDisplayedItems(sortedList);
     setZipSortOrder(zipSortOrder === "asc" ? "desc" : "asc");
     props.handleSorting(sortedList);
+    props.onDataChange(0);
   }
 
   function sortByStatus() {
@@ -546,6 +534,7 @@ function PropertiesList(props) {
     setDisplayedItems(sortedList);
     setStatusSortOrder(statusSortOrder === "asc" ? "desc" : "asc");
     props.handleSorting(sortedList);
+    props.onDataChange(0);
   }
 
   return (
