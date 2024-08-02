@@ -290,6 +290,7 @@ function Properties() {
                 allRentStatus={allRentStatus}
                 rawPropertyData={propertyList}
                 onBackClick={handleBackClick}
+                setRHS={setRHS}
               />
             )}
             {RHS === "ViewLease" && (
