@@ -106,7 +106,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     }
     return profileObj;
   };
-  const getBusiness = (user, type) => "600-000003"
+  const getBusiness = (user, type) =>  user.businesses[type].business_uid; //"600-000003"
   const getProfileId = () => {
     // console.log('Raminsss', user)
     if (selectedRole === "PM_EMPLOYEE") return user.businesses.MANAGEMENT.business_employee_id;
