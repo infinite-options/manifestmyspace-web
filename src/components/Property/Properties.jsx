@@ -20,6 +20,7 @@ import ViewLease from "../Leases/ViewLease";
 import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManagementContract";
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
+import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 
 function Properties(props) {
   const [dataReady, setDataReady] = useState(false);
@@ -42,6 +43,16 @@ function Properties(props) {
   const [returnIndex, setReturnIndex] = useState(0);
   const [applicationIndex, setApplicationIndex] = useState(0);
 
+  const [newContractUID, setNewContractUID ] = useState(null);
+  const [newContractPropertyUID, setNewContractPropertyUID ] = useState(null);
+
+  useEffect(() => {
+    console.log("ROHIT - newContractUID - ", newContractUID)
+  }, [newContractUID]);
+
+  useEffect(() => {
+    console.log("ROHIT - newContractPropertyUID - ", newContractPropertyUID)
+  }, [newContractPropertyUID]);
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
@@ -232,7 +243,7 @@ function Properties(props) {
     // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
     setRHS("AddProperty");
   };  
-  
+
 
   const handleViewContractClick = () => {
     // setPage("ViewLease");
@@ -242,6 +253,10 @@ function Properties(props) {
     console.log("View Contract", propertyList[propertyIndex].contract_uid);
     setRHS("ViewContract");
   };
+
+  const showNewContract = () => {
+    setRHS("CreateContract");
+  }
 
   const handleBackClick = () => {
     setRHS("PropertyNavigator");
@@ -316,8 +331,21 @@ function Properties(props) {
               RHS === "AddProperty" && 
                 <PropertyForm
                   onBack={handleBackClick}
-                  onSubmit={handleBackClick}
+                  // onSubmit={handleBackClick}
+                  onSubmit={showNewContract}
                   property_endpoint_resp={rawPropertyData}
+                  setNewContractUID={setNewContractUID}
+                  setNewContractPropertyUID={setNewContractPropertyUID}
+                  // showNewContract={showNewContract}
+                />
+            }
+            {
+              RHS === "CreateContract" && 
+                <ManagementContractDetails
+                  contractUID={newContractUID}
+                  contractPropertyUID={newContractPropertyUID}
+                  properties={rawPropertyData}
+                  
                 />
             }
           </Grid>

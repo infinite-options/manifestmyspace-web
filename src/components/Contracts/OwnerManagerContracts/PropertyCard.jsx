@@ -1235,6 +1235,9 @@ const PropertyCard = (props) => {
       case "one_time":
         freq = "One Time";
         break;
+      case "One Time":
+        freq = "One Time";
+        break;
       case "hourly":
         freq = "Hourly";
         break;
@@ -1247,10 +1250,19 @@ const PropertyCard = (props) => {
       case "bi-weekly":
         freq = "Bi-weekly";
         break;
+      case "biweekly":
+        freq = "Bi-weekly";
+        break;
       case "monthly":
         freq = "Monthly";
         break;
+      case "Monthly":
+        freq = "Monthly";
+        break;
       case "annually":
+        freq = "Annual";
+        break;
+      case "Annually":
         freq = "Annual";
         break;
       default:
@@ -1409,8 +1421,8 @@ const PropertyCard = (props) => {
               color: "text.darkblue",
             }}
           >
-            Rent: {"$"}
-            {propertyData.property_listed_rent ? propertyData.property_listed_rent : "<RENT>"}
+            Rent:
+            {propertyData.property_listed_rent ? `$ ${propertyData.property_listed_rent}` : " -"}
           </Box>
           <Box
             sx={{
@@ -1421,7 +1433,7 @@ const PropertyCard = (props) => {
               color: "text.darkblue",
             }}
           >
-            Due: {propertyData.lease_rent_due_by ? propertyData.lease_rent_due_by : "<DUE>"} of every Month
+            Due: {propertyData.lease_rent_due_by ? `${propertyData.lease_rent_due_by} of every month` : " -"}
           </Box>
         </Box>
         <Box
@@ -1685,78 +1697,79 @@ const PropertyCard = (props) => {
           width: "100%",
         }}
       >
-        <Box>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Start Date"}
-              </Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={contractStartDate}
-                  minDate={dayjs()}
-                  onChange={handleStartDateChange}
-                  slots={{
-                    openPickerIcon: CalendarIcon,
+          <Grid container item xs={12} columnSpacing={6}>
+            <Grid item xs={6} md={6}>
+              <Stack>
+                <Typography
+                  sx={{
+                    color: theme.typography.propertyPage.color,
+                    fontFamily: "Source Sans Pro",
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
                   }}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                      style: {
-                        width: "100%",
-                        fontSize: 12,
-                        backgroundColor: "#F2F2F2 !important",
-                        borderRadius: "10px !important",
+                >
+                  {"Start Date"}
+                </Typography>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={contractStartDate}
+                    minDate={dayjs()}
+                    onChange={handleStartDateChange}
+                    slots={{
+                      openPickerIcon: CalendarIcon,
+                    }}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                        style: {
+                          width: "100%",
+                          fontSize: 12,
+                          backgroundColor: "#F2F2F2 !important",
+                          borderRadius: "10px !important",
+                        },
                       },
-                    },
-                  }}
-                />
-              </LocalizationProvider>
-            </Stack>
-          </Grid>
-        </Box>
+                    }}
+                  />
+                </LocalizationProvider>
+              </Stack>
+            </Grid>
+          
 
-        <Grid item xs={6} md={6}>
-          <Stack>
-            <Typography
-              sx={{
-                color: theme.typography.propertyPage.color,
-                fontFamily: "Source Sans Pro",
-                fontWeight: theme.typography.common.fontWeight,
-                fontSize: theme.typography.smallFont,
-              }}
-            >
-              {"End Date"}
-            </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={contractEndDate}
-                minDate={dayjs()}
-                onChange={handleEndDateChange}
-                slots={{
-                  openPickerIcon: CalendarIcon,
-                }}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    style: {
-                      width: "100%",
-                      fontSize: 12,
-                      backgroundColor: "#F2F2F2 !important",
-                      borderRadius: "10px !important",
-                    },
-                  },
-                }}
-              />
-            </LocalizationProvider>
-          </Stack>
+            <Grid item xs={6} md={6}>
+              <Stack>
+                <Typography
+                  sx={{
+                    color: theme.typography.propertyPage.color,
+                    fontFamily: "Source Sans Pro",
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {"End Date"}
+                </Typography>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={contractEndDate}
+                    minDate={dayjs()}
+                    onChange={handleEndDateChange}
+                    slots={{
+                      openPickerIcon: CalendarIcon,
+                    }}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                        style: {
+                          width: "100%",
+                          fontSize: 12,
+                          backgroundColor: "#F2F2F2 !important",
+                          borderRadius: "10px !important",
+                        },
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </Stack>
+            </Grid>
         </Grid>
       </Box>
       {showInvalidStartDatePrompt && (
