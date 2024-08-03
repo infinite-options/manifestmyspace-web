@@ -311,7 +311,7 @@ function Properties() {
                 // showNewContract={showNewContract}
               />
             )}
-            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData} />}
+            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />}
             {RHS === "ViewPMQuotesRequested" && (
               <PMQuotesRequested
                 index={returnIndex}
