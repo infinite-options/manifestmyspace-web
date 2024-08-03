@@ -20,13 +20,13 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export default function ChangePasswordSettingsManager() {
+export default function ChangePasswordSettingsManager(props) {
     const classes = useStyles();
     const navigate = useNavigate();
     const { user } = useUser();
     // console.log("USER - ", user);
     const location = useLocation();
-    let   manager_data = location.state.manager_data;
+    let   manager_data = props.manager_data;
     
 
     const [modifiedData, setModifiedData] = useState({'user_uid' : user?.user_uid});
@@ -95,7 +95,7 @@ export default function ChangePasswordSettingsManager() {
                 .then((response) => {
                     console.log('Data updated successfully');
                     setIsEdited(false); // Reset the edit status
-                    navigate(-1)
+                    props.setRHS("form");
                 })
                 .catch((error) => {
                     if(error.response){
@@ -163,7 +163,10 @@ export default function ChangePasswordSettingsManager() {
                         position: 'absolute',
                         left: 0
                         }}
-                    onClick={()=>{navigate(-1)}}/>
+                    onClick={()=>{
+                        console.log('changeRhs',props.setRHS);
+                        props.setRHS("form")
+                        }}/>
                     <Typography 
                     sx={{
                         justifySelf: 'center',
@@ -175,10 +178,12 @@ export default function ChangePasswordSettingsManager() {
                 </Box>
             <Paper
               style={{
-                margin: '30px 30px 30px 100px', // Margin around the paper
+                margin: 'auto', // Margin around the paper
                 padding: theme.spacing(2),
                 backgroundColor: theme.palette.primary.main,
                 width: '85%', // Occupy full width with 25px margins on each side
+                justifyContent:'center',
+                alignItems:'center',
                 [theme.breakpoints.down('sm')]: {
                     width: '80%',
                 },
