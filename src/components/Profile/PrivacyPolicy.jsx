@@ -1,10 +1,16 @@
 import React from "react";
-import { Typography, Box, Paper, Grid } from "@mui/material";
+import { Typography, Box, Paper, Grid, Button } from "@mui/material";
 import theme from "../../theme/theme";
 import ManifestWhite from "../../images/onboarding/manifest_white.png";
 import { ReactComponent as Logo } from "../../images/logo.svg";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-export default function PrivacyPolicy() {
+
+function PrivacyPolicy({setRHS}) {
+
+    const handleBackClick = () => {
+        setRHS("form");
+    }
 
     return (
         <Box
@@ -22,6 +28,15 @@ export default function PrivacyPolicy() {
                 margin: "auto",
             }}>
                 <Grid container sx={{ margin: '15px' }}>
+                    <Grid item md={12}>
+                        <Button onClick={handleBackClick} sx={{
+                            '&:hover': {
+                                backgroundColor: 'white',
+                            },
+                        }}>
+                            <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20 }} />
+                        </Button>
+                    </Grid>
                     <Grid item md={7.5}>
                         <Typography sx={{ fontSize: '24px', fontWeight: 'bold', textAlign: 'left', marginTop: '5px' }}>
                             My Space Privacy Policy
@@ -37,8 +52,8 @@ export default function PrivacyPolicy() {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 width: "auto",
-                                backgroundColor:'#160449',
-                                height:'50px'
+                                backgroundColor: '#160449',
+                                height: '50px'
                             }}
                         >
                             <Logo />
@@ -110,3 +125,5 @@ export default function PrivacyPolicy() {
         </Box>
     )
 }
+
+export default PrivacyPolicy;

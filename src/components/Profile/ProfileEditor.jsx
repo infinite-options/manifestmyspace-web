@@ -263,7 +263,7 @@ function ProfileEditor() {
           }
            {RHS === "privacyPolicy" &&
             <Grid item xs={12} md={9}>
-             <PrivacyPolicy/>
+             <PrivacyPolicy setRHS={setRHS}/>
             </Grid>
           }
            {RHS === "termsAndConditions" &&
