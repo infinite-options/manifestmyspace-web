@@ -26,6 +26,7 @@ import ChangePasswordSettingsManager from "../Settings/ChangePasswordSettingsMan
 import ChangePasswordSettings from "../Settings/ChangePasswordSettings";
 import ChangePasswordSettingsTenant from "../Settings/ChangePasswordSettingsTenant";
 import ChangePasswordSettingsMaintenance from "../Settings/ChangePasswordSettingsMaintenance";
+import PrivacyPolicy from "./PrivacyPolicy";
 
 const useStyles = makeStyles({
   button: {
@@ -248,7 +249,7 @@ function ProfileEditor() {
         </Grid>
         <Grid container spacing={6}>
           <Grid item xs={12} md={3}>
-            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick} />
+            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick} setRHS={setRHS}/>
           </Grid>
           {RHS === "form" &&
             <Grid item xs={12} md={9}>
@@ -256,6 +257,16 @@ function ProfileEditor() {
             </Grid>
           }
           {RHS === "passwordChange" &&
+            <Grid item xs={12} md={9}>
+              {getPasswordChangeForm()}
+            </Grid>
+          }
+           {RHS === "privacyPolicy" &&
+            <Grid item xs={12} md={9}>
+             <PrivacyPolicy/>
+            </Grid>
+          }
+           {RHS === "termsAndConditions" &&
             <Grid item xs={12} md={9}>
               {getPasswordChangeForm()}
             </Grid>

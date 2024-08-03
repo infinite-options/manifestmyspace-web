@@ -42,7 +42,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ApplicationSettings({ handleChangePasswordClick }) {
+export default function ApplicationSettings({ handleChangePasswordClick, setRHS }) {
   console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId, user, logout } = useUser(); // Ensure user is destructured from useUser
@@ -149,7 +149,10 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
           />
         </Grid>
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '5px', }}>
-          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>
+          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }} onClick={() => {
+                console.log('clicked privacypolicy');
+                setRHS("privacyPolicy");
+              }}>
             Privacy policy
           </Link>
         </Grid>
