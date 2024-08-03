@@ -27,6 +27,7 @@ import ChangePasswordSettings from "../Settings/ChangePasswordSettings";
 import ChangePasswordSettingsTenant from "../Settings/ChangePasswordSettingsTenant";
 import ChangePasswordSettingsMaintenance from "../Settings/ChangePasswordSettingsMaintenance";
 import PrivacyPolicy from "./PrivacyPolicy";
+import TermsAndConditions from "./TermsAndConditions";
 
 const useStyles = makeStyles({
   button: {
@@ -268,7 +269,7 @@ function ProfileEditor() {
           }
            {RHS === "termsAndConditions" &&
             <Grid item xs={12} md={9}>
-              {getPasswordChangeForm()}
+             <TermsAndConditions setRHS={setRHS} />
             </Grid>
           }
         </Grid>

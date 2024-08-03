@@ -157,7 +157,9 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
           </Link>
         </Grid>
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '15px', }}>
-          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>
+          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }} onClick={() => {
+                setRHS("termsAndConditions");
+              }}>
             Terms and conditions
           </Link>
         </Grid>
