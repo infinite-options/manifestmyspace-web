@@ -917,33 +917,70 @@ const PropertyCard = (props) => {
     setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
   };
 
-  const setData = () => {
-    if(allContracts !== null && allContracts !== undefined ) {
-      const contractData = allContracts?.find((contract) => contract.contract_uid === props.contractUID);
-      console.log("CONTRACT - ", contractData);
-      // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
-      setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
-      setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
-      setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
-      setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
-      setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
-      setContractFees(contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : []);
-      const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
-      setPreviouslyUploadedDocs(oldDocs);
-      const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
-      if (contractDoc) {
-        setContractDocument(contractDoc);
-      }
-      setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
-    }
+  // const setData = () => {
+  //   if(allContracts !== null && allContracts !== undefined ) {
+  //     const contractData = allContracts?.find((contract) => contract.contract_uid === props.contractUID);
+  //     console.log("setData - CONTRACT - ", contractData);
+  //     // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
+  //     setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
+  //     setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
+  //     setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
+  //     setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
+  //     setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
+  //     setContractFees(contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : []);
+  //     const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
+  //     setPreviouslyUploadedDocs(oldDocs);
+  //     const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
+  //     if (contractDoc) {
+  //       setContractDocument(contractDoc);
+  //     }
+  //     setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
+  //   }
+  //   if( businessProfile !== null && businessProfile !== undefined) {
+  //     console.log("Business Services Fees", businessProfile["business_services_fees"]);
+  //     setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
+  //   }
+
+  // }
+
+  const setBusinessProfileDetails = () => {
     if( businessProfile !== null && businessProfile !== undefined) {
       console.log("Business Services Fees", businessProfile["business_services_fees"]);
       setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
     }
+  }
+
+  const setContractDetails = () => {
+    if(allContracts !== null && allContracts !== undefined ) {
+      const contractData = allContracts?.find((contract) => contract.contract_uid === props.contractUID);
+      console.log("setData - CONTRACT - ", contractData);
+      // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
+      if( contractData ) {
+        setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
+        setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
+        setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
+        setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
+        setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
+        setContractFees(contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : []);
+        const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
+        setPreviouslyUploadedDocs(oldDocs);
+        const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
+        if (contractDoc) {
+          setContractDocument(contractDoc);
+        }
+        setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
+      }
+    }
 
   }
 
+  useEffect(() => {
+    setContractDetails();
+  }, [contractUID]);
+
   const fetchDataNew = async () => {
+    console.log("props.contractUID:", props.contractUID);
+      setContractUID(props.contractUID);
     if( allContracts === null){
       const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
       const data = await result.json();
@@ -951,19 +988,10 @@ const PropertyCard = (props) => {
 
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-      console.log("props.contractUID:", props.contractUID);
-      setContractUID(props.contractUID);
+      
       if (data !== "No records for this Uid") {
         setAllContracts(data["result"]);      
-      }
-
-      // get default contract fees for manager
-      // const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${contractBusinessID}`);
-      const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
-      const data2 = await businessProfileResult.json();
-      const businessProfileData = data2["result"][0];
-      console.log("Business Services Fees", businessProfileData["business_services_fees"]);
-      setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
+      }      
     }
     if( businessProfile === null ){
       const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
@@ -972,8 +1000,8 @@ const PropertyCard = (props) => {
       const businessProf = businessProfileData?.find( item => item.business_uid === getProfileId())
       console.log("ROHIT - businessProf - ", businessProf);
       setBusinessProfile(businessProf);
-    }
-    setData();
+    }    
+    
 
   }
 
@@ -988,7 +1016,18 @@ const PropertyCard = (props) => {
   useEffect(() => {
     // fetchData();
     fetchDataNew();
+    // if (allContracts !== null && businessProfile !== null) {
+    //   setData();
+    // }    
   }, [props.contractUID]);
+
+  useEffect(() => {
+    setContractDetails();
+  }, [allContracts]);
+
+  useEffect(() => {
+    setBusinessProfileDetails();
+  }, [businessProfile]);
 
   
 

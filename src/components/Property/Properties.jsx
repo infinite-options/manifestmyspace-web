@@ -57,9 +57,9 @@ function Properties() {
   const [ managersList, setManagersList ] = useState([]);
   const [ managerData, setManagerData ] = useState(null); // for request quotes
 
-  // useEffect(() => {
-  //   console.log("Properties - newContractUID - ", newContractUID);
-  // }, [newContractUID]);
+  useEffect(() => {
+    console.log("Properties - newContractUID - ", newContractUID);
+  }, [newContractUID]);
 
   // useEffect(() => {
   //   console.log("Properties - newContractPropertyUID - ", newContractPropertyUID);

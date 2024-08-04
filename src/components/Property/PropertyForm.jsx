@@ -375,6 +375,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 				//     property_endpoint_resp: property_endpoint_resp,
 				//   },
 				// });			
+				navigate("/pmQuotesList", {
+				  state: {
+				    selected_contract_uid: responseContractUID,				    
+				  },
+				});			
 			} catch (error) {
 				console.error("Error:", error);
 			}

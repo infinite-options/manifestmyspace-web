@@ -21,24 +21,48 @@ export default function PMQuotesList() {
   console.log("In PMQuoteList");
   console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
 
+  const selectedContractUID = location?.state?.selected_contract_uid;
+  // const selectedContractUID = "010-000361";
+
   const property_endpoint_resp = location.state.property_endpoint_resp;
   const { getProfileId } = useUser();
-  // const [contractRequests, setContractRequests] = useState([]);
-  const [contractRequests, setContractRequests] = useState(property_endpoint_resp);  
+  const [contractRequests, setContractRequests] = useState([]);
+  // const [contractRequests, setContractRequests] = useState(property_endpoint_resp);  
   const [properties, setProperties] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
   // const [ currentContract, setCurrentContract ] = useState(null);
   const [ index, setIndex ] = useState(0);
-  const [ currentContractUID, setCurrentContractUID ] = useState(contractRequests[0]?.contract_uid);
-  const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(contractRequests[0]?.property_id);
+  // const [ currentContractUID, setCurrentContractUID ] = useState(contractRequests[0]?.contract_uid);
+  const [ currentContractUID, setCurrentContractUID ] = useState(null);
+  // const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(contractRequests[0]?.property_id);
+  const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(null);
 
   useEffect(() => {
     console.log("ROHIT - index - ", index);
   }, [index]);
 
   useEffect(() => {
+    console.log("ROHIT - here 2 - contractRequests - ", contractRequests);
+    if (selectedContractUID !== null && selectedContractUID !== undefined && contractRequests !== null && contractRequests !== undefined) {
+      // const contract = contractRequests.find(contract => contract.contract_uid === selectedContract.contract_uid);
+      // if (contract) {
+      //   setCurrentContract(contract);
+      //   setCurrentContractUID(contract?.contract_uid);
+      //   setCurrentContractPropertyUID(contract?.property_id);
+      // }
+      
+      const index = contractRequests.findIndex(contract => contract.contract_uid === selectedContractUID);
+      console.log("ROHIT - contractRequests index - ", index);
+      if (index !== -1) {
+        setIndex(index)
+      }
+    }   
+  }, [contractRequests]);
+
+  useEffect(() => {
+    console.log("ROHIT - currentContractUID index- ", index);
     console.log("ROHIT - currentContractUID - ", currentContractUID);
   }, [currentContractUID]);
 
@@ -52,59 +76,90 @@ export default function PMQuotesList() {
 
   useEffect(() => {
     const contract = contractRequests[index];
-    console.log("ROHIT - current contract - ", contract);
+    console.log("ROHIT - here - contractRequests - ", contractRequests);
+    console.log("ROHIT - here - index - ", index);
+    console.log("ROHIT - here - current contract - ", contract);
     if(contract) setCurrentContractUID(contract?.contract_uid);
     if(contract) setCurrentContractPropertyUID(contract?.property_id);
-  }, [index]);
+  }, [index, contractRequests]);
+
+  // useEffect(() => {
+  //   const getContractsForPM = async () => {
+  //     setShowSpinner(true);
+  //     try {
+  //       const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
+  //       const contractsResponse = await response.json();
+  //       console.log("contractResponse: ", contractsResponse);
+  //       const contractsData = contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE");
+  //       console.log("contractData: ", contractsData);
+  //       setContractRequests(contractsData);
+  //       setShowSpinner(false);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   console.log("ContractRequests: ", contractRequests);
+
+  //   const getProperties = async () => {
+  //     setShowSpinner(true);
+  //     try {
+  //       console.log("In getProperties:", property_endpoint_resp);
+
+  //       // Assuming property_endpoint_resp is an object with the 'Property' and 'NewPMRequests' properties
+  //       // const properties = property_endpoint_resp.Property.result;
+  //       // console.log("Properties: ", properties);
+  //       // const newPMRequests = property_endpoint_resp.NewPMRequests.result;
+  //       const newPMRequests = property_endpoint_resp;
+  //       console.log("NewPMRequests: ", newPMRequests);
+
+  //       // Correct the announcements field for each property
+  //       // properties.forEach((property) => {
+  //       //   if (property.announcements) {
+  //       //     property.announcements = property.announcements.replace(/\\"/g, '"');
+  //       //     property.announcements = JSON.parse(property.announcements);
+  //       //   }
+  //       // });
+
+  //       // setProperties(properties);
+  //       setContractRequests(newPMRequests);
+  //       setShowSpinner(false);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   getProperties();
+  // }, [refresh]);
 
   useEffect(() => {
-    const getContractsForPM = async () => {
+    // const dataObject = {};
+    // console.log("In UseEffect");
+    // console.log(getProfileId());
+
+    // console.log("In UseEffect after if");
+    const fetchData = async () => {
       setShowSpinner(true);
+
+      const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+      // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
+
       try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-        const contractsResponse = await response.json();
-        console.log("contractResponse: ", contractsResponse);
-        const contractsData = contractsResponse.result.filter((contract) => contract.contract_status !== "ACTIVE");
-        console.log("contractData: ", contractsData);
-        setContractRequests(contractsData);
-        setShowSpinner(false);
+        const jsonData = await response.json();
+        // console.log("Manager Dashboard jsonData: ", jsonData);        
+        // NEW PM REQUESTS
+        const requests = jsonData?.NewPMRequests?.result;
+        setContractRequests(requests);        
+        // setCurrentContractUID(requests[0]?.contract_uid)
+        // setCurrentContractPropertyUID(requests[0]?.property_uid)
       } catch (error) {
         console.error(error);
       }
+
+      setShowSpinner(false);
     };
-
-    console.log("ContractRequests: ", contractRequests);
-
-    const getProperties = async () => {
-      setShowSpinner(true);
-      try {
-        console.log("In getProperties:", property_endpoint_resp);
-
-        // Assuming property_endpoint_resp is an object with the 'Property' and 'NewPMRequests' properties
-        // const properties = property_endpoint_resp.Property.result;
-        // console.log("Properties: ", properties);
-        // const newPMRequests = property_endpoint_resp.NewPMRequests.result;
-        const newPMRequests = property_endpoint_resp;
-        console.log("NewPMRequests: ", newPMRequests);
-
-        // Correct the announcements field for each property
-        // properties.forEach((property) => {
-        //   if (property.announcements) {
-        //     property.announcements = property.announcements.replace(/\\"/g, '"');
-        //     property.announcements = JSON.parse(property.announcements);
-        //   }
-        // });
-
-        // setProperties(properties);
-        setContractRequests(newPMRequests);
-        setShowSpinner(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getProperties();
-  }, [refresh]);
+    fetchData();
+  }, []);
 
   // return (
   //   <ThemeProvider theme={theme}>
@@ -150,6 +205,9 @@ export default function PMQuotesList() {
 
   return (
     <ThemeProvider theme={theme}>
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color='inherit' />
+      </Backdrop>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
@@ -164,7 +222,8 @@ export default function PMQuotesList() {
             <ManagementContractDetails
               contractUID={currentContractUID}
               contractPropertyUID={currentContractPropertyUID}
-              properties={property_endpoint_resp}
+              // properties={property_endpoint_resp}
+              properties={contractRequests}
             />
             
           </Grid>
@@ -187,17 +246,15 @@ const QuotesList = (props) => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color='inherit' />
-        </Backdrop>
-        <Grid container item xs={12} sx={{backgroundColor: '#F2F2F2', padding: '10px', borderRadius: '10px', }}>
+        
+        <Grid container item xs={12} sx={{backgroundColor: '#F2F2F2', padding: '10px', borderRadius: '10px', height: '100%' }}>
           <Stack
             direction='column'
             alignItems='center'
             // justifyContent='center'
             sx={{
               width: "100%", // Take up full screen width
-              height: "90vh", // Set the Box height to full height
+              height: "100%", // Set the Box height to full height
               // marginTop: theme.spacing(2), // Set the margin to 20px
             }}
           >
@@ -226,7 +283,7 @@ const QuotesList = (props) => {
                 // justifyContent='center'
                 sx={{
                   width: "100%", // Take up full screen width
-                  height: "85vh", // Set the Box height to full height
+                  height: "100vh", // Set the Box height to full height
                   borderRadius: '10px',
                   // paddingTop: '1200px',
                   overflow: 'auto',

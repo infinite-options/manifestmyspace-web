@@ -138,6 +138,13 @@ function ManagementContractDetails(props) {
     setTimeDiff(calculateTimeDiff());
   }, []);
 
+  // useEffect(() => {
+  //   // console.log("Management Contract Details UseEffect in ManagementContractDetails");
+  //   // console.log("New PM Requests in MCD: ", property_endpoint_resp);      
+  //   fetchData();
+  //   setTimeDiff(calculateTimeDiff());
+  // }, [props.properties]);
+
   const handleBackBtn = () => {
     navigate(-1);
   };
@@ -150,7 +157,7 @@ function ManagementContractDetails(props) {
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Container maxWidth='lg' sx={{ height: '100%',paddingTop: "10px",  marginTop: theme.spacing(2) }}>
+      <Container maxWidth='lg' sx={{ height: '100%', }}>
         <Grid container item xs={12} sx={{height: '100%',}}>      
           <Box
             sx={{
