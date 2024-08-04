@@ -115,6 +115,7 @@ export default function PropertyNavigator({
   const [dataforhappiness, setdataforhappiness] = useState([]);
 
   const [applianceList, setApplianceList] = useState([]);
+  const [initialApplData, setInitialApplData] = useState(null);
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
@@ -754,6 +755,7 @@ export default function PropertyNavigator({
 
   const handleEditClick = (row) => {
     // console.log("ROHIT - handleEditClick - row - ", row);
+    setInitialApplData(row);
     setcurrentApplRow(row);
     setModifiedApplRow({ appliance_uid: row.appliance_uid });
     setIsEditing(true);
@@ -822,8 +824,23 @@ export default function PropertyNavigator({
     }
   };
 
+  const getAppliancesChanges = () => {
+    const changes = {};
+
+    if (!initialApplData) {
+      return changes;
+    }
+
+    Object.keys(currentApplRow).forEach((key) => {
+      if (initialApplData[key] != currentApplRow[key]) {
+        changes[key] = currentApplRow[key];
+      }
+    });
+    return changes;
+  };
+
   const editAppliance = async (appliance) => {
-    // console.log("inside editAppliance", appliance);
+    console.log("inside editAppliance", appliance);
     try {
       setShowSpinner(true);
       const headers = {
@@ -833,19 +850,39 @@ export default function PropertyNavigator({
         "Access-Control-Allow-Credentials": "*",
       };
 
+      const changedFields = getAppliancesChanges();
+
+      if (Object.keys(changedFields).length == 0) {
+        console.log("No changes detected.");
+        setShowSpinner(false);
+        return;
+      }
+
       const applianceFormData = new FormData();
 
-      Object.keys(appliance).forEach((key) => {
-        // console.log(`Key: ${key}`);
+      // Object.keys(appliance).forEach((key) => {
+      //   // console.log(`Key: ${key}`);
 
-        applianceFormData.append(key, appliance[key]);
-      });
+      //   applianceFormData.append(key, changedFields[key]);
+      // });
       // applianceFormData.append('appiliance_uid', appliance.uid);
 
       // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
+
+      for (const [key, value] of Object.entries(changedFields)) {
+        applianceFormData.append(key, value);
+      }
+
+      for (let [key, value] of applianceFormData.entries()) {
+        console.log(key, value);
+      }
+
+      if (appliance.appliance_uid) {
+        applianceFormData.append("appliance_uid", appliance.appliance_uid);
+      }
 
       axios
         .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
