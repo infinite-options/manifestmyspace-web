@@ -32,7 +32,7 @@ import PropertyCard from "./PropertyCard";
 import { isValidDate } from "../../../utils/dates";
 
 function ManagementContractDetails(props) {
-  console.log("In ManagementContractDetails.jsx");
+  console.log("In ManagementContractDetails.jsx - props - ", props);
   const { getProfileId } = useUser();
   const navigate = useNavigate();
 
@@ -47,6 +47,22 @@ function ManagementContractDetails(props) {
   // const [contractPropertyID, setContractPropertyID] = useState(null);
   const [contractPropertyID, setContractPropertyID] = useState(props.contractPropertyUID);
 
+  useEffect(() => {
+    setContractUID(props.contractUID);    
+  }, [props.contractUID]);
+
+  useEffect(() => {
+    setContractPropertyID(props.contractPropertyUID);
+    
+  }, [props.contractPropertyUID]);
+
+  useEffect(() => {
+    fetchData();
+    setTimeDiff(calculateTimeDiff());    
+  }, [contractPropertyID]);
+
+  
+
   const property_endpoint_resp = props.properties
 
   const [showSpinner, setShowSpinner] = useState(false);
@@ -57,67 +73,77 @@ function ManagementContractDetails(props) {
   const [index, setIndex] = useState(0);
   const [timeDiff, setTimeDiff] = useState(null);
 
+  const fetchData = async () => {
+    setShowSpinner(true);
+
+    // setContractUID(contract_uid);
+    // console.log(property_endpoint_resp);
+    // console.log(property_endpoint_resp["NewPMRequests"]);
+    // console.log(property_endpoint_resp["NewPMRequests"].result);
+    // console.log(property_endpoint_resp["NewPMRequests"]["result"]);
+
+    console.log("ROHIT - property_endpoint_resp - ", property_endpoint_resp);
+
+    // const properties = property_endpoint_resp["NewPMRequests"]["result"] ? property_endpoint_resp["NewPMRequests"]["result"] : [];
+    const properties = property_endpoint_resp ? property_endpoint_resp : [];
+    console.log("PROPERTIES", properties);
+    setPropertiesData(properties);
+
+    const filteredProperties = properties.filter((property) => property.property_uid === contractPropertyID);
+    console.log("FILTERED PROPERTIES - contractPropertyID - ", contractPropertyID);
+    console.log("FILTERED PROPERTIES", filteredProperties);
+    setFilteredPropertiesData(filteredProperties);
+
+    // console.log("FILTERED PROPERTIES DATA", filteredProperties);
+
+    // setContractPropertyID(filteredProperties[0]["property_uid"]);
+    // setContractPropertyID(contract_property_id);
+
+    setIsLoading(false);
+    setShowSpinner(false);
+  };
+
+  const calculateTimeDiff = () => {
+    const announcement_date = new Date();
+    if (announcement_date === null) {
+      return "<TIME AGO>";
+    }
+    const now = new Date();
+    const timeDiff = now - announcement_date;
+
+    const seconds = Math.floor(timeDiff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    let durationString;
+    if (days > 0) {
+      durationString = `${days} days ago`;
+    } else if (hours > 0) {
+      durationString = `${hours} hours ago`;
+    } else if (minutes > 0) {
+      durationString = `${minutes} minutes ago`;
+    } else {
+      durationString = `${seconds} seconds ago`;
+    }
+
+    // console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
+    return durationString;
+  };
+
   useEffect(() => {
     // console.log("Management Contract Details UseEffect in ManagementContractDetails");
-    // console.log("New PM Requests in MCD: ", property_endpoint_resp);
-
-    const fetchData = async () => {
-      setShowSpinner(true);
-
-      // setContractUID(contract_uid);
-      // console.log(property_endpoint_resp);
-      // console.log(property_endpoint_resp["NewPMRequests"]);
-      // console.log(property_endpoint_resp["NewPMRequests"].result);
-      // console.log(property_endpoint_resp["NewPMRequests"]["result"]);
-
-      console.log("ROHIT - property_endpoint_resp - ", property_endpoint_resp);
-
-      const properties = property_endpoint_resp["NewPMRequests"]["result"] ? property_endpoint_resp["NewPMRequests"]["result"] : [];
-      console.log("PROPERTIES", properties);
-      setPropertiesData(properties);
-
-      const filteredProperties = properties.filter((property) => property.property_uid === contractPropertyID);
-      console.log("FILTERED PROPERTIES", filteredProperties);
-      setFilteredPropertiesData(filteredProperties);
-
-      // console.log("FILTERED PROPERTIES DATA", filteredProperties);
-
-      // setContractPropertyID(filteredProperties[0]["property_uid"]);
-      // setContractPropertyID(contract_property_id);
-
-      setIsLoading(false);
-      setShowSpinner(false);
-    };
-    const calculateTimeDiff = () => {
-      const announcement_date = new Date();
-      if (announcement_date === null) {
-        return "<TIME AGO>";
-      }
-      const now = new Date();
-      const timeDiff = now - announcement_date;
-
-      const seconds = Math.floor(timeDiff / 1000);
-      const minutes = Math.floor(seconds / 60);
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-
-      let durationString;
-      if (days > 0) {
-        durationString = `${days} days ago`;
-      } else if (hours > 0) {
-        durationString = `${hours} hours ago`;
-      } else if (minutes > 0) {
-        durationString = `${minutes} minutes ago`;
-      } else {
-        durationString = `${seconds} seconds ago`;
-      }
-
-      // console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
-      return durationString;
-    };
+    // console.log("New PM Requests in MCD: ", property_endpoint_resp);      
     fetchData();
     setTimeDiff(calculateTimeDiff());
   }, []);
+
+  // useEffect(() => {
+  //   // console.log("Management Contract Details UseEffect in ManagementContractDetails");
+  //   // console.log("New PM Requests in MCD: ", property_endpoint_resp);      
+  //   fetchData();
+  //   setTimeDiff(calculateTimeDiff());
+  // }, [props.properties]);
 
   const handleBackBtn = () => {
     navigate(-1);
@@ -131,7 +157,7 @@ function ManagementContractDetails(props) {
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Container maxWidth='lg' sx={{ height: '100%',paddingTop: "10px",  marginTop: theme.spacing(2) }}>
+      <Container maxWidth='lg' sx={{ height: '100%', }}>
         <Grid container item xs={12} sx={{height: '100%',}}>      
           <Box
             sx={{
@@ -175,6 +201,21 @@ function ManagementContractDetails(props) {
                 Management Contract
               </Box>
             </Stack>
+            <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontWeight: theme.typography.primary.fontWeight,
+                  }}
+                >
+                  Contract UID: {contractUID}
+                  {/* {contactsTab} */}
+                </Typography>
+              </Box>
             <Box
               flexDirection="row"
               alignItems="center"

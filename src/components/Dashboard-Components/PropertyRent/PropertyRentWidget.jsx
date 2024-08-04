@@ -33,6 +33,7 @@ const useStyles = makeStyles({
 
 export default function PropertyRentWidget(props) {
   console.log("In Property Rent Widget ");
+  console.log("In Property Rent Widget - PM Contracts - props - ", props);
   console.log("In Property Rent Widget - PM Contracts: ", props.contractRequests);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));

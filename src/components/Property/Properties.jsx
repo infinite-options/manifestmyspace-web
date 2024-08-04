@@ -57,9 +57,9 @@ function Properties() {
   const [ managersList, setManagersList ] = useState([]);
   const [ managerData, setManagerData ] = useState(null); // for request quotes
 
-  // useEffect(() => {
-  //   console.log("Properties - newContractUID - ", newContractUID);
-  // }, [newContractUID]);
+  useEffect(() => {
+    console.log("Properties - newContractUID - ", newContractUID);
+  }, [newContractUID]);
 
   // useEffect(() => {
   //   console.log("Properties - newContractPropertyUID - ", newContractPropertyUID);
@@ -341,7 +341,7 @@ function Properties() {
                 // showNewContract={showNewContract}
               />
             )}
-            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData} />}
+            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />}
             {RHS === "ViewPMQuotesRequested" && (
               <PMQuotesRequested
                 index={returnIndex}
