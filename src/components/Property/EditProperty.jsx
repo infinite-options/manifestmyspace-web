@@ -40,6 +40,7 @@ import { getLatLongFromAddress } from "../../utils/geocode";
 import AddressAutocompleteInput from "./AddressAutocompleteInput";
 
 import APIConfig from "../../utils/APIConfig";
+import PropertyNavigator from "./PropertyNavigator";
 
 function EditProperty(props) {
   console.log("In Edit Property2 - rename to Edit Property");
@@ -145,9 +146,13 @@ function EditProperty(props) {
   const [unitAmenities, setUnitAmenities] = useState("");
   const [nearbyAmenities, setNearbyAmenities] = useState("");
   // const [page, setPage] = useState("Edit");
+  const [initialData, setInitialData] = useState({});
+
 
   useEffect(() => {
     const property = propertyList[index];
+    setInitialData(property);
+    console.log("Intial data", initialData);
     setPropertyData(property);
     setAddress(property.property_address);
     setCity(property.property_city);
@@ -179,6 +184,40 @@ function EditProperty(props) {
     setUnitAmenities(property.property_amenities_unit);
     setNearbyAmenities(property.property_amenities_nearby);
   }, [index]);
+
+  const getChangedFields = () => {
+    const changes = {};
+    // if (bedrooms === initialData.property_num_beds) {
+    //   console.log("Nothing has changed");
+    // }
+    if (bedrooms !== initialData.property_num_beds) changes.property_num_beds = bedrooms;
+    if (address !== initialData.property_address) changes.property_address = address;
+    if (city !== initialData.property_city) changes.property_city = city;
+    if (propertyState !== initialData.property_state) changes.property_state = propertyState;
+    if (zip !== initialData.property_zip) changes.property_zip = zip;
+    if (propertyType !== initialData.property_type) changes.property_type = propertyType;
+    if (squareFootage !== initialData.property_area) changes.property_area = squareFootage;
+    if (bathrooms !== initialData.property_num_baths) changes.property_num_baths = bathrooms;
+    if (isListed !== (initialData.property_available_to_rent === 1)) changes.property_available_to_rent = isListed ? 1 : 0;
+    if (description !== initialData.property_description) changes.property_description = description;
+    if (notes !== initialData.property_notes) changes.property_notes = notes;
+    if (unit !== initialData.property_unit) changes.property_unit = unit;
+    if (propertyValue !== initialData.property_value) changes.property_value = propertyValue;
+    if (assessmentYear !== initialData.property_value_year) changes.property_value_year = assessmentYear;
+    if (deposit !== initialData.property_deposit) changes.property_deposit = deposit;
+    if (listedRent !== initialData.property_listed_rent) changes.property_listed_rent = listedRent;
+    if (petsAllowed !== (initialData.property_pets_allowed === 1)) changes.property_pets_allowed = petsAllowed ? 1 : 0;
+    if (depositForRent !== (initialData.property_deposit_for_rent === 1)) changes.property_deposit_for_rent = depositForRent ? 1 : 0;
+    if (taxes !== initialData.property_taxes) changes.property_taxes = taxes;
+    if (mortgages !== initialData.property_mortgages) changes.property_mortgages = mortgages;
+    if (insurance !== initialData.property_insurance) changes.property_insurance = insurance;
+    if (communityAmenities !== initialData.property_amenities_community) changes.property_amenities_community = communityAmenities;
+    if (unitAmenities !== initialData.property_amenities_unit) changes.property_amenities_unit = unitAmenities;
+    if (nearbyAmenities !== initialData.property_amenities_nearby) changes.property_amenities_nearby = nearbyAmenities;
+    // console.log("CHANGES", changes.bedrooms);
+
+  return changes;
+  };
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -432,11 +471,25 @@ function EditProperty(props) {
     setListed(event.target.checked);
   };
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("handleSubmit");
+
+    const changedFields = getChangedFields();
+
+    if (Object.keys(changedFields).length == 0) {
+      console.log("No changes detected.");
+      return;
+    }
+
     const formData = new FormData();
     const utilitiesFormData = new FormData();
+
+    for (const [key, value] of Object.entries(changedFields)) {
+      formData.append(key, value);
+    }
+
     const currentDate = new Date();
     // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
     const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
@@ -450,41 +503,50 @@ function EditProperty(props) {
 
     console.log("EditProperty - handleSubmit - coordinates - ", coordinates);
 
-    if (coordinates) {
+    if (propertyData.property_uid) {
+      formData.append("property_uid", propertyData.property_uid);
+    }
+
+    if (changedFields.property_address && coordinates) {
       formData.append("property_latitude", coordinates.latitude);
       formData.append("property_longitude", coordinates.longitude);
     }
 
-    formData.append("property_uid", propertyData.property_uid);
-    formData.append("property_address", address);
-    formData.append("property_unit", unit);
-    formData.append("property_city", city);
-    formData.append("property_state", propertyState);
-    formData.append("property_zip", zip);
-    formData.append("property_type", propertyType);
-    formData.append("property_num_beds", bedrooms); // Double
-    formData.append("property_num_baths", bathrooms); // Double
-    formData.append("property_area", squareFootage);
-    formData.append("property_listed_rent", listedRent); // Int
-    formData.append("property_deposit", deposit); // Int
-    formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
-    formData.append("property_deposit_for_rent", depositForRent ? 1 : 0); // Int
-    formData.append("property_taxes", taxes);
-    formData.append("property_mortgages", mortgages);
-    formData.append("property_insurance", insurance);
-    formData.append("property_featured", 0);
-    formData.append("property_description", description);
-    formData.append("property_notes", notes);
-    if (page === "add_listing" || page === "edit_listing") {
-      formData.append("property_available_to_rent", isListed ? 1 : 0);
-    }
-    formData.append("property_value", propertyValue);
-    formData.append("property_value_year", assessmentYear);
-    formData.append("property_active_date", activeDate);
-    // formData.append('property_utilities', utilities);
-    formData.append("property_amenities_community", communityAmenities);
-    formData.append("property_amenities_unit", unitAmenities);
-    formData.append("property_amenities_nearby", nearbyAmenities);
+    // if (coordinates) {
+    //   formData.append("property_latitude", coordinates.latitude);
+    //   formData.append("property_longitude", coordinates.longitude);
+    // }
+
+    // formData.append("property_uid", propertyData.property_uid);
+    // formData.append("property_address", address);
+    // formData.append("property_unit", unit);
+    // formData.append("property_city", city);
+    // formData.append("property_state", propertyState);
+    // formData.append("property_zip", zip);
+    // formData.append("property_type", propertyType);
+    // formData.append("property_num_beds", bedrooms); // Double
+    // formData.append("property_num_baths", bathrooms); // Double
+    // formData.append("property_area", squareFootage);
+    // formData.append("property_listed_rent", listedRent); // Int
+    // formData.append("property_deposit", deposit); // Int
+    // formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
+    // formData.append("property_deposit_for_rent", depositForRent ? 1 : 0); // Int
+    // formData.append("property_taxes", taxes);
+    // formData.append("property_mortgages", mortgages);
+    // formData.append("property_insurance", insurance);
+    // formData.append("property_featured", 0);
+    // formData.append("property_description", description);
+    // formData.append("property_notes", notes);
+    // if (page === "add_listing" || page === "edit_listing") {
+    //   formData.append("property_available_to_rent", isListed ? 1 : 0);
+    // }
+    // formData.append("property_value", propertyValue);
+    // formData.append("property_value_year", assessmentYear);
+    // formData.append("property_active_date", activeDate);
+    // // formData.append('property_utilities', utilities);
+    // formData.append("property_amenities_community", communityAmenities);
+    // formData.append("property_amenities_unit", unitAmenities);
+    // formData.append("property_amenities_nearby", nearbyAmenities);
 
     //utilities form data
     const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
@@ -517,7 +579,7 @@ function EditProperty(props) {
         formData.append(key, file.image);
       }
       if (file.coverPhoto) {
-        formData.append("img_favorite", key);
+        formData.append("property_favorite_image", key);
       }
     }
 
@@ -538,7 +600,7 @@ function EditProperty(props) {
           body: formData,
         })
       );
-      promises_added.push("putData");
+      // promises_added.push("putData");
 
       setShowSpinner(false);
 
@@ -623,15 +685,20 @@ function EditProperty(props) {
       await autoUpdate();
 
       console.log("propertyList after autoUpdate - ", propertyList);
-      if (isDesktop == true) {
-        // navigate("/properties", { state: { index: index } }); - PM Changed
-        navigate("/propertiesPM", { state: { index: index } });
-      } else {
-        navigate("/propertyDetail", { state: { index: index, propertyList: propertyList, allRentStatus: allRentStatus, isDesktop: isDesktop, rawPropertyData: rawPropertyData } });
-      }
+      // if (isDesktop == true) {
+      //   console.log("isDesktop in here")
+      //   // navigate("/properties", { state: { index: index } }); - PM Changed
+      //   console.log("In here 1")
+      //   navigate("/propertiesPM", { state: { index: index, showLHS: "List", showRHS: "PropertyNavigator" } });
+      // } else {
+        console.log("In here 2")
+        navigate("/propertiesPM", { state: { index: index, propertyList: propertyList, showRHS: "PropertyNavigator" } });
+      // }
+      // window.location.reload();
     } catch (error) {
       console.error("Error:", error);
     }
+
   };
 
   const formatUtilityName = (utility) => {
