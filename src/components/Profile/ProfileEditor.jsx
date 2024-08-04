@@ -22,6 +22,12 @@ import MaintenanceOnBoardDesktopForm from "../Onboarding/MaintenanceOnBoardDeskt
 import MaintenanceOnboardingForm from "../Onboarding/MaintenanceOnboardingForm";
 import PMEmpOnBoardDesktopForm from "../Onboarding/PMEmpOnBoardDesktopForm";
 import MaintEmpOnBoardDesktopForm from "../Onboarding/MaintEmpOnBoardDesktopForm";
+import ChangePasswordSettingsManager from "../Settings/ChangePasswordSettingsManager";
+import ChangePasswordSettings from "../Settings/ChangePasswordSettings";
+import ChangePasswordSettingsTenant from "../Settings/ChangePasswordSettingsTenant";
+import ChangePasswordSettingsMaintenance from "../Settings/ChangePasswordSettingsMaintenance";
+import PrivacyPolicy from "./PrivacyPolicy";
+import TermsAndConditions from "./TermsAndConditions";
 
 const useStyles = makeStyles({
   button: {
@@ -60,6 +66,7 @@ function ProfileEditor() {
   const [darkMode, setDarkMode] = useState(false);
   const [allowCookies, setAllowCookies] = useState(true);
   const [settingsChanged, setSettingsChanged] = useState(false);
+  const [RHS, setRHS] = useState("form");
 
   console.log("In Profile Editor as (selected Role): ", selectedRole);
   console.log("user data is", user);
@@ -196,54 +203,75 @@ function ProfileEditor() {
   };
 
   const handleChangePasswordClick = (event) => {
+    setRHS("passwordChange");
     event.preventDefault();
+  };
+
+  const getPasswordChangeForm = () => {
     if (profileData) {
       if (selectedRole === "OWNER") {
-        navigate("/changePasswordSettings", { state: { owner_data: profileData } });
+        return <ChangePasswordSettings owner_data={profileData} setRHS={setRHS} />
       } else if (selectedRole === "MANAGER") {
-        navigate("/ChangePasswordSettingsManager", { state: { manager_data: profileData } });
+        return <ChangePasswordSettingsManager manager_data={profileData} setRHS={setRHS} />
       } else if (selectedRole === "TENANT") {
-        navigate("/changePasswordSettingsTenant", { state: { tenant_data: profileData } });
+        return <ChangePasswordSettingsTenant tenant_data={profileData} setRHS={setRHS} />
       } else {
-        navigate("/ChangePasswordSettingsMaintenance", { state: { maintenance_data: profileData } });
+        return <ChangePasswordSettingsMaintenance maintenance_data={profileData} setRHS={setRHS} />
       }
     } else {
       console.log("Profile data is not loaded yet");
     }
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid item xs={12}>
-            <Box
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              justifyContent: isMobile ? "center" : "left",
+              paddingLeft: "10px",
+              paddingRight: "10px",
+              alignText: "center",
+              alignContent: "center",
+            }}
+          >
+            <Typography
               sx={{
-                display: "flex",
-                flexDirection: isMobile ? "column" : "row",
-                justifyContent: isMobile ? "center" : "left",
-                paddingLeft: "10px",
-                paddingRight: "10px",
-                alignText: "center",
-                alignContent: "center",
+                fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                fontWeight: "600",
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: { xs: "22px", sm: "28px", md: "32px" },
-                  fontWeight: "600",
-                }}
-              >
-                Welcome, {user.first_name}!
-              </Typography>
-            </Box>
+              Welcome, {user.first_name}!
+            </Typography>
+          </Box>
         </Grid>
         <Grid container spacing={6}>
           <Grid item xs={12} md={3}>
-            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick}/>
+            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick} setRHS={setRHS}/>
           </Grid>
-          <Grid item xs={12} md={9}>
-            {renderForm()}
-          </Grid>
+          {RHS === "form" &&
+            <Grid item xs={12} md={9}>
+              {renderForm()}
+            </Grid>
+          }
+          {RHS === "passwordChange" &&
+            <Grid item xs={12} md={9}>
+              {getPasswordChangeForm()}
+            </Grid>
+          }
+           {RHS === "privacyPolicy" &&
+            <Grid item xs={12} md={9}>
+             <PrivacyPolicy setRHS={setRHS}/>
+            </Grid>
+          }
+           {RHS === "termsAndConditions" &&
+            <Grid item xs={12} md={9}>
+             <TermsAndConditions setRHS={setRHS} />
+            </Grid>
+          }
         </Grid>
       </Container>
     </ThemeProvider>

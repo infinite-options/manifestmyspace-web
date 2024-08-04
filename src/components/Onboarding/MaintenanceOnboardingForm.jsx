@@ -286,10 +286,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
     const parsedDocs = JSON.parse(profileData.business_documents);
       console.log("ROHIT - parsedDocs - ", parsedDocs);
-      const docs = parsedDocs?.map((doc, index) => ({
-          ...doc,
-          id: index
-      }));
+      const docs = parsedDocs ? parsedDocs.map((doc, index) => ({
+        ...doc,
+        id: index
+    })) : [];
       // console.log('initial docs', docs);
       setDocuments(docs || []);      
    
