@@ -39,46 +39,32 @@ export default function PMQuotesList() {
   // const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(contractRequests[0]?.property_id);
   const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(null);
 
-  useEffect(() => {
-    console.log("ROHIT - index - ", index);
-  }, [index]);
+  // useEffect(() => {
+  //   console.log("index - ", index);
+  // }, [index]);
 
   useEffect(() => {
-    console.log("ROHIT - here 2 - contractRequests - ", contractRequests);
-    if (selectedContractUID !== null && selectedContractUID !== undefined && contractRequests !== null && contractRequests !== undefined) {
-      // const contract = contractRequests.find(contract => contract.contract_uid === selectedContract.contract_uid);
-      // if (contract) {
-      //   setCurrentContract(contract);
-      //   setCurrentContractUID(contract?.contract_uid);
-      //   setCurrentContractPropertyUID(contract?.property_id);
-      // }
-      
+    // console.log("contractRequests - ", contractRequests);
+    if (selectedContractUID !== null && selectedContractUID !== undefined && contractRequests !== null && contractRequests !== undefined) {            
       const index = contractRequests.findIndex(contract => contract.contract_uid === selectedContractUID);
-      console.log("ROHIT - contractRequests index - ", index);
+      // console.log("contractRequests useEffect index - ", index);
       if (index !== -1) {
         setIndex(index)
       }
     }   
   }, [contractRequests]);
 
-  useEffect(() => {
-    console.log("ROHIT - currentContractUID index- ", index);
-    console.log("ROHIT - currentContractUID - ", currentContractUID);
-  }, [currentContractUID]);
+  // useEffect(() => {  
+  //   console.log("currentContractUID - ", currentContractUID);
+  // }, [currentContractUID]);
+
+  // useEffect(() => {
+  //   console.log("currentContractPropertyUID - ", currentContractPropertyUID);
+  // }, [currentContractPropertyUID]);
+
 
   useEffect(() => {
-    console.log("ROHIT - currentContractPropertyUID - ", currentContractPropertyUID);
-  }, [currentContractPropertyUID]);
-
-  // const setCurrentContract = ( contractID, contractPropertyID ) => {
-    
-  // }
-
-  useEffect(() => {
-    const contract = contractRequests[index];
-    console.log("ROHIT - here - contractRequests - ", contractRequests);
-    console.log("ROHIT - here - index - ", index);
-    console.log("ROHIT - here - current contract - ", contract);
+    const contract = contractRequests[index];    
     if(contract) setCurrentContractUID(contract?.contract_uid);
     if(contract) setCurrentContractPropertyUID(contract?.property_id);
   }, [index, contractRequests]);
@@ -160,48 +146,6 @@ export default function PMQuotesList() {
     };
     fetchData();
   }, []);
-
-  // return (
-  //   <ThemeProvider theme={theme}>
-  //     <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-  //       <CircularProgress color='inherit' />
-  //     </Backdrop>
-  //     <Stack
-  //       direction='column'
-  //       alignItems='center'
-  //       justifyContent='center'
-  //       sx={{
-  //         width: "100%", // Take up full screen width
-  //         minHeight: "100vh", // Set the Box height to full height
-  //         marginTop: theme.spacing(2), // Set the margin to 20px
-  //       }}
-  //     >
-  //       <Stack
-  //         sx={{
-  //           backgroundColor: "#fff",
-  //           width: "100%", // Occupy full width with 25px margins on each side
-  //           maxWidth: "800px", // You can set a maxWidth if needed
-  //           textAlign: "center", // Center align text
-  //         }}
-  //         spacing={2}
-  //         p={2}
-  //       >
-  //         <Typography
-  //           sx={{
-  //             color: "#160449",
-  //             fontWeight: theme.typography.primary.fontWeight,
-  //             fontSize: theme.typography.largeFont,
-  //           }}
-  //         >
-  //           All Property Management Requests
-  //         </Typography>
-  //         {contractRequests.map((contract, index) => (
-  //           <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} />
-  //         ))}
-  //       </Stack>
-  //     </Stack>
-  //   </ThemeProvider>
-  // );
 
   return (
     <ThemeProvider theme={theme}>

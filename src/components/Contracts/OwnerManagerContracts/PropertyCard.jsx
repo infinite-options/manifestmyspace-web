@@ -841,7 +841,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
-  console.log("ROHIT - PropertyCard - props - ", props);
+  console.log("PropertyCard - props - ", props);
 
   const [ propertyData, setPropertyData ] = useState(props.data);
   const timeDiff = props.timeDifference;
@@ -998,7 +998,7 @@ const PropertyCard = (props) => {
       const data2 = await businessProfileResult.json();
       const businessProfileData = data2["result"];
       const businessProf = businessProfileData?.find( item => item.business_uid === getProfileId())
-      console.log("ROHIT - businessProf - ", businessProf);
+      // console.log("businessProf - ", businessProf);
       setBusinessProfile(businessProf);
     }    
     

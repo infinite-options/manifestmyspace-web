@@ -4,9 +4,11 @@ import { Chart } from "react-google-charts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Typography, Switch, Link, Button, Paper, Stack, Grid } from "@mui/material";
 import { useUser } from "../../contexts/UserContext.jsx";
+import { useCookies } from "react-cookie";
 import { makeStyles } from "@material-ui/core";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import theme from "../../theme/theme.js";
+import axios from "axios";
 
 const useStyles = makeStyles({
   button: {
@@ -45,6 +47,7 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
   console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId, user, logout } = useUser(); // Ensure user is destructured from useUser
+  const [cookies, setCookie] = useCookies(["user"]);
   const classes = useStyles();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState(user.notifications === "true");
@@ -63,7 +66,8 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
   }, [settingsChanged]);
 
   const handleAddRoleLinkClick = () => {
-    setShowRoleDropdown(!showRoleDropdown);
+    // setShowRoleDropdown(!showRoleDropdown);
+    setShowRoleDropdown(true);
   };
 
   const handleRoleSelect = (event) => {
@@ -71,6 +75,13 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
     // Handle role selection logic here
     console.log("Selected role:", event.target.value);
   };
+
+  useEffect(() => {
+    if (newRole) {
+      handleAddRole();
+      setShowRoleDropdown(false); // Hide the dropdown after adding the role
+    }
+  }, [newRole]);
 
   // const handleChangePasswordClick = () => {
   //   // Handle password change logic here
@@ -82,6 +93,48 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
     console.log("User logged out");
     logout();
     // navigate("/login");
+  };
+
+  const handleAddRole = async () => {
+    try {
+      console.log("cookies.user", cookies.user);
+
+      // Check if newRole is available
+      if (newRole) {
+        // Initialize existingRoles from cookies
+        const existingRoles = cookies.user.role ? cookies.user.role.split(",") : [];
+
+        // Check if the new role already exists
+        if (existingRoles.includes(newRole)) {
+          alert(`You already have the role: ${newRole}`);
+          return;
+        }
+
+        // Add the new role
+        existingRoles.push(newRole);
+        const updatedRole = existingRoles.join(",");
+
+        // Send the update request to the server
+        const response = await axios.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+          user_uid: cookies.user.user_uid,
+          role: updatedRole,
+        });
+
+        // Check if the response is successful
+        if (response.status === 200) {
+          setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
+          alert("Role updated successfully");
+          navigate("/addNewRole", { state: { user_uid: cookies.user.user_uid, newRole } });
+        } else {
+          alert("An error occurred while updating the role.");
+        }
+      } else {
+        alert("Please select a role to add.");
+      }
+    } catch (error) {
+      console.error("Error updating role:", error);
+      alert("An error occurred while updating the role.");
+    }
   };
 
   return (
