@@ -102,7 +102,7 @@ const ProfileManager = () => {
       const profileResponse = await axios.get(url);
       const profileData = profileResponse.data.profile.result[0];
       setProfileData(profileData);
-      setIsSave(false)
+      setIsSave(false);
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
@@ -211,7 +211,7 @@ const ProfileManager = () => {
   return (
     <Box className={classes.container}>
       <Box className={classes.leftPanel}>
-        <Typography variant="h5">Application Settings</Typography>
+        <Typography variant='h5'>Application Settings</Typography>
         <Stack spacing={2} mt={5}>
           <Box className={classes.settingsItem}>
             <Typography>Allow notifications</Typography>
@@ -243,33 +243,33 @@ const ProfileManager = () => {
               }}
             />
           </Box>
-          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>
+          <Link href='#' underline='hover' sx={{ color: "#3D5CAC" }}>
             Privacy policy
           </Link>
-          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>
+          <Link href='#' underline='hover' sx={{ color: "#3D5CAC" }}>
             Terms and conditions
           </Link>
-          <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC" }}>
+          <Link href='#' underline='hover' onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC" }}>
             Add Role
           </Link>
           {showRoleDropdown && (
             <Box className={classes.settingsItem}>
               <select value={newRole} onChange={handleRoleSelect}>
-                <option value="">Select Role</option>
-                <option value="MANAGER">Manager</option>
-                <option value="PM_EMPLOYEE">Property Manager - Employee</option>
-                <option value="OWNER">Owner</option>
-                <option value="TENANT">Tenant</option>
-                <option value="MAINTENANCE">Maintenance</option>
-                <option value="MAINT_EMPLOYEE">Maintenance - Employee</option>
+                <option value=''>Select Role</option>
+                <option value='MANAGER'>Manager</option>
+                <option value='PM_EMPLOYEE'>Property Manager - Employee</option>
+                <option value='OWNER'>Owner</option>
+                <option value='TENANT'>Tenant</option>
+                <option value='MAINTENANCE'>Maintenance</option>
+                <option value='MAINT_EMPLOYEE'>Maintenance - Employee</option>
               </select>
             </Box>
           )}
-          <Link href="#" underline="hover" onClick={handleChangePasswordClick} sx={{ color: "#3D5CAC" }}>
-            Change password
+          <Link href='#' underline='hover' onClick={handleChangePasswordClick} sx={{ color: "#3D5CAC" }}>
+            Change password 2
           </Link>
           <Button
-            variant="contained"
+            variant='contained'
             onClick={() => {
               logout();
             }}

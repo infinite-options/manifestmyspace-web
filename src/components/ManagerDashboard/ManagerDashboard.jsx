@@ -34,7 +34,7 @@ const useStyles = makeStyles({
   },
 });
 
-function ManagerDashboard() {
+export default function ManagerDashboard() {
   // console.log("In Manager Dashboard function");
 
   const navigate = useNavigate();
@@ -332,5 +332,3 @@ const ShimmerUI = () => {
     </ThemeProvider>
   );
 };
-
-export default ManagerDashboard;

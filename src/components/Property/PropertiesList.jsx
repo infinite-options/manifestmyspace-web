@@ -51,6 +51,7 @@ export default function PropertiesList(props) {
   // console.log("In Property List - returnIndex outside: ", );
   // console.log("In Property List - rentStatus outside: ", allRentStatus);
   // console.log("In Property List - LHS outside: ", LHS);
+  // console.log("In Property List - LHS Props outside: ", props.LHS);
 
   useEffect(() => {
     setPropertyList(props.propertyList);

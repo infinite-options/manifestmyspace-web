@@ -26,7 +26,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import NewCardSlider from "../Announcement/NewCardSlider";
 import APIConfig from "../../utils/APIConfig";
 import Announcements from "../Announcement/Announcements";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Import the back arrow icon
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // Import the back arrow icon
 
 const useStyles = makeStyles({
   button: {
@@ -49,6 +49,7 @@ const useStyles = makeStyles({
 });
 
 export default function OwnerDashboard() {
+  console.log("In Owner Dashboard function");
   const { user, getProfileId } = useUser();
   const classes = useStyles();
   const navigate = useNavigate();
@@ -75,24 +76,26 @@ export default function OwnerDashboard() {
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
 
   const [announcementsData, setAnnouncementsData] = useState([]);
-  const [view, setView] = useState('dashboard');
+  const [view, setView] = useState("dashboard");
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
-  console.log("getProfileId()", getProfileId());
+  // console.log("getProfileId()", getProfileId());
   useEffect(() => {
     const dataObject = {};
-    console.log("getProfileI$", getProfileId());
+    // console.log("getProfileI$", getProfileId());
     const fetchData = async () => {
       if (!getProfileId()) {
         return;
       }
-      console.log("getProfileId*", getProfileId());
-      if (!getProfileId())  { let newRole="OWNER"
-      navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });}
+      // console.log("getProfileId*", getProfileId());
+      if (!getProfileId()) {
+        let newRole = "OWNER";
+        navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
+      }
       setShowSpinner(true);
-      console.log("getProfileId()", getProfileId());     
+      console.log("getProfileId()", getProfileId());
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
-      console.log("jsonData", jsonData);
+      // console.log("jsonData", jsonData);
 
       const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
       const announcementsResponseData = await announcementsResponse.json();
@@ -117,12 +120,12 @@ export default function OwnerDashboard() {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
 
-      <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container spacing={6}>
-          {view === 'dashboard' ? (
+          {view === "dashboard" ? (
             <>
               <Grid item xs={12}>
                 <Box
@@ -163,7 +166,7 @@ export default function OwnerDashboard() {
                   <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
                     <Grid
                       container
-                      direction="row"
+                      direction='row'
                       sx={{
                         paddingTop: "10px",
                         paddingBottom: "10px",
@@ -207,7 +210,7 @@ export default function OwnerDashboard() {
                               paddingRight: "25px",
                               fontWeight: "bold",
                             }}
-                            onClick={() => setView('announcements')}
+                            onClick={() => setView("announcements")}
                           >
                             {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
                           </Box>
@@ -231,12 +234,12 @@ export default function OwnerDashboard() {
                 <CashflowWidget data={cashflowStatusData} />
               </Grid>
               <Grid item xs={12} md={8}>
-                <Box sx={{ display: 'flex', alignItems: 'center', paddingTop: '10px' }}>
-                  <IconButton onClick={() => setView('dashboard')} sx={{ marginRight: '10px' }}>
+                <Box sx={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
+                  <IconButton onClick={() => setView("dashboard")} sx={{ marginRight: "10px" }}>
                     <ArrowBackIcon />
                   </IconButton>
                 </Box>
-                <Box sx={{ paddingTop: '10px' }}>
+                <Box sx={{ paddingTop: "10px" }}>
                   <Announcements />
                 </Box>
               </Grid>
@@ -245,17 +248,18 @@ export default function OwnerDashboard() {
         </Grid>
       </Container>
 
-      <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
         <DialogContent>
           <DialogContentText
-            id="alert-dialog-description"
+            id='alert-dialog-description'
             sx={{
               color: theme.typography.common.blue,
               fontWeight: theme.typography.common.fontWeight,
               paddingTop: "10px",
             }}
           >
-            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need to add additional details such as your SSN and address. Thank you!
+            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need
+            to add additional details such as your SSN and address. Thank you!
           </DialogContentText>
         </DialogContent>
         <DialogActions>

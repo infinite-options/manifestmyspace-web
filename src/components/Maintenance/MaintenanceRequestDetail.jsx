@@ -322,7 +322,7 @@ export function MaintenanceRequestDetail({ maintenance_request_index, status: in
                   fontSize: theme.typography.largeFont,
                 }}
               >
-                Maintenance Details
+                Maintenance Details 123
               </Typography>
             </Box>
           </Stack>
