@@ -283,10 +283,10 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
       const parsedDocs = JSON.parse(profileData.tenant_documents);
       console.log("ROHIT - parsedDocs - ", parsedDocs);
-      const docs = parsedDocs?.map((doc, index) => ({
+      const docs = parsedDocs ? parsedDocs.map((doc, index) => ({
           ...doc,
           id: index
-      }));
+      })) : [];
       // console.log('initial docs', docs);
       setDocuments(docs);
       documentsRef.current = parsedDocs;

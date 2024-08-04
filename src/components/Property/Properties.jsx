@@ -22,6 +22,9 @@ import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 import PMQuotesRequested from "./PMQuotesRequested";
+import SearchManager from "./SearchManager";
+import RequestQuotes from "./RequestQuotes";
+import { ManageHistory } from "@mui/icons-material";
 
 function Properties() {
   const location = useLocation();
@@ -51,13 +54,21 @@ function Properties() {
   const [newContractUID, setNewContractUID] = useState(null);
   const [newContractPropertyUID, setNewContractPropertyUID] = useState(null);
 
-  useEffect(() => {
-    // console.log("ROHIT - newContractUID - ", newContractUID);
-  }, [newContractUID]);
+  const [ managersList, setManagersList ] = useState([]);
+  const [ managerData, setManagerData ] = useState(null); // for request quotes
 
   useEffect(() => {
-    // console.log("ROHIT - newContractPropertyUID - ", newContractPropertyUID);
-  }, [newContractPropertyUID]);
+    console.log("Properties - newContractUID - ", newContractUID);
+  }, [newContractUID]);
+
+  // useEffect(() => {
+  //   console.log("Properties - newContractPropertyUID - ", newContractPropertyUID);
+  // }, [newContractPropertyUID]);
+
+  useEffect(() => {
+    console.log("ROHIT - managersList - ", managersList);
+  }, [managersList]);
+
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
@@ -231,9 +242,26 @@ function Properties() {
     setRHS("ViewPMQuotesRequested");
   };
 
+  const handleShowSearchManager = () => {
+    setRHS("SearchManager");
+  }
+
+  const handleShowRequestQuotes = () => {
+    setRHS("RequestQuotes");
+  }
+
+  const handleRequestQuotes = ( manager ) => {
+    console.log("ROHIT - Properties - handleRequestQuotes - managerData - ", manager);
+    setManagerData(manager);
+    setRHS("RequestQuotes");
+  }
   const handleSorting = (propertyList) => {
     setPropertyList(propertyList);
   };
+
+  
+
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -277,6 +305,8 @@ function Properties() {
                 onViewContractClick={handleViewContractClick}
                 handleViewApplication={handleViewApplication}
                 handleViewPMQuotesRequested={handleViewPMQuotesRequested}
+                onShowSearchManager={handleShowSearchManager}
+                handleShowRequestQuotes={handleShowRequestQuotes}
               />
             )}
             {RHS === "EditProperty" && (
@@ -290,6 +320,7 @@ function Properties() {
                 allRentStatus={allRentStatus}
                 rawPropertyData={propertyList}
                 onBackClick={handleBackClick}
+                setRHS={setRHS}
               />
             )}
             {RHS === "ViewLease" && (
@@ -303,14 +334,14 @@ function Properties() {
               <PropertyForm
                 onBack={handleBackClick}
                 // onSubmit={handleBackClick}
-                onSubmit={showNewContract}
+                showNewContract={showNewContract}
                 property_endpoint_resp={rawPropertyData}
                 setNewContractUID={setNewContractUID}
                 setNewContractPropertyUID={setNewContractPropertyUID}
                 // showNewContract={showNewContract}
               />
             )}
-            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData} />}
+            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />}
             {RHS === "ViewPMQuotesRequested" && (
               <PMQuotesRequested
                 index={returnIndex}
@@ -322,6 +353,29 @@ function Properties() {
                 // setCurrentView={setCurrentView}
               />
             )}
+            {
+              RHS === "SearchManager" && (
+                <SearchManager 
+                  index={returnIndex}
+                  propertyData={propertyList}                  
+                  setManagersList={setManagersList}
+                  handleBackClick={handleBackClick}
+                  handleRequestQuotes={handleRequestQuotes}
+                />
+              )
+            }
+            {
+              RHS === "RequestQuotes" && (
+                <RequestQuotes 
+                  // requestQuotesState={requestQuotesState} 
+                  // setCurrentView={setCurrentView} 
+                  index={returnIndex}
+                  propertyData={propertyList}
+                  managerData={managerData}
+                  onShowSearchManager={handleShowSearchManager}
+                />
+              )
+            }
           </Grid>
         </Grid>
       </Container>

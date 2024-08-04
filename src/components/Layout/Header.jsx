@@ -21,12 +21,20 @@ function Header(props) {
   const cookiesData = cookie["user"];
   const userRoles = user && cookiesData?.role ? cookiesData.role.split(",") : [];
   // console.log("cookiesData ", cookiesData);
-  // console.log("Current User Roles: ", userRoles);
+  //console.log("Current User Roles: ", userRoles);
 
   const navigate = useNavigate();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const desiredOrder = ['MANAGER', 'OWNER', 'TENANT', 'MAINTENANCE', 'PM_EMPLOYEE', 'MAINT_EMPLOYEE'];
+
+  const sortUserRoles = (roles, order) => {
+    return roles.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+  };
+
+  const sortedRoles = sortUserRoles([...userRoles], desiredOrder);
 
   const handleMenuToggle = (event) => {
     setAnchorEl(event.currentTarget);
@@ -100,9 +108,9 @@ function Header(props) {
                 )}
               </Toolbar>
             </AppBar>
-            {!isMobile && userRoles.length > 0 && (
+            {!isMobile && sortedRoles.length > 0 && (
               <Toolbar style={{ justifyContent: "space-between", padding: "0 20px", backgroundColor: "#3D5CAC", color: "#FFFFFF" }}>
-                {userRoles.map((role) => (
+                {sortedRoles.map((role) => (
                   <Button
                     key={role}
                     color='inherit'
@@ -138,7 +146,7 @@ function Header(props) {
                   horizontal: "right",
                 }}
               >
-                {userRoles.map((role) => (
+                {sortedRoles.map((role) => (
                   <MenuItem key={role} onClick={() => handleButtonClick(role)}>
                     {roleName(role)}
                   </MenuItem>

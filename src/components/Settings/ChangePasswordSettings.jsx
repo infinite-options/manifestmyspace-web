@@ -20,13 +20,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ChangePasswordSettings() {
+export default function ChangePasswordSettings(props) {
   const classes = useStyles();
   const navigate = useNavigate();
   const { user } = useUser();
   // console.log("USER - ", user);
   const location = useLocation();
-  let owner_data = location.state && location.state.owner_data ? location.state.owner_data:null;
+  let owner_data = props.owner_data;
   console.log('inside owner password change', owner_data);
 
   const [modifiedData, setModifiedData] = useState({ user_uid: user?.user_uid });
@@ -93,7 +93,7 @@ export default function ChangePasswordSettings() {
           .then((response) => {
             console.log("Data updated successfully");
             setIsEdited(false); // Reset the edit status
-            navigate(-1);
+            props.setRHS("form");
           })
           .catch((error) => {
             if (error.response) {
@@ -152,7 +152,7 @@ export default function ChangePasswordSettings() {
                 left: 0,
               }}
               onClick={() => {
-                navigate(-1);
+                props.setRHS("form");
               }}
             />
             <Typography
@@ -168,10 +168,12 @@ export default function ChangePasswordSettings() {
           </Box>
           <Paper
             style={{
-              margin: '30px 30px 30px 100px',
+              margin: 'auto',
               padding: theme.spacing(2),
               backgroundColor: theme.palette.primary.main,
               width: "85%", // Occupy full width with 25px margins on each side
+              justifyContent:'center',
+              alignItems:'center',
               [theme.breakpoints.down("sm")]: {
                 width: "80%",
               },

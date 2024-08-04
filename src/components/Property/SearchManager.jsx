@@ -15,6 +15,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 // Styles
 const useStyles = makeStyles((theme) => ({
@@ -32,14 +33,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // SearchManager Component
-const SearchManager = ({ searchManagerState, onShowRequestQuotes, setCurrentView }) => {
+// const SearchManager = ({ searchManagerState, onShowRequestQuotes, setCurrentView }) => {
+const SearchManager = (props) => {
   // State declarations
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
   //console.log('----search manager searchManagerState---', searchManagerState)
-  const managerState = location.state || searchManagerState;
-  const { index, propertyData, isDesktop } = managerState || {};
+  const managerState = location.state || props;
+  const { index, propertyData } = managerState || {};
+  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   //console.log('---propertyData searchmanager---', propertyData, index);
   const [displayed_managers, set_displayed_managers] = useState([]);
   const [all_managers, set_all_managers] = useState([]);
@@ -48,9 +51,14 @@ const SearchManager = ({ searchManagerState, onShowRequestQuotes, setCurrentView
   const [ownerId, setOwnerId] = useState(getProfileId());
   const [showSpinner, setShowSpinner] = useState(false);
 
-  const handleRequestQuotes = async (managerData) => {
-    onShowRequestQuotes({ managerData, propertyData, index, isDesktop });
-  };
+  const setManagersList = props.setManagersList;
+  const handleBackClick = props.handleBackClick;
+
+  const handleRequestQuotes = props.handleRequestQuotes;
+  // const handleRequestQuotes = async (managerData) => {
+  //   // onShowRequestQuotes({ managerData, propertyData, index, isDesktop }); // rohit - fix
+  //   console.log("SearchManager - handleRequestQuotes - managerData - ", managerData);
+  // };
 
   // Function to fetch manager information
   const get_manager_info = async () => {
@@ -61,6 +69,7 @@ const SearchManager = ({ searchManagerState, onShowRequestQuotes, setCurrentView
     const managers = response.data.result;
     set_all_managers(managers);
     set_displayed_managers(managers);
+    setManagersList(managers);
     setShowSpinner(false);
   };
 
@@ -81,7 +90,8 @@ const SearchManager = ({ searchManagerState, onShowRequestQuotes, setCurrentView
   const navigateToPrev = () => {
     if(isDesktop === true){
       //navigate('/properties', {state:{index:index}});
-      setCurrentView('defaultview');
+      // setCurrentView('defaultview');
+      handleBackClick();
     }else{
       navigate(-1);
     }

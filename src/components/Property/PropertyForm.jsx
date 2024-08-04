@@ -100,7 +100,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, }) => {
+const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, }) => {
 	const classes = useStyles();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
@@ -375,6 +375,11 @@ const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp, setNewContract
 				//     property_endpoint_resp: property_endpoint_resp,
 				//   },
 				// });			
+				navigate("/pmQuotesList", {
+				  state: {
+				    selected_contract_uid: responseContractUID,				    
+				  },
+				});			
 			} catch (error) {
 				console.error("Error:", error);
 			}
@@ -392,7 +397,11 @@ const PropertyForm = ({ onBack, onSubmit, property_endpoint_resp, setNewContract
 		setSelectedImageList([]);
 		setActiveStep(0);
 		setShowSpinner(false);
-		onSubmit(); // Call the parent's submit handler
+		if( selectedRole === "MANAGER"){
+			showNewContract(); 
+		} else if (selectedRole === "OWNER") {
+			onBack();
+		}
 
 	};
 
