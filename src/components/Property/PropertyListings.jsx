@@ -507,6 +507,18 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
     });
   };
 
+  const handleTenantApplicationButton = () => {
+    setRightPane({
+      type: "tenantApplication",
+      state: {
+        index: data.property_uid,
+        data: property,
+        status: status,
+        lease: lease,
+      },
+    });
+  }
+
   function formatAddress() {
     if (property?.property_unit !== "") {
       return property?.property_address + " Unit " + property?.property_unit;
@@ -967,8 +979,9 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
                   textTransform: "none",
                   whiteSpace: "nowrap",
                 }}
-                onClick={() => navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } })}
-              >
+                // onClick={() => navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } })}
+                onClick={handleTenantApplicationButton}
+             >
                 View Application
               </Button>
             ) : null}

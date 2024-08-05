@@ -21,7 +21,7 @@ export default function TenantApplication(props) {
 
   console.log("props in tenantApplication", props);
 
-  const [property, setProperty] = useState(props.property);
+  const [property, setProperty] = useState(props.data);
   const [status, setStatus] = useState(props.status);
   const [lease, setLease] = useState(props.lease);
   console.log("in tenant application status", status);
