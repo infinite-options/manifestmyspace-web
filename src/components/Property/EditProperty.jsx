@@ -38,6 +38,7 @@ import { Assessment } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { getLatLongFromAddress } from "../../utils/geocode";
 import AddressAutocompleteInput from "./AddressAutocompleteInput";
+import { useCookies } from "react-cookie";
 
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
@@ -60,6 +61,9 @@ function EditProperty(props) {
   // replaced with line below
   // let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state || editPropertyState;
   let { index, propertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick } = props;
+
+  const [cookies, setCookie] = useCookies(["default_form_vals"]);
+  const cookiesData = cookies["default_form_vals"];
 
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   // console.log("Property propertyData---", propertyData)
@@ -506,7 +510,7 @@ function EditProperty(props) {
     setListed(event.target.checked);
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event, stayOnPage = false) => {
     event.preventDefault();
     console.log("handleSubmit");
 
@@ -747,24 +751,29 @@ function EditProperty(props) {
     }
 
     try {
-      // console.log("promises added - ", promises_added);
       await Promise.all(promises);
       console.log("All Changes saved to the Database", promises);
       await autoUpdate();
 
-      console.log("propertyList after autoUpdate - ", propertyList);
-      if (isDesktop == true) {
-        // navigate("/properties", { state: { index: index } }); - PM Changed
-        props.setRHS("PropertyNavigator");
-        navigate("/propertiesPM", { state: { index: index } });
+      if (stayOnPage) {
+        console.log("STAY ON PAGE", stayOnPage)
+        // setCookie("user_data", { ...cookiesData, index }, { path: "/" });
       } else {
-        navigate("/propertyDetail", { state: { index: index, propertyList: propertyList, allRentStatus: allRentStatus, isDesktop: isDesktop, rawPropertyData: rawPropertyData } });
+        console.log("propertyList after autoUpdate - ", propertyList);
+        if (isDesktop) {
+          props.setRHS("PropertyNavigator");
+          navigate("/propertiesPM", { state: { index, propertyList } });
+          // setCookie("user_data", { ...cookiesData, index }, { path: "/" });
+          window.location.reload();
+        } else {
+          navigate("/propertiesPM", { state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData } });
+        }
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
+  
   const formatUtilityName = (utility) => {
     const formattedUtility = utility.replace(/_/g, " ");
     return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
@@ -1125,7 +1134,7 @@ function EditProperty(props) {
           }}
         >
           <Grid container>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ paddingTop: "10px" }}>
               <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
                 {page === "edit_property" && (
                   <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Property</Typography>
@@ -1138,6 +1147,17 @@ function EditProperty(props) {
                 )}
               </Button>
             </Grid>
+            {page !== "add_listing" && (
+            <Grid item xs={12} sx={{ paddingTop: "10px" }}>
+              <Button
+                variant="contained"
+                sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}
+                onClick={(event) => handleSubmit(event, true)}
+              >
+              <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont}}> Update and Stay </Typography>
+              </Button>
+            </Grid>
+          )}
           </Grid>
         </Box>
       </Stack>
