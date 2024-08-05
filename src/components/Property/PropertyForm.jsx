@@ -15,6 +15,10 @@ import {
 	Box,
 	ThemeProvider,
 	Modal,
+	Dialog,
+	DialogContent,
+	DialogContentText,
+	DialogActions,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import MapIcon from '@mui/icons-material/Map';
@@ -100,7 +104,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, }) => {
+const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, refreshProperties, }) => {
 	const classes = useStyles();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
@@ -134,6 +138,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 	const [selectedAppliances, setSelectedAppliances] = useState([]);
 	const [coordinates, setCoordinates] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const [detailsSaved, setDetailsSaved ] = useState(false);
+
+	const [showGoBackDialog, setShowGoBackDialog ] = useState(false);
 
 	const handleCloseModal = () => {
 		setIsModalOpen(false);
@@ -397,9 +405,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 		setSelectedImageList([]);
 		setActiveStep(0);
 		setShowSpinner(false);
-		if( selectedRole === "MANAGER"){
-			showNewContract(); 
-		} else if (selectedRole === "OWNER") {
+
+		refreshProperties();
+		
+		if (selectedRole === "OWNER") {
 			onBack();
 		}
 
@@ -451,17 +460,34 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 		fetchAppliances();
 	}, []);
 
+	const handleBackClick = () => {
+		setShowGoBackDialog(true);	
+	}
+	
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', marginTop: '15px', }}>
+				<Grid container spacing={8}>
+					<Grid item xs={2}>
+						<Button onClick={handleBackClick} sx={{
+							'&:hover': {
+								backgroundColor: 'white',
+							}
+						}}>
+							<ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20 }} />
+						</Button>
+					</Grid>
+					<Grid container justifyContent='center' item xs={8}>
+						<Typography sx={{fontSize: '24px', color: "#160449", fontWeight: 'bold'}}>
+							Enter Property Details
+						</Typography>
+					</Grid>
 
-				<Button onClick={onBack} sx={{
-					'&:hover': {
-						backgroundColor: 'white',
-					}
-				}}>
-					<ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", marginLeft: -20 }} />
-				</Button>
+					<Grid item xs={2}>
+
+					</Grid>
+				</Grid>
 
 				<Card sx={{ backgroundColor: '#D6D5DA', marginBottom: '18px', padding: '16px', borderRadius: '8px' }}>
 					<CardContent className={classes.cardContent}>
@@ -913,6 +939,64 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 						<ReferUser onClose={handleCloseModal} onReferralSuccess={handleSetSelectedOwner} />
 					</Box>
 				</Modal>
+				
+				<Dialog
+					open={showGoBackDialog}
+					onClose={() => setShowGoBackDialog(false)}
+					aria-labelledby='alert-dialog-title'
+					aria-describedby='alert-dialog-description'
+				>
+					<DialogContent>
+						<DialogContentText
+							id='alert-dialog-description'
+							sx={{
+							fontWeight: theme.typography.common.fontWeight,
+							paddingTop: "10px",
+							}}
+						>
+							Are you sure you want to leave without saving the new property?
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+					<Box
+						sx={{
+						width: "100%",
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+						}}
+					>
+						<Button
+							onClick={() => onBack()}
+							sx={{
+								color: "white",
+								backgroundColor: "#3D5CAC80",
+								":hover": {
+								backgroundColor: "#3D5CAC",
+								},
+								marginRight: "10px",
+							}}
+							autoFocus
+						>
+							Yes
+						</Button>
+						<Button
+						onClick={() => setShowGoBackDialog(false)}
+						sx={{
+							color: "white",
+							backgroundColor: "#3D5CAC80",
+							":hover": {
+							backgroundColor: "#3D5CAC",
+							},
+							marginLeft: "10px",
+						}}
+						>
+						No
+						</Button>
+					</Box>
+					</DialogActions>
+				</Dialog>
+				
 			</Container>
 		</ThemeProvider>);
 };
