@@ -10,14 +10,19 @@ import { CustomTabPanel } from "../Maintenance/MaintenanceRequestDetail";
 import { useUser } from "../../contexts/UserContext";
 
 import APIConfig from "../../utils/APIConfig";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-export default function PMQuotesRequested({pmQuoteRequestedState, setCurrentView}) {
+export default function PMQuotesRequested(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
-  console.log("--debug location.state--", location.state || pmQuoteRequestedState);
-  console.log('----pmQuoteRequestedState.contracts---', pmQuoteRequestedState.contracts);
-  const PMQuotesDetails = location.state || pmQuoteRequestedState;
+  // console.log("--debug location.state--", location.state || pmQuoteRequestedState);
+  console.log('----pmQuoteRequestedState.contracts---', props.contracts);
+  // const PMQuotesDetails = location.state || props;
+  const PMQuotesDetails = props;
+  console.log('ROHIT - PMQuotesDetails -', PMQuotesDetails);
+  console.log('ROHIT - PMQuotesDetails props -', props);
+  const handleBackClick = props.handleBackClick;
 
   const [contracts, setContracts] = useState(PMQuotesDetails.contracts);
 
@@ -25,7 +30,8 @@ export default function PMQuotesRequested({pmQuoteRequestedState, setCurrentView
   const property = PMQuotesDetails.propertyData;
   const propertyId = property[PMQuotesDetails.index]?.property_uid ;
   const index = PMQuotesDetails.index;
-  const isDesktop = PMQuotesDetails.isDesktop;
+  // const isDesktop = PMQuotesDetails.isDesktop;
+  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   const statusList = ["New Quotes", "Contracts"];
   const statusColor = ["#3D5CAC", "#160449"];
@@ -283,7 +289,7 @@ export default function PMQuotesRequested({pmQuoteRequestedState, setCurrentView
 
   const viewAllProperties = () => {
     if (isDesktop == true) {
-      setCurrentView('defaultview');
+      handleBackClick();
     } else {
       navigate(-1);
     }

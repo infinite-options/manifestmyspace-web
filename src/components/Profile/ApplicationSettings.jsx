@@ -4,9 +4,12 @@ import { Chart } from "react-google-charts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Typography, Switch, Link, Button, Paper, Stack, Grid } from "@mui/material";
 import { useUser } from "../../contexts/UserContext.jsx";
+import { useCookies } from "react-cookie";
 import { makeStyles } from "@material-ui/core";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import theme from "../../theme/theme.js";
+import axios from "axios";
+import { styled } from '@mui/system';
 
 const useStyles = makeStyles({
   button: {
@@ -41,10 +44,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ApplicationSettings({ handleChangePasswordClick }) {
+export default function ApplicationSettings({ handleChangePasswordClick, setRHS }) {
   console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId, user, logout } = useUser(); // Ensure user is destructured from useUser
+  const [cookies, setCookie] = useCookies(["user"]);
   const classes = useStyles();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState(user.notifications === "true");
@@ -53,6 +57,28 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
   const [settingsChanged, setSettingsChanged] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [newRole, setNewRole] = useState("");
+
+  const CustomSwitch = styled(Switch)(({ theme }) => ({
+    '& .MuiSwitch-switchBase.Mui-checked': {
+      '&:hover': {
+        backgroundColor: 'rgba(61, 92, 172, 0.08)', // Hover effect color when checked
+      },
+      '& + .MuiSwitch-track': {
+        backgroundColor: 'gray', // Track color when checked
+        opacity: 1,
+      },
+    },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track:before': {
+      backgroundColor: 'gray',
+    },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track:after': {
+      backgroundColor: 'gray',
+    },
+    '& .MuiSwitch-track': {
+      backgroundColor: 'gray', // Track color when not checked
+      opacity: 1,
+    },
+  }));
 
   useEffect(() => {
     if (settingsChanged) {
@@ -63,7 +89,8 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
   }, [settingsChanged]);
 
   const handleAddRoleLinkClick = () => {
-    setShowRoleDropdown(!showRoleDropdown);
+    // setShowRoleDropdown(!showRoleDropdown);
+    setShowRoleDropdown(true);
   };
 
   const handleRoleSelect = (event) => {
@@ -71,6 +98,13 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
     // Handle role selection logic here
     console.log("Selected role:", event.target.value);
   };
+
+  useEffect(() => {
+    if (newRole) {
+      handleAddRole();
+      setShowRoleDropdown(false); // Hide the dropdown after adding the role
+    }
+  }, [newRole]);
 
   // const handleChangePasswordClick = () => {
   //   // Handle password change logic here
@@ -84,6 +118,48 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
     // navigate("/login");
   };
 
+  const handleAddRole = async () => {
+    try {
+      console.log("cookies.user", cookies.user);
+
+      // Check if newRole is available
+      if (newRole) {
+        // Initialize existingRoles from cookies
+        const existingRoles = cookies.user.role ? cookies.user.role.split(",") : [];
+
+        // Check if the new role already exists
+        if (existingRoles.includes(newRole)) {
+          alert(`You already have the role: ${newRole}`);
+          return;
+        }
+
+        // Add the new role
+        existingRoles.push(newRole);
+        const updatedRole = existingRoles.join(",");
+
+        // Send the update request to the server
+        const response = await axios.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+          user_uid: cookies.user.user_uid,
+          role: updatedRole,
+        });
+
+        // Check if the response is successful
+        if (response.status === 200) {
+          setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
+          alert("Role updated successfully");
+          navigate("/addNewRole", { state: { user_uid: cookies.user.user_uid, newRole } });
+        } else {
+          alert("An error occurred while updating the role.");
+        }
+      } else {
+        alert("Please select a role to add.");
+      }
+    } catch (error) {
+      console.error("Error updating role:", error);
+      alert("An error occurred while updating the role.");
+    }
+  };
+
   return (
     <Grid container alignContent='flex-start' item xs={12} sx={{padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "10px", height: '100%', }}>
       <Typography sx={{ fontSize: '24px', fontWeight: 'bold', }}>Application Settings</Typography>
@@ -93,7 +169,7 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
             <Typography>Allow notifications</Typography>
           </Grid>
           
-          <Switch
+          <CustomSwitch
             checked={notifications}
             onChange={(e) => {
               setNotifications(e.target.checked);
@@ -105,7 +181,7 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
           <Grid container item xs={9} alignContent= 'center'>
             <Typography>Dark mode</Typography>
           </Grid>
-          <Switch
+          <CustomSwitch
             checked={darkMode}
             onChange={(e) => {
               setDarkMode(e.target.checked);
@@ -117,7 +193,7 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
           <Grid container item xs={9} alignContent= 'center'>
             <Typography>Allow Cookies</Typography>
           </Grid>
-          <Switch
+          <CustomSwitch
             checked={allowCookies}
             onChange={(e) => {
               setAllowCookies(e.target.checked);
@@ -126,12 +202,17 @@ export default function ApplicationSettings({ handleChangePasswordClick }) {
           />
         </Grid>
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '5px', }}>
-          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>
+          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }} onClick={() => {
+                console.log('clicked privacypolicy');
+                setRHS("privacyPolicy");
+              }}>
             Privacy policy
           </Link>
         </Grid>
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '15px', }}>
-          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }}>
+          <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }} onClick={() => {
+                setRHS("termsAndConditions");
+              }}>
             Terms and conditions
           </Link>
         </Grid>

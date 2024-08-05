@@ -82,6 +82,7 @@ export default function PropertyNavigator({
   setManagerDetailsState,
   onShowSearchManager,
   handleViewApplication,
+  handleViewPMQuotesRequested,
   props,
 }) {
   // console.log("In Property Navigator", onEditClick);
@@ -114,6 +115,7 @@ export default function PropertyNavigator({
   const [dataforhappiness, setdataforhappiness] = useState([]);
 
   const [applianceList, setApplianceList] = useState([]);
+  const [initialApplData, setInitialApplData] = useState(null);
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
@@ -204,7 +206,7 @@ export default function PropertyNavigator({
 
   const [activeStep, setActiveStep] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [contractsData, setContractsData] = useState([]);
+  const [contractsData, setContractsData] = useState(contracts);
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
@@ -303,11 +305,13 @@ export default function PropertyNavigator({
       //   getContractsForOwner();
       var count = 0;
       const filtered = contractsData.filter((contract) => contract.property_id === propertyId);
+      console.log("ROHIT - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
         if (contract.contract_status === "SENT" || contract.contract_status === "NEW") {
           count++;
         }
       });
+      console.log("ROHIT - PropertyNavigator - contract count - ", count);
       setContractsNewSent(count);
       setContractsData(contracts);
 
@@ -333,7 +337,8 @@ export default function PropertyNavigator({
         setAppliances([]);
       }
     }
-  }, [currentIndex, propertyId, allRentStatus]);
+  }, [currentIndex, propertyId, allRentStatus, index, propertyList, contracts, propertyData,]);
+// }, [currentIndex, propertyId, allRentStatus]);
 
   const tenant_detail = property && property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
   const manager_detail = property && property.business_uid ? `${property.business_name}` : "No Manager";
@@ -750,6 +755,7 @@ export default function PropertyNavigator({
 
   const handleEditClick = (row) => {
     // console.log("ROHIT - handleEditClick - row - ", row);
+    setInitialApplData(row);
     setcurrentApplRow(row);
     setModifiedApplRow({ appliance_uid: row.appliance_uid });
     setIsEditing(true);
@@ -818,8 +824,23 @@ export default function PropertyNavigator({
     }
   };
 
+  const getAppliancesChanges = () => {
+    const changes = {};
+
+    if (!initialApplData) {
+      return changes;
+    }
+
+    Object.keys(currentApplRow).forEach((key) => {
+      if (initialApplData[key] != currentApplRow[key]) {
+        changes[key] = currentApplRow[key];
+      }
+    });
+    return changes;
+  };
+
   const editAppliance = async (appliance) => {
-    // console.log("inside editAppliance", appliance);
+    console.log("inside editAppliance", appliance);
     try {
       setShowSpinner(true);
       const headers = {
@@ -829,19 +850,39 @@ export default function PropertyNavigator({
         "Access-Control-Allow-Credentials": "*",
       };
 
+      const changedFields = getAppliancesChanges();
+
+      if (Object.keys(changedFields).length == 0) {
+        console.log("No changes detected.");
+        setShowSpinner(false);
+        return;
+      }
+
       const applianceFormData = new FormData();
 
-      Object.keys(appliance).forEach((key) => {
-        // console.log(`Key: ${key}`);
+      // Object.keys(appliance).forEach((key) => {
+      //   // console.log(`Key: ${key}`);
 
-        applianceFormData.append(key, appliance[key]);
-      });
+      //   applianceFormData.append(key, changedFields[key]);
+      // });
       // applianceFormData.append('appiliance_uid', appliance.uid);
 
       // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
+
+      for (const [key, value] of Object.entries(changedFields)) {
+        applianceFormData.append(key, value);
+      }
+
+      for (let [key, value] of applianceFormData.entries()) {
+        console.log(key, value);
+      }
+
+      if (appliance.appliance_uid) {
+        applianceFormData.append("appliance_uid", appliance.appliance_uid);
+      }
 
       axios
         .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
@@ -1948,37 +1989,43 @@ export default function PropertyNavigator({
                             </Box>
                           </Box>
                         </Grid>
-                        <Grid item xs={1.3} md={1.3}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              padding: "0px 0px 0px 8px",
-                            }}
-                          >
-                            <KeyboardArrowRightIcon
-                              sx={{ color: arrowButton1_color, cursor: "pointer" }}
-                              onClick={() => {
-                                /* navigate('/pmQuotesRequested', {
-                                  state: {
-                                    index: currentIndex,
-                                    propertyData: propertyData,
-                                    contracts: contractsData,
-                                    isDesktop: isDesktop,
-                                  },
-                                }); */
-                                const state = {
-                                  index: currentIndex,
-                                  propertyData: propertyData,
-                                  contracts: contractsData,
-                                  isDesktop: isDesktop,
-                                };
-                                setPmQuoteRequestedState(state);
-                              }}
-                            />
-                          </Box>
-                        </Grid>
+                        { contractsNewSent ? (
+                            <Grid item xs={1.3} md={1.3}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  padding: "0px 0px 0px 8px",
+                                }}
+                              >
+                                <KeyboardArrowRightIcon
+                                  sx={{ color: arrowButton1_color, cursor: "pointer" }}
+                                  onClick={() => {
+                                    /* navigate('/pmQuotesRequested', {
+                                      state: {
+                                        index: currentIndex,
+                                        propertyData: propertyData,
+                                        contracts: contractsData,
+                                        isDesktop: isDesktop,
+                                      },
+                                    }); */
+                                    // const state = {
+                                    //   index: currentIndex,
+                                    //   propertyData: propertyData,
+                                    //   contracts: contractsData,
+                                    //   isDesktop: isDesktop,
+                                    // };
+                                    // setPmQuoteRequestedState(state);
+                                    handleViewPMQuotesRequested();
+                                  }}
+                                />
+                              </Box>
+                            </Grid>
+                          ) : (
+                            <></>
+                          )
+                        }
                       </>
                     ) : null}
                     {property && property.applications.length > 0 && (

@@ -294,8 +294,8 @@ export function MaintenanceOwner() {
   };
 
   const handleBackButton = () => {
-    const { fromProperty, index } = location.state;
-    if (location.state && fromProperty === true) {
+    if (location.state && location.state.fromProperty === true) {
+      const { fromProperty, index } = location.state;
       // navigate('/properties', { state: { index } }); - PM CHanged
       navigate("/propertiesPM", { state: { index } });
     } else {
