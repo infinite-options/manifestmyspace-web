@@ -78,22 +78,24 @@ export default function OwnerFirstProperty() {
   // const [allAnnouncementsData, setAllAnnouncementsData] = useState([]);
 
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
-  console.log("getProfileId()", getProfileId());
+  // console.log("getProfileId()", getProfileId());
   useEffect(() => {
     const dataObject = {};
-    console.log("getProfileI$", getProfileId());
+    // console.log("getProfileI$", getProfileId());
     const fetchData = async () => {
       if (!getProfileId()) {
         return;
       }
-      console.log("getProfileId*", getProfileId());
-      if (!getProfileId())  { let newRole="OWNER"
-      navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });}
+      // console.log("getProfileId*", getProfileId());
+      if (!getProfileId()) {
+        let newRole = "OWNER";
+        navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
+      }
       setShowSpinner(true);
-      console.log("getProfileId()", getProfileId());     
+      // console.log("getProfileId()", getProfileId());
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
-      console.log("jsonData", jsonData);
+      console.log("Owner First Property jsonData", jsonData);
 
       const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
       const announcementsResponseData = await announcementsResponse.json();
@@ -126,10 +128,10 @@ export default function OwnerFirstProperty() {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
 
-      <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Box
@@ -158,16 +160,16 @@ export default function OwnerFirstProperty() {
           </Grid>
 
           <Grid container item xs={12} md={8} columnSpacing={1}>
-            <PropertyForm/>
-            </Grid>
+            <PropertyForm />
+          </Grid>
         </Grid>
       </Container>
       {/* } */}
-      <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
         {/* <DialogTitle id="alert-dialog-title">Referral Sent</DialogTitle> */}
         <DialogContent>
           <DialogContentText
-            id="alert-dialog-description"
+            id='alert-dialog-description'
             sx={{
               color: theme.typography.common.blue,
               fontWeight: theme.typography.common.fontWeight,

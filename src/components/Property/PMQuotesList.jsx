@@ -237,7 +237,9 @@ const QuotesList = (props) => {
 
             
               {contractRequests.map((contract, index) => (
-                <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} index={index} setIndex={setIndex} />
+                <Grid item xs={12}>
+                  <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} index={index} setIndex={setIndex} />
+                </Grid>
               ))}
             </Stack>
             </Stack>
@@ -271,36 +273,16 @@ function ContractCard(props) {
   if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
   return (
-    // <Box
-    //   sx={{
-    //     backgroundColor: "#D6D5DA",
-    //     borderRadius: "10px",
-    //     padding: "10px",
-    //     marginBottom: "20px",
-    //     fontSize: "11px",
-    //     cursor: "pointer",
-    //     position: "relative",
-    //   }}
-    //   onClick={() =>
-    //     navigate("/managementContractDetails", {
-    //       state: {
-    //         contract_uid: contract.contract_uid,
-    //         contract_business_id: contract.business_id,
-    //         contract_property_id: contract.property_id,
-    //         contractUID: contract.contract_uid,
-    //         property_endpoint_resp,
-    //       },
-    //     })
-    //   }
-    // >
-    <Grid container item xs={12} sx={{
+    <Grid container alignContent='flex-start' item xs={12} sx={{
         backgroundColor: "#D6D5DA",
+        // backgroundColor: "red",
         borderRadius: "10px",
         padding: "10px",
         marginBottom: "20px",
         fontSize: "11px",
         cursor: "pointer",
-        position: "relative",
+        // position: "relative",
+        // height: '500px',
       }}
       onClick={() => setCurrentIndex(index)}
     >
@@ -321,7 +303,7 @@ function ContractCard(props) {
           />
         </Grid>
 
-        <Grid container item xs={4} sx={{ textAlign: "center", alignItems: "center" }}>
+        <Grid container item xs={4} sx={{ textAlign: "center", alignItems: "center", justifyContent: 'flex-end' }}>
           <Typography
             sx={{
               color: textColor,
@@ -347,13 +329,13 @@ function ContractCard(props) {
         </Grid>
      </Grid>
      <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px",  }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px", }}>
           <span style={{ fontWeight: "bold" }}>Contract UID:</span> {`${contract.contract_uid}`}
         </Typography>
       </Grid>
       <Grid item xs={12}>
         <Typography sx={{ color: "#160449", fontSize: "14px",  }}>
-          <span style={{ fontWeight: "bold" }}>Contract Proprty ID:</span> {`${contract.contract_property_id}`}
+          <span style={{ fontWeight: "bold" }}>Contract Property ID:</span> {`${contract.contract_property_id}`}
         </Typography>
       </Grid>
       <Grid item xs={12}>
