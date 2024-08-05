@@ -36,10 +36,16 @@ export default function TenantApplication(props) {
   const [childOccupants, setChildOccupants] = useState(null);
 
   const [tenantDocuments, setTenantDocuments] = useState([]);
+  const [formattedAddress, setFormattedAddress] = useState("");
 
   // useEffect(() => {
   //     console.log("tenantDocuments - ", tenantDocuments);
   // }, [tenantDocuments])
+
+  useEffect(()=>{
+    const address = formatAddress();
+    setFormattedAddress(address);
+  },[props.data])
 
   const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
 
@@ -66,8 +72,8 @@ export default function TenantApplication(props) {
         return "";
     }
   }
-  function formattedAddress() {
-    return `${property.property_address} ${property.property_unit} ${property.property_city} ${property.property_state} ${property.property_zip}`;
+  function formatAddress() {
+    return `${props.data.property_address} ${props.data.property_unit} ${props.data.property_city} ${props.data.property_state} ${props.data.property_zip}`;
   }
 
   function formatTenantAddress() {
@@ -304,7 +310,7 @@ export default function TenantApplication(props) {
               fontSize: theme.typography.smallFont,
             }}
           >
-            {formattedAddress()}
+            {formattedAddress}
           </Typography>
         </Box>
         <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "10px" }}>

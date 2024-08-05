@@ -136,7 +136,7 @@ const PropertyInfo = (props) => {
       //navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
       props.setRightPane({
         type: "tenantApplication",
-        state: { property: property, status: status, lease: lease },
+        state: { data: property, status: status, lease: lease },
       });
     } else {
       return null;
@@ -147,7 +147,7 @@ const PropertyInfo = (props) => {
     //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
     props.setRightPane({
       type: "tenantApplication",
-      state: { property: property, status: status, lease: lease },
+      state: { data: property, status: status, lease: lease },
     });
   }
 

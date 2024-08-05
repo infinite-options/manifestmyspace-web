@@ -71,6 +71,7 @@ function TenantDashboard(props) {
   const [newTenantMaintenanceState, setnewTenantMaintenanceState] = useState(null);
   const [viewLeaseState, setViewLeaseState] = useState(null);
   const [paymentState, setPaymentState] = useState(null);
+  const [tenantApplicationNavState, setTenantApplicationNavState] = useState(null);
 
   const open = Boolean(anchorEl);
 
@@ -80,10 +81,10 @@ function TenantDashboard(props) {
   useEffect(() => {
     console.log("In Tenant Dashboard UseEffect");
     console.log("Tenant ID: ", tenantId, "   Property ID: ", propertyId ? propertyId : "Not Selected");
-  
+
     // Reset addMaintenance to false
     setAddMaintenance(false);
-  
+
     // Check if the profile ID is available
     if (!getProfileId()) {
       console.log("profile id is ***", getProfileId());
@@ -91,26 +92,26 @@ function TenantDashboard(props) {
       navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
       return;
     }
-  
+
     // Function to fetch tenant data
     const getTenantData = async () => {
       if (!getProfileId()) return;
-  
+
       setShowSpinner(true);
-  
+
       try {
         console.log("Call endpoints");
-  
+
         // Fetch data from multiple endpoints
         const tenantRequests = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
         const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
         const paymentsReponse = await fetch(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
-  
+
         // Parse the response data
         const tenantRequestsData = await tenantRequests.json();
         const announcementsResponseData = await announcementsResponse.json();
         const paymentsResponseData = await paymentsReponse.json();
-  
+
         // Extract the necessary data
         let propertyData = tenantRequestsData?.property?.result || [];
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result || [];
@@ -118,16 +119,16 @@ function TenantDashboard(props) {
         let announcementsReceivedData = announcementsResponseData?.received?.result || [];
         let paymentsReceivedData = paymentsResponseData?.MoneyPaid?.result || [];
         let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result || [];
-  
+
         console.log("[DEBUG] announcementsReceivedData", announcementsReceivedData);
-  
+
         // Check if all leases are not active
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
         console.log("Non Active Leases: ", allNonActiveLease);
-  
+
         // Sort propertyData by lease_status so that active lease is first
         propertyData.sort((a, b) => (a.lease_status === "ACTIVE" ? -1 : b.lease_status === "ACTIVE" ? 1 : 0));
-  
+
         // Set the state with the fetched data
         setPropertyData(propertyData);
         setLeaseDetails(leaseDetailsData);
@@ -136,15 +137,15 @@ function TenantDashboard(props) {
         setPaymentHistory(paymentsReceivedData);
         setPaymentExpected(paymentsExpectedData);
         setAllAnnouncementsData(announcementsReceivedData);
-  
+
         // Determine the property address and set it
         let propertyAddress = propertyData[0] ? propertyData[0].property_address + " " + propertyData[0].property_unit : "No Data";
         setPropertyAddr(propertyAddress);
         setFirstName(user.first_name);
-  
+
         // Set the total balance
         setTotal(propertyData[0] ? propertyData[0].balance : "0.00");
-  
+
         // Set the selected property based on the location state
         if (location.state?.propertyId) {
           console.log("Property ID exists: ", propertyId);
@@ -160,13 +161,13 @@ function TenantDashboard(props) {
       } catch (error) {
         console.error("Error fetching tenant data:", error);
       }
-  
+
       setShowSpinner(false);
     };
-  
+
     getTenantData();
     setRefresh(false);
-  
+
     // List all dependencies in the dependency array
   }, []);
   //[getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance, tenantId]);
@@ -199,6 +200,13 @@ function TenantDashboard(props) {
       setRightPane({ type: "viewlease" });
     }
   }, [viewLeaseState]);
+
+  useEffect(() => {
+    console.log("tenantApplicationNavState", tenantApplicationNavState);
+    if (tenantApplicationNavState) {
+      setRightPane({ type: "tenantApplication", state: tenantApplicationNavState });
+    }
+  }, [tenantApplicationNavState]);
 
   useEffect(() => {
     const navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
@@ -301,10 +309,10 @@ function TenantDashboard(props) {
       case "addtenantmaintenance":
         return <AddTenantMaintenanceItem newTenantMaintenanceState={newTenantMaintenanceState} setRightPane={setRightPane} />;
       case "viewlease":
-          return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
+        return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
       case "payment":
-          return <Payments accountBalanceWidgetData={paymentState} setRightPane={setRightPane} />;
-       default:
+        return <Payments accountBalanceWidgetData={paymentState} setRightPane={setRightPane} />;
+      default:
         return null;
     }
   };
@@ -404,8 +412,10 @@ function TenantDashboard(props) {
               setSelectedLease={setSelectedLease}
               setTotal={setTotal}
               setViewLeaseState={setViewLeaseState}
-              rightPane = {rightPane.type}
+              rightPane={rightPane.type}
               setPaymentState={setPaymentState}
+              setRightPane={setRightPane}
+              setTenantApplicationNavState={setTenantApplicationNavState}
             />
           </Grid>
 
@@ -944,6 +954,8 @@ const AccountBalanceWidget = ({
   setViewLeaseState,
   rightPane,
   setPaymentState,
+  setRightPane,
+  setTenantApplicationNavState,
 }) => {
   const navigate = useNavigate();
   console.log("---selectedProperty in acc---", selectedProperty);
@@ -1010,17 +1022,26 @@ const AccountBalanceWidget = ({
     setViewLeaseState(state);
   }
 
+  function handleViewApplicationNavigate(property, lease) {
+    const state = {
+      data: property, status: property.lease_status, lease: lease
+    }
+    setTenantApplicationNavState(state);
+  }
+
   function handlePaymentNavigate() {
     /*navigate("/payments", 
     { state: { accountBalanceWidgetData: 
       { selectedProperty, selectedLease, 
         propertyAddr, propertyData, total,
          rentFees, lateFees, utilityFees } } }); */
-          
-    const state =  
-          { selectedProperty, selectedLease, 
-            propertyAddr, propertyData, total,
-             rentFees, lateFees, utilityFees } 
+
+    const state =
+    {
+      selectedProperty, selectedLease,
+      propertyAddr, propertyData, total,
+      rentFees, lateFees, utilityFees
+    }
     console.log('---state to be passed in handlePaymentNavigate---', state);
     setPaymentState(state);
   }
@@ -1030,9 +1051,22 @@ const AccountBalanceWidget = ({
     setPropertyId(item.property_uid);
     setTotal(item.balance);
     setSelectedProperty(item);
-    setSelectedLease(propertyData.find((lease) => lease.lease_uid === item.lease_uid));
-    if(rightPane=="viewlease"){
-      handleViewLeaseNavigate(item.lease_uid)
+    const lease = propertyData.find((lease) => lease.lease_uid === item.lease_uid);
+    setSelectedLease(lease);
+    if (rightPane == "viewlease") {
+      if (item.lease_status === 'NEW') {
+        setRightPane("tenantApplication");
+        handleViewApplicationNavigate(item, lease);
+      } else {
+        handleViewLeaseNavigate(item.lease_uid)
+      }
+    } else if (rightPane == "tenantApplication") {
+      if (item.lease_status === 'NEW') {
+        handleViewApplicationNavigate(item, lease);
+      } else {
+        setRightPane("viewlease");
+        handleViewLeaseNavigate(item.lease_uid);
+      }
     }
     handleClose();
   }
@@ -1171,7 +1205,8 @@ const AccountBalanceWidget = ({
             textAlign: "center",
           }}
           onClick={() => {
-            handlePaymentNavigate(); }}
+            handlePaymentNavigate();
+          }}
         >
           Make a Payment
         </Box>
@@ -1271,24 +1306,44 @@ const AccountBalanceWidget = ({
           </Grid>
         </Grid>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItem: "left",
-          justifyContent: "left",
-          margin: isMobile ? "0px" : "20px",
-          paddingBottom: isMobile ? "5px" : "10px",
-          cursor: "pointer",
-          color: "#3D5CAC",
-          fontSize: "20px",
-          fontWeight: 600,
-        }}
-        onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
-      >
-        <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-        <u>View Full Lease</u>
-      </Box>
+      {selectedProperty?.lease_status === "NEW" ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItem: "left",
+            justifyContent: "left",
+            margin: isMobile ? "0px" : "20px",
+            paddingBottom: isMobile ? "5px" : "10px",
+            cursor: "pointer",
+            color: "#3D5CAC",
+            fontSize: "20px",
+            fontWeight: 600,
+          }}
+          onClick={() => handleViewApplicationNavigate(selectedProperty, selectedLease)}
+        >
+          <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+          <u>View Application</u>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItem: "left",
+            justifyContent: "left",
+            margin: isMobile ? "0px" : "20px",
+            paddingBottom: isMobile ? "5px" : "10px",
+            cursor: "pointer",
+            color: "#3D5CAC",
+            fontSize: "20px",
+            fontWeight: 600,
+          }}
+          onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
+        >
+          <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+          <u>View Full Lease</u>
+        </Box>)}
     </DashboardTab>
   );
 };
