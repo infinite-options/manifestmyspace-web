@@ -954,7 +954,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
                 whiteSpace: "nowrap",
               }}
             >
-              Contact Property
+              Contact Property Manager
             </Button>
             <Button
               variant='contained'
