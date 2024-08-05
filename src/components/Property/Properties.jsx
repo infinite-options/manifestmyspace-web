@@ -25,6 +25,7 @@ import PMQuotesRequested from "./PMQuotesRequested";
 import SearchManager from "./SearchManager";
 import RequestQuotes from "./RequestQuotes";
 import { ManageHistory } from "@mui/icons-material";
+import AddListing from "./AddListing";
 
 function Properties() {
   const location = useLocation();
@@ -259,10 +260,11 @@ function Properties() {
     setPropertyList(propertyList);
   };
 
+  const handleAddListingClick = (mode) => {
+    setPage(mode);
+    setRHS("AddListing");
+  };
   
-
-  
-
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
@@ -307,6 +309,7 @@ function Properties() {
                 handleViewPMQuotesRequested={handleViewPMQuotesRequested}
                 onShowSearchManager={handleShowSearchManager}
                 handleShowRequestQuotes={handleShowRequestQuotes}
+                onAddListingClick={handleAddListingClick}
               />
             )}
             {RHS === "EditProperty" && (
@@ -376,6 +379,15 @@ function Properties() {
                 />
               )
             }
+            {RHS === "AddListing" && (
+              <AddListing
+                propertyList={propertyList}
+                index={returnIndex}
+                page={page}
+                propertyId={propertyList[returnIndex]?.property_uid}
+                setRHS={setRHS}
+              />
+            )}
           </Grid>
         </Grid>
       </Container>

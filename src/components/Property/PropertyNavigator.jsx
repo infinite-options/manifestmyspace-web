@@ -83,6 +83,7 @@ export default function PropertyNavigator({
   onShowSearchManager,
   handleViewApplication,
   handleViewPMQuotesRequested,
+  onAddListingClick,
   props,
 }) {
   // console.log("In Property Navigator", onEditClick);
@@ -1382,7 +1383,7 @@ export default function PropertyNavigator({
                             </Button>
                           </Box>
                         ) : (
-                          <Box>
+                          <Box sx={{ pb: 40 }}>
                             <Button
                               variant='outlined'
                               sx={{
@@ -1464,8 +1465,8 @@ export default function PropertyNavigator({
                               width: "100%",
                             }}
                             size='small'
-                            onClick={() => onEditClick("add_listing")}
-                          >
+                            onClick={() => onAddListingClick("create_listing")}
+                            >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
                             <Typography
                               sx={{
@@ -1494,7 +1495,7 @@ export default function PropertyNavigator({
                               width: "100%",
                             }}
                             size='small'
-                            onClick={() => onEditClick("edit_listing")}
+                            onClick={() => onAddListingClick("edit_listing")}
                           >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
                             <Typography
