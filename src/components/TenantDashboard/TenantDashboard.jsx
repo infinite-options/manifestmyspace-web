@@ -292,7 +292,8 @@ function TenantDashboard(props) {
       case "tenantApplication":
         return <TenantApplication {...rightPane.state} setRightPane={setRightPane} />;
       case "tenantProfileEdit":
-        return <TenantProfileEdit {...rightPane.state} setRightPane={setRightPane} />;
+        // return <TenantProfileEdit {...rightPane.state} setRightPane={setRightPane} />;
+        navigate('/profileEditor');
       case "announcements":
         return <Announcements setRightPane={setRightPane} />;
       case "tenantmaintenanceitem":
