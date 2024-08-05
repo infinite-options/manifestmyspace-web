@@ -67,6 +67,7 @@ export default function TenantApplication(props) {
     }
   }
   function formattedAddress() {
+    console.log("Property Address: ", property.property_address);
     return `${property.property_address} ${property.property_unit} ${property.property_city} ${property.property_state} ${property.property_zip}`;
   }
 
