@@ -1,7 +1,7 @@
-import React, {useState, useEffect } from "react";
-import { Box, Stack, ThemeProvider, Button, Typography, Grid, Paper, Container, Toolbar, OutlinedInput, } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Stack, ThemeProvider, Button, Typography, Grid, Paper, Container, Toolbar, OutlinedInput } from "@mui/material";
 import theme from "../../theme/theme";
-import { useNavigate, useLocation, } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { roleMap } from "./helper";
 import ManifestWhite from "../../images/onboarding/manifest_white.png";
@@ -14,16 +14,16 @@ import { lighten } from "@material-ui/core";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import GoogleLogin from "./GoogleLogin";
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import PasswordModal from "./PasswordModal";
 import UserDoesNotExistModal from "./UserDoesNotExistModal";
 
 export default function LandingPage() {
-  console.log("In Landing Page");
+  // console.log("In Landing Page");
   const navigate = useNavigate();
   const { setAuthData, setLoggedIn, selectRole } = useUser();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -31,24 +31,24 @@ export default function LandingPage() {
   const roleTextStyling = { color: "#160449", fontSize: isMobile ? 22 : 30, fontWeight: 700, textAlign: "center" };
   const useCaseTextStyling = { color: "#160449", fontSize: isMobile ? 16 : 18, fontWeight: 600 };
 
-  const location = useLocation();  
+  const location = useLocation();
 
-  const [ showLogin, setShowLogin ] = useState(false);  
-  const [ showEmailLogin, setShowEmailLogin] = useState(false)
+  const [showLogin, setShowLogin] = useState(false);
+  const [showEmailLogin, setShowEmailLogin] = useState(false);
 
-  const [ email, setEmail ] = useState('');
-  const [ password, setPassword ] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [ showPassword, setShowPassword ] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [ userDoesntExist, setUserDoesntExist ] = useState(false);
-  const [ passModal, setpassModal ] = useState(false);
-  const [ passwordModalOpen, setPasswordModalOpen ] = useState(false);
+  const [userDoesntExist, setUserDoesntExist] = useState(false);
+  const [passModal, setpassModal] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
-  useEffect(() => {    
-    if (location.state && typeof location.state.showLogin !== 'undefined') {
+  useEffect(() => {
+    if (location.state && typeof location.state.showLogin !== "undefined") {
       setShowLogin(location.state.showLogin);
-    } else {      
+    } else {
       setShowLogin(false);
     }
     setShowEmailLogin(false);
@@ -194,169 +194,153 @@ export default function LandingPage() {
                 >
                   Your <u>Complete</u> Property Management Solution
                 </Typography>
-                {
-                  !showLogin && (                    
-                      <Stack spacing={8} direction="column">
-                        <Button
-                          sx={{
-                            // width: isMobile ? "100%" : "80%",
-                            width: "100%",
-                            alignContent: "center",
-                            alignItems: "center",
-                            background: "#3D5CAC",
-                            color: theme.palette.background.default,
-                            "&:hover": {
-                              backgroundColor: lighten("#3D5CAC", 0.3),
-                            },
-                          }}
-                          onClick={() => navigate("/newUser")}
-                          variant="contained"
-                        >
-                          <Typography sx={{ color: "#FFFFFF", fontSize: 18, fontWeight: 700 }}>Get Started</Typography>
-                        </Button>
-                        <Button
-                          sx={{
-                            // width: isMobile ? "100%" : "80%",
-                            width: "100%",
-                            alignContent: "center",
-                            alignItems: "center",
-                            background: "#FFFFFF",
-                            color: theme.palette.background.default,
-                            "&:hover": {
-                              backgroundColor: darken("#FFFFFF", 0.3),
-                            },
-                            borderColor: "#000000",
-                            borderWidth: "3px",
-                          }}
-                          // onClick={() => navigate("/returningUser")}
-                          onClick={() => setShowLogin(true)}
-                          variant="contained"
-                        >
-                          <Typography sx={{ color: "#160449", fontSize: 18, fontWeight: 700 }}>Login</Typography>
-                        </Button>                                                        
-                      </Stack>
-                  )
-                }
-                    
-                {
-                  showLogin && (
-                    <Stack spacing={8} direction="column" sx={{marginTop: '20px', }}>
+                {!showLogin && (
+                  <Stack spacing={8} direction='column'>
+                    <Button
+                      sx={{
+                        // width: isMobile ? "100%" : "80%",
+                        width: "100%",
+                        alignContent: "center",
+                        alignItems: "center",
+                        background: "#3D5CAC",
+                        color: theme.palette.background.default,
+                        "&:hover": {
+                          backgroundColor: lighten("#3D5CAC", 0.3),
+                        },
+                      }}
+                      onClick={() => navigate("/newUser")}
+                      variant='contained'
+                    >
+                      <Typography sx={{ color: "#FFFFFF", fontSize: 18, fontWeight: 700 }}>Get Started</Typography>
+                    </Button>
+                    <Button
+                      sx={{
+                        // width: isMobile ? "100%" : "80%",
+                        width: "100%",
+                        alignContent: "center",
+                        alignItems: "center",
+                        background: "#FFFFFF",
+                        color: theme.palette.background.default,
+                        "&:hover": {
+                          backgroundColor: darken("#FFFFFF", 0.3),
+                        },
+                        borderColor: "#000000",
+                        borderWidth: "3px",
+                      }}
+                      // onClick={() => navigate("/returningUser")}
+                      onClick={() => setShowLogin(true)}
+                      variant='contained'
+                    >
+                      <Typography sx={{ color: "#160449", fontSize: 18, fontWeight: 700 }}>Login</Typography>
+                    </Button>
+                  </Stack>
+                )}
 
-                      {
-                        !showEmailLogin && (
-                          <>
-                          <Box>
-                            <GoogleLogin />
-                          </Box>
-                                             
-                          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', }}>
-                            <Button
-                              onClick={() => setShowEmailLogin(true)}
-                              sx={{
-                                width: '350px',
-                                height: '57px',
-                                borderRadius: '5px',
-                                fontSize: '16px',
-                                backgroundColor: "#F2F2F2",
-                                textTransform: "none",
-                                color: "#000000",
-                                fontWeight: 'bold',
-                                '&:hover': {
-                                    backgroundColor: "#3D5CAC",
-                                    color: "#FFFFFF",
-                                },
-                                marginTop: '10px',                                                                                                                        
-                              }}
-                            >
-                                {'Login with Email'}
-                            </Button>
-                          </Box>
-                          </>
-                        )
-                      }
-                      {
-                        showEmailLogin && (
+                {showLogin && (
+                  <Stack spacing={8} direction='column' sx={{ marginTop: "20px" }}>
+                    {!showEmailLogin && (
+                      <>
+                        <Box>
+                          <GoogleLogin />
+                        </Box>
 
-                      
-                          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', }}>
-                            <OutlinedInput 
-                              value={email} 
-                              onChange={ (e) => setEmail(e.target.value)}
-                              id="filled-basic" 
-                              variant="filled" 
-                              placeholder="Enter Email Address"
-                              sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
-                            />
-                            <OutlinedInput
-                              type={ showPassword ? 'text' : 'password'} 
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                              id="filled-basic"
-                              variant="filled"
-                              placeholder="Enter Password"
-                              sx={{ marginTop: '5px', width: '350px', backgroundColor: '#F2F2F2'}}
-                              endAdornment={
-                                <InputAdornment position="end">
-                                  <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={() => setShowPassword((show) => !show)}                                                                
-                                    edge="end"
-                                  >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                  </IconButton>
-                                </InputAdornment>
-                              }                          
-                            />
-                            <Button
-                              onClick={handleLogin}
-                              sx={{
-                                width: '350px',
-                                height: '57px',
-                                borderRadius: '5px',
-                                fontSize: '16px',
+                        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                          <Button
+                            onClick={() => setShowEmailLogin(true)}
+                            sx={{
+                              width: "350px",
+                              height: "57px",
+                              borderRadius: "5px",
+                              fontSize: "16px",
+                              backgroundColor: "#F2F2F2",
+                              textTransform: "none",
+                              color: "#000000",
+                              fontWeight: "bold",
+                              "&:hover": {
                                 backgroundColor: "#3D5CAC",
-                                textTransform: "none",
                                 color: "#FFFFFF",
-                                fontWeight: 'bold',
-                                '&:hover': {
-                                    backgroundColor: "#160449",
-                                    color: "#FFFFFF",
-                                },
-                                marginTop: '10px',                                                                                                                        
-                              }}
-                            >
-                                Login
-                            </Button>                              
-                            <Box
-                              onClick={onReset}
-                              sx={{
-                                marginTop: '10px',
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                  justifySelf: "center",
-                                  color: theme.typography.common.default,
-                                  fontWeight: theme.typography.light.fontWeight,
-                                  fontSize: theme.typography.primary.smallFont,
-                                }}
-                              >                                  
-                                <u>Forgot Password?</u>
-                              </Typography>
-
-                            </Box>
-                          </Box>
-                        )
-                      }
-                    </Stack>                
-                  )
-                }                
+                              },
+                              marginTop: "10px",
+                            }}
+                          >
+                            {"Login with Email"}
+                          </Button>
+                        </Box>
+                      </>
+                    )}
+                    {showEmailLogin && (
+                      <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                        <OutlinedInput
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          id='filled-basic'
+                          variant='filled'
+                          placeholder='Enter Email Address'
+                          sx={{ marginTop: "5px", width: "350px", backgroundColor: "#F2F2F2" }}
+                        />
+                        <OutlinedInput
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          id='filled-basic'
+                          variant='filled'
+                          placeholder='Enter Password'
+                          sx={{ marginTop: "5px", width: "350px", backgroundColor: "#F2F2F2" }}
+                          endAdornment={
+                            <InputAdornment position='end'>
+                              <IconButton aria-label='toggle password visibility' onClick={() => setShowPassword((show) => !show)} edge='end'>
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                        />
+                        <Button
+                          onClick={handleLogin}
+                          sx={{
+                            width: "350px",
+                            height: "57px",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                            backgroundColor: "#3D5CAC",
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: "bold",
+                            "&:hover": {
+                              backgroundColor: "#160449",
+                              color: "#FFFFFF",
+                            },
+                            marginTop: "10px",
+                          }}
+                        >
+                          Login
+                        </Button>
+                        <Box
+                          onClick={onReset}
+                          sx={{
+                            marginTop: "10px",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              justifySelf: "center",
+                              color: theme.typography.common.default,
+                              fontWeight: theme.typography.light.fontWeight,
+                              fontSize: theme.typography.primary.smallFont,
+                            }}
+                          >
+                            <u>Forgot Password?</u>
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )}
+                  </Stack>
+                )}
               </Stack>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6} sx={{ order: { xs: -1, sm: 0 }, display: "flex" }}>
-            <Box sx={{}} width="100%" height="100%">
-              <img src={ManifestWhite} width="100%" />
+            <Box sx={{}} width='100%' height='100%'>
+              <img src={ManifestWhite} width='100%' />
             </Box>
           </Grid>
 
@@ -390,9 +374,9 @@ export default function LandingPage() {
               >
                 <Typography sx={roleTextStyling}>For Property Owners</Typography>
                 <Box sx={{ width: "80%", height: "80%", display: "flex" }}>
-                  <img src={Owners} width="100%" alt="owners view" />
+                  <img src={Owners} width='100%' alt='owners view' />
                 </Box>
-                <Typography sx={useCaseTextStyling} component="div">
+                <Typography sx={useCaseTextStyling} component='div'>
                   <ul>
                     <li>Monitor rent payments</li>
                     <li>Track maintenance requests</li>
@@ -420,9 +404,9 @@ export default function LandingPage() {
               >
                 <Typography sx={roleTextStyling}>For Tenants</Typography>
                 <Box sx={{ width: "80%", height: "80%", display: "flex" }}>
-                  <img src={Tenants} width="100%" alt="tenants view" />
+                  <img src={Tenants} width='100%' alt='tenants view' />
                 </Box>
-                <Typography sx={useCaseTextStyling} component="div">
+                <Typography sx={useCaseTextStyling} component='div'>
                   <ul>
                     <li>View new properties</li>
                     <li>Pay rent on time</li>
@@ -450,9 +434,9 @@ export default function LandingPage() {
               >
                 <Typography sx={roleTextStyling}>For Property Managers</Typography>
                 <Box sx={{ width: "80%", height: "80%", display: "flex" }}>
-                  <img src={Manager} width="100%" alt="property manager view" />
+                  <img src={Manager} width='100%' alt='property manager view' />
                 </Box>
-                <Typography sx={useCaseTextStyling} component="div">
+                <Typography sx={useCaseTextStyling} component='div'>
                   <ul>
                     <li>Manager your clients, tenants, and personnel</li>
                     <li>See property cashflow</li>
@@ -481,9 +465,9 @@ export default function LandingPage() {
               >
                 <Typography sx={roleTextStyling}>For Maintenance Professionals</Typography>
                 <Box sx={{ width: "80%", height: "80%", display: "flex" }}>
-                  <img src={Maintenance} width="100%" alt="maintenance view" />
+                  <img src={Maintenance} width='100%' alt='maintenance view' />
                 </Box>
-                <Typography sx={useCaseTextStyling} component="div">
+                <Typography sx={useCaseTextStyling} component='div'>
                   <ul>
                     <li>View quote requests</li>
                     <li>See past jobs and schedule more</li>

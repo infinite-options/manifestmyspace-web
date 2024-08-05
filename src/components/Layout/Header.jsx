@@ -19,22 +19,23 @@ function Header(props) {
   const { user, selectedRole, selectRole, roleName, isLoggedIn } = useUser();
   const [cookie] = useCookies(["user"]); // Removed setCookie since it is unused
   const cookiesData = cookie["user"];
-  const userRoles = user && cookiesData?.role ? cookiesData.role.split(",") : [];
   // console.log("cookiesData ", cookiesData);
-  //console.log("Current User Roles: ", userRoles);
+  const userRoles = user && cookiesData?.role ? cookiesData.role.split(",") : [];
+  // console.log("Current User Roles: ", userRoles);
 
   const navigate = useNavigate();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const desiredOrder = ['MANAGER', 'OWNER', 'TENANT', 'MAINTENANCE', 'PM_EMPLOYEE', 'MAINT_EMPLOYEE'];
+  const desiredOrder = ["MANAGER", "OWNER", "TENANT", "MAINTENANCE", "PM_EMPLOYEE", "MAINT_EMPLOYEE"];
 
   const sortUserRoles = (roles, order) => {
     return roles.sort((a, b) => order.indexOf(a) - order.indexOf(b));
   };
 
   const sortedRoles = sortUserRoles([...userRoles], desiredOrder);
+  // console.log("Sorted Roles: ", sortedRoles);
 
   const handleMenuToggle = (event) => {
     setAnchorEl(event.currentTarget);
