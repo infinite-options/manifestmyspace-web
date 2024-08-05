@@ -182,7 +182,12 @@ export default function TenantApplication(props) {
   }
 
   function displaySSN() {
-    return `Last 4 digits: ${tenantProfile?.tenant_ssn.slice(-4)}`;
+    // console.log('ssn is', tenantProfile)
+    if (tenantProfile && (tenantProfile.tenant_ssn != null || tenantProfile.tenant_ssn != "")) {
+      return `Last 4 digits: ${tenantProfile?.tenant_ssn.slice(-4)}`;
+    } else {
+      return '-';
+    }
   }
 
   function handleWithdrawLease() {
