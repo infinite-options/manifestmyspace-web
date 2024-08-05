@@ -960,7 +960,25 @@ const PropertyCard = (props) => {
         setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
         setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
         setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
-        setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
+
+        // setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
+        const defaultContacts = [];
+        const managerContact = {
+          contact_first_name : contractData["business_name"],
+          contact_last_name : "",
+          contact_email: contractData["business_email"],
+          contact_phone_number: contractData["business_phone_number"],
+        }
+        defaultContacts.push(managerContact)
+        const assignedContacts = contractData["contract_assigned_contacts"]
+        if(assignedContacts && assignedContacts.length){
+          setContractAssignedContacts(JSON.parse(contractData["contract_assigned_contacts"]));
+        } else {
+          setContractAssignedContacts(defaultContacts)
+        }
+
+
+
         setContractFees(contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : []);
         const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
         setPreviouslyUploadedDocs(oldDocs);
@@ -1144,9 +1162,10 @@ const PropertyCard = (props) => {
   };
 
   const handleOpenEditContact = (contactIndex) => {
+    setIndexForEditContactDialog(contactIndex);
     setShowEditContactDialog(true);
     console.log("EDITING CONTACT, Index", contactIndex);
-    setIndexForEditContactDialog(contactIndex);
+    
   };
 
   const handleCloseEditContact = () => {
@@ -1172,6 +1191,7 @@ const PropertyCard = (props) => {
   // }
 
   const handleAddContact = (newContact) => {
+    console.log("ROHIT - newContact - ", newContact);
     setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
   };
 
@@ -1834,7 +1854,7 @@ const PropertyCard = (props) => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     value={contractStartDate}
-                    minDate={dayjs()}
+                    // minDate={dayjs()}
                     onChange={handleStartDateChange}
                     slots={{
                       openPickerIcon: CalendarIcon,
@@ -1866,12 +1886,12 @@ const PropertyCard = (props) => {
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {"End Date"}
+                  {"End Date 89"}
                 </Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     value={contractEndDate}
-                    minDate={dayjs()}
+                    // minDate={dayjs()}
                     onChange={handleEndDateChange}
                     slots={{
                       openPickerIcon: CalendarIcon,
@@ -1881,9 +1901,15 @@ const PropertyCard = (props) => {
                         size: "small",
                         style: {
                           width: "100%",
-                          fontSize: 12,
+                          fontSize: 24,
                           backgroundColor: "#F2F2F2 !important",
-                          borderRadius: "10px !important",
+                          // borderRadius: "10px !important",
+                          borderRadius: "10px",
+                          border: "1px solid black",
+                          // border: "10px solid green", 
+                          'input': {
+                            border: "1px solid black", // Ensure input border is black
+                          },                         
                         },
                       },
                     }}
@@ -2197,65 +2223,26 @@ const PropertyCard = (props) => {
               width: "100%",
             }}
           >
-            Contract Assigned Contacts:
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "flex-start",
-                paddingTop: "5px",
-                color: "black",
-              }}
-            >
-              <Box sx={{ width: "200px" }}>Name</Box>
-              <Box sx={{ width: "200px" }}>Email</Box>
-              <Box sx={{ width: "200px" }}>Phone Number</Box>
-            </Box>
-            {[...contractAssignedContacts].map((contact, i) => (
-              <Box
-                key={i}
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                  paddingTop: "10px",
-                }}
-                onClick={() => handleOpenEditContact(i)}
-              >
-                <Box
-                  sx={{
-                    // height: '40px',
-                    // width: '100%',
-                    color: "#3D5CAC",
-                    width: "200px",
-                  }}
-                >
-                  {contact.contact_first_name} {contact.contact_last_name}
-                </Box>
+            Contract Assigned Contacts:            
+            <Grid container sx={{color: "black",}}>
+              <Grid item xs={3}>
+                Name
+              </Grid>
+              <Grid item xs={4}>
+                Email
+              </Grid>
+              <Grid item xs={3}>
+                Phone Number
+              </Grid>
 
-                <Box sx={{ width: "200px" }}>{contact.contact_email}</Box>
-                <Box sx={{ width: "80px" }}>{contact.contact_phone_number}</Box>
-                <Button
-                  variant="text"
-                  onClick={(event) => {
-                    handleDeleteContact(i, event);
-                  }}
-                  sx={{
-                    width: "10%",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "bold",
-                    color: "#3D5CAC",
-                    "&:hover": {
-                      backgroundColor: "transparent", // Set to the same color as the default state
-                    },
-                  }}
-                >
-                  <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-                </Button>
-              </Box>
+            </Grid>
+            {[...contractAssignedContacts].map((contact, i) => (
+              <ContactListItem
+                contact={contact}
+                i={i}
+                handleOpenEditContact={handleOpenEditContact}
+                handleDeleteContact={handleDeleteContact}
+              />
             ))}
           </Box>
         </Box>
@@ -2419,6 +2406,92 @@ const PropertyCard = (props) => {
     </>
   );
 };
+
+const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContact, }) => {
+  
+
+
+  // return (
+  //   <Box
+  //     key={i}
+  //     sx={{
+  //       display: "flex",
+  //       flexDirection: "row",
+  //       alignItems: "center",
+  //       justifyContent: "flex-start",
+  //       paddingTop: "10px",
+  //     }}
+  //     onClick={() => handleOpenEditContact(i)}
+  //   >
+  //     <Box
+  //       sx={{
+  //         // height: '40px',
+  //         // width: '100%',
+  //         color: "#3D5CAC",
+  //         width: "200px",
+  //       }}
+  //     >
+  //       {contact.contact_first_name} {contact.contact_last_name}
+  //     </Box>
+
+  //     <Box sx={{ width: "200px" }}>{contact.contact_email}</Box>
+  //     <Box sx={{ width: "80px" }}>{contact.contact_phone_number}</Box>
+  //     <Button
+  //       variant="text"
+  //       onClick={(event) => {
+  //         handleDeleteContact(i, event);
+  //       }}
+  //       sx={{
+  //         width: "10%",
+  //         cursor: "pointer",
+  //         fontSize: "14px",
+  //         fontWeight: "bold",
+  //         color: "#3D5CAC",
+  //         "&:hover": {
+  //           backgroundColor: "transparent", // Set to the same color as the default state
+  //         },
+  //       }}
+  //     >
+  //       <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
+  //     </Button>
+  //   </Box>
+
+  // );
+  return (
+    <Grid container key={i} onClick={() => handleOpenEditContact(i)}>
+      <Grid item xs={3} >
+        {contact.contact_first_name} {contact.contact_last_name}
+      </Grid>
+      <Grid item xs={4}>
+        {contact.contact_email}
+      </Grid>
+      <Grid item xs={4}>
+        {contact.contact_phone_number}
+      </Grid>
+      <Grid item xs={1}>
+      <Button
+      variant="text"
+      onClick={(event) => {
+        handleDeleteContact(i, event);
+      }}
+      sx={{
+        width: "10%",
+        cursor: "pointer",
+        fontSize: "14px",
+        fontWeight: "bold",
+        color: "#3D5CAC",
+        "&:hover": {
+          backgroundColor: "transparent", // Set to the same color as the default state
+        },
+      }}
+    >
+      <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
+    </Button>
+
+      </Grid>
+    </Grid>
+  )
+}
 
 function AddContactDialog({ open, handleClose, onAddContact }) {
   const [contactFirstName, setContactFirstName] = useState("");
@@ -2590,6 +2663,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 }
 
 function EditContactDialog({ open, handleClose, onEditContact, contactIndex, contacts }) {
+  console.log("ROHIT - contactIndex - ", contactIndex);
   const [contactFirstName, setContactFirstName] = useState(contacts[contactIndex].contact_first_name);
   const [contactLastName, setContactLastName] = useState(contacts[contactIndex].contact_last_name);
   const [contactEmail, setContactEmail] = useState(contacts[contactIndex].contact_email);
