@@ -154,6 +154,34 @@ function Properties() {
     setShowSpinner(false);
   }, []);
 
+  const fetchProperties = async () => {
+    setShowSpinner(true);
+
+    // PROPERTIES ENDPOINT
+    const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
+    //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
+    if (!property_response.ok) {
+      // console.log("Error fetching Property Details data");
+    }
+    const propertyData = await property_response.json();
+    const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
+    // console.log("In Properties > Property Endpoint: ", propertyList);
+    setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
+    setPropertyList([...propertyList]);
+    setDisplayedItems([...propertyList]);
+    setPropertyIndex(0);
+
+          
+    if (propertyData.Property.code === 200) {
+      // console.log("Endpoint Data is Ready");
+      setDataReady(true);
+    }      
+    setShowSpinner(false);
+  };
+  const refreshProperties = () => {    
+    fetchProperties();    
+  }
+
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
     const applications = data["Applications"]?.result;
@@ -339,6 +367,7 @@ function Properties() {
                 setNewContractUID={setNewContractUID}
                 setNewContractPropertyUID={setNewContractPropertyUID}
                 // showNewContract={showNewContract}
+                refreshProperties={refreshProperties}
               />
             )}
             {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />}
