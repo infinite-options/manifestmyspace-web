@@ -21,9 +21,9 @@ export default function TenantApplication(props) {
 
   // console.log("props in tenantApplication", props);
 
-  const [property, setProperty] = useState(props.data);
-  const [status, setStatus] = useState(props.status);
-  const [lease, setLease] = useState(props.lease);
+  const [property, setProperty] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [lease, setLease] = useState([]);
   // console.log("in tenant application status", status);
   // console.log("lease", lease);
   // console.log("property", property);
@@ -43,6 +43,9 @@ export default function TenantApplication(props) {
   // }, [tenantDocuments])
 
   useEffect(() => {
+    setProperty(props.data);
+    setStatus(props.status);
+    setLease(props.lease);
     const address = formatAddress();
     setFormattedAddress(address);
   }, [props.data]);
@@ -275,6 +278,15 @@ export default function TenantApplication(props) {
 
   return (
     <ThemeProvider theme={theme}>
+      <Paper
+      style={{
+        margin: "5px",
+        padding: 20,
+        backgroundColor: theme.palette.primary.main,
+        borderRadius:'10px',
+        boxShadow:"0px 2px 4px #00000040"
+      }}
+      >
       <Box
         sx={{
           paddingBottom: "50px",
@@ -1021,7 +1033,8 @@ export default function TenantApplication(props) {
             )}
           </Grid>
         </Paper>
-      </Box>
+      </Box>    
+      </Paper>
     </ThemeProvider>
   );
 }
