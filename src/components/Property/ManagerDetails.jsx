@@ -44,10 +44,12 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
   });
 
   if (managerData !== undefined) {
-    let businessLocations = JSON.parse(managerData.business_locations !== undefined ? managerData.business_locations : "");
-    let city = businessLocations[0] !== undefined ? businessLocations[0].location : "";
-    let distance = businessLocations[0] !== undefined ? businessLocations[0].distance : "";
-    let feesArray = JSON.parse(managerData.business_services_fees);
+    let businessLocations = JSON.parse(managerData.business_locations !== undefined ? managerData.business_locations : "");    
+    if(businessLocations){  
+      let city = businessLocations[0] !== undefined ? businessLocations[0].location : "";
+      let distance = businessLocations[0] !== undefined ? businessLocations[0].distance : "";
+      let feesArray = JSON.parse(managerData.business_services_fees);
+    }
   } else {
     let business_locations = "";
     let city = "";
