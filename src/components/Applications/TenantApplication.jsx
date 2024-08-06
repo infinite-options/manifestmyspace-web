@@ -10,7 +10,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-
+import CloseIcon from "@mui/icons-material/Close";
 import APIConfig from "../../utils/APIConfig";
 
 export default function TenantApplication(props) {
@@ -21,9 +21,9 @@ export default function TenantApplication(props) {
 
   // console.log("props in tenantApplication", props);
 
-  const [property, setProperty] = useState(props.data);
-  const [status, setStatus] = useState(props.status);
-  const [lease, setLease] = useState(props.lease);
+  const [property, setProperty] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [lease, setLease] = useState([]);
   // console.log("in tenant application status", status);
   // console.log("lease", lease);
   // console.log("property", property);
@@ -43,6 +43,9 @@ export default function TenantApplication(props) {
   // }, [tenantDocuments])
 
   useEffect(() => {
+    setProperty(props.data);
+    setStatus(props.status);
+    setLease(props.lease);
     const address = formatAddress();
     setFormattedAddress(address);
   }, [props.data]);
@@ -208,7 +211,11 @@ export default function TenantApplication(props) {
 
     Promise.all([withdrawLeaseResponse]).then((values) => {
       //navigate("/listings"); // send success data back to the propertyInfo page
-      props.setRightPane({ type: "listings" });
+      if (props.from === "PropertyInfo") {
+        props.setRightPane({ type: "listings" });
+      } else {
+        props.setRightPane("");
+      }
     });
   }
 
@@ -262,491 +269,520 @@ export default function TenantApplication(props) {
 
       Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
         // navigate("/listings"); // send success data back to the propertyInfo page
-        props.setRightPane({ type: "listings" });
+        if (props.from === "PropertyInfo") {
+          props.setRightPane({ type: "listings" });
+        } else {
+          props.setRightPane("");
+        }
       });
     } catch (error) {
       console.log("Error submitting application:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       // navigate("/listings");
-      props.setRightPane({ type: "listings" });
+      if (props.from === "PropertyInfo") {
+        props.setRightPane({ type: "listings" });
+      } else {
+        props.setRightPane("");
+      }
     }
   }
 
+  const handleCloseButton = (e) => {
+    e.preventDefault();
+    props.setRightPane?.("");
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          paddingBottom: "50px",
+      <Paper
+        style={{
+          margin: "5px",
+          padding: 20,
+          backgroundColor: theme.palette.primary.main,
+          borderRadius: '10px',
+          boxShadow: "0px 2px 4px #00000040"
         }}
       >
         <Box
-          component='span'
-          display='flex'
-          justifyContent='center'
-          alignItems='center'
-          position='relative'
           sx={{
-            paddingTop: "20px",
+            paddingBottom: "50px",
           }}
         >
-          <Typography
+          <Box
+            component='span'
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            position='relative'
             sx={{
-              justifySelf: "center",
-              color: theme.typography.primary.black,
-              fontWeight: theme.typography.primary.fontWeight,
-              fontSize: theme.typography.largeFont,
+              paddingTop: "20px",
             }}
           >
-            Your Application For
-          </Typography>
-        </Box>
-        <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
-          <Typography
-            sx={{
-              justifySelf: "center",
-              color: theme.typography.primary.black,
-              fontWeight: theme.typography.medium.fontWeight,
-              fontSize: theme.typography.smallFont,
-            }}
-          >
-            {formattedAddress}
-          </Typography>
-        </Box>
-        <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "10px" }}>
-          <Button
-            // onClick={() => navigate("-1")}
-            onClick={() => props.setRightPane({ type: "listings" })}
-            sx={{
-              textTransform: "none",
-              padding: "10px 10px 0px 10px",
-              textDecoration: "underline",
-              position: "relative",
-            }}
-          >
-            <img src={backButton} style={{ width: "20px", height: "20px", margin: "0 5px" }} />
+            {props.from === "accwidget" && 
+            <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+              <Button onClick={(e) => handleCloseButton(e)}>
+                <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+              </Button>
+            </Box>}
+            <Typography
+              sx={{
+                justifySelf: "center",
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+              }}
+            >
+              Your Application For
+            </Typography>
+          </Box>
+          <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
             <Typography
               sx={{
                 justifySelf: "center",
                 color: theme.typography.primary.black,
                 fontWeight: theme.typography.medium.fontWeight,
                 fontSize: theme.typography.smallFont,
-                textAlign: "center",
               }}
             >
-              <u>Return to All Listings</u>
-            </Typography>
-          </Button>
-        </Box>
-        <Divider light />
-        {status ? (
-          <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ padding: "10px" }}>
-            <Typography
-              sx={{
-                justifySelf: "center",
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.secondaryFont,
-              }}
-            >
-              Applied on {lease.lease_application_date}
+              {formattedAddress}
             </Typography>
           </Box>
-        ) : null}
-        <Paper
-          style={{
-            margin: "25px",
-            padding: 20,
-            backgroundColor: theme.palette.primary.main,
-            height: "25%",
-          }}
-        >
-          <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Typography
+          {props.from === "PropertyInfo" &&
+            <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "10px" }}>
+              <Button
+                // onClick={() => navigate("-1")}
+                onClick={() => props.setRightPane({ type: "listings" })}
                 sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
+                  textTransform: "none",
+                  padding: "10px 10px 0px 10px",
+                  textDecoration: "underline",
+                  position: "relative",
                 }}
               >
-                Name
-              </Typography>
+                <img src={backButton} style={{ width: "20px", height: "20px", margin: "0 5px" }} />
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.medium.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "center",
+                  }}
+                >
+                  <u>Return to All Listings</u>
+                </Typography>
+              </Button>
+            </Box>
+          }
+          {status ? (
+            <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ padding: "10px" }}>
               <Typography
                 sx={{
                   justifySelf: "center",
                   color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {tenantProfile?.tenant_first_name} {tenantProfile?.tenant_last_name}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Email
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {tenantProfile?.tenant_email}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Phone
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {tenantProfile?.tenant_phone_number}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                SSN #
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {/* {tenantProfile?.tenant_ssn} */}
-                {displaySSN()}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                License #
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {tenantProfile?.tenant_drivers_license_number}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                License State
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {tenantProfile?.tenant_drivers_license_state}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Current Salary
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                ${tenantProfile?.tenant_current_salary}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Salary Frequency
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {tenantProfile?.tenant_salary_frequency}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Company Name
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {tenantProfile?.tenant_current_job_company}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Job Title
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {tenantProfile?.tenant_current_job_title}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Current Address
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {formatTenantAddress()}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Unit #
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {formatTenantUnit()}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                City/State
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {formatTenantCityState()}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.mediumFont,
-                }}
-              >
-                Zip Code
-              </Typography>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.light.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {formatTenantZip()}
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
                   fontWeight: theme.typography.primary.fontWeight,
                   fontSize: theme.typography.secondaryFont,
                 }}
               >
-                Who plans to live in the unit <span style={{ color: "red" }}>*</span>
+                Applied on {lease.lease_application_date}
               </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {adultOccupants?.length} Adults
-              </Typography>
-              {adultOccupants &&
-                adultOccupants.map((occupant, index) => (
-                  <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.light.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                    key={index}
-                  >
-                    {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
-                  </Typography>
-                ))}
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {childOccupants?.length} Children
-              </Typography>
-              {childOccupants &&
-                childOccupants.map((occupant, index) => (
-                  <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.light.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                    key={index}
-                  >
-                    {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
-                  </Typography>
-                ))}
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {petOccupants?.length} Pets
-              </Typography>
-              {/* <Typography
+            </Box>
+          ) : null}
+          <Paper
+            style={{
+              margin: "25px",
+              padding: 20,
+              backgroundColor: theme.palette.primary.main,
+              height: "25%",
+            }}
+          >
+            <Grid container spacing={4}>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Name
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {tenantProfile?.tenant_first_name} {tenantProfile?.tenant_last_name}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Email
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {tenantProfile?.tenant_email}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Phone
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {tenantProfile?.tenant_phone_number}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  SSN #
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {/* {tenantProfile?.tenant_ssn} */}
+                  {displaySSN()}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  License #
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {tenantProfile?.tenant_drivers_license_number}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  License State
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {tenantProfile?.tenant_drivers_license_state}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Current Salary
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  ${tenantProfile?.tenant_current_salary}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Salary Frequency
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {tenantProfile?.tenant_salary_frequency}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Company Name
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {tenantProfile?.tenant_current_job_company}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Job Title
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {tenantProfile?.tenant_current_job_title}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Current Address
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {formatTenantAddress()}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Unit #
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {formatTenantUnit()}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  City/State
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {formatTenantCityState()}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                  }}
+                >
+                  Zip Code
+                </Typography>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.light.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {formatTenantZip()}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.secondaryFont,
+                  }}
+                >
+                  Who plans to live in the unit <span style={{ color: "red" }}>*</span>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {adultOccupants?.length} Adults
+                </Typography>
+                {adultOccupants &&
+                  adultOccupants.map((occupant, index) => (
+                    <Typography
+                      sx={{
+                        justifySelf: "center",
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                      key={index}
+                    >
+                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
+                    </Typography>
+                  ))}
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {childOccupants?.length} Children
+                </Typography>
+                {childOccupants &&
+                  childOccupants.map((occupant, index) => (
+                    <Typography
+                      sx={{
+                        justifySelf: "center",
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                      key={index}
+                    >
+                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
+                    </Typography>
+                  ))}
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {petOccupants?.length} Pets
+                </Typography>
+                {/* <Typography
                                     sx={{
                                         justifySelf: 'center',
                                         color: theme.typography.primary.black,
@@ -756,47 +792,47 @@ export default function TenantApplication(props) {
                                 >
                                     Otto | Cat | 16 lbs | 2 years old
                                 </Typography> */}
-              {petOccupants &&
-                petOccupants.map((occupant, index) => (
-                  <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.light.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                    key={index}
-                  >
-                    {occupant.name} {occupant.type} | {occupant.relationship} | DOB: {occupant.dob}
-                  </Typography>
-                ))}
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {vehicles?.length} Vehicles
-              </Typography>
-              {vehicles &&
-                vehicles.map((vehicle, index) => (
-                  <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.light.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                    key={index}
-                  >
-                    {vehicle.make} {vehicle.model} | {vehicle.year} | {vehicle.license} | {vehicle.state}
-                  </Typography>
-                ))}
-              {/* <Typography
+                {petOccupants &&
+                  petOccupants.map((occupant, index) => (
+                    <Typography
+                      sx={{
+                        justifySelf: "center",
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                      key={index}
+                    >
+                      {occupant.name} {occupant.type} | {occupant.relationship} | DOB: {occupant.dob}
+                    </Typography>
+                  ))}
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {vehicles?.length} Vehicles
+                </Typography>
+                {vehicles &&
+                  vehicles.map((vehicle, index) => (
+                    <Typography
+                      sx={{
+                        justifySelf: "center",
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                      key={index}
+                    >
+                      {vehicle.make} {vehicle.model} | {vehicle.year} | {vehicle.license} | {vehicle.state}
+                    </Typography>
+                  ))}
+                {/* <Typography
                                 sx={{
                                     justifySelf: 'center',
                                     color: theme.typography.primary.black,
@@ -806,222 +842,223 @@ export default function TenantApplication(props) {
                             >
                                 Porsche Cayenne S | SUV | ASD1235 | CA
                             </Typography> */}
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.secondaryFont,
-                }}
-              >
-                Your Documents:
-              </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.secondaryFont,
+                  }}
+                >
+                  Your Documents:
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingTop: "5px",
+                    color: theme.typography.common.blue,
+                  }}
+                >
+                  <Box>Filename</Box>
+                  <Box>Type</Box>
+                  <Box> </Box>
+                </Box>
+                {(Array.isArray(tenantDocuments) ? tenantDocuments : []).map((doc, i) => (
+                  <>
+                    <Box
+                      key={i}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <a href={doc.link} target='_blank' rel='noopener noreferrer'>
+                        <Box
+                          sx={{
+                            // height: '16px',
+                            width: "100%",
+
+                            cursor: "pointer", // Change cursor to indicate clickability
+                            color: "#3D5CAC",
+                          }}
+                        >
+                          {doc.filename}
+                        </Box>
+                      </a>
+                      {formatDocumentType(doc.type)}
+                      <Button
+                        variant='text'
+                        onClick={(event) => {
+                          deleteTenantDocument(i);
+                        }}
+                        sx={{
+                          width: "10%",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          fontWeight: "bold",
+                          color: "#3D5CAC",
+                          "&:hover": {
+                            backgroundColor: "transparent", // Set to the same color as the default state
+                          },
+                        }}
+                      >
+                        <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
+                      </Button>
+                    </Box>
+                  </>
+                ))}
+              </Grid>
+
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "row",
-                  alignItems: "center",
                   justifyContent: "space-between",
-                  paddingTop: "5px",
-                  color: theme.typography.common.blue,
+                  alignItems: "center",
+                  paddingTop: "10px",
+                  marginBottom: "7px",
+                  width: "100%",
                 }}
               >
-                <Box>Filename</Box>
-                <Box>Type</Box>
-                <Box> </Box>
-              </Box>
-              {(Array.isArray(tenantDocuments) ? tenantDocuments : []).map((doc, i) => (
-                <>
-                  <Box
-                    key={i}
+                <Button
+                  variant='contained'
+                  sx={{
+                    backgroundColor: "#9EAED6",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                  }}
+                  onClick={() => handleApplicationSubmit()}
+                >
+                  <Typography
                     sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#160449",
+                      textTransform: "none",
                     }}
                   >
-                    <a href={doc.link} target='_blank' rel='noopener noreferrer'>
-                      <Box
+                    Submit
+                  </Typography>
+                </Button>
+                <Button
+                  variant='contained'
+                  sx={{
+                    backgroundColor: "#CB8E8E",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                  }}
+                  onClick={() => props.setRightPane({ type: "tenantProfileEdit" })}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#160449",
+                      textTransform: "none",
+                    }}
+                  >
+                    Edit
+                  </Typography>
+                </Button>
+              </Box>
+              {status && status === "NEW" ? (
+                <>
+                  <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                    <Button
+                      sx={{
+                        marginTop: "30px",
+                        color: "#160449",
+                        backgroundColor: "#ffe230",
+                        fontWeight: theme.typography.medium.fontWeight,
+                        fontSize: theme.typography.mediumFont,
+                        textTransform: "none",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        ":hover": {
+                          color: "white",
+                        },
+                      }}
+                      onClick={() => setShowWithdrawLeaseDialog(true)}
+                    >
+                      Withdraw
+                    </Button>
+                  </Grid>
+                </>
+              ) : null}
+              {showWithdrawLeaseDialog && (
+                <Dialog
+                  open={showWithdrawLeaseDialog}
+                  onClose={() => setShowWithdrawLeaseDialog(false)}
+                  aria-labelledby='alert-dialog-title'
+                  aria-describedby='alert-dialog-description'
+                >
+                  <DialogContent>
+                    <DialogContentText
+                      id='alert-dialog-description'
+                      sx={{
+                        fontWeight: theme.typography.common.fontWeight,
+                        paddingTop: "10px",
+                      }}
+                    >
+                      Are you sure you want to withdraw your application for {property.property_address} {property.property_unit}?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Button
+                        onClick={() => handleWithdrawLease()}
                         sx={{
-                          // height: '16px',
-                          width: "100%",
-
-                          cursor: "pointer", // Change cursor to indicate clickability
-                          color: "#3D5CAC",
+                          color: "white",
+                          backgroundColor: "#3D5CAC80",
+                          ":hover": {
+                            backgroundColor: "#3D5CAC",
+                          },
+                          marginRight: "10px",
+                        }}
+                        autoFocus
+                      >
+                        Yes
+                      </Button>
+                      <Button
+                        onClick={() => setShowWithdrawLeaseDialog(false)}
+                        sx={{
+                          color: "white",
+                          backgroundColor: "#3D5CAC80",
+                          ":hover": {
+                            backgroundColor: "#3D5CAC",
+                          },
+                          marginLeft: "10px",
                         }}
                       >
-                        {doc.filename}
-                      </Box>
-                    </a>
-                    {formatDocumentType(doc.type)}
-                    <Button
-                      variant='text'
-                      onClick={(event) => {
-                        deleteTenantDocument(i);
-                      }}
-                      sx={{
-                        width: "10%",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        color: "#3D5CAC",
-                        "&:hover": {
-                          backgroundColor: "transparent", // Set to the same color as the default state
-                        },
-                      }}
-                    >
-                      <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-                    </Button>
-                  </Box>
-                </>
-              ))}
+                        No
+                      </Button>
+                    </Box>
+                  </DialogActions>
+                </Dialog>
+              )}
             </Grid>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingTop: "10px",
-                marginBottom: "7px",
-                width: "100%",
-              }}
-            >
-              <Button
-                variant='contained'
-                sx={{
-                  backgroundColor: "#9EAED6",
-                  textTransform: "none",
-                  borderRadius: "5px",
-                  display: "flex",
-                  width: "45%",
-                }}
-                onClick={() => handleApplicationSubmit()}
-              >
-                <Typography
-                  sx={{
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: "14px",
-                    color: "#160449",
-                    textTransform: "none",
-                  }}
-                >
-                  Submit
-                </Typography>
-              </Button>
-              <Button
-                variant='contained'
-                sx={{
-                  backgroundColor: "#CB8E8E",
-                  textTransform: "none",
-                  borderRadius: "5px",
-                  display: "flex",
-                  width: "45%",
-                }}
-                onClick={() => props.setRightPane({ type: "tenantProfileEdit" })}
-              >
-                <Typography
-                  sx={{
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: "14px",
-                    color: "#160449",
-                    textTransform: "none",
-                  }}
-                >
-                  Edit
-                </Typography>
-              </Button>
-            </Box>
-            {status && status === "NEW" ? (
-              <>
-                <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-                  <Button
-                    sx={{
-                      marginTop: "30px",
-                      color: "#160449",
-                      backgroundColor: "#ffe230",
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.mediumFont,
-                      textTransform: "none",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      ":hover": {
-                        color: "white",
-                      },
-                    }}
-                    onClick={() => setShowWithdrawLeaseDialog(true)}
-                  >
-                    Withdraw
-                  </Button>
-                </Grid>
-              </>
-            ) : null}
-            {showWithdrawLeaseDialog && (
-              <Dialog
-                open={showWithdrawLeaseDialog}
-                onClose={() => setShowWithdrawLeaseDialog(false)}
-                aria-labelledby='alert-dialog-title'
-                aria-describedby='alert-dialog-description'
-              >
-                <DialogContent>
-                  <DialogContentText
-                    id='alert-dialog-description'
-                    sx={{
-                      fontWeight: theme.typography.common.fontWeight,
-                      paddingTop: "10px",
-                    }}
-                  >
-                    Are you sure you want to withdraw your application for {property.property_address} {property.property_unit}?
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Box
-                    sx={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Button
-                      onClick={() => handleWithdrawLease()}
-                      sx={{
-                        color: "white",
-                        backgroundColor: "#3D5CAC80",
-                        ":hover": {
-                          backgroundColor: "#3D5CAC",
-                        },
-                        marginRight: "10px",
-                      }}
-                      autoFocus
-                    >
-                      Yes
-                    </Button>
-                    <Button
-                      onClick={() => setShowWithdrawLeaseDialog(false)}
-                      sx={{
-                        color: "white",
-                        backgroundColor: "#3D5CAC80",
-                        ":hover": {
-                          backgroundColor: "#3D5CAC",
-                        },
-                        marginLeft: "10px",
-                      }}
-                    >
-                      No
-                    </Button>
-                  </Box>
-                </DialogActions>
-              </Dialog>
-            )}
-          </Grid>
-        </Paper>
-      </Box>
+          </Paper>
+        </Box>
+      </Paper>
     </ThemeProvider>
   );
 }
