@@ -180,8 +180,9 @@ function EditProperty(props) {
 		new Array(JSON.parse(propertyData.property_images).length).fill(false)
 	);
 	const [favoriteIcons, setFavoriteIcons] = useState(
-		new Array(JSON.parse(propertyData.property_images).length).fill(false)
-	);
+    JSON.parse(propertyData.property_images).map(image => image === propertyData.property_favorite_image)
+  );
+  
 
 	useEffect(() => {
 		const property = propertyList[index];
@@ -669,7 +670,7 @@ function EditProperty(props) {
     }
 		//console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
 		formData.append('property_images', propertyData.property_images);
-
+    formData.append('property_favorite_image', favImage);
 		const files = imageState;
 		let i = 0;
 		for (const file of imageState) {
@@ -681,11 +682,13 @@ function EditProperty(props) {
 			} else {
 				// newProperty[key] = file.image;
 				formData.append(key, file.image);
-			}
+			 }
 			if (file.coverPhoto) {
-				formData.append('property_favorite_image', key);
+				formData.set('property_favorite_image', key);
 			}
 		}
+
+    console.log('---FavImage----', favImage);
 
 		if (deletedImageList.length > 0) {
 			formData.append('deleted_images', JSON.stringify(deletedImageList));
@@ -919,13 +922,26 @@ function EditProperty(props) {
 	};
 
 	const handleFavorite = (index) => {
-		const updatedFavoriteIcons = [...favoriteIcons];
-		updatedFavoriteIcons[index] = !updatedFavoriteIcons[index];
-		setFavoriteIcons(updatedFavoriteIcons);
+    const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
+    updatedFavoriteIcons[index] = true;
+    setFavoriteIcons(updatedFavoriteIcons);
+  
+    const newFavImage = JSON.parse(propertyData.property_images)[index];
+    setFavImage(newFavImage);
+    setSelectedImageList(prevState =>
+      prevState.map((file, i) => ({
+        ...file,
+        coverPhoto: i === index
+      }))
+    );
+  
+    console.log(`Favorite image at index: ${index}`);
+  };
 
-		console.log(`Favorite image at index: ${index}`);
-	};
-
+  const handleUpdateFavoriteIcons = () => {
+    setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
+};
+  
 	return (
 		<ThemeProvider theme={theme}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -1110,6 +1126,9 @@ function EditProperty(props) {
 									setSelectedImageList={setImageState}
 									setDeletedImageList={setDeletedImageList}
 									page={page}
+                  setFavImage={setFavImage}
+                  favImage={favImage}
+                  updateFavoriteIcons={handleUpdateFavoriteIcons}
 								/>
 							</Grid>
 
