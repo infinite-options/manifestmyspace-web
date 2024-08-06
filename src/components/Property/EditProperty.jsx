@@ -50,7 +50,7 @@ import APIConfig from "../../utils/APIConfig";
 import PropertyNavigator from "./PropertyNavigator";
 
 function EditProperty(props) {
-  console.log("In Edit Property2 - rename to Edit Property");
+  // console.log("In Edit Property");
   const { state } = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -175,7 +175,6 @@ function EditProperty(props) {
   const [initfavImage, setInitFavImage] = useState("");
 
   const [hasChanges, setHasChanges] = useState(false);
-
 
   useEffect(() => {
     const property = propertyList[index];
@@ -392,7 +391,7 @@ function EditProperty(props) {
     let utilitiesInUIDForm = {};
     let mappedUtilities2 = {};
 
-    console.log("ROHIT - utilities - ", utilities);
+    // console.log("ROHIT - utilities - ", utilities);
     try {
       if (utilities && utilities.length > 0) {
         utilitiesObject = JSON.parse(utilities);
@@ -523,8 +522,7 @@ function EditProperty(props) {
       setHasChanges(false);
       console.log("No changes detected.");
       return;
-    }
-    else {
+    } else {
       setHasChanges(true);
     }
 
@@ -763,7 +761,7 @@ function EditProperty(props) {
       await autoUpdate();
 
       if (stayOnPage) {
-        console.log("STAY ON PAGE", stayOnPage)
+        console.log("STAY ON PAGE", stayOnPage);
         // setCookie("user_data", { ...cookiesData, index }, { path: "/" });
       } else {
         console.log("propertyList after autoUpdate - ", propertyList);
@@ -780,7 +778,7 @@ function EditProperty(props) {
       console.error("Error:", error);
     }
   };
-  
+
   const formatUtilityName = (utility) => {
     const formattedUtility = utility.replace(/_/g, " ");
     return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
@@ -851,8 +849,32 @@ function EditProperty(props) {
   useEffect(() => {
     const changedFields = getChangedFields();
     setHasChanges(Object.keys(changedFields).length > 0);
-  }, [address, city, propertyState, zip, propertyType, squareFootage, bedrooms, bathrooms, isListed, description, notes, unit, propertyValue, assessmentYear, deposit, listedRent, petsAllowed, depositForRent, taxes, mortgages, insurance, communityAmenities, unitAmenities, nearbyAmenities]);
-  
+  }, [
+    address,
+    city,
+    propertyState,
+    zip,
+    propertyType,
+    squareFootage,
+    bedrooms,
+    bathrooms,
+    isListed,
+    description,
+    notes,
+    unit,
+    propertyValue,
+    assessmentYear,
+    deposit,
+    listedRent,
+    petsAllowed,
+    depositForRent,
+    taxes,
+    mortgages,
+    insurance,
+    communityAmenities,
+    unitAmenities,
+    nearbyAmenities,
+  ]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -1140,38 +1162,34 @@ function EditProperty(props) {
         </Paper>
 
         <Box
-        sx={{
-          marginBottom: "30px",
-          width: "80%",
-          paddingBottom: "30px",
-        }}
-      >
-        <Stack direction="row" spacing={6} justifyContent="center" sx={{marginTop: "20px"}}>
+          sx={{
+            marginBottom: "30px",
+            width: "80%",
+            paddingBottom: "30px",
+          }}
+        >
+          <Stack direction='row' spacing={6} justifyContent='center' sx={{ marginTop: "20px" }}>
+            {page !== "add_listing" && (
+              <Button variant='contained' sx={{ backgroundColor: theme.typography.formButton.background }} onClick={(event) => handleSubmit(event, true)}>
+                <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save</Typography>
+              </Button>
+            )}
 
-        {page !== "add_listing" && (
-            <Button
-              variant="contained"
-              sx={{ backgroundColor: theme.typography.formButton.background}}
-              onClick={(event) => handleSubmit(event, true)}
-            >
-              <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save</Typography>
+            <Button variant='contained' type='submit' form='editPropertyForm' sx={{ backgroundColor: theme.typography.formButton.background }} disabled={!hasChanges}>
+              {page === "edit_property" && (
+                <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  Save and Return to Dashboard
+                </Typography>
+              )}
+              {page === "add_listing" && (
+                <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Create Listing</Typography>
+              )}
+              {page === "edit_listing" && (
+                <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Listing</Typography>
+              )}
             </Button>
-          )}
-          
-          <Button variant='contained' type='submit' form='editPropertyForm' sx={{ backgroundColor: theme.typography.formButton.background}} disabled={!hasChanges}>
-            {page === "edit_property" && (
-              <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save and Return to Dashboard</Typography>
-            )}
-            {page === "add_listing" && (
-              <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Create Listing</Typography>
-            )}
-            {page === "edit_listing" && (
-              <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Listing</Typography>
-            )}
-          </Button>
-        </Stack>
-      </Box>
-
+          </Stack>
+        </Box>
       </Stack>
     </ThemeProvider>
   );

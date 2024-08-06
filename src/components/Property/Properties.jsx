@@ -60,7 +60,7 @@ function Properties() {
   const [managerData, setManagerData] = useState(null); // for request quotes
 
   useEffect(() => {
-    console.log("Properties - newContractUID - ", newContractUID);
+    // console.log("Properties - newContractUID - ", newContractUID);
   }, [newContractUID]);
 
   // useEffect(() => {
@@ -68,7 +68,7 @@ function Properties() {
   // }, [newContractPropertyUID]);
 
   useEffect(() => {
-    console.log("ROHIT - managersList - ", managersList);
+    // console.log("ROHIT - managersList - ", managersList);
   }, [managersList]);
 
   // LHS , RHS
@@ -342,9 +342,9 @@ function Properties() {
             )}
             {RHS === "EditProperty" && (
               <EditProperty
-                currentId={propertyList[returnIndexTest].property_uid}
-                property={propertyList[returnIndexTest]}
-                index={returnIndexTest}
+                currentId={propertyList[returnIndex].property_uid}
+                property={propertyList[returnIndex]}
+                index={returnIndex}
                 propertyList={propertyList}
                 page={page}
                 isDesktop={isDesktop}

@@ -306,13 +306,13 @@ export default function PropertyNavigator({
       //   getContractsForOwner();
       var count = 0;
       const filtered = contractsData.filter((contract) => contract.property_id === propertyId);
-      console.log("ROHIT - PropertyNavigator - filtered contracts - ", filtered);
+      // console.log("ROHIT - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
         if (contract.contract_status === "SENT" || contract.contract_status === "NEW") {
           count++;
         }
       });
-      console.log("ROHIT - PropertyNavigator - contract count - ", count);
+      // console.log("ROHIT - PropertyNavigator - contract count - ", count);
       setContractsNewSent(count);
       setContractsData(contracts);
 
@@ -338,8 +338,8 @@ export default function PropertyNavigator({
         setAppliances([]);
       }
     }
-  }, [currentIndex, propertyId, allRentStatus, index, propertyList, contracts, propertyData,]);
-// }, [currentIndex, propertyId, allRentStatus]);
+  }, [currentIndex, propertyId, allRentStatus, index, propertyList, contracts, propertyData]);
+  // }, [currentIndex, propertyId, allRentStatus]);
 
   const tenant_detail = property && property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
   const manager_detail = property && property.business_uid ? `${property.business_name}` : "No Manager";
@@ -1466,7 +1466,7 @@ export default function PropertyNavigator({
                             }}
                             size='small'
                             onClick={() => onAddListingClick("create_listing")}
-                            >
+                          >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
                             <Typography
                               sx={{
@@ -1990,20 +1990,20 @@ export default function PropertyNavigator({
                             </Box>
                           </Box>
                         </Grid>
-                        { contractsNewSent ? (
-                            <Grid item xs={1.3} md={1.3}>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  padding: "0px 0px 0px 8px",
-                                }}
-                              >
-                                <KeyboardArrowRightIcon
-                                  sx={{ color: arrowButton1_color, cursor: "pointer" }}
-                                  onClick={() => {
-                                    /* navigate('/pmQuotesRequested', {
+                        {contractsNewSent ? (
+                          <Grid item xs={1.3} md={1.3}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "0px 0px 0px 8px",
+                              }}
+                            >
+                              <KeyboardArrowRightIcon
+                                sx={{ color: arrowButton1_color, cursor: "pointer" }}
+                                onClick={() => {
+                                  /* navigate('/pmQuotesRequested', {
                                       state: {
                                         index: currentIndex,
                                         propertyData: propertyData,
@@ -2011,22 +2011,21 @@ export default function PropertyNavigator({
                                         isDesktop: isDesktop,
                                       },
                                     }); */
-                                    // const state = {
-                                    //   index: currentIndex,
-                                    //   propertyData: propertyData,
-                                    //   contracts: contractsData,
-                                    //   isDesktop: isDesktop,
-                                    // };
-                                    // setPmQuoteRequestedState(state);
-                                    handleViewPMQuotesRequested();
-                                  }}
-                                />
-                              </Box>
-                            </Grid>
-                          ) : (
-                            <></>
-                          )
-                        }
+                                  // const state = {
+                                  //   index: currentIndex,
+                                  //   propertyData: propertyData,
+                                  //   contracts: contractsData,
+                                  //   isDesktop: isDesktop,
+                                  // };
+                                  // setPmQuoteRequestedState(state);
+                                  handleViewPMQuotesRequested();
+                                }}
+                              />
+                            </Box>
+                          </Grid>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : null}
                     {property && property.applications.length > 0 && (
