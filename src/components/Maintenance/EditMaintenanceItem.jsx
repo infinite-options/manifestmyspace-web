@@ -48,7 +48,7 @@ export default function EditMaintenanceItem() {
 
 	let testIssue1, testProperty1, testIssueItem1, testCost1;
     let testTitle1, testPriority1, completionStatus1;
-    let requestUid1, propID1;
+    let requestUid1, propID1, images;
 
 	if (isMobile) {
 		testIssue1 = location.state.testIssue;
@@ -70,6 +70,7 @@ export default function EditMaintenanceItem() {
 		completionStatus1 = sessionStorage.getItem('completionStatus');
 		requestUid1 = sessionStorage.getItem('requestUid');
 		propID1 = sessionStorage.getItem('propID');
+		images = sessionStorage.getItem('maintenanceImages');
 	}
 
 	// setCost(testCost1);
@@ -177,7 +178,7 @@ export default function EditMaintenanceItem() {
 			sessionStorage.removeItem('month');
 			sessionStorage.removeItem('year');
 			sessionStorage.removeItem('editMaintenanceView');
-
+			sessionStorage.removeItem('maintenanceImages');
 			window.dispatchEvent(new Event('storage'));
 			// Dispatch the custom event
             setTimeout(() => {
@@ -241,23 +242,36 @@ export default function EditMaintenanceItem() {
 		editFormData.append('maintenance_request_closed_date', null);
 		editFormData.append('maintenance_request_adjustment_date', null);
 		
-		console.log('---edit maintainance---', selectedImageList);
+		console.log('maintenance images', images);
+		console.log('---edit maintenance---', selectedImageList);
+		
 		for (let i = 0; i < selectedImageList.length; i++) {
-			try {
-				let key = i === 0 ? 'img_cover' : `img_${i - 1}`;
-
-				if (selectedImageList[i].startsWith('data:image')) {
-					console.log('is it in if', selectedImageList[i]);
-					const imageBlob = dataURItoBlob(selectedImageList[i]);
-					editFormData.append(key, imageBlob);
-				} else {
-					console.log('is it in else', selectedImageList[i]);
-					editFormData.append(key, selectedImageList[i]);
-				}
-			} catch (error) {
-				console.log('Error uploading images', error);
-			}
+			let key = `img_${i + 1}`;
+			console.log('printing selected images', selectedImageList[i]);
+			if (selectedImageList[i].file !== null) {
+				// newProperty[key] = file.file;
+				editFormData.append(key, selectedImageList[i].file);
+			  } else {
+				// newProperty[key] = file.image;
+				editFormData.append(key, selectedImageList[i].image);
+			  }
+			// try {
+			// 	console.log('before key');
+			// 	let key = i === 0 ? 'img_cover' : `img_${i - 1}`;
+			// 	console.log('before if', selectedImageList[i]);
+			// 	if (selectedImageList[i].image.startsWith('data:image')) {
+			// 		console.log('is it in if', selectedImageList[i]);
+			// 		const imageBlob = dataURItoBlob(selectedImageList[i].image);
+			// 		editFormData.append(key, imageBlob);
+			// 	} else {
+			// 		console.log('is it in else', selectedImageList[i]);
+			// 		editFormData.append(key, selectedImageList[i]);
+			// 	}
+			// } catch (error) {
+			// 	console.log('Error uploading images', error);
+			// }
 		}
+		editFormData.append('maintenance_images', images);
 		console.log('editFormData>>>>>>');
 		for (let [key, value] of editFormData.entries()) {
 			console.log(key, value);

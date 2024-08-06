@@ -545,6 +545,7 @@ if (squareFootage !== initsquareFootage) formData.append("property_area", square
     const files = imageState;
     let i = 0;
     for (const file of imageState) {
+      console.log('file in imageState', file);
       // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
       let key = `img_${i++}`;
       if (file.file !== null) {

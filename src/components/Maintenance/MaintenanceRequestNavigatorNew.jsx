@@ -112,7 +112,8 @@ export default function MaintenanceRequestNavigatorNew({
 		testPriority,
 		completionStatus,
 		requestUid,
-		propID
+		propID,
+		images,
 	) {
 		if (isMobile) {
 			navigate('/editMaintenanceItem', {
@@ -128,6 +129,7 @@ export default function MaintenanceRequestNavigatorNew({
 					propID,
 					month,
 					year,
+					images
 				},
 			});
 		} else {
@@ -146,6 +148,10 @@ export default function MaintenanceRequestNavigatorNew({
 			sessionStorage.setItem('editMaintenanceView', true);
 			sessionStorage.setItem('selectedRequestIndex', requestIndex);
 			sessionStorage.setItem('selectedStatus', status);
+			console.log('JSON.stringify(images)', JSON.stringify(images));
+			console.log('JSON.stringify(images)', JSON.stringify(images));
+			console.log('JSON.stringify(images)', JSON.stringify(images));
+			sessionStorage.setItem('maintenanceImages', JSON.stringify(images));
 			window.dispatchEvent(new Event('storage'));
 			setTimeout(() => {
 				window.dispatchEvent(new Event('maintenanceRequestSelected'));
@@ -483,7 +489,8 @@ export default function MaintenanceRequestNavigatorNew({
 												priorities[currentIndex], // Use local state here
 												completionStatus,
 												data.maintenance_request_uid,
-												data.maintenance_property_id
+												data.maintenance_property_id,
+												images,
 											)
 										}
 									/>
