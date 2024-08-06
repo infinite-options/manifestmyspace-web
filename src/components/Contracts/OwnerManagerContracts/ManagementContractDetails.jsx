@@ -32,7 +32,7 @@ import PropertyCard from "./PropertyCard";
 import { isValidDate } from "../../../utils/dates";
 
 function ManagementContractDetails(props) {
-  console.log("In ManagementContractDetails.jsx - props - ", props);
+  // console.log("In ManagementContractDetails.jsx - props - ", props);
   const { getProfileId } = useUser();
   const navigate = useNavigate();
 
@@ -83,12 +83,12 @@ function ManagementContractDetails(props) {
 
     // const properties = property_endpoint_resp["NewPMRequests"]["result"] ? property_endpoint_resp["NewPMRequests"]["result"] : [];
     const properties = property_endpoint_resp ? property_endpoint_resp : [];
-    console.log("PROPERTIES", properties);
+    // console.log("PROPERTIES", properties);
     setPropertiesData(properties);
 
     const filteredProperties = properties.filter((property) => property.property_uid === contractPropertyID);
-    console.log("FILTERED PROPERTIES - contractPropertyID - ", contractPropertyID);
-    console.log("FILTERED PROPERTIES", filteredProperties);
+    // console.log("FILTERED PROPERTIES - contractPropertyID - ", contractPropertyID);
+    // console.log("FILTERED PROPERTIES", filteredProperties);
     setFilteredPropertiesData(filteredProperties);
 
     // console.log("FILTERED PROPERTIES DATA", filteredProperties);

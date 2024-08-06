@@ -67,7 +67,7 @@ function EditProperty(props) {
 
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   // console.log("Property propertyData---", propertyData)
-  console.log("Property Data in Edit Property", propertyData);
+  // console.log("Property Data in Edit Property", propertyData);
   const { user, selectedRole, selectRole, Name } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());
@@ -262,7 +262,7 @@ function EditProperty(props) {
   };
 
   useEffect(() => {
-    console.log("deletedImageList - ", deletedImageList);
+    // console.log("deletedImageList - ", deletedImageList);
   }, [deletedImageList]);
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});

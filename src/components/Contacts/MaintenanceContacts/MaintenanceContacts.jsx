@@ -12,21 +12,18 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
-
 import ContactsList from "../ContactsList";
 import ManagerContactDetail from "../ContactDetail/ManagerContactDetail";
 import TenantContactDetail from "../ContactDetail/TenantContactDetail";
 import EmployeeContactDetail from "../ContactDetail/EmployeeContactDetail";
 
-
-
 const MaintenanceContacts = () => {
   const { getProfileId, selectedRole } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [contactsTab, setContactsTab] = useState("Manager");
-  const [ contactsData, setContactsData ] = useState([]);
+  const [contactsData, setContactsData] = useState([]);
 
-  const [ currentIndex, setCurrentIndex ] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // useEffect(() => {
   //   console.log("contactsData - ", contactsData);
@@ -37,15 +34,14 @@ const MaintenanceContacts = () => {
   // }, [currentIndex]);
   // useEffect(() => {
   //   console.log("contactsTab", contactsTab)
-  //   setCurrentIndex(0); 
+  //   setCurrentIndex(0);
   // }, [contactsTab]);
-  
 
   const fetchData = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     // const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
-    console.log("In PMContracts.jsx");
+    // console.log("In PMContracts.jsx");
     setShowSpinner(true);
 
     await axios
@@ -65,33 +61,32 @@ const MaintenanceContacts = () => {
     fetchData();
   }, []);
 
-  return (    
-      <Container disableGutters maxWidth="lg">
-        <Grid container>
-          <Grid container item xs={12} md={4}>
-            <Grid item xs={12} sx={{padding: '5px', height: '100%', }}>                            
-                <ContactsList data={contactsData} tab={"Manager"} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-            </Grid>
-          </Grid>
-          <Grid container item xs={12} md={8} >
-            <Grid item xs={12} sx={{padding: '5px',}}>
-              {
-                contactsTab === "Manager" && <ManagerContactDetail data={contactsData?.managers} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-              }
-             
-              {
-                contactsTab === "Tenant" && <TenantContactDetail data={contactsData?.tenants} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-              }
-
-              {
-                contactsTab === "Employee" && <EmployeeContactDetail data={contactsData?.employees} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
-              }
-               
-            </Grid>                  
+  return (
+    <Container disableGutters maxWidth='lg'>
+      <Grid container>
+        <Grid container item xs={12} md={4}>
+          <Grid item xs={12} sx={{ padding: "5px", height: "100%" }}>
+            <ContactsList data={contactsData} tab={"Manager"} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
           </Grid>
         </Grid>
-      </Container>    
+        <Grid container item xs={12} md={8}>
+          <Grid item xs={12} sx={{ padding: "5px" }}>
+            {contactsTab === "Manager" && (
+              <ManagerContactDetail data={contactsData?.managers} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+            )}
+
+            {contactsTab === "Tenant" && (
+              <TenantContactDetail data={contactsData?.tenants} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+            )}
+
+            {contactsTab === "Employee" && (
+              <EmployeeContactDetail data={contactsData?.employees} contacsTab={contactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+            )}
+          </Grid>
+        </Grid>
+      </Grid>
+    </Container>
   );
-}
+};
 
 export default MaintenanceContacts;

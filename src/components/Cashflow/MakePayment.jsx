@@ -65,7 +65,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
   // const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [paymentData, setPaymentData] = useState(selectedPayment?.paymentData);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState(selectedPayment?.paymentMethodInfo || {});
-  console.log("--DEBUG-- paymentData", paymentData);
+  // console.log("--DEBUG-- paymentData", paymentData);
   const [balance, setBalance] = useState(parseFloat(selectedPayment?.paymentData?.balance));
   const [purchaseUID, setPurchaseUID] = useState(selectedPayment?.paymentData.purchase_uids[0]?.purchase_uid);
   const [purchaseUIDs, setPurchaseUIDs] = useState(selectedPayment?.paymentData.purchase_uids);
@@ -79,17 +79,17 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
   const [isMakePaymentDisabled, setIsMakePaymentDisabled] = useState(true); // State to control the disabled status of the Make Payment button
 
   //   console.log("DEBUG BALANCE IN SELECT PAYMENT", balance);
-  console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
-  console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
+  // console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
+  // console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
   //   console.log("--debug-- location.state", location.state);
-  console.log("---debug--- convenience_fee", convenience_fee);
+  // console.log("---debug--- convenience_fee", convenience_fee);
 
   useEffect(() => {
-    console.log("In new UseEffect Current Convenience Fee is: ", convenience_fee);
+    // console.log("In new UseEffect Current Convenience Fee is: ", convenience_fee);
   }, [convenience_fee]);
 
   useEffect(() => {
-    console.log("In new UseEffect Current Balance is: ", totalBalance);
+    // console.log("In new UseEffect Current Balance is: ", totalBalance);
   }, [totalBalance]);
 
   const [stripePayment, setStripePayment] = useState(false);
@@ -187,17 +187,17 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
   }
 
   const submit = async ({ paymentIntent, paymentMethod }) => {
-    console.log("In Submit Function");
-    console.log("paymentData", paymentData);
-    console.log("in submit in SelectPayment.jsx", convenience_fee);
+    // console.log("In Submit Function");
+    // console.log("paymentData", paymentData);
+    // console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
 
-    console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
-    console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
+    // console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
+    // console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
 
     paymentIntent = paymentIntent === undefined ? "Zelle" : paymentIntent;
     paymentMethod = paymentMethod === undefined ? "Zelle" : paymentMethod;
-    console.log("Re-Setting PI and PM: ", paymentIntent, paymentMethod);
+    // console.log("Re-Setting PI and PM: ", paymentIntent, paymentMethod);
     // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
     setShowSpinner(true);
 

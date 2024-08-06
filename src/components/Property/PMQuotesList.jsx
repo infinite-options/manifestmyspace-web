@@ -1,4 +1,4 @@
-import { ThemeProvider, Typography, Box, Tabs, Tab, Card, CardHeader, Slider, Stack, Button, Grid, Container, } from "@mui/material";
+import { ThemeProvider, Typography, Box, Tabs, Tab, Card, CardHeader, Slider, Stack, Button, Grid, Container } from "@mui/material";
 import documentIcon from "../../images/Subtract.png";
 import Bell_fill from "../../images/Bell_fill.png";
 import { useEffect, useState } from "react";
@@ -18,8 +18,8 @@ import ManagementContractDetails from "../Contracts/OwnerManagerContracts/Manage
 export default function PMQuotesList() {
   let navigate = useNavigate();
   const location = useLocation();
-  console.log("In PMQuoteList");
-  console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
+  // console.log("In PMQuoteList");
+  // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
 
   const selectedContractUID = location?.state?.selected_contract_uid;
   // const selectedContractUID = "010-000361";
@@ -27,17 +27,17 @@ export default function PMQuotesList() {
   const property_endpoint_resp = location.state.property_endpoint_resp;
   const { getProfileId } = useUser();
   const [contractRequests, setContractRequests] = useState([]);
-  // const [contractRequests, setContractRequests] = useState(property_endpoint_resp);  
+  // const [contractRequests, setContractRequests] = useState(property_endpoint_resp);
   const [properties, setProperties] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
   // const [ currentContract, setCurrentContract ] = useState(null);
-  const [ index, setIndex ] = useState(0);
+  const [index, setIndex] = useState(0);
   // const [ currentContractUID, setCurrentContractUID ] = useState(contractRequests[0]?.contract_uid);
-  const [ currentContractUID, setCurrentContractUID ] = useState(null);
+  const [currentContractUID, setCurrentContractUID] = useState(null);
   // const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(contractRequests[0]?.property_id);
-  const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(null);
+  const [currentContractPropertyUID, setCurrentContractPropertyUID] = useState(null);
 
   // useEffect(() => {
   //   console.log("index - ", index);
@@ -45,16 +45,16 @@ export default function PMQuotesList() {
 
   useEffect(() => {
     // console.log("contractRequests - ", contractRequests);
-    if (selectedContractUID !== null && selectedContractUID !== undefined && contractRequests !== null && contractRequests !== undefined) {            
-      const index = contractRequests.findIndex(contract => contract.contract_uid === selectedContractUID);
+    if (selectedContractUID !== null && selectedContractUID !== undefined && contractRequests !== null && contractRequests !== undefined) {
+      const index = contractRequests.findIndex((contract) => contract.contract_uid === selectedContractUID);
       // console.log("contractRequests useEffect index - ", index);
       if (index !== -1) {
-        setIndex(index)
+        setIndex(index);
       }
-    }   
+    }
   }, [contractRequests]);
 
-  // useEffect(() => {  
+  // useEffect(() => {
   //   console.log("currentContractUID - ", currentContractUID);
   // }, [currentContractUID]);
 
@@ -62,11 +62,10 @@ export default function PMQuotesList() {
   //   console.log("currentContractPropertyUID - ", currentContractPropertyUID);
   // }, [currentContractPropertyUID]);
 
-
   useEffect(() => {
-    const contract = contractRequests[index];    
-    if(contract) setCurrentContractUID(contract?.contract_uid);
-    if(contract) setCurrentContractPropertyUID(contract?.property_id);
+    const contract = contractRequests[index];
+    if (contract) setCurrentContractUID(contract?.contract_uid);
+    if (contract) setCurrentContractPropertyUID(contract?.property_id);
   }, [index, contractRequests]);
 
   // useEffect(() => {
@@ -132,10 +131,10 @@ export default function PMQuotesList() {
 
       try {
         const jsonData = await response.json();
-        // console.log("Manager Dashboard jsonData: ", jsonData);        
+        // console.log("Manager Dashboard jsonData: ", jsonData);
         // NEW PM REQUESTS
         const requests = jsonData?.NewPMRequests?.result;
-        setContractRequests(requests);        
+        setContractRequests(requests);
         // setCurrentContractUID(requests[0]?.contract_uid)
         // setCurrentContractPropertyUID(requests[0]?.property_uid)
       } catch (error) {
@@ -150,16 +149,12 @@ export default function PMQuotesList() {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color='inherit' />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            <QuotesList
-              propertyData={property_endpoint_resp}
-              contractRequests={contractRequests}
-              setIndex={setIndex}
-            />
+            <QuotesList propertyData={property_endpoint_resp} contractRequests={contractRequests} setIndex={setIndex} />
           </Grid>
 
           <Grid item xs={12} md={8}>
@@ -169,7 +164,6 @@ export default function PMQuotesList() {
               // properties={property_endpoint_resp}
               properties={contractRequests}
             />
-            
           </Grid>
         </Grid>
       </Container>
@@ -185,13 +179,10 @@ const QuotesList = (props) => {
   const contractRequests = props.contractRequests;
   const setIndex = props.setIndex;
 
-
-
   return (
     <>
       <ThemeProvider theme={theme}>
-        
-        <Grid container item xs={12} sx={{backgroundColor: '#F2F2F2', padding: '10px', borderRadius: '10px', height: '100%' }}>
+        <Grid container item xs={12} sx={{ backgroundColor: "#F2F2F2", padding: "10px", borderRadius: "10px", height: "100%" }}>
           <Stack
             direction='column'
             alignItems='center'
@@ -228,28 +219,25 @@ const QuotesList = (props) => {
                 sx={{
                   width: "100%", // Take up full screen width
                   height: "100vh", // Set the Box height to full height
-                  borderRadius: '10px',
+                  borderRadius: "10px",
                   // paddingTop: '1200px',
-                  overflow: 'auto',
+                  overflow: "auto",
                   // marginTop: theme.spacing(2), // Set the margin to 20px
-                }}                
+                }}
               >
-
-            
-              {contractRequests.map((contract, index) => (
-                <Grid item xs={12}>
-                  <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} index={index} setIndex={setIndex} />
-                </Grid>
-              ))}
-            </Stack>
+                {contractRequests.map((contract, index) => (
+                  <Grid item xs={12}>
+                    <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} index={index} setIndex={setIndex} />
+                  </Grid>
+                ))}
+              </Stack>
             </Stack>
           </Stack>
         </Grid>
       </ThemeProvider>
     </>
-
   );
-}
+};
 
 function ContractCard(props) {
   let navigate = useNavigate();
@@ -273,7 +261,12 @@ function ContractCard(props) {
   if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
   return (
-    <Grid container alignContent='flex-start' item xs={12} sx={{
+    <Grid
+      container
+      alignContent='flex-start'
+      item
+      xs={12}
+      sx={{
         backgroundColor: "#D6D5DA",
         // backgroundColor: "red",
         borderRadius: "10px",
@@ -286,7 +279,6 @@ function ContractCard(props) {
       }}
       onClick={() => setCurrentIndex(index)}
     >
-
       <Grid container alignItems='center'>
         <Grid item xs={4}></Grid>
 
@@ -303,14 +295,13 @@ function ContractCard(props) {
           />
         </Grid>
 
-        <Grid container item xs={4} sx={{ textAlign: "center", alignItems: "center", justifyContent: 'flex-end' }}>
+        <Grid container item xs={4} sx={{ textAlign: "center", alignItems: "center", justifyContent: "flex-end" }}>
           <Typography
             sx={{
               color: textColor,
               fontWeight: "bold",
               fontSize: "16px",
               // marginLeft: "5px",
-              
             }}
           >
             {contract.contract_status}
@@ -319,7 +310,7 @@ function ContractCard(props) {
             <img
               src={Bell_fill}
               alt='Bell Icon'
-              style={{ display: "block", cursor: "pointer", marginTop: "5px", marginLeft: "10px", }}
+              style={{ display: "block", cursor: "pointer", marginTop: "5px", marginLeft: "10px" }}
               onClick={(e) => {
                 e.stopPropagation();
                 navigate("/announcements", { state: { owner_uid: contract.owner_uid } });
@@ -327,49 +318,49 @@ function ContractCard(props) {
             />
           )}
         </Grid>
-     </Grid>
-     <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px", }}>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Contract UID:</span> {`${contract.contract_uid}`}
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px",  }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Contract Property ID:</span> {`${contract.contract_property_id}`}
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px",  }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Title:</span> {`${announcements?.length ? announcements[0]?.announcement_title : "No title"}`}
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px",  }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Message:</span> {`${announcements?.length ? announcements[0]?.announcement_msg : "No message"}`}
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px",  }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.owner_first_name} ${contract.owner_last_name}`}
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px", }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Email:</span> {contract.owner_email}
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px", }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Address:</span> {contract.property_address} {contract.property_city} {contract.property_state} {contract.property_zip}
         </Typography>
-      </Grid>  
+      </Grid>
       <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px", }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.owner_phone_number}
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px", }}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Beds:</span> {contract.property_num_beds} <span style={{ fontWeight: "bold", marginLeft: "15px" }}>Baths:</span>{" "}
           {contract.property_num_baths}
         </Typography>

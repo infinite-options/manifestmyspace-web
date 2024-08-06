@@ -105,7 +105,7 @@ function PMContractDetailsList(props) {
       // setPropertiesData(responseData["Property"]["result"]? responseData["Property"]["result"] : []);
       // const properties = responseData["Property"]["result"]? responseData["Property"]["result"] : [];
       const properties = responseData["NewPMRequests"]["result"] ? responseData["NewPMRequests"]["result"] : [];
-      console.log("PROPERTIES", properties);
+      // console.log("PROPERTIES", properties);
       setPropertiesData(properties);
 
       // setFilteredPropertiesData(propertiesData.filter(property => announcementData.announcement_properties.includes(property.property_uid)));
@@ -115,7 +115,7 @@ function PMContractDetailsList(props) {
       // const filteredProperties = properties.filter(property => announcementPropertiesArray.includes(property.property_uid));
       // // const filteredProperties = properties.filter(property => announcementData.announcement_properties.includes(property.property_uid)); // if "announcement_properties" is an array
       const filteredProperties = properties.filter((property) => property.property_uid === contract_property_id);
-      console.log("FILTERED PROPERTIES", filteredProperties);
+      // console.log("FILTERED PROPERTIES", filteredProperties);
       setFilteredPropertiesData(filteredProperties);
 
       // console.log("FILTERED PROPERTIES DATA", filteredProperties);
@@ -176,7 +176,7 @@ function PMContractDetailsList(props) {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Box
         sx={{
@@ -187,12 +187,12 @@ function PMContractDetailsList(props) {
           fontFamily: "Source Sans Pro",
         }}
       >
-        <Stack flexDirection="row" justifyContent="flex-start" alignItems="center" sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Stack flexDirection='row' justifyContent='flex-start' alignItems='center' sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Button sx={{ padding: "0", minWidth: "150px" }} onClick={handleBackBtn}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
               <path
-                d="M4 8L2.58579 9.41421L1.17157 8L2.58579 6.58579L4 8ZM9 21C7.89543 21 7 20.1046 7 19C7 17.8954 7.89543 17 9 17L9 21ZM7.58579 14.4142L2.58579 9.41421L5.41421 6.58579L10.4142 11.5858L7.58579 14.4142ZM2.58579 6.58579L7.58579 1.58579L10.4142 4.41421L5.41421 9.41421L2.58579 6.58579ZM4 6L14.5 6L14.5 10L4 10L4 6ZM14.5 21L9 21L9 17L14.5 17L14.5 21ZM22 13.5C22 17.6421 18.6421 21 14.5 21L14.5 17C16.433 17 18 15.433 18 13.5L22 13.5ZM14.5 6C18.6421 6 22 9.35786 22 13.5L18 13.5C18 11.567 16.433 10 14.5 10L14.5 6Z"
-                fill="#3D5CAC"
+                d='M4 8L2.58579 9.41421L1.17157 8L2.58579 6.58579L4 8ZM9 21C7.89543 21 7 20.1046 7 19C7 17.8954 7.89543 17 9 17L9 21ZM7.58579 14.4142L2.58579 9.41421L5.41421 6.58579L10.4142 11.5858L7.58579 14.4142ZM2.58579 6.58579L7.58579 1.58579L10.4142 4.41421L5.41421 9.41421L2.58579 6.58579ZM4 6L14.5 6L14.5 10L4 10L4 6ZM14.5 21L9 21L9 17L14.5 17L14.5 21ZM22 13.5C22 17.6421 18.6421 21 14.5 21L14.5 17C16.433 17 18 15.433 18 13.5L22 13.5ZM14.5 6C18.6421 6 22 9.35786 22 13.5L18 13.5C18 11.567 16.433 10 14.5 10L14.5 6Z'
+                fill='#3D5CAC'
               />
             </svg>
           </Button>
@@ -208,15 +208,15 @@ function PMContractDetailsList(props) {
             Management Contract
           </Box>
         </Stack>
-        <Box flexDirection="row" alignItems="center" sx={{ width: "100%", display: "flex", justifyContent: "space-evenly", alignItems: "center" }}>
+        <Box flexDirection='row' alignItems='center' sx={{ width: "100%", display: "flex", justifyContent: "space-evenly", alignItems: "center" }}>
           <Box
             onClick={() => {
               console.log("Previous button clicked. INDEX - ", index);
               index > 0 ? setIndex(index - 1) : setIndex(filteredPropertiesData.length - 1);
             }}
           >
-            <svg width="33" height="33" viewBox="0 0 33 33" fill="#160449" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z" />
+            <svg width='33' height='33' viewBox='0 0 33 33' fill='#160449' xmlns='http://www.w3.org/2000/svg'>
+              <path d='M5.5 16.5L4.08579 15.0858L2.67157 16.5L4.08579 17.9142L5.5 16.5ZM26.125 18.5C27.2296 18.5 28.125 17.6046 28.125 16.5C28.125 15.3954 27.2296 14.5 26.125 14.5V18.5ZM12.3358 6.83579L4.08579 15.0858L6.91421 17.9142L15.1642 9.66421L12.3358 6.83579ZM4.08579 17.9142L12.3358 26.1642L15.1642 23.3358L6.91421 15.0858L4.08579 17.9142ZM5.5 18.5H26.125V14.5H5.5V18.5Z' />
             </svg>
           </Box>
           <Box
@@ -240,8 +240,8 @@ function PMContractDetailsList(props) {
               index < filteredPropertiesData.length - 1 ? setIndex(index + 1) : setIndex(0);
             }}
           >
-            <svg width="33" height="33" viewBox="0 0 33 33" fill="#160449" xmlns="http://www.w3.org/2000/svg">
-              <path d="M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z" />
+            <svg width='33' height='33' viewBox='0 0 33 33' fill='#160449' xmlns='http://www.w3.org/2000/svg'>
+              <path d='M27.5 16.5L28.9142 17.9142L30.3284 16.5L28.9142 15.0858L27.5 16.5ZM6.875 14.5C5.77043 14.5 4.875 15.3954 4.875 16.5C4.875 17.6046 5.77043 18.5 6.875 18.5L6.875 14.5ZM20.6642 26.1642L28.9142 17.9142L26.0858 15.0858L17.8358 23.3358L20.6642 26.1642ZM28.9142 15.0858L20.6642 6.83579L17.8358 9.66421L26.0858 17.9142L28.9142 15.0858ZM27.5 14.5L6.875 14.5L6.875 18.5L27.5 18.5L27.5 14.5Z' />
             </svg>
           </Box>
         </Box>
@@ -308,13 +308,13 @@ function PropertyCard(props) {
   }, [contractEndDate]);
 
   useEffect(() => {
-    console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
+    // console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
     // let JSONstring = JSON.stringify(defaultContractFees);
     // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
   }, [contractAssignedContacts]);
 
   useEffect(() => {
-    console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
+    // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
     // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
 
@@ -324,22 +324,19 @@ function PropertyCard(props) {
   }, [defaultContractFees]);
 
   useEffect(() => {
-    console.log("CONTRACT FEES - ", contractFees);
-
+    // console.log("CONTRACT FEES - ", contractFees);
     // let JSONstring = JSON.stringify(contractFees);
     // console.log("CONTRACT FEES JSON string- ", JSONstring);
   }, [contractFees]);
 
   useEffect(() => {
-    console.log("CONTRACT FILE TYPES - ", contractFileTypes);
-
+    // console.log("CONTRACT FILE TYPES - ", contractFileTypes);
     // let JSONstring = JSON.stringify(contractFileTypes);
     // console.log("CONTRACT FILE TYPES JSON string- ", JSONstring);
   }, [contractFileTypes]);
 
   useEffect(() => {
-    console.log("PREVIOUSLY UPLOADED DOCS - ", previouslyUploadedDocs);
-
+    // console.log("PREVIOUSLY UPLOADED DOCS - ", previouslyUploadedDocs);
     // let JSONstring = JSON.stringify(previouslyUploadedDocs);
     // console.log("PREVIOUSLY UPLOADED DOCS JSON string- ", JSONstring);
   }, [previouslyUploadedDocs]);
@@ -437,8 +434,8 @@ function PropertyCard(props) {
   };
 
   const handleEditContact = (newContact, index) => {
-    console.log("In handleEditContact of PropertyCard");
-    console.log(newContact, index);
+    // console.log("In handleEditContact of PropertyCard");
+    // console.log(newContact, index);
     setContractAssignedContacts((prevContacts) => {
       const updatedContacts = prevContacts.map((contact, i) => {
         if (i === index) {
@@ -451,7 +448,7 @@ function PropertyCard(props) {
   };
 
   const handleDeleteContact = (index, event) => {
-    console.log("Contract Assigned Contacts", contractAssignedContacts);
+    // console.log("Contract Assigned Contacts", contractAssignedContacts);
     setContractAssignedContacts((prevContacts) => {
       const contactsArray = Array.from(prevContacts);
       contactsArray.splice(index, 1);
@@ -472,12 +469,12 @@ function PropertyCard(props) {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          console.log("Data updated successfully");
+          // console.log("Data updated successfully");
           navigate("/PMProperties");
         }
       })
       .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
+        // console.error("There was a problem with the fetch operation:", error);
       });
   };
 
@@ -594,17 +591,17 @@ function PropertyCard(props) {
       formData.append("contract_documents_details", JSON.stringify(documentsDetails));
     }
 
-    console.log("Quote sent. Data sent - ");
+    // console.log("Quote sent. Data sent - ");
     for (const pair of formData.entries()) {
-      console.log(`${pair[0]}, ${pair[1]}`);
+      // console.log(`${pair[0]}, ${pair[1]}`);
     }
 
     sendPutRequest(formData);
   };
 
   useEffect(() => {
-    console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
-    console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
+    // console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
+    // console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
 
     //get contracts
     const fetchData = async () => {
@@ -613,11 +610,11 @@ function PropertyCard(props) {
 
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-      console.log("props.contractUID:", props.contractUID);
+      // console.log("props.contractUID:", props.contractUID);
       setContractUID(props.contractUID);
       const contractData = data["result"].find((contract) => contract.contract_uid === props.contractUID);
 
-      console.log("CONTRACT - ", contractData);
+      // console.log("CONTRACT - ", contractData);
       // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
       setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
       setContractStartDate(contractData["contract_start_date"] ? contractData["contract_start_date"] : "");
@@ -638,7 +635,7 @@ function PropertyCard(props) {
       const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
       const data2 = await businessProfileResult.json();
       const businessProfileData = data2["result"][0];
-      console.log("Business Services Fees", businessProfileData["business_services_fees"]);
+      // console.log("Business Services Fees", businessProfileData["business_services_fees"]);
       setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
     };
 
@@ -860,7 +857,7 @@ function PropertyCard(props) {
               }}
             >
               Contract:
-              <a href={contractDocument.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "text.darkblue" }}>
+              <a href={contractDocument.link} target='_blank' rel='noopener noreferrer' style={{ textDecoration: "none", color: "text.darkblue" }}>
                 <Box sx={{ cursor: "pointer" }}>
                   <DescriptionIcon sx={{ fontSize: 16, color: "#3D5CAC" }} />
                 </Box>
@@ -1197,7 +1194,7 @@ function PropertyCard(props) {
       >
         Management Agreement Name *
       </Box>
-      <TextInputField name="management_agreement_name" placeholder="Enter contract name" value={contractName} onChange={handleContractNameChange} required>
+      <TextInputField name='management_agreement_name' placeholder='Enter contract name' value={contractName} onChange={handleContractNameChange} required>
         First Name
       </TextInputField>
 
@@ -1223,7 +1220,7 @@ function PropertyCard(props) {
           >
             Start Date *
           </Box>
-          <TextInputField name="start_date" placeholder="mm-dd-yyyy" value={contractStartDate} onChange={handleStartDateChange}>
+          <TextInputField name='start_date' placeholder='mm-dd-yyyy' value={contractStartDate} onChange={handleStartDateChange}>
             Start Date
           </TextInputField>
         </Box>
@@ -1238,7 +1235,7 @@ function PropertyCard(props) {
           >
             End Date *
           </Box>
-          <TextInputField name="end_date" placeholder="mm-dd-yyyy" value={contractEndDate} onChange={handleEndDateChange} required>
+          <TextInputField name='end_date' placeholder='mm-dd-yyyy' value={contractEndDate} onChange={handleEndDateChange} required>
             End Date
           </TextInputField>
         </Box>
@@ -1325,7 +1322,7 @@ function PropertyCard(props) {
                 </Box>
 
                 <Button
-                  variant="text"
+                  variant='text'
                   onClick={(event) => {
                     handleDeleteFee(index, event);
                   }}
@@ -1410,7 +1407,7 @@ function PropertyCard(props) {
                     justifyContent: "space-between",
                   }}
                 >
-                  <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                  <a href={doc.link} target='_blank' rel='noopener noreferrer'>
                     <Box
                       sx={{
                         // height: '16px',
@@ -1425,7 +1422,7 @@ function PropertyCard(props) {
                   </a>
                   {doc.type}
                   <Button
-                    variant="text"
+                    variant='text'
                     onClick={(event) => {
                       handleDeletePrevUploadedFile(i);
                     }}
@@ -1492,7 +1489,7 @@ function PropertyCard(props) {
                 </Box>
                 <Select
                   value={contractFileTypes[i]}
-                  label="Document Type"
+                  label='Document Type'
                   onChange={(e) => {
                     const updatedTypes = [...contractFileTypes];
                     updatedTypes[i] = e.target.value;
@@ -1510,7 +1507,7 @@ function PropertyCard(props) {
                   <MenuItem value={"other"}>other</MenuItem>
                 </Select>
                 <Button
-                  variant="text"
+                  variant='text'
                   onClick={() => {
                     // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
                     handleRemoveFile(i);
@@ -1604,7 +1601,7 @@ function PropertyCard(props) {
                 <Box sx={{ width: "200px" }}>{contact.contact_email}</Box>
                 <Box sx={{ width: "80px" }}>{contact.contact_phone_number}</Box>
                 <Button
-                  variant="text"
+                  variant='text'
                   onClick={(event) => {
                     handleDeleteContact(i, event);
                   }}
@@ -1677,13 +1674,13 @@ function PropertyCard(props) {
               color: "#3D5CAC",
             }}
           >
-            <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+            <label htmlFor='file-upload' style={{ cursor: "pointer" }}>
               <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} /> Add Document
             </label>
             <input
-              id="file-upload"
-              type="file"
-              accept=".doc,.docx,.txt,.pdf"
+              id='file-upload'
+              type='file'
+              accept='.doc,.docx,.txt,.pdf'
               hidden
               // onChange={(e) => setContractFiles(e.target.files)}
               onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
@@ -1705,7 +1702,7 @@ function PropertyCard(props) {
         }}
       >
         <Button
-          variant="contained"
+          variant='contained'
           sx={{
             backgroundColor: "#CB8E8E",
             textTransform: "none",
@@ -1730,7 +1727,7 @@ function PropertyCard(props) {
           </Typography>
         </Button>
         <Button
-          variant="contained"
+          variant='contained'
           sx={{
             backgroundColor: "#9EAED6",
             textTransform: "none",
@@ -1808,7 +1805,7 @@ function TextInputField(props) {
         width: "100%",
       }}
     >
-      <input type="text" style={inputStyle} name={props.name} placeholder={props.placeholder} value={props.value} onChange={props.onChange} />
+      <input type='text' style={inputStyle} name={props.name} placeholder={props.placeholder} value={props.value} onChange={props.onChange} />
     </Box>
   );
 }
@@ -1922,7 +1919,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
         //     width: '100%',
         //     maxWidth: 'none',
         // }}
-        maxWidth="xl"
+        maxWidth='xl'
         sx={{
           "& .MuiDialog-paper": {
             width: "60%",
@@ -1977,8 +1974,8 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
               <Box>Fee Name</Box>
               {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
-                name="fee_name"
-                placeholder=""
+                name='fee_name'
+                placeholder=''
                 value={feeName}
                 onChange={(event) => {
                   setFeeName(event.target.value);
@@ -2021,7 +2018,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                 /> */}
               <Select
                 value={feeFrequency}
-                label="Frequency"
+                label='Frequency'
                 onChange={handleFrequencyChange}
                 sx={{
                   backgroundColor: "#D6D5DA",
@@ -2052,21 +2049,21 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
             color: "#3D5CAC",
           }}
         >
-          <RadioGroup row aria-label="fee-type-group-label" name="fee-type-radio-buttons-group" value={feeType} onChange={handleFeeTypeChange}>
+          <RadioGroup row aria-label='fee-type-group-label' name='fee-type-radio-buttons-group' value={feeType} onChange={handleFeeTypeChange}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
               }}
             >
-              <FormControlLabel value="PERCENT" control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label="Percent" />
+              <FormControlLabel value='PERCENT' control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label='Percent' />
               {/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
               {feeType === "PERCENT" && (
                 <Box>
                   <TextField
                     value={percentage}
-                    label=""
-                    variant="outlined"
+                    label=''
+                    variant='outlined'
                     // sx={{
                     //     width: '45px',
                     //     height: '3px',
@@ -2092,7 +2089,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                 flexDirection: "column",
               }}
             >
-              <FormControlLabel value="FLAT-RATE" control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label="Flat Rate" />
+              <FormControlLabel value='FLAT-RATE' control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label='Flat Rate' />
               <Box sx={{ width: "60px", height: "20px" }}></Box>
             </Box>
             {feeType === "FLAT-RATE" && (
@@ -2105,11 +2102,11 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
               >
                 Amount
                 <TextField
-                  name="flat-rate"
+                  name='flat-rate'
                   value={feeAmount}
-                  placeholder=""
-                  label=""
-                  variant="outlined"
+                  placeholder=''
+                  label=''
+                  variant='outlined'
                   // sx={{
                   //     width: '45px',
                   //     height: '3px',
@@ -2162,7 +2159,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                     /> */}
                 <Select
                   value={feeAppliedTo}
-                  label="Applied To"
+                  label='Applied To'
                   onChange={handleAppliedToChange}
                   sx={{
                     backgroundColor: "#D6D5DA",
@@ -2192,7 +2189,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
             Close
           </Button>
           <Button
-            type="submit"
+            type='submit'
             onClick={handleAddFee}
             sx={{
               "&:hover": {
@@ -2314,7 +2311,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
         //     width: '100%',
         //     maxWidth: 'none',
         // }}
-        maxWidth="xl"
+        maxWidth='xl'
         sx={{
           "& .MuiDialog-paper": {
             width: "60%",
@@ -2369,8 +2366,8 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
               <Box>Fee Name</Box>
               {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
-                name="fee_name"
-                placeholder=""
+                name='fee_name'
+                placeholder=''
                 value={feeName}
                 onChange={(event) => {
                   setFeeName(event.target.value);
@@ -2413,7 +2410,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                 /> */}
               <Select
                 value={feeFrequency}
-                label="Frequency"
+                label='Frequency'
                 onChange={handleFrequencyChange}
                 sx={{
                   backgroundColor: "#D6D5DA",
@@ -2444,21 +2441,21 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
             color: "#3D5CAC",
           }}
         >
-          <RadioGroup row aria-label="fee-type-group-label" name="fee-type-radio-buttons-group" value={feeType} onChange={handleFeeTypeChange}>
+          <RadioGroup row aria-label='fee-type-group-label' name='fee-type-radio-buttons-group' value={feeType} onChange={handleFeeTypeChange}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
               }}
             >
-              <FormControlLabel value="PERCENT" control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label="Percent" />
+              <FormControlLabel value='PERCENT' control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label='Percent' />
               {/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
               {feeType === "PERCENT" && (
                 <Box>
                   <TextField
                     value={percentage}
-                    label=""
-                    variant="outlined"
+                    label=''
+                    variant='outlined'
                     // sx={{
                     //     width: '45px',
                     //     height: '3px',
@@ -2484,7 +2481,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                 flexDirection: "column",
               }}
             >
-              <FormControlLabel value="FLAT-RATE" control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label="Flat Rate" />
+              <FormControlLabel value='FLAT-RATE' control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label='Flat Rate' />
               <Box sx={{ width: "60px", height: "20px" }}></Box>
             </Box>
             {feeType === "FLAT-RATE" && (
@@ -2497,11 +2494,11 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
               >
                 Amount
                 <TextField
-                  name="flat-rate"
+                  name='flat-rate'
                   value={feeAmount}
-                  placeholder=""
-                  label=""
-                  variant="outlined"
+                  placeholder=''
+                  label=''
+                  variant='outlined'
                   // sx={{
                   //     width: '45px',
                   //     height: '3px',
@@ -2554,7 +2551,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     /> */}
                 <Select
                   value={feeAppliedTo}
-                  label="Applied To"
+                  label='Applied To'
                   onChange={handleAppliedToChange}
                   sx={{
                     backgroundColor: "#D6D5DA",
@@ -2594,7 +2591,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
               color: "#160449",
               textTransform: "none",
             }}
-            type="submit"
+            type='submit'
             onClick={handleEditFee}
           >
             Save Fee
@@ -2636,7 +2633,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
         open={open}
         onClose={handleClose}
         fullWidth
-        maxWidth="sm"
+        maxWidth='sm'
         sx={{
           fontSize: "13px",
           fontWeight: "bold",
@@ -2670,8 +2667,8 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
               <Box sx={{ color: "#3D5CAC" }}>First Name</Box>
               {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
-                name="contact_first_name"
-                placeholder=""
+                name='contact_first_name'
+                placeholder=''
                 value={contactFirstName}
                 onChange={(event) => {
                   setContactFirstName(event.target.value);
@@ -2687,8 +2684,8 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Last Name</Box>
               <TextField
-                name="contact_last_name"
-                placeholder=""
+                name='contact_last_name'
+                placeholder=''
                 value={contactLastName}
                 onChange={(event) => {
                   setContactLastName(event.target.value);
@@ -2707,8 +2704,8 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Email</Box>
               <TextField
-                name="contact_email"
-                placeholder=""
+                name='contact_email'
+                placeholder=''
                 value={contactEmail}
                 onChange={(event) => {
                   setContactEmail(event.target.value);
@@ -2724,8 +2721,8 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Phone Number</Box>
               <TextField
-                name="contact_phone_number"
-                placeholder=""
+                name='contact_phone_number'
+                placeholder=''
                 value={contactPhone}
                 onChange={(event) => {
                   setContactPhone(event.target.value);
@@ -2755,7 +2752,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
             Close
           </Button>
           <Button
-            type="submit"
+            type='submit'
             onClick={handleSaveContact}
             sx={{
               "&:hover": {
@@ -2805,7 +2802,7 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
         open={open}
         onClose={handleClose}
         fullWidth
-        maxWidth="sm"
+        maxWidth='sm'
         sx={{
           fontSize: "13px",
           fontWeight: "bold",
@@ -2839,8 +2836,8 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
               <Box sx={{ color: "#3D5CAC" }}>First Name</Box>
               {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
-                name="contact_first_name"
-                placeholder=""
+                name='contact_first_name'
+                placeholder=''
                 value={contactFirstName}
                 onChange={(event) => {
                   setContactFirstName(event.target.value);
@@ -2856,8 +2853,8 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Last Name</Box>
               <TextField
-                name="contact_last_name"
-                placeholder=""
+                name='contact_last_name'
+                placeholder=''
                 value={contactLastName}
                 onChange={(event) => {
                   setContactLastName(event.target.value);
@@ -2876,8 +2873,8 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Email</Box>
               <TextField
-                name="contact_email"
-                placeholder=""
+                name='contact_email'
+                placeholder=''
                 value={contactEmail}
                 onChange={(event) => {
                   setContactEmail(event.target.value);
@@ -2893,8 +2890,8 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Phone Number</Box>
               <TextField
-                name="contact_phone_number"
-                placeholder=""
+                name='contact_phone_number'
+                placeholder=''
                 value={contactPhone}
                 onChange={(event) => {
                   setContactPhone(event.target.value);
@@ -2924,7 +2921,7 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
             Close
           </Button>
           <Button
-            type="submit"
+            type='submit'
             onClick={handleSaveContact}
             sx={{
               "&:hover": {

@@ -10,22 +10,22 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
 function PMRentDetail(props) {
-  console.log("in PMRentDetail: ", props);
+  // console.log("in PMRentDetail: ", props);
   const location = useLocation();
   const [index, setIndex] = useState(location.state.index);
-  console.log("in PMRentDetail Index: ", index);
+  // console.log("in PMRentDetail Index: ", index);
   const [propertyStatus, setPropertyStatus] = useState(location.state.status);
-  console.log("in PMRentDetail Status: ", propertyStatus);
-  const rentDetailIndexList = location.state.rentDetailIndexList;  
-  console.log("in PMRentDetail rentDetailIndexList - : ", rentDetailIndexList);
+  // console.log("in PMRentDetail Status: ", propertyStatus);
+  const rentDetailIndexList = location.state.rentDetailIndexList;
+  // console.log("in PMRentDetail rentDetailIndexList - : ", rentDetailIndexList);
   const [showSpinner, setShowSpinner] = useState(false);
   // const rentData = location.state.data;
-  // console.log("in PMRentDetail Rent Data: ", rentData);  
+  // console.log("in PMRentDetail Rent Data: ", rentData);
   const [propertiesData, setPropertiesData] = useState([]);
   // useEffect(() => {
   //   console.log("propertiesData - ", propertiesData);
   // }, [propertiesData]);
-  
+
   const months = {
     January: 1,
     February: 2,
@@ -43,22 +43,22 @@ function PMRentDetail(props) {
 
   const navigate = useNavigate();
 
-  const getProperties = (status) => {    
+  const getProperties = (status) => {
     switch (status) {
       case "UNPAID":
-        return propertiesData? propertiesData.unpaid : [];
+        return propertiesData ? propertiesData.unpaid : [];
       case "PAID PARTIALLY":
-        return propertiesData? propertiesData.partial : [];
+        return propertiesData ? propertiesData.partial : [];
       case "PAID LATE":
-        return propertiesData? propertiesData.late : [];
+        return propertiesData ? propertiesData.late : [];
       case "PAID":
-        return propertiesData? propertiesData.paid : [];
+        return propertiesData ? propertiesData.paid : [];
       case "VACANT":
-        return propertiesData? propertiesData.vacant : [];
+        return propertiesData ? propertiesData.vacant : [];
       default:
         return [];
     }
-  }
+  };
   function incrementIndex() {
     if (index < getProperties(propertyStatus).length - 1) {
       setIndex(index + 1);
@@ -93,10 +93,9 @@ function PMRentDetail(props) {
       //   return unique.some(entry => entry.property_uid === item.property_uid) ? unique : [...unique, item];
       // }, []);
 
-      const filteredData = fetchData.filter((data) => rentDetailIndexList.includes(data.rent_detail_index));      
+      const filteredData = fetchData.filter((data) => rentDetailIndexList.includes(data.rent_detail_index));
       console.log("filteredData -  ", filteredData);
 
-      
       const not_paid = [];
       const partial_paid = [];
       const late_paid = [];
@@ -122,14 +121,13 @@ function PMRentDetail(props) {
             break;
           default:
             break;
-        }        
+        }
       }
-      setPropertiesData({ unpaid: not_paid, partial: partial_paid, late: late_paid, paid: paid, vacant: vacant });      
+      setPropertiesData({ unpaid: not_paid, partial: partial_paid, late: late_paid, paid: paid, vacant: vacant });
       setRentDetailsData(fetchData);
       console.log("rentDetailsData: ", rentDetailsData);
       setShowSpinner(false);
     });
-
   }, []);
 
   useEffect(() => {
@@ -157,7 +155,6 @@ function PMRentDetail(props) {
     if (property?.length > 0) {
       setPropertyID(property[index].property_id);
     }
-
   }, [propertyStatus, index]);
 
   // useEffect(() => {
@@ -210,7 +207,7 @@ function PMRentDetail(props) {
   return (
     <MainContainer>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <RentTitle>Property Rent 4</RentTitle>
       <Box

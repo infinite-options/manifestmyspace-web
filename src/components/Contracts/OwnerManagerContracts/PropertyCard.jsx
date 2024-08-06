@@ -841,7 +841,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
-  console.log("PropertyCard - props - ", props);
+  // console.log("PropertyCard - props - ", props);
 
   const [propertyData, setPropertyData] = useState(props.data);
   const timeDiff = props.timeDifference;
@@ -883,15 +883,15 @@ const PropertyCard = (props) => {
   const fetchData = async () => {
     const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
     const data = await result.json();
-    console.log("--debug--", data);
+    // console.log("--debug--", data);
 
     // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
     // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-    console.log("props.contractUID:", props.contractUID);
+    // console.log("props.contractUID:", props.contractUID);
     setContractUID(props.contractUID);
     if (data !== "No records for this Uid") {
       const contractData = data["result"].find((contract) => contract.contract_uid === props.contractUID);
-      console.log("CONTRACT - ", contractData);
+      // console.log("CONTRACT - ", contractData);
       // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
       setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
       setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
@@ -913,7 +913,7 @@ const PropertyCard = (props) => {
     const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
     const data2 = await businessProfileResult.json();
     const businessProfileData = data2["result"][0];
-    console.log("Business Services Fees", businessProfileData["business_services_fees"]);
+    // console.log("Business Services Fees", businessProfileData["business_services_fees"]);
     setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
   };
 
@@ -953,7 +953,7 @@ const PropertyCard = (props) => {
   const setContractDetails = () => {
     if (allContracts !== null && allContracts !== undefined) {
       const contractData = allContracts?.find((contract) => contract.contract_uid === props.contractUID);
-      console.log("setData - CONTRACT - ", contractData);
+      // console.log("setData - CONTRACT - ", contractData);
       // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
       if (contractData) {
         setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
@@ -1059,11 +1059,11 @@ const PropertyCard = (props) => {
   }, [contractEndDate]);
 
   useEffect(() => {
-    console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
+    // console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
   }, [contractAssignedContacts]);
 
   useEffect(() => {
-    console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
+    // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
     // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
 
@@ -1073,22 +1073,19 @@ const PropertyCard = (props) => {
   }, [defaultContractFees]);
 
   useEffect(() => {
-    console.log("CONTRACT FEES - ", contractFees);
-
+    // console.log("CONTRACT FEES - ", contractFees);
     // let JSONstring = JSON.stringify(contractFees);
     // console.log("CONTRACT FEES JSON string- ", JSONstring);
   }, [contractFees]);
 
   useEffect(() => {
-    console.log("CONTRACT FILE TYPES - ", contractFileTypes);
-
+    // console.log("CONTRACT FILE TYPES - ", contractFileTypes);
     // let JSONstring = JSON.stringify(contractFileTypes);
     // console.log("CONTRACT FILE TYPES JSON string- ", JSONstring);
   }, [contractFileTypes]);
 
   useEffect(() => {
-    console.log("PREVIOUSLY UPLOADED DOCS - ", previouslyUploadedDocs);
-
+    // console.log("PREVIOUSLY UPLOADED DOCS - ", previouslyUploadedDocs);
     // let JSONstring = JSON.stringify(previouslyUploadedDocs);
     // console.log("PREVIOUSLY UPLOADED DOCS JSON string- ", JSONstring);
   }, [previouslyUploadedDocs]);
@@ -1109,8 +1106,8 @@ const PropertyCard = (props) => {
     //     feeAmount: 0,
     // };
     // setContractFees((prevContractFees) => [...prevContractFees, newFee]);
-    console.log("IN handleEditFee of PropertyCard");
-    console.log(newFee, index);
+    // console.log("IN handleEditFee of PropertyCard");
+    // console.log(newFee, index);
     setContractFees((prevContractFees) => {
       const updatedContractFees = prevContractFees.map((fee, i) => {
         if (i === index) {
@@ -1123,7 +1120,7 @@ const PropertyCard = (props) => {
   };
 
   const handleDeleteFee = (index, event) => {
-    console.log("Contract Fees", contractFees);
+    // console.log("Contract Fees", contractFees);
     setContractFees((prevFees) => {
       const feesArray = Array.from(prevFees);
       feesArray.splice(index, 1);
@@ -1142,7 +1139,7 @@ const PropertyCard = (props) => {
 
   const handleOpenEditFee = (feeIndex) => {
     setShowEditFeeDialog(true);
-    console.log("EDITING FEE, Index", feeIndex);
+    // console.log("EDITING FEE, Index", feeIndex);
     setIndexForEditFeeDialog(feeIndex);
   };
 
@@ -1157,7 +1154,7 @@ const PropertyCard = (props) => {
   const handleOpenEditContact = (contactIndex) => {
     setIndexForEditContactDialog(contactIndex);
     setShowEditContactDialog(true);
-    console.log("EDITING CONTACT, Index", contactIndex);
+    // console.log("EDITING CONTACT, Index", contactIndex);
   };
 
   const handleCloseEditContact = () => {
@@ -1188,8 +1185,8 @@ const PropertyCard = (props) => {
   };
 
   const handleEditContact = (newContact, index) => {
-    console.log("In handleEditContact of PropertyCard");
-    console.log(newContact, index);
+    // console.log("In handleEditContact of PropertyCard");
+    // console.log(newContact, index);
     setContractAssignedContacts((prevContacts) => {
       const updatedContacts = prevContacts.map((contact, i) => {
         if (i === index) {
@@ -1202,7 +1199,7 @@ const PropertyCard = (props) => {
   };
 
   const handleDeleteContact = (index, event) => {
-    console.log("Contract Assigned Contacts", contractAssignedContacts);
+    // console.log("Contract Assigned Contacts", contractAssignedContacts);
     setContractAssignedContacts((prevContacts) => {
       const contactsArray = Array.from(prevContacts);
       contactsArray.splice(index, 1);
@@ -1223,7 +1220,7 @@ const PropertyCard = (props) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          console.log("Data updated successfully");
+          // console.log("Data updated successfully");
           navigate("/managerDashboard");
         }
       })
@@ -1254,7 +1251,7 @@ const PropertyCard = (props) => {
   };
 
   const handleDeclineOfferClick = () => {
-    console.log("Decline Offer Clicked");
+    // console.log("Decline Offer Clicked");
     // let contractFeesJSONString = JSON.stringify(contractFees);
     // console.log("Decline Offer - contractFeesJSONString : ", contractFeesJSONString);
     // const data = {
@@ -1270,7 +1267,7 @@ const PropertyCard = (props) => {
     formData.append("contract_uid", contractUID);
     formData.append("contract_status", "REFUSED");
 
-    console.log("Declined offer. Data sent - ", formData);
+    // console.log("Declined offer. Data sent - ", formData);
 
     sendPutRequest(formData);
   };
@@ -1281,7 +1278,7 @@ const PropertyCard = (props) => {
         return false; // Return false if the index is out of bounds
       }
       const fileType = contractFileTypes[i];
-      console.log("FILE TYPE: ", fileType);
+      // console.log("FILE TYPE: ", fileType);
       if (!fileType || fileType.trim() === "") {
         return false;
       }
@@ -1291,12 +1288,12 @@ const PropertyCard = (props) => {
   };
 
   const handleSendQuoteClick = () => {
-    console.log("Send Quote Clicked");
+    // console.log("Send Quote Clicked");
     const formData = new FormData();
     let contractFeesJSONString = JSON.stringify(contractFees);
-    console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
+    // console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
     let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
-    console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);
+    // console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);
     // const data = {
     //     "contract_uid": contractUID,
     //     "contract_name": contractName,
@@ -1343,17 +1340,17 @@ const PropertyCard = (props) => {
       formData.append("contract_documents_details", JSON.stringify(documentsDetails));
     }
 
-    console.log("Quote sent. Data sent - ");
+    // console.log("Quote sent. Data sent - ");
     for (const pair of formData.entries()) {
-      console.log(`${pair[0]}, ${pair[1]}`);
+      // console.log(`${pair[0]}, ${pair[1]}`);
     }
 
     sendPutRequest(formData);
   };
 
   useEffect(() => {
-    console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
-    console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
+    // console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
+    // console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
 
     //get contracts
     // fetchData();

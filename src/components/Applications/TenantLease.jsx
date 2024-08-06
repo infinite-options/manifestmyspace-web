@@ -51,8 +51,8 @@ const useStyles = makeStyles((theme) => ({
 
 const initialFees = (property, application) => {
   const fees = [];
-  console.log("--debug-- property", property);
-  console.log("--debug-- application", application);
+  // console.log("--debug-- property", property);
+  // console.log("--debug-- application", application);
   if (property.property_listed_rent) {
     fees.push({
       id: fees.length + 1,
@@ -448,104 +448,102 @@ const TenantLease = () => {
   };
 
   const handleCreateLease = async () => {
-    try{
+    try {
+      setShowMissingFieldsPrompt(false);
+      if (!checkRequiredFields()) {
+        setShowMissingFieldsPrompt(true);
+        return;
+      }
+      setShowSpinner(true);
 
-    setShowMissingFieldsPrompt(false);
-    if (!checkRequiredFields()) {
-      setShowMissingFieldsPrompt(true);
-      return;
-    }
-    setShowSpinner(true);
+      const leaseApplicationFormData = new FormData();
 
-    const leaseApplicationFormData = new FormData();
+      leaseApplicationFormData.append("lease_uid", application.lease_uid);
+      leaseApplicationFormData.append("lease_status", "PROCESSING");
+      leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
+      leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
+      // leaseApplicationFormData.append("documents", leaseFiles);
 
-    leaseApplicationFormData.append("lease_uid", application.lease_uid);
-    leaseApplicationFormData.append("lease_status", "PROCESSING");
-    leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
-    leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
-    leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
-    leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
-    leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
-    leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
-    // leaseApplicationFormData.append("documents", leaseFiles);
+      const hasMissingType = !checkFileTypeSelected();
+      console.log("HAS MISSING TYPE", hasMissingType);
 
-    const hasMissingType = !checkFileTypeSelected();
-    console.log("HAS MISSING TYPE", hasMissingType);
+      if (hasMissingType) {
+        setShowMissingFileTypePrompt(true);
+        setShowSpinner(false);
+        return;
+      }
 
-    if (hasMissingType) {
-      setShowMissingFileTypePrompt(true);
-      setShowSpinner(false);
-      return;
-    }
+      if (leaseFiles.length) {
+        const documentsDetails = [];
+        [...leaseFiles].forEach((file, i) => {
+          leaseApplicationFormData.append(`file-${i}`, file, file.name);
+          const fileType = leaseFileTypes[i] || "";
+          const documentObject = {
+            // file: file,
+            fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+            fileName: file.name, //may not need filename
+            fileType: fileType,
+          };
+          documentsDetails.push(documentObject);
+        });
+        leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+      }
 
-    if (leaseFiles.length) {
-      const documentsDetails = [];
-      [...leaseFiles].forEach((file, i) => {
-        leaseApplicationFormData.append(`file-${i}`, file, file.name);
-        const fileType = leaseFileTypes[i] || "";
-        const documentObject = {
-          // file: file,
-          fileIndex: i, //may not need fileIndex - will files be appended in the same order?
-          fileName: file.name, //may not need filename
-          fileType: fileType,
-        };
-        documentsDetails.push(documentObject);
+      // for (let [key, value] of leaseApplicationFormData.entries()) {
+      //   console.log(key, value);
+      // }
+
+      // await fetch(
+      //   `http://localhost:4000/leaseApplication`,
+      //   {
+      //     method: "PUT",
+      //     body: leaseApplicationFormData
+      //   }
+      // );
+      await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationFormData,
       });
-      leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
-    }
 
-    // for (let [key, value] of leaseApplicationFormData.entries()) {
-    //   console.log(key, value);
-    // }
+      const receiverPropertyMapping = {
+        [application.tenant_uid]: [property.property_uid],
+      };
 
-    // await fetch(
-    //   `http://localhost:4000/leaseApplication`,
-    //   {
-    //     method: "PUT",
-    //     body: leaseApplicationFormData
-    //   }
-    // );
-    await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-      method: "PUT",
-      body: leaseApplicationFormData,
-    });
-
-    const receiverPropertyMapping = {
-      [application.tenant_uid]: [property.property_uid],
-    };
-
-    await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        announcement_title: "New Lease created",
-        announcement_msg: "You have a new lease to be approved for your property",
-        announcement_sender: getProfileId(),
-        announcement_date: new Date().toDateString(),
-        // announcement_properties: property.property_uid,
-        announcement_properties: JSON.stringify(receiverPropertyMapping),
-        announcement_mode: "LEASE",
-        announcement_receiver: [application.tenant_uid],
-        announcement_type: ["Text", "Email"],
-      }),
-    });
-    navigate("/managerDashboard");
-    setShowSpinner(false);
- 
-    }catch (error) {
+      await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          announcement_title: "New Lease created",
+          announcement_msg: "You have a new lease to be approved for your property",
+          announcement_sender: getProfileId(),
+          announcement_date: new Date().toDateString(),
+          // announcement_properties: property.property_uid,
+          announcement_properties: JSON.stringify(receiverPropertyMapping),
+          announcement_mode: "LEASE",
+          announcement_receiver: [application.tenant_uid],
+          announcement_type: ["Text", "Email"],
+        }),
+      });
+      navigate("/managerDashboard");
+      setShowSpinner(false);
+    } catch (error) {
       console.log("Error Creating Lease:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       navigate("/managerDashboard");
       setShowSpinner(false);
-  }
-   };
+    }
+  };
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Box
         sx={{
@@ -566,15 +564,15 @@ const TenantLease = () => {
               }}
               onClick={() => navigate(-1)}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <path
-                  d="M4 8L2.58579 9.41421L1.17157 8L2.58579 6.58579L4 8ZM9 21C7.89543 21 7 20.1046 7 19C7 17.8954 7.89543 17 9 17L9 21ZM7.58579 14.4142L2.58579 9.41421L5.41421 6.58579L10.4142 11.5858L7.58579 14.4142ZM2.58579 6.58579L7.58579 1.58579L10.4142 4.41421L5.41421 9.41421L2.58579 6.58579ZM4 6L14.5 6L14.5 10L4 10L4 6ZM14.5 21L9 21L9 17L14.5 17L14.5 21ZM22 13.5C22 17.6421 18.6421 21 14.5 21L14.5 17C16.433 17 18 15.433 18 13.5L22 13.5ZM14.5 6C18.6421 6 22 9.35786 22 13.5L18 13.5C18 11.567 16.433 10 14.5 10L14.5 6Z"
-                  fill="#3D5CAC"
+                  d='M4 8L2.58579 9.41421L1.17157 8L2.58579 6.58579L4 8ZM9 21C7.89543 21 7 20.1046 7 19C7 17.8954 7.89543 17 9 17L9 21ZM7.58579 14.4142L2.58579 9.41421L5.41421 6.58579L10.4142 11.5858L7.58579 14.4142ZM2.58579 6.58579L7.58579 1.58579L10.4142 4.41421L5.41421 9.41421L2.58579 6.58579ZM4 6L14.5 6L14.5 10L4 10L4 6ZM14.5 21L9 21L9 17L14.5 17L14.5 21ZM22 13.5C22 17.6421 18.6421 21 14.5 21L14.5 17C16.433 17 18 15.433 18 13.5L22 13.5ZM14.5 6C18.6421 6 22 9.35786 22 13.5L18 13.5C18 11.567 16.433 10 14.5 10L14.5 6Z'
+                  fill='#3D5CAC'
                 />
               </svg>
             </Button>
           </Grid>
-          <Grid item xs={11} textAlign="center" sx={{ paddingTop: "5px", paddingRight: "30px" }}>
+          <Grid item xs={11} textAlign='center' sx={{ paddingTop: "5px", paddingRight: "30px" }}>
             <Typography
               sx={{
                 fontSize: "20px",
@@ -606,7 +604,7 @@ const TenantLease = () => {
           >
             <img
               src={propertyImage}
-              alt="Property Img"
+              alt='Property Img'
               style={{
                 width: "130px",
                 height: "130px",
@@ -741,7 +739,7 @@ const TenantLease = () => {
                   slots={{
                     openPickerIcon: CalendarIcon,
                   }}
-                  variant="desktop"
+                  variant='desktop'
                   slotProps={{
                     textField: {
                       size: "small",
@@ -777,7 +775,7 @@ const TenantLease = () => {
                   slots={{
                     openPickerIcon: CalendarIcon,
                   }}
-                  variant="desktop"
+                  variant='desktop'
                   slotProps={{
                     textField: {
                       size: "small",
@@ -806,12 +804,12 @@ const TenantLease = () => {
                 {"# of Occupants"}
               </Typography>
               <TextField
-                name="noOfOccupants"
+                name='noOfOccupants'
                 value={noOfOccupants}
                 onChange={handleNoOfOccupantsChange}
-                variant="filled"
+                variant='filled'
                 fullWidth
-                placeholder="Number"
+                placeholder='Number'
                 sx={{
                   "& .MuiFilledInput-root": {
                     backgroundColor: "#D6D5DA",
@@ -837,12 +835,12 @@ const TenantLease = () => {
                 {"End Lease Notice Period"}
               </Typography>
               <TextField
-                name="endLeaseNoticePeriod"
+                name='endLeaseNoticePeriod'
                 value={endLeaseNoticePeriod}
                 onChange={(e) => setEndLeaseNoticePeriod(e.target.value)}
-                variant="filled"
+                variant='filled'
                 fullWidth
-                placeholder=""
+                placeholder=''
                 sx={{
                   "& .MuiFilledInput-root": {
                     backgroundColor: "#D6D5DA",
@@ -876,7 +874,7 @@ const TenantLease = () => {
                       {"Fee Name "}
                       <span style={{ color: "red" }}>*</span>
                     </Typography>
-                    <TextField name="fee_name" value={row.fee_name} variant="filled" fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
+                    <TextField name='fee_name' value={row.fee_name} variant='filled' fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
@@ -892,7 +890,7 @@ const TenantLease = () => {
                       {"Charge "}
                       <span style={{ color: "red" }}>*</span>
                     </Typography>
-                    <TextField name="charge" value={row.charge} variant="filled" fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
+                    <TextField name='charge' value={row.charge} variant='filled' fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
@@ -911,17 +909,17 @@ const TenantLease = () => {
                     </Typography>
                     <Select
                       value={row.frequency}
-                      size="small"
+                      size='small'
                       fullWidth
                       onChange={(e) => handleFrequencyChange(e, row.id)}
-                      placeholder="Select frequency"
+                      placeholder='Select frequency'
                       className={classes.select}
                     >
-                      <MenuItem value="One-time">One-time</MenuItem>
-                      <MenuItem value="Weekly">Weekly</MenuItem>
-                      <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
-                      <MenuItem value="Monthly">Monthly</MenuItem>
-                      <MenuItem value="Annually">Annually</MenuItem>
+                      <MenuItem value='One-time'>One-time</MenuItem>
+                      <MenuItem value='Weekly'>Weekly</MenuItem>
+                      <MenuItem value='Bi-Weekly'>Bi-Weekly</MenuItem>
+                      <MenuItem value='Monthly'>Monthly</MenuItem>
+                      <MenuItem value='Annually'>Annually</MenuItem>
                     </Select>
                   </Stack>
                 </Grid>
@@ -940,14 +938,14 @@ const TenantLease = () => {
                     </Typography>
                     {row.frequency === "Monthly" && (
                       <TextField
-                        name="due_by"
+                        name='due_by'
                         value={row.due_by !== null && row.due_by !== "" ? row.due_by : ""}
-                        variant="filled"
+                        variant='filled'
                         fullWidth
                         className={classes.root}
                         onChange={(e) => handleFeeChange(e, row.id)}
                         InputProps={{
-                          endAdornment: <InputAdornment position="start">{getDateAdornmentString(row.due_by)}</InputAdornment>,
+                          endAdornment: <InputAdornment position='start'>{getDateAdornmentString(row.due_by)}</InputAdornment>,
                         }}
                       />
                     )}
@@ -981,12 +979,12 @@ const TenantLease = () => {
                         }}
                       >
                         <Select
-                          name="due_by"
+                          name='due_by'
                           value={row.due_by !== null ? valueToDayMap.get(row.due_by) : ""}
-                          size="small"
+                          size='small'
                           fullWidth
                           onChange={(e) => handleDueByChange(e, row.id, "weekly")}
-                          placeholder="Select Due By Day"
+                          placeholder='Select Due By Day'
                           className={classes.select}
                           sx={{
                             margin: "auto",
@@ -1026,14 +1024,14 @@ const TenantLease = () => {
                     </Typography>
                     {(row.frequency === "Monthly" || row.frequency === "One-time" || row.frequency === "Annually") && (
                       <TextField
-                        name="available_topay"
+                        name='available_topay'
                         value={row.available_topay}
-                        variant="filled"
+                        variant='filled'
                         fullWidth
                         className={classes.root}
                         onChange={(e) => handleFeeChange(e, row.id)}
                         InputProps={{
-                          endAdornment: <InputAdornment position="start">days before</InputAdornment>,
+                          endAdornment: <InputAdornment position='start'>days before</InputAdornment>,
                         }}
                       />
                     )}
@@ -1044,12 +1042,12 @@ const TenantLease = () => {
                         }}
                       >
                         <Select
-                          name="available_topay"
+                          name='available_topay'
                           value={row.available_topay !== null ? row.available_topay : ""}
-                          size="small"
+                          size='small'
                           fullWidth
                           onChange={(e) => handleAvailableToPayChange(e, row.id, "weekly")}
-                          placeholder="Select Available to Pay By Day"
+                          placeholder='Select Available to Pay By Day'
                           className={classes.select}
                         >
                           {row.frequency &&
@@ -1086,14 +1084,14 @@ const TenantLease = () => {
                     </Typography>
                     {(row.frequency === "Monthly" || row.frequency === "One-time" || row.frequency === "Annually") && (
                       <TextField
-                        name="late_by"
+                        name='late_by'
                         value={row.late_by}
-                        variant="filled"
+                        variant='filled'
                         fullWidth
                         className={classes.root}
                         onChange={(e) => handleFeeChange(e, row.id)}
                         InputProps={{
-                          endAdornment: <InputAdornment position="start">days after</InputAdornment>,
+                          endAdornment: <InputAdornment position='start'>days after</InputAdornment>,
                         }}
                       />
                     )}
@@ -1104,12 +1102,12 @@ const TenantLease = () => {
                         }}
                       >
                         <Select
-                          name="late_by"
+                          name='late_by'
                           value={row.late_by !== null ? row.late_by : ""}
-                          size="small"
+                          size='small'
                           fullWidth
                           onChange={(e) => handleLateByChange(e, row.id, "weekly")}
-                          placeholder="Select Late By Day"
+                          placeholder='Select Late By Day'
                           className={classes.select}
                         >
                           {row.frequency &&
@@ -1144,7 +1142,7 @@ const TenantLease = () => {
                       {"Late Fee "}
                       <span style={{ color: "red" }}>*</span>
                     </Typography>
-                    <TextField name="late_fee" value={row.late_fee} variant="filled" fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
+                    <TextField name='late_fee' value={row.late_fee} variant='filled' fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
@@ -1161,9 +1159,9 @@ const TenantLease = () => {
                       <span style={{ color: "red" }}>*</span>
                     </Typography>
                     <TextField
-                      name="perDay_late_fee"
+                      name='perDay_late_fee'
                       value={row.perDay_late_fee}
-                      variant="filled"
+                      variant='filled'
                       fullWidth
                       className={classes.root}
                       onChange={(e) => handleFeeChange(e, row.id)}
@@ -1280,7 +1278,7 @@ const TenantLease = () => {
                       </Box>
                       <Select
                         value={leaseFileTypes[i]}
-                        label="Document Type"
+                        label='Document Type'
                         onChange={(e) => {
                           const updatedTypes = [...leaseFileTypes];
                           updatedTypes[i] = e.target.value;
@@ -1298,7 +1296,7 @@ const TenantLease = () => {
                         <MenuItem value={"other"}>Other</MenuItem>
                       </Select>
                       <Button
-                        variant="text"
+                        variant='text'
                         onClick={() => {
                           // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
                           handleRemoveFile(i);
@@ -1343,13 +1341,13 @@ const TenantLease = () => {
                   color: "#3D5CAC",
                 }}
               >
-                <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+                <label htmlFor='file-upload' style={{ cursor: "pointer" }}>
                   <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} /> Add Document
                 </label>
                 <input
-                  id="file-upload"
-                  type="file"
-                  accept=".doc,.docx,.txt,.pdf"
+                  id='file-upload'
+                  type='file'
+                  accept='.doc,.docx,.txt,.pdf'
                   hidden
                   onChange={(e) => setLeaseFiles((prevFiles) => [...prevFiles, ...e.target.files])}
                   multiple

@@ -177,20 +177,20 @@ export default function SelectPayment(props) {
   }
 
   const submit = async ({ paymentIntent, paymentMethod }) => {
-    console.log("in submit in SelectPayment.jsx", convenience_fee);
+    // console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
     // TODO: navigate to correct dashboard based on role
     // navigate("/tenantDashboard");
 
     // console.log("--DEBUG-- in submit in SelectPayment.jsx stripeResponse output", stripeResponse)
 
-    console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
-    console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
+    // console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
+    // console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
 
     // Check if paymentMethod is true
     if (paymentMethod) {
       // If paymentMethod is true, proceed with payment confirmation and make payments
-      console.log("Check if payment went through and then add Covnenience Fee Purchase to Purchase Table here", convenience_fee);
+      // console.log("Check if payment went through and then add Covnenience Fee Purchase to Purchase Table here", convenience_fee);
       let data = {
         pur_property_id: "200-000001",
         purchase_type: "Extra Charge",
@@ -205,7 +205,7 @@ export default function SelectPayment(props) {
         pur_initiator: "600-000003",
         pur_payer: "350-000002",
       };
-      console.log("Data for Add Revenue is: ", data);
+      // console.log("Data for Add Revenue is: ", data);
 
       let config = {
         method: "post",
@@ -228,10 +228,10 @@ export default function SelectPayment(props) {
           setShowSpinner(false);
         });
 
-      console.log("Add Revenue complete");
+      // console.log("Add Revenue complete");
     } else {
       // If paymentMethod is not true, handle the case accordingly
-      console.log("Payment method is not selected. Please select a payment method.");
+      // console.log("Payment method is not selected. Please select a payment method.");
       // You may want to display an error message or take some other action here
     }
 
@@ -373,7 +373,7 @@ export default function SelectPayment(props) {
 
     let response = await fetch(url);
     const responseData = await response.json();
-    console.log("--DEBUG-- response data from Stripe", responseData);
+    // console.log("--DEBUG-- response data from Stripe", responseData);
     // setStripeResponse(responseData);
     const stripePromise = loadStripe(responseData.publicKey);
     setStripePromise(stripePromise);
@@ -384,12 +384,12 @@ export default function SelectPayment(props) {
   return (
     <div style={{ padding: "30px" }}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
-      <Stack direction="row" justifyContent="center">
-        <Box position="absolute" left={30}>
+      <Stack direction='row' justifyContent='center'>
+        <Box position='absolute' left={30}>
           <Button onClick={() => navigate(-1)}>
             <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
           </Button>
@@ -419,7 +419,7 @@ export default function SelectPayment(props) {
           },
         }}
       >
-        <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
+        <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
           <Typography
             sx={{
               justifySelf: "center",
@@ -432,7 +432,7 @@ export default function SelectPayment(props) {
           </Typography>
         </Stack>
 
-        <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
+        <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
           <Typography
             sx={{
               justifySelf: "center",
@@ -447,7 +447,7 @@ export default function SelectPayment(props) {
         <Divider light />
         <Stack>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6} justifyContent="center" alignItems="center">
+            <Grid item xs={6} justifyContent='center' alignItems='center'>
               <Typography
                 sx={{
                   justifySelf: "center",
@@ -460,7 +460,7 @@ export default function SelectPayment(props) {
               </Typography>
             </Grid>
 
-            <Grid item xs={6} alignItems="center">
+            <Grid item xs={6} alignItems='center'>
               <Typography
                 sx={{
                   justifySelf: "center",
@@ -473,7 +473,7 @@ export default function SelectPayment(props) {
               </Typography>
             </Grid>
 
-            <Grid item xs={6} alignItems="center">
+            <Grid item xs={6} alignItems='center'>
               <Typography
                 sx={{
                   justifySelf: "center",
@@ -486,7 +486,7 @@ export default function SelectPayment(props) {
               </Typography>
             </Grid>
 
-            <Grid item xs={6} alignItems="center">
+            <Grid item xs={6} alignItems='center'>
               <Typography
                 sx={{
                   justifySelf: "center",
@@ -499,7 +499,7 @@ export default function SelectPayment(props) {
               </Typography>
             </Grid>
 
-            <Grid item xs={6} alignItems="center">
+            <Grid item xs={6} alignItems='center'>
               <Typography
                 sx={{
                   justifySelf: "center",
@@ -511,7 +511,7 @@ export default function SelectPayment(props) {
                 Total
               </Typography>
             </Grid>
-            <Grid item xs={6} alignItems="center">
+            <Grid item xs={6} alignItems='center'>
               <Typography
                 sx={{
                   justifySelf: "center",
@@ -543,15 +543,15 @@ export default function SelectPayment(props) {
       >
         <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Payment Methods</Typography>
         <Divider light />
-        <FormControl component="fieldset">
-          <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
+        <FormControl component='fieldset'>
+          <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
             <FormControlLabel
-              value="Bank Transfer"
+              value='Bank Transfer'
               control={<Radio />}
               label={
                 <>
                   <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
-                    <img src={BankIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+                    <img src={BankIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
                     <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
                   </div>
                   <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
@@ -561,12 +561,12 @@ export default function SelectPayment(props) {
               }
             />
             <FormControlLabel
-              value="Credit Card"
+              value='Credit Card'
               control={<Radio />}
               label={
                 <>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <img src={CreditCardIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+                    <img src={CreditCardIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
                     Credit Card
                   </div>
                   <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
@@ -583,55 +583,55 @@ export default function SelectPayment(props) {
         </Typography>
         <Divider light />
 
-        <FormControl component="fieldset">
-          <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
+        <FormControl component='fieldset'>
+          <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
             <FormControlLabel
-              value="PayPal"
+              value='PayPal'
               control={<Radio />}
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={PayPal} alt="PayPal" style={{ marginRight: "8px", height: "24px" }} />
+                  <img src={PayPal} alt='PayPal' style={{ marginRight: "8px", height: "24px" }} />
                   Paypal
                 </div>
               }
             />
             <FormControlLabel
-              value="Apple Pay"
+              value='Apple Pay'
               control={<Radio />}
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
+                  <img src={ApplePay} alt='Apple Pay' style={{ marginRight: "8px", height: "24px" }} />
                   Apple Pay
                 </div>
               }
             />
             <FormControlLabel
-              value="Stripe"
+              value='Stripe'
               control={<Radio />}
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={Stripe} alt="Stripe" style={{ marginRight: "8px", height: "24px" }} />
+                  <img src={Stripe} alt='Stripe' style={{ marginRight: "8px", height: "24px" }} />
                   Stripe
                 </div>
               }
             />
 
             <FormControlLabel
-              value="Zelle"
+              value='Zelle'
               control={<Radio />}
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
+                  <img src={Zelle} alt='Zelle' style={{ marginRight: "8px", height: "24px" }} />
                   Zelle
                 </div>
               }
             />
             <FormControlLabel
-              value="Venmo"
+              value='Venmo'
               control={<Radio />}
               label={
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src={Venmo} alt="Venmo" style={{ marginRight: "8px", height: "24px" }} />
+                  <img src={Venmo} alt='Venmo' style={{ marginRight: "8px", height: "24px" }} />
                   Venmo
                 </div>
               }
@@ -639,7 +639,7 @@ export default function SelectPayment(props) {
           </RadioGroup>
         </FormControl>
         <Button
-          variant="contained"
+          variant='contained'
           onClick={handleSubmit}
           sx={{
             backgroundColor: "#3D5CAC",
