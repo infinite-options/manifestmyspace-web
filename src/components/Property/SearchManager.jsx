@@ -1,4 +1,3 @@
-// Import statements
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, ThemeProvider } from "@mui/system";
@@ -55,10 +54,23 @@ const SearchManager = (props) => {
   const handleBackClick = props.handleBackClick;
 
   const handleRequestQuotes = props.handleRequestQuotes;
-  // const handleRequestQuotes = async (managerData) => {
-  //   // onShowRequestQuotes({ managerData, propertyData, index, isDesktop }); // rohit - fix
-  //   console.log("SearchManager - handleRequestQuotes - managerData - ", managerData);
-  // };
+  
+  const contracts = props.contracts;
+  const property_ID = props.propertyId;
+  console.log("contracts is ^^^", contracts)
+  console.log("property_ID is ^^^", property_ID)
+
+  const filteredContracts = contracts.filter(contract => 
+    contract.property_id === property_ID && 
+    (contract.contract_status === "NEW" || 
+     contract.contract_status === "ACTIVE" || 
+     contract.contract_status === "SENT")
+  );
+  
+  // Extract the contract_business_id from the filtered contracts
+  const contractBusinessIds = filteredContracts.map(contract => contract.contract_business_id);
+  
+  console.log(" contractBusinessIds @@", contractBusinessIds);
 
   // Function to fetch manager information
   const get_manager_info = async () => {
@@ -135,7 +147,7 @@ const SearchManager = (props) => {
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "center", 
               }}
             >
               <Box
@@ -226,7 +238,15 @@ const SearchManager = (props) => {
                   }}
                 />
                 {displayed_managers.map((m) => (
-                  <DocumentCard data={m} ownerId={ownerId} propertyData={propertyData} index={index} onRequestQuotes={handleRequestQuotes}/>
+                  <DocumentCard 
+                    key={m.business_uid} 
+                    data={m} 
+                    ownerId={ownerId} 
+                    propertyData={propertyData} 
+                    index={index} 
+                    onRequestQuotes={handleRequestQuotes}
+                    contractBusinessIds={contractBusinessIds} // Pass contractBusinessIds as a prop
+                  />
                 ))}
               </Box>
             </Box>
@@ -248,6 +268,7 @@ function DocumentCard(props) {
   const isDesktop = props.isDesktop;
   const onRequestQuotes = props.onRequestQuotes;
   const navigate = useNavigate();
+  const contractBusinessIds = props.contractBusinessIds; // Get contractBusinessIds from props
 
   console.log("BUSINESS Locations - ", obj.business_locations);
   let location1 = "";
@@ -308,18 +329,29 @@ function DocumentCard(props) {
                         justifyContent: "flex-end",
                     }}
                 >
-                    <Button
-                        variant="contained"
-                        sx={{
-                            textTransform: "none",
-                            background: "#3D5CAC",
-                            color: theme.palette.background.default,
-                            borderRadius: "10px 10px 10px 10px",
-                        }}
-                        onClick={() => onRequestQuotes(obj)}
+                  {contractBusinessIds.includes(obj.business_uid) ? (
+                    <Typography
+                      sx={{
+                        color: "green",
+                        fontWeight: "bold",
+                      }}
                     >
-                        Request Quote
+                      Request Pending
+                    </Typography>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      sx={{
+                        textTransform: "none",
+                        background: "#3D5CAC",
+                        color: theme.palette.background.default,
+                        borderRadius: "10px 10px 10px 10px",
+                      }}
+                      onClick={() => onRequestQuotes(obj)}
+                    >
+                      Request Quote
                     </Button>
+                  )}
                 </Box>
             </Grid>
         </Grid>
@@ -336,7 +368,7 @@ function DocumentCard(props) {
                 </AccordionSummary>
                 <AccordionDetails>
                     {feesArray && feesArray.map((fee) =>{
-                        return( <FeesTextCard fee={fee}/>)
+                        return( <FeesTextCard key={fee.fee_name} fee={fee}/>)
                     })}
                 </AccordionDetails>
             </Accordion>

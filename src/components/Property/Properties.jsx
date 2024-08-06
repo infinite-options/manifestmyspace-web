@@ -44,6 +44,7 @@ function Properties() {
   const [propertyIndex, setPropertyIndex] = useState(0);
   const [allRentStatus, setAllRentStatus] = useState([]);
   const [isFromRentWidget, setFromRentWidget] = useState(false);
+  const [reloadPropertyList, setReloadPropertyList]=useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
   const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
@@ -183,7 +184,8 @@ function Properties() {
     };
     fetchData();
     setShowSpinner(false);
-  }, []);
+    setReloadPropertyList(false)
+  }, [reloadPropertyList]);
 
   const fetchProperties = async () => {
     setShowSpinner(true);
@@ -405,6 +407,7 @@ function Properties() {
                 property_endpoint_resp={rawPropertyData}
                 setNewContractUID={setNewContractUID}
                 setNewContractPropertyUID={setNewContractPropertyUID}
+                setReloadPropertyList={setReloadPropertyList}
                 // showNewContract={showNewContract}
                 refreshProperties={refreshProperties}
               />
@@ -424,13 +427,15 @@ function Properties() {
               />
             )}
             {RHS === "SearchManager" && (
-              <SearchManager
-                index={returnIndex}
-                propertyData={propertyList}
-                setManagersList={setManagersList}
-                handleBackClick={handleBackClick}
-                handleRequestQuotes={handleRequestQuotes}
-              />
+              <SearchManager 
+                  index={returnIndex}
+                  propertyData={propertyList}                  
+                  setManagersList={setManagersList}
+                  handleBackClick={handleBackClick}
+                  handleRequestQuotes={handleRequestQuotes}
+                  contracts={allContracts}
+                  propertyId={propertyList[returnIndex].property_uid}
+                />
             )}
             {RHS === "RequestQuotes" && (
               <RequestQuotes

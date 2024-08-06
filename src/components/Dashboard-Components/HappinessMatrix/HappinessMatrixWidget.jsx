@@ -6,12 +6,12 @@ import theme from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
 import CustomImage from "./CustomImage";
 
-function HappinessMatrixWidget(props) {
+function HappinessMatrixWidget(props) { 
   const navigate = useNavigate();
   // const chartWidth = 400;
   // const chartHeight = 350;
   const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
-  const { happinessData, contactDetails } = props;
+  const { happinessData, contactDetails, page, setHappinessData, setOwnerUID, currentOwnerUID } = props;
   const [data, setData] = useState([]);
 
   // console.log("happiness data initial", happinessData);
@@ -193,10 +193,13 @@ function HappinessMatrixWidget(props) {
                       onClick={() => handlePointClick(props.payload)}
                       happinessData={happinessData}
                       contactDetails={contactDetails}
-                      // page={page}
+                       page={page}
+                       setHappinessData={setHappinessData}
+                       setOwnerUID={setOwnerUID}
                       // setIndex={setIndex}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}
+                      currentOwnerUID={currentOwnerUID} // Pass current owner UID
                     />
                   )}
                 />

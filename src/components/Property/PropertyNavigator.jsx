@@ -594,7 +594,7 @@ export default function PropertyNavigator({
         index: currentIndex,
         isDesktop: isDesktop,
       };
-      console.log("---inside prop nav state---", state);
+      //console.log("---inside prop nav state---", state);
       setManagerDetailsState(state);
       handleViewManagerDetailsClick();
     } else {
@@ -1993,10 +1993,11 @@ export default function PropertyNavigator({
                               sx={{
                                 display: "flex",
                                 alignItems: "center",
-                                cursor: "pointer",
+                                cursor: contractsNewSent ? "pointer" : "default",
                               }}
+                              onClick={contractsNewSent ? handleViewPMQuotesRequested : null}
                             >
-                              <Badge color='success' badgeContent={contractsNewSent} showZero />
+                              <Badge color="success" badgeContent={contractsNewSent} showZero />
                             </Box>
                           </Box>
                         </Grid>
