@@ -1054,14 +1054,17 @@ const AccountBalanceWidget = ({
     const lease = propertyData.find((lease) => lease.lease_uid === item.lease_uid);
     setSelectedLease(lease);
     if (rightPane == "viewlease") {
-      if (item.lease_status === 'NEW') {
+      if (item.lease_status === 'REFUSED' || item.lease_status === 'WITHDRAWN' || item.lease_status === 'NEW' ||
+        item.lease_status === 'PROCESSING' || item.lease_status === 'RESCIND' || item.lease_status === 'REJECTED'
+      ) {
         setRightPane("tenantApplication");
         handleViewApplicationNavigate(item, lease);
       } else {
         handleViewLeaseNavigate(item.lease_uid)
       }
     } else if (rightPane == "tenantApplication") {
-      if (item.lease_status === 'NEW') {
+      if (item.lease_status === 'REFUSED' || item.lease_status === 'WITHDRAWN' || item.lease_status === 'NEW' ||
+        item.lease_status === 'PROCESSING' || item.lease_status === 'RESCIND' || item.lease_status === 'REJECTED') {
         handleViewApplicationNavigate(item, lease);
       } else {
         setRightPane("viewlease");
@@ -1306,7 +1309,9 @@ const AccountBalanceWidget = ({
           </Grid>
         </Grid>
       </Box>
-      {selectedProperty?.lease_status === "NEW" ? (
+      {selectedProperty?.lease_status === "NEW" || selectedProperty?.lease_status === "REFUSED" ||  
+      selectedProperty?.lease_status === "WITHDRAWN" || selectedProperty?.lease_status === "PROCESSING" || 
+      selectedProperty?.lease_status === "REJECTED" || selectedProperty?.lease_status === "RESCIND" ? (
         <Box
           sx={{
             display: "flex",
