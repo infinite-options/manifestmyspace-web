@@ -660,6 +660,15 @@ function EditProperty(props) {
 		addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
 		addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
 
+
+    if (imagesTobeDeleted.length > 0) {
+      console.log('-----deleted_images----', imagesTobeDeleted);
+  
+      let updatedImages = JSON.parse(propertyData.property_images);
+      updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
+      propertyData.property_images = JSON.stringify(updatedImages);
+      formData.append('delete_images', JSON.stringify(imagesTobeDeleted));
+    }
 		//console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
 		formData.append('property_images', propertyData.property_images);
 
@@ -681,13 +690,11 @@ function EditProperty(props) {
 			}
 		}
 
-		if (deletedImageList.length > 0) {
-			formData.append('deleted_images', JSON.stringify(deletedImageList));
-		}
+		// if (deletedImageList.length > 0) {
+		// 	formData.append('deleted_images', JSON.stringify(deletedImageList));
+		// }
 
-    if (imagesTobeDeleted.length > 0){
-      console.log('-----deleted_images----', imagesTobeDeleted);
-    }
+    
 
 		for (let [key, value] of formData.entries()) {
 			console.log(key, value);
