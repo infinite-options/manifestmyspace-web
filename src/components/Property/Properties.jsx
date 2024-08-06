@@ -29,9 +29,9 @@ import AddListing from "./AddListing";
 
 function Properties() {
   const location = useLocation();
-  console.log("In Properties");
-  console.log("In Properties LHS: ", location.state?.showLHS);
-  console.log("In Properties RHS: ", location.state?.showRHS);
+  // console.log("In Properties");
+  // console.log("In Properties LHS: ", location.state?.showLHS);
+  // console.log("In Properties RHS: ", location.state?.showRHS);
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
@@ -56,8 +56,8 @@ function Properties() {
   const [newContractUID, setNewContractUID] = useState(null);
   const [newContractPropertyUID, setNewContractPropertyUID] = useState(null);
 
-  const [ managersList, setManagersList ] = useState([]);
-  const [ managerData, setManagerData ] = useState(null); // for request quotes
+  const [managersList, setManagersList] = useState([]);
+  const [managerData, setManagerData] = useState(null); // for request quotes
 
   useEffect(() => {
     console.log("Properties - newContractUID - ", newContractUID);
@@ -173,16 +173,15 @@ function Properties() {
     setDisplayedItems([...propertyList]);
     setPropertyIndex(0);
 
-          
     if (propertyData.Property.code === 200) {
       // console.log("Endpoint Data is Ready");
       setDataReady(true);
-    }      
+    }
     setShowSpinner(false);
   };
-  const refreshProperties = () => {    
-    fetchProperties();    
-  }
+  const refreshProperties = () => {
+    fetchProperties();
+  };
 
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
@@ -274,17 +273,17 @@ function Properties() {
 
   const handleShowSearchManager = () => {
     setRHS("SearchManager");
-  }
+  };
 
   const handleShowRequestQuotes = () => {
     setRHS("RequestQuotes");
-  }
+  };
 
-  const handleRequestQuotes = ( manager ) => {
-    console.log("ROHIT - Properties - handleRequestQuotes - managerData - ", manager);
+  const handleRequestQuotes = (manager) => {
+    // console.log("ROHIT - Properties - handleRequestQuotes - managerData - ", manager);
     setManagerData(manager);
     setRHS("RequestQuotes");
-  }
+  };
   const handleSorting = (propertyList) => {
     setPropertyList(propertyList);
   };
@@ -293,7 +292,7 @@ function Properties() {
     setPage(mode);
     setRHS("AddListing");
   };
-  
+
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
@@ -374,7 +373,9 @@ function Properties() {
                 refreshProperties={refreshProperties}
               />
             )}
-            {RHS === "CreateContract" && <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />}
+            {RHS === "CreateContract" && (
+              <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />
+            )}
             {RHS === "ViewPMQuotesRequested" && (
               <PMQuotesRequested
                 index={returnIndex}
@@ -386,37 +387,27 @@ function Properties() {
                 // setCurrentView={setCurrentView}
               />
             )}
-            {
-              RHS === "SearchManager" && (
-                <SearchManager 
-                  index={returnIndex}
-                  propertyData={propertyList}                  
-                  setManagersList={setManagersList}
-                  handleBackClick={handleBackClick}
-                  handleRequestQuotes={handleRequestQuotes}
-                />
-              )
-            }
-            {
-              RHS === "RequestQuotes" && (
-                <RequestQuotes 
-                  // requestQuotesState={requestQuotesState} 
-                  // setCurrentView={setCurrentView} 
-                  index={returnIndex}
-                  propertyData={propertyList}
-                  managerData={managerData}
-                  onShowSearchManager={handleShowSearchManager}
-                />
-              )
-            }
-            {RHS === "AddListing" && (
-              <AddListing
-                propertyList={propertyList}
+            {RHS === "SearchManager" && (
+              <SearchManager
                 index={returnIndex}
-                page={page}
-                propertyId={propertyList[returnIndex]?.property_uid}
-                setRHS={setRHS}
+                propertyData={propertyList}
+                setManagersList={setManagersList}
+                handleBackClick={handleBackClick}
+                handleRequestQuotes={handleRequestQuotes}
               />
+            )}
+            {RHS === "RequestQuotes" && (
+              <RequestQuotes
+                // requestQuotesState={requestQuotesState}
+                // setCurrentView={setCurrentView}
+                index={returnIndex}
+                propertyData={propertyList}
+                managerData={managerData}
+                onShowSearchManager={handleShowSearchManager}
+              />
+            )}
+            {RHS === "AddListing" && (
+              <AddListing propertyList={propertyList} index={returnIndex} page={page} propertyId={propertyList[returnIndex]?.property_uid} setRHS={setRHS} />
             )}
           </Grid>
         </Grid>

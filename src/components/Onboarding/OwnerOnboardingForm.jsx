@@ -31,10 +31,10 @@ import {
   AccordionSummary,
   AccordionDetails,
   Snackbar,
-  Alert, 
+  Alert,
   AlertTitle,
 } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { makeStyles } from "@material-ui/core/styles";
 import PayPal from "../../images/PayPal.png";
 import ZelleIcon from "../../images/Zelle.png";
@@ -87,7 +87,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     credit_card: { value: "", checked: false, uid: "" },
     bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
   });
-  
+
   const [adults, setAdults] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
   const [children, setChildren] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
   const [pets, setPets] = useState([{ id: 1, name: "", breed: "", type: "", weight: "" }]);
@@ -111,62 +111,56 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
 
-  const [ license, setLicense ] = useState("")
-  const [ licenseState, setLicenseState ] = useState("");
-  const [ licenseExp, setLicenseExp ] = useState("");
+  const [license, setLicense] = useState("");
+  const [licenseState, setLicenseState] = useState("");
+  const [licenseExp, setLicenseExp] = useState("");
 
   const [modifiedData, setModifiedData] = useState([]);
 
   const [isUpdate, setIsUpdate] = useState(false);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const getListDetails = async () => {
     try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-        if (!response.ok) {
-            console.log("Error fetching lists data");
-        }
-        const responseJson = await response.json();
-        const relationships = responseJson.result.filter(res => res.list_category === "relationships");
-        const states = responseJson.result.filter(res => res.list_category === "states");
-        setRelationships(relationships);
-        setStates(states);
+      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+      if (!response.ok) {
+        console.log("Error fetching lists data");
+      }
+      const responseJson = await response.json();
+      const relationships = responseJson.result.filter((res) => res.list_category === "relationships");
+      const states = responseJson.result.filter((res) => res.list_category === "states");
+      setRelationships(relationships);
+      setStates(states);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
+  };
 
   useEffect(() => {
-    console.log("ROHIT - adults - ", adults);
+    // console.log("ROHIT - adults - ", adults);
   }, [adults]);
 
   useEffect(() => {
-    console.log("ROHIT - paymentMethods - ", paymentMethods);
+    // console.log("ROHIT - paymentMethods - ", paymentMethods);
   }, [paymentMethods]);
 
   useEffect(() => {
-    console.log("ROHIT - modifiedData - ", modifiedData);    
+    // console.log("ROHIT - modifiedData - ", modifiedData);
   }, [modifiedData]);
 
-
   const updateModifiedData = (updatedItem) => {
-    setModifiedData((prev) => {      
-      const existingKeyIndex = prev.findIndex(item => item.key === updatedItem.key);
-        
+    setModifiedData((prev) => {
+      const existingKeyIndex = prev.findIndex((item) => item.key === updatedItem.key);
+
       if (existingKeyIndex !== -1) {
-        return prev.map((item, index) => 
-          index === existingKeyIndex ? { ...item, value: updatedItem.value } : item
-        );
-      }  
+        return prev.map((item, index) => (index === existingKeyIndex ? { ...item, value: updatedItem.value } : item));
+      }
       return [...prev, { key: updatedItem.key, value: updatedItem.value }];
     });
-  }
-  
-
+  };
 
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
@@ -180,9 +174,9 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
 
   const handleAddressSelect = (address) => {
     setAddress(address.street ? address.street : "");
-    updateModifiedData({ key: "owner_address", value: address.street ? address.street : "" });    
+    updateModifiedData({ key: "owner_address", value: address.street ? address.street : "" });
     setCity(address.city ? address.city : "");
-    updateModifiedData({ key: "owner_city", value: address.city ? address.city : "" });  
+    updateModifiedData({ key: "owner_city", value: address.city ? address.city : "" });
     setState(address.state ? address.state : "");
     updateModifiedData({ key: "owner_state", value: address.state ? address.state : "" });
     setZip(address.zip ? address.zip : "");
@@ -203,12 +197,12 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     setPhoneNumber(formatPhoneNumber(event.target.value));
     updateModifiedData({ key: "owner_phone_number", value: formatPhoneNumber(event.target.value) });
   };
-  
-  const handleSSNChange = (event) => { 
+
+  const handleSSNChange = (event) => {
     let value = event.target.value;
     if (value.length > 11) return;
-    setSsn(value);    
-    updateModifiedData({ key: "owner_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });  
+    setSsn(value);
+    updateModifiedData({ key: "owner_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
   };
 
   const setProfileData = async () => {
@@ -228,7 +222,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
       setCity(profileData.owner_city || "");
       setState(profileData.owner_state || "");
       setZip(profileData.owner_zip || "");
-    
+
       const paymentMethods = JSON.parse(profileData.paymentMethods);
       const updatedPaymentMethods = {
         paypal: { value: "", checked: false, uid: "" },
@@ -268,7 +262,6 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     console.log("calling useeffect");
     setIsSave(false);
 
-
     setProfileData();
 
     // getListDetails();
@@ -303,7 +296,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
       return;
     }
     readImage(file);
-  };  
+  };
 
   const paymentMethodsArray = [
     { name: "PayPal", icon: PayPal, state: paymentMethods.paypal },
@@ -328,11 +321,11 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
             </Grid>
           )
         } */}
-        
+
         <Grid container alignContent='center' item xs={1}>
-            <img src={method.icon} alt={method.name} />
-        </Grid>        
-        
+          <img src={method.icon} alt={method.name} />
+        </Grid>
+
         {method.name === "Bank Account" ? (
           <>
             <Grid item xs={5}>
@@ -340,7 +333,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                 name={`${method.name.toLowerCase().replace(/\s/g, "_")}_account`}
                 value={method.state?.account_number}
                 onChange={handleChangeValue}
-                variant="filled"
+                variant='filled'
                 fullWidth
                 placeholder={`Enter Your Bank Account Number`}
                 disabled={!method.state?.checked}
@@ -352,7 +345,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                 name={`${method.name.toLowerCase().replace(/\s/g, "_")}_routing`}
                 value={method.state?.routing_number}
                 onChange={handleChangeValue}
-                variant="filled"
+                variant='filled'
                 fullWidth
                 placeholder={`Enter Your Bank Routing Number`}
                 disabled={!method.state?.checked}
@@ -366,7 +359,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
               name={method.name.toLowerCase().replace(/\s/g, "_")}
               value={method.state?.value}
               onChange={handleChangeValue}
-              variant="filled"
+              variant='filled'
               fullWidth
               placeholder={`Enter ${method.name}`}
               disabled={!method.state?.checked}
@@ -382,7 +375,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     const { name, checked } = e.target;
     const map = { ...paymentMethods };
     map[name].checked = checked;
-    console.log("ROHIT - handleChangeChecked - map[name]", map[name])
+    console.log("ROHIT - handleChangeChecked - map[name]", map[name]);
     // if (name === "bank_account") {
     //   if (!checked) {
     //     map.bank_account.account_number = "";
@@ -395,7 +388,6 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     // }
     setPaymentMethods(map);
   };
-
 
   const handleChangeValue = (e) => {
     const { name, value } = e.target;
@@ -415,8 +407,6 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     }
   };
 
-  
-
   const handlePaymentStep = async () => {
     setShowSpinner(true);
     const keys = Object.keys(paymentMethods);
@@ -433,7 +423,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           if (bankAccount.routing_number && bankAccount.account_number) {
             paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
             paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-            paymentMethodPayload.paymentMethod_status = bankAccount.checked? "Active" : "Inactive";
+            paymentMethodPayload.paymentMethod_status = bankAccount.checked ? "Active" : "Inactive";
             if (bankAccount.uid) {
               putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
             } else {
@@ -442,7 +432,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           }
         } else {
           paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-          paymentMethodPayload.paymentMethod_status = paymentMethods[key].checked? "Active" : "Inactive";
+          paymentMethodPayload.paymentMethod_status = paymentMethods[key].checked ? "Active" : "Inactive";
           if (paymentMethods[key].uid) {
             putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
           } else {
@@ -464,7 +454,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     setCookie("default_form_vals", { ...cookiesData, paymentMethods });
   };
 
-  const handleNextStep = async () => {    
+  const handleNextStep = async () => {
     if (firstName === "") {
       alert("Please enter first name");
       return;
@@ -508,7 +498,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   };
 
   const showSnackbar = (message, severity) => {
-    console.log('Inside show snackbar');
+    console.log("Inside show snackbar");
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -520,159 +510,156 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
 
   const handleUpdate = () => {
     // setIsUpdate( prevState => !prevState);
-    console.log('handleUpdate called');
+    console.log("handleUpdate called");
     setIsSave(true);
-}
+  };
 
   const editOrUpdateOwner = async () => {
-    console.log('inside editOrUpdateOwner', modifiedData);
+    console.log("inside editOrUpdateOwner", modifiedData);
     try {
-        if (modifiedData.length > 0) {
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
+      if (modifiedData.length > 0) {
+        setShowSpinner(true);
+        const headers = {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Credentials": "*",
+        };
 
-            const profileFormData = new FormData();
+        const profileFormData = new FormData();
 
-            // const feesJSON = JSON.stringify(leaseFees)
-            // leaseApplicationFormData.append("lease_fees", feesJSON);
-            // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-            modifiedData.forEach(item => {
-                console.log(`Key: ${item.key}`);                
-                  profileFormData.append(item.key, JSON.stringify(item.value));                
-            });
-            profileFormData.append('owner_uid', profileData.owner_uid);
-            
-        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
-            .then((response) => {
-                console.log('Data updated successfully', response);
-                showSnackbar("Your profile has been successfully updated.", "success");                
-                handleUpdate();
-                setShowSpinner(false);
-            })
-            .catch((error) => {
-                setShowSpinner(false);
-                showSnackbar("Cannot update your profile. Please try again", "error");
-                if (error.response) {
-                    console.log(error.response.data);
-                }
-            });
+        // const feesJSON = JSON.stringify(leaseFees)
+        // leaseApplicationFormData.append("lease_fees", feesJSON);
+        // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+        modifiedData.forEach((item) => {
+          console.log(`Key: ${item.key}`);
+          profileFormData.append(item.key, JSON.stringify(item.value));
+        });
+        profileFormData.append("owner_uid", profileData.owner_uid);
+
+        axios
+          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+          .then((response) => {
+            console.log("Data updated successfully", response);
+            showSnackbar("Your profile has been successfully updated.", "success");
+            handleUpdate();
+            setShowSpinner(false);
+          })
+          .catch((error) => {
+            setShowSpinner(false);
+            showSnackbar("Cannot update your profile. Please try again", "error");
+            if (error.response) {
+              console.log(error.response.data);
+            }
+          });
         setShowSpinner(false);
         setModifiedData([]);
-    } else {
+      } else {
         showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
-    }
+      }
     } catch (error) {
-        showSnackbar("Cannot update the lease. Please try again", "error");
-        console.log("Cannot Update the lease", error);
-        setShowSpinner(false);
+      showSnackbar("Cannot update the lease. Please try again", "error");
+      console.log("Cannot Update the lease", error);
+      setShowSpinner(false);
     }
-  }
+  };
 
   const saveProfile = async () => {
-    console.log('inside saveProfile', modifiedData);
+    console.log("inside saveProfile", modifiedData);
     try {
-        if (modifiedData.length > 0) {
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
+      if (modifiedData.length > 0) {
+        setShowSpinner(true);
+        const headers = {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Credentials": "*",
+        };
 
-            const profileFormData = new FormData();
+        const profileFormData = new FormData();
 
-            // const feesJSON = JSON.stringify(leaseFees)
-            // leaseApplicationFormData.append("lease_fees", feesJSON);
-            // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-            modifiedData.forEach(item => {
-              console.log(`Key: ${item.key}`);                
-              profileFormData.append(item.key, item.value);                
-            });
-            profileFormData.append('owner_uid', profileData.owner_uid);
-            
-        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
-            .then((response) => {
-                console.log('Data updated successfully', response);
-                showSnackbar("Your profile has been successfully updated.", "success");                
-                handleUpdate();
-                setShowSpinner(false);
-            })
-            .catch((error) => {
-                setShowSpinner(false);
-                showSnackbar("Cannot update your profile. Please try again", "error");
-                if (error.response) {
-                    console.log(error.response.data);
-                }
-            });
+        // const feesJSON = JSON.stringify(leaseFees)
+        // leaseApplicationFormData.append("lease_fees", feesJSON);
+        // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+        modifiedData.forEach((item) => {
+          console.log(`Key: ${item.key}`);
+          profileFormData.append(item.key, item.value);
+        });
+        profileFormData.append("owner_uid", profileData.owner_uid);
+
+        axios
+          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+          .then((response) => {
+            console.log("Data updated successfully", response);
+            showSnackbar("Your profile has been successfully updated.", "success");
+            handleUpdate();
+            setShowSpinner(false);
+          })
+          .catch((error) => {
+            setShowSpinner(false);
+            showSnackbar("Cannot update your profile. Please try again", "error");
+            if (error.response) {
+              console.log(error.response.data);
+            }
+          });
         setShowSpinner(false);
         setModifiedData([]);
-    } else {
+      } else {
         showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
-    }
+      }
     } catch (error) {
-        showSnackbar("Cannot update the lease. Please try again", "error");
-        console.log("Cannot Update the lease", error);
-        setShowSpinner(false);
+      showSnackbar("Cannot update the lease. Please try again", "error");
+      console.log("Cannot Update the lease", error);
+      setShowSpinner(false);
     }
-  }
-
+  };
 
   return (
     <>
-      <Grid        
-        container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: '10px', padding: '10px', }}
-      >
+      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
         <Grid item xs={12}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f" }}>
+          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
             Owner Profile Information
           </Typography>
           <Grid container item xs={12}>
             <Grid container alignContent='center' item xs={3}>
               <Grid container justifyContent='center' item xs={12}>
                 {photo && photo.image ? (
-                <img
-                  key={Date.now()}
-                  src={photo.image}
-                  style={{
-                    width: "121px",
-                    height: "121px",
-                    objectFit: "cover",
-                    borderRadius: "50%",
-                  }}
-                  alt="profile"
-                />
+                  <img
+                    key={Date.now()}
+                    src={photo.image}
+                    style={{
+                      width: "121px",
+                      height: "121px",
+                      objectFit: "cover",
+                      borderRadius: "50%",
+                    }}
+                    alt='profile'
+                  />
                 ) : (
-                  <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                  <img src={DefaultProfileImg} alt='default' style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
                 )}
               </Grid>
-              <Grid  container justifyContent='center' item xs={12} sx={{ marginTop: '20px',}}>
+              <Grid container justifyContent='center' item xs={12} sx={{ marginTop: "20px" }}>
                 <Button
-                  component="label"
-                  variant="contained"
+                  component='label'
+                  variant='contained'
                   sx={{
                     backgroundColor: "#3D5CAC",
                     width: "193px",
                     height: "35px",
-                    textTransform: 'none',
-                    fontWeight: 'bold',
-                    color: '#FFFFFF',
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    color: "#FFFFFF",
                   }}
                 >
                   {" "}
                   Add Profile Pic
-                  <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
+                  <input type='file' hidden accept='image/*' onChange={handlePhotoChange} />
                 </Button>
-
               </Grid>
             </Grid>
-            <Grid container item xs={9}  columnSpacing={2}>
+            <Grid container item xs={9} columnSpacing={2}>
               <Grid item xs={6}>
                 <Typography
                   sx={{
@@ -697,13 +684,19 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
               </Grid>
               <Grid container item xs={12} columnSpacing={2}>
                 <Grid item xs={6}>
-                  <TextField name="firstName" value={firstName} onChange={(e) => handleFirstNameChange(e)} variant="filled" fullWidth placeholder="First name" className={classes.root} />
+                  <TextField
+                    name='firstName'
+                    value={firstName}
+                    onChange={(e) => handleFirstNameChange(e)}
+                    variant='filled'
+                    fullWidth
+                    placeholder='First name'
+                    className={classes.root}
+                  />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name="lastName" value={lastName} variant="filled" onChange={handleLastNameChange} fullWidth placeholder="Last name" className={classes.root} />
+                  <TextField name='lastName' value={lastName} variant='filled' onChange={handleLastNameChange} fullWidth placeholder='Last name' className={classes.root} />
                 </Grid>
-                
-
               </Grid>
               <Grid container item xs={12} columnSpacing={4}>
                 <Grid container item xs={3}>
@@ -721,7 +714,6 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                   <Grid item xs={12}>
                     <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address} />
                   </Grid>
-                  
                 </Grid>
                 <Grid container item xs={2}>
                   <Grid item xs={12}>
@@ -736,9 +728,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField value={unit} onChange={ handleUnitChange } variant="filled" placeholder="3" className={classes.root}></TextField>
+                    <TextField value={unit} onChange={handleUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
                   </Grid>
-                  
                 </Grid>
                 <Grid container item xs={2}>
                   <Grid item xs={12}>
@@ -753,9 +744,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name="City" value={city} onChange={(e) => setCity(e.target.value)} variant="filled" placeholder="City" className={classes.root} />
+                    <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
                   </Grid>
-                  
                 </Grid>
 
                 <Grid container item xs={2}>
@@ -771,9 +761,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name="State" value={state} onChange={(e) => setState(e.target.value)} variant="filled" placeholder="State" className={classes.root} />
+                    <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
                   </Grid>
-                  
                 </Grid>
 
                 <Grid container item xs={3}>
@@ -789,9 +778,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name="Zip" value={zip} onChange={(e) => setZip(e.target.value)} variant="filled" placeholder="Zip" className={classes.root} />
+                    <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
                   </Grid>
-                  
                 </Grid>
               </Grid>
 
@@ -809,9 +797,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={email} onChange={handleEmailChange} variant="filled" placeholder="Email" className={classes.root}></TextField>
+                    <TextField fullWidth value={email} onChange={handleEmailChange} variant='filled' placeholder='Email' className={classes.root}></TextField>
                   </Grid>
-                  
                 </Grid>
                 <Grid container item xs={6}>
                   <Grid item xs={12}>
@@ -826,11 +813,10 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={phoneNumber} onChange={handlePhoneNumberChange} variant="filled" placeholder="Phone Number" className={classes.root}></TextField>
+                    <TextField fullWidth value={phoneNumber} onChange={handlePhoneNumberChange} variant='filled' placeholder='Phone Number' className={classes.root}></TextField>
                   </Grid>
-                  
-                </Grid>                
-              </Grid>              
+                </Grid>
+              </Grid>
 
               <Grid container item xs={12} columnSpacing={4}>
                 <Grid container item xs={6}>
@@ -846,57 +832,45 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField 
+                    <TextField
                       fullWidth
                       // value={mask}
                       value={ssn}
                       // onChange={(e) => setSsn(e.target.value)}
                       onChange={handleSSNChange}
-                      variant="filled"
-                      placeholder="SSN"
+                      variant='filled'
+                      placeholder='SSN'
                       className={classes.root}
-                    >
-                    </TextField>
+                    ></TextField>
                   </Grid>
-                  
-                </Grid>                                                         
+                </Grid>
               </Grid>
             </Grid>
-
           </Grid>
         </Grid>
-
-        
       </Grid>
 
-      <Grid        
-        container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px',}}
-      >
+      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
         <Grid item xs={12}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
+          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
             Payment Information
           </Typography>
-
         </Grid>
-        <Grid container item xs={12}>          
+        <Grid container item xs={12}>
           {renderPaymentMethods()}
         </Grid>
-        
       </Grid>
 
       <Grid container justifyContent='center' item xs={12}>
-        <Button variant="contained" color="primary" onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC", }}>
-          <Typography sx={{ fontWeight: 'bold', color: '#FFFFFF', textTransform: 'none', }}>
-            Save
-          </Typography>
+        <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
         </Button>
       </Grid>
 
-      <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
-            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
-            {snackbarMessage}
+      <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%", height: "100%" }}>
+          <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </>

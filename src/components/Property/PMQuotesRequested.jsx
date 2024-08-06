@@ -17,18 +17,18 @@ export default function PMQuotesRequested(props) {
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   // console.log("--debug location.state--", location.state || pmQuoteRequestedState);
-  console.log('----pmQuoteRequestedState.contracts---', props.contracts);
+  // console.log('----pmQuoteRequestedState.contracts---', props.contracts);
   // const PMQuotesDetails = location.state || props;
   const PMQuotesDetails = props;
-  console.log('ROHIT - PMQuotesDetails -', PMQuotesDetails);
-  console.log('ROHIT - PMQuotesDetails props -', props);
+  // console.log('ROHIT - PMQuotesDetails -', PMQuotesDetails);
+  // console.log('ROHIT - PMQuotesDetails props -', props);
   const handleBackClick = props.handleBackClick;
 
   const [contracts, setContracts] = useState(PMQuotesDetails.contracts);
 
   const [refresh, setRefresh] = useState(false);
   const property = PMQuotesDetails.propertyData;
-  const propertyId = property[PMQuotesDetails.index]?.property_uid ;
+  const propertyId = property[PMQuotesDetails.index]?.property_uid;
   const index = PMQuotesDetails.index;
   // const isDesktop = PMQuotesDetails.isDesktop;
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
@@ -104,9 +104,9 @@ export default function PMQuotesRequested(props) {
                 return (
                   <div>
                     <DocumentCard data={contract} />
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" sx={{ padding: "8px", paddingTop: "8px" }}>
+                    <Stack direction='row' justifyContent='space-between' alignItems='center' position='relative' sx={{ padding: "8px", paddingTop: "8px" }}>
                       <Button
-                        variant="contained"
+                        variant='contained'
                         sx={{
                           textTransform: "none",
                           background: "#A52A2A",
@@ -124,7 +124,7 @@ export default function PMQuotesRequested(props) {
                         Decline
                       </Button>
                       <Button
-                        variant="contained"
+                        variant='contained'
                         sx={{
                           textTransform: "none",
                           background: "#76B148",
@@ -157,9 +157,9 @@ export default function PMQuotesRequested(props) {
                 return (
                   <div>
                     <DocumentCard data={contract} />
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" position="relative" sx={{ padding: "8px", paddingTop: "8px" }}>
+                    <Stack direction='row' justifyContent='space-between' alignItems='center' position='relative' sx={{ padding: "8px", paddingTop: "8px" }}>
                       <Button
-                        variant="contained"
+                        variant='contained'
                         sx={{
                           textTransform: "none",
                           background: "#A52A2A",
@@ -316,25 +316,25 @@ export default function PMQuotesRequested(props) {
           }}
         >
           <Stack
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
+            direction='column'
+            justifyContent='center'
+            alignItems='center'
             sx={{
               paddingBottom: "0px",
             }}
           >
-            <Box direction="row" justifyContent="center" alignItems="center">
+            <Box direction='row' justifyContent='center' alignItems='center'>
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                 Search for Properties Manager
               </Typography>
             </Box>
-            <Box position="absolute" right={30}>
+            <Box position='absolute' right={30}>
               <Button>
                 <SearchIcon />
               </Button>
             </Box>
           </Stack>
-          <Stack direction="column" justifyContent="center" alignItems="center">
+          <Stack direction='column' justifyContent='center' alignItems='center'>
             <Box onClick={viewAllProperties}>
               <Button
                 sx={{
@@ -364,7 +364,7 @@ export default function PMQuotesRequested(props) {
               }}
             >
               <Tabs
-                variant="fullWidth"
+                variant='fullWidth'
                 value={tabStatus}
                 onChange={(e) => console.log(e)}
                 TabIndicatorProps={{
@@ -399,7 +399,7 @@ export default function PMQuotesRequested(props) {
                     textTransform: "none",
                   }}
                   onClick={() => setTabStatus(0)}
-                  label="Quotes Requested"
+                  label='Quotes Requested'
                 />
                 <Tab
                   sx={{
@@ -418,7 +418,7 @@ export default function PMQuotesRequested(props) {
                     textTransform: "none",
                   }}
                   onClick={() => setTabStatus(1)}
-                  label="Active Contracts"
+                  label='Active Contracts'
                 />
               </Tabs>
               <Box
@@ -429,7 +429,7 @@ export default function PMQuotesRequested(props) {
               ></Box>
             </Box>
           </Stack>
-          <Stack direction="column" justifyContent="center" alignItems="center">
+          <Stack direction='column' justifyContent='center' alignItems='center'>
             <Box
               sx={{
                 borderBottom: 0,

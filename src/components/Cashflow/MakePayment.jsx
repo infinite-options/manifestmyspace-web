@@ -6,15 +6,13 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider, Container, ThemeProvider, } from "@mui/material";
-
-
+import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider, Container, ThemeProvider } from "@mui/material";
 
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
 // Stripe Imports
-import StripeFeesDialog from "../Settings/StripeFeesDialog"
+import StripeFeesDialog from "../Settings/StripeFeesDialog";
 import StripePayment from "../Settings/StripePayment";
 
 // Program Imports
@@ -55,14 +53,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MakePayment({ selectedPayment, refreshCashflowData, setCurrentWindow, }) {
-//   const location = useLocation();
-  const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole, } = useUser();
-  console.log("ROHIT - MakePayment -  props - ", selectedPayment);
-//   console.log("--DEBUG-- location.state", location.state);  
+export default function MakePayment({ selectedPayment, refreshCashflowData, setCurrentWindow }) {
+  //   const location = useLocation();
+  const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole } = useUser();
+  // console.log("ROHIT - MakePayment -  props - ", selectedPayment);
+  //   console.log("--DEBUG-- location.state", location.state);
 
   const classes = useStyles();
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const [showSpinner, setShowSpinner] = useState(false);
   // const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [paymentData, setPaymentData] = useState(selectedPayment?.paymentData);
@@ -83,10 +81,8 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
   //   console.log("DEBUG BALANCE IN SELECT PAYMENT", balance);
   console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
   console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
-//   console.log("--debug-- location.state", location.state);
+  //   console.log("--debug-- location.state", location.state);
   console.log("---debug--- convenience_fee", convenience_fee);
-
-
 
   useEffect(() => {
     console.log("In new UseEffect Current Convenience Fee is: ", convenience_fee);
@@ -101,10 +97,10 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
   const [applePay, setApplePay] = useState(false);
   const [paymentConfirm, setPaymentConfirm] = useState(false);
 
-  const [activePaymentMethods, setActivePaymentMethods ] = useState([]);
+  const [activePaymentMethods, setActivePaymentMethods] = useState([]);
 
   async function fetchPaymentMethods() {
-    try {      
+    try {
       const methods = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
       console.log("Manager Payment Method Data: ", methods.data);
       return methods.data;
@@ -115,25 +111,22 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
 
   useEffect(() => {
     fetchPaymentMethods()
-    .then((data) => {
-      setActivePaymentMethods(data?.result?.filter(method => method.paymentMethod_status === 'Active'));      
-    })
-    .catch((error) => {
-      console.error("Error fetching payment methods:", error);
-    });
-
+      .then((data) => {
+        setActivePaymentMethods(data?.result?.filter((method) => method.paymentMethod_status === "Active"));
+      })
+      .catch((error) => {
+        console.error("Error fetching payment methods:", error);
+      });
   }, []);
 
-  useEffect(() => {        
-    console.log("ROHIT - activePaymentMethods - ", activePaymentMethods);    
+  useEffect(() => {
+    // console.log("ROHIT - activePaymentMethods - ", activePaymentMethods);
   }, [activePaymentMethods]);
 
-
-  
   useEffect(() => {
     // Check if selectedMethod is not empty and confirmationNumber is not empty for Zelle and method for payment is selected
     // if ((selectedMethod === "Zelle" && confirmationNumber === "") || !selectedMethod ) {
-    if ((confirmationNumber === "") || !selectedMethod ) {
+    if (confirmationNumber === "" || !selectedMethod) {
       setIsMakePaymentDisabled(true); // Disable button if conditions not met
     } else {
       setIsMakePaymentDisabled(false); // Enable button if conditions met
@@ -195,7 +188,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
 
   const submit = async ({ paymentIntent, paymentMethod }) => {
     console.log("In Submit Function");
-    console.log("paymentData", paymentData)
+    console.log("paymentData", paymentData);
     console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
 
@@ -220,8 +213,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
       payment_intent: paymentIntent,
       payment_method: paymentMethod,
     };
-    if (paymentMethod=='Zelle')
-      payment_request_payload.confirmation_number=confirmationNumber;
+    if (paymentMethod == "Zelle") payment_request_payload.confirmation_number = confirmationNumber;
 
     await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
       // await fetch("http://localhost:4000/makePayment2", {
@@ -236,10 +228,8 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
     // navigate(routingString);
     // navigate("/payments")
 
-        
-    setCurrentWindow("TRANSACTIONS")
+    setCurrentWindow("TRANSACTIONS");
     refreshCashflowData();
-
 
     setShowSpinner(false);
   };
@@ -297,14 +287,13 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
     if (selectedValue !== "Zelle") {
       setConfirmationNumber("");
     }
-    
+
     update_fee(event);
-  
   };
 
   const radioSx = {
-    '&.Mui-checked': {
-      color: 'blue',
+    "&.Mui-checked": {
+      color: "blue",
     },
   };
 
@@ -359,77 +348,77 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
     setShowSpinner(false);
   };
 
-  const getPaymentMethodName = (type) =>{
-    switch(type){
-        case "zelle":
-            return "Zelle";
-            break;
+  const getPaymentMethodName = (type) => {
+    switch (type) {
+      case "zelle":
+        return "Zelle";
+        break;
 
-        case "apple_pay":
-            return "Apple Pay";
-            break;
+      case "apple_pay":
+        return "Apple Pay";
+        break;
 
-        case "stripe":
-            return "Stripe";
-            break;
+      case "stripe":
+        return "Stripe";
+        break;
 
-        case "paypal":
-            return "Paypal";
-            break;
-        
-        case "venmo":
-            return "Venmo";
-            break;
+      case "paypal":
+        return "Paypal";
+        break;
 
-        default:
-            return "<PAYMENT_METHOD_NAME>"
-            break;
+      case "venmo":
+        return "Venmo";
+        break;
+
+      default:
+        return "<PAYMENT_METHOD_NAME>";
+        break;
     }
-  }
+  };
 
   const getPMImage = (type) => {
-    switch(type){
-        case "zelle":
-            return Zelle;
-            break;
+    switch (type) {
+      case "zelle":
+        return Zelle;
+        break;
 
-        case "apple_pay":
-            return ApplePay;
-            break;
+      case "apple_pay":
+        return ApplePay;
+        break;
 
-        case "stripe":
-            return Stripe;
-            break;
+      case "stripe":
+        return Stripe;
+        break;
 
-        case "paypal":
-            return PayPal;
-            break;
-        
-        case "venmo":
-            return Venmo;
-            break;
+      case "paypal":
+        return PayPal;
+        break;
 
-        default:
-            return null
-            break;
+      case "venmo":
+        return Venmo;
+        break;
+
+      default:
+        return null;
+        break;
     }
-  }
+  };
 
   return (
     // <div style={{ padding: "30px" }}>
     <>
       <ThemeProvider theme={theme}>
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color="inherit" />
+          <CircularProgress color='inherit' />
         </Backdrop>
 
-        <Container  disableGutters maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
-          <Grid container spacing={6} sx={{height: '90%'}}>          
+        <Container disableGutters maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
+          <Grid container spacing={6} sx={{ height: "90%" }}>
             <Grid container item xs={12} columnSpacing={6}>
               <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
               {/* <Stack direction="row" > */}
-              <Grid container item xs={12} justifyContent="center">
+              <Grid container item xs={12} justifyContent='center'>
                 {/* <Grid item xs={1} >
                   <Button onClick={() => navigate(-1)}>
                     <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
@@ -445,13 +434,13 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                 >
                   Select Payment Method
                 </Typography>
-              {/* </Stack> */}
+                {/* </Stack> */}
               </Grid>
               <Paper
                 style={{
-                  width: '100%',
+                  width: "100%",
                   margin: "25px",
-                  marginBottom: '0px',
+                  marginBottom: "0px",
                   padding: "10px",
                   backgroundColor: theme.palette.primary.main,
                   // height: "25%",
@@ -463,7 +452,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                   // },
                 }}
               >
-                <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
+                <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
                   <Typography
                     sx={{
                       justifySelf: "center",
@@ -476,7 +465,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                   </Typography>
                 </Stack>
 
-                <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
+                <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
                   <Typography
                     sx={{
                       justifySelf: "center",
@@ -486,12 +475,12 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                     }}
                   >
                     {"$" + (balance + convenience_fee).toFixed(2)}
-                    </Typography>
+                  </Typography>
                 </Stack>
                 <Divider light />
                 <Stack>
                   <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6} justifyContent="center" alignItems="center">
+                    <Grid item xs={6} justifyContent='center' alignItems='center'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -504,7 +493,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                       </Typography>
                     </Grid>
 
-                    <Grid container item xs={6} justifyContent="flex-end">
+                    <Grid container item xs={6} justifyContent='flex-end'>
                       <Typography
                         sx={{
                           justifySelf: "flex-end",
@@ -518,7 +507,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={6} alignItems="center">
+                    <Grid item xs={6} alignItems='center'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -531,7 +520,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                       </Typography>
                     </Grid>
 
-                    <Grid container item xs={6} justifyContent="flex-end">
+                    <Grid container item xs={6} justifyContent='flex-end'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -544,7 +533,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={6} alignItems="center">
+                    <Grid item xs={6} alignItems='center'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -556,7 +545,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                         Total
                       </Typography>
                     </Grid>
-                    <Grid container item xs={6} justifyContent="flex-end">
+                    <Grid container item xs={6} justifyContent='flex-end'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -586,32 +575,36 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                   },
                 }}
               >
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Payment Methods</Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Payment Methods
+                </Typography>
                 <Divider light />
-                <FormControl component="fieldset">
-                  <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
+                <FormControl component='fieldset'>
+                  <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
                     <FormControlLabel
-                      value="Bank Transfer"
+                      value='Bank Transfer'
                       control={<Radio />}
                       label={
                         <>
                           <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
-                            <img src={BankIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+                            <img src={BankIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
                           </div>
                           <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>.08% Convenience Fee - max $5</Typography>
+                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>
+                              .08% Convenience Fee - max $5
+                            </Typography>
                           </div>
                         </>
                       }
                     />
                     <FormControlLabel
-                      value="Credit Card"
+                      value='Credit Card'
                       control={<Radio />}
                       label={
                         <>
                           <div style={{ display: "flex", alignItems: "center" }}>
-                            <img src={CreditCardIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+                            <img src={CreditCardIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
                             Credit Card
                           </div>
                           <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
@@ -623,7 +616,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                   </RadioGroup>
                 </FormControl>
 
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont, marginTop: '20px', }}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont, marginTop: "20px" }}>
                   Other Payment Methods
                 </Typography>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
@@ -711,76 +704,71 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                   </RadioGroup>
                 </FormControl> */}
 
-                <FormControl component="fieldset" sx={{marginTop: '20px',}}>
-                  <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>                    
+                <FormControl component='fieldset' sx={{ marginTop: "20px" }}>
+                  <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
                     <Grid container item xs={12}>
-                        { activePaymentMethods?.map((method, index) => {
-                            const methodName = getPaymentMethodName(method.paymentMethod_type)
-                            return (
-                                // <Grid container item xs={12} key={method.paymentMethod_uid}>
-                                    <FormControlLabel
-                                        value={methodName}
-                                        control={<Radio sx={radioSx}/>}
-                                        disableTypography={true}
-                                        label={
-                                            <Grid container alignItems='center' item xs={12} sx={{width: '100%',}}>
-                                                <Grid item xs={1}>
-                                                    <img src={getPMImage(method.paymentMethod_type)} alt={methodName} style={{ marginRight: "8px", height: "24px" }} />
-                                                </Grid>
-                                                {/* {methodName} {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"} */}
-                                                <Grid item xs={1.5}>
-                                                    {methodName}
-                                                </Grid>
-                                                <Grid item xs={6.5}>
-                                                    {method.paymentMethod_name ? method.paymentMethod_name : "No Payment Info"}
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                {
-                                                    selectedMethod === methodName && (
-                                                        
-                                                            <TextField
-                                                                id="confirmation-number"
-                                                                label="Confirmation Number"
-                                                                variant="outlined"
-                                                                size="small"
-                                                                value={confirmationNumber}
-                                                                sx={{ 
-                                                                    // marginLeft: "10px", 
-                                                                    '& .MuiOutlinedInput-root': {
-                                                                        '&.Mui-focused fieldset': {
-                                                                        borderColor: 'black',
-                                                                        },
-                                                                    },
-                                                                    '& .MuiInputLabel-root': {
-                                                                        '&.Mui-focused': {
-                                                                        color: '#3D5CAC',
-                                                                        },
-                                                                    },                                                        
-                                                                }} // Add some spacing between the image and the textfield
-                                                                // disabled={selectedMethod!== methodName}
-                                                                onChange={(e) => setConfirmationNumber(e.target.value)}
-                                                            />
-                                                        
-                                                    )
-                                                }
-                                                </Grid>
-                                                
-                                            </Grid>
-                                        }
-                                        sx={{
-                                            width: '100%',
-                                            margin: '0px',
-                                        }}
+                      {activePaymentMethods?.map((method, index) => {
+                        const methodName = getPaymentMethodName(method.paymentMethod_type);
+                        return (
+                          // <Grid container item xs={12} key={method.paymentMethod_uid}>
+                          <FormControlLabel
+                            value={methodName}
+                            control={<Radio sx={radioSx} />}
+                            disableTypography={true}
+                            label={
+                              <Grid container alignItems='center' item xs={12} sx={{ width: "100%" }}>
+                                <Grid item xs={1}>
+                                  <img src={getPMImage(method.paymentMethod_type)} alt={methodName} style={{ marginRight: "8px", height: "24px" }} />
+                                </Grid>
+                                {/* {methodName} {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"} */}
+                                <Grid item xs={1.5}>
+                                  {methodName}
+                                </Grid>
+                                <Grid item xs={6.5}>
+                                  {method.paymentMethod_name ? method.paymentMethod_name : "No Payment Info"}
+                                </Grid>
+                                <Grid item xs={3}>
+                                  {selectedMethod === methodName && (
+                                    <TextField
+                                      id='confirmation-number'
+                                      label='Confirmation Number'
+                                      variant='outlined'
+                                      size='small'
+                                      value={confirmationNumber}
+                                      sx={{
+                                        // marginLeft: "10px",
+                                        "& .MuiOutlinedInput-root": {
+                                          "&.Mui-focused fieldset": {
+                                            borderColor: "black",
+                                          },
+                                        },
+                                        "& .MuiInputLabel-root": {
+                                          "&.Mui-focused": {
+                                            color: "#3D5CAC",
+                                          },
+                                        },
+                                      }} // Add some spacing between the image and the textfield
+                                      // disabled={selectedMethod!== methodName}
+                                      onChange={(e) => setConfirmationNumber(e.target.value)}
                                     />
-                                // </Grid>
-                            );
-                        })}
-                    </Grid>                                                            
+                                  )}
+                                </Grid>
+                              </Grid>
+                            }
+                            sx={{
+                              width: "100%",
+                              margin: "0px",
+                            }}
+                          />
+                          // </Grid>
+                        );
+                      })}
+                    </Grid>
                   </RadioGroup>
                 </FormControl>
-                
+
                 <Button
-                  variant="contained"
+                  variant='contained'
                   onClick={handleSubmit}
                   sx={{
                     backgroundColor: "#3D5CAC",
@@ -789,7 +777,8 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                     borderRadius: "10px", // Rounded corners
                     marginTop: "20px", // Add some spacing to the top
                   }}
-                  disabled={isMakePaymentDisabled}>
+                  disabled={isMakePaymentDisabled}
+                >
                   Make Payment
                 </Button>
               </Paper>
@@ -802,15 +791,13 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                   show={stripePayment}
                   setShow={setStripePayment}
                 />
-              </Elements>                                  
+              </Elements>
             </Grid>
           </Grid>
         </Container>
       </ThemeProvider>
-      
-    {/* </div> */}
+
+      {/* </div> */}
     </>
   );
 }
-
-         

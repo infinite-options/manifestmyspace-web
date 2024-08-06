@@ -92,43 +92,39 @@ const ViewManagementContract = (props) => {
   const [moveOutDate, setMoveOutDate] = useState(new Date());
   const [expanded, setExpanded] = useState(false);
 
-  const [ index, setIndex ] = useState(props.index);
-  const [ contractFees, setContractFees ] = useState([]);
-  const [ contractDocuments, setContractDocuments ] = useState([]);
+  const [index, setIndex] = useState(props.index);
+  const [contractFees, setContractFees] = useState([]);
+  const [contractDocuments, setContractDocuments] = useState([]);
 
   // const [leaseID, setLeaseID] = useState("");
-  
 
   const handleViewButton = (link) => {
     // console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
     window.open(link, "_blank", "rel=noopener noreferrer");
   };
-  
+
   // console.log(location.state)
   // console.log("leaseID", leaseID)
   // console.log("propertyUID", propertyUID)
 
-//   const leaseID = props.lease_id ? props.lease_id : location.state.lease_id;
-//   const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
-//   const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
-//   const index = props.lease_id ? props.index : location.state.index;
-  
+  //   const leaseID = props.lease_id ? props.lease_id : location.state.lease_id;
+  //   const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
+  //   const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
+  //   const index = props.lease_id ? props.index : location.state.index;
+
   const propertyList = props.propertyList ? props.propertyList : [];
   useEffect(() => {
-    const index = props.index;    
+    const index = props.index;
     setIndex(index);
-    console.log("ROHIT - propertyList - ", propertyList);
-    console.log("ROHIT - index - ", index);
+    // console.log("ROHIT - propertyList - ", propertyList);
+    // console.log("ROHIT - index - ", index);
 
-    const contractFees = propertyList[index]?.contract_fees ? JSON.parse(propertyList[index]?.contract_fees) : []
+    const contractFees = propertyList[index]?.contract_fees ? JSON.parse(propertyList[index]?.contract_fees) : [];
     setContractFees(contractFees);
 
-    const contractDocuments = propertyList[index]?.contract_documents ? JSON.parse(propertyList[index]?.contract_documents) : []
-    setContractDocuments(contractDocuments)
-
+    const contractDocuments = propertyList[index]?.contract_documents ? JSON.parse(propertyList[index]?.contract_documents) : [];
+    setContractDocuments(contractDocuments);
   }, [props.index]);
-
-
 
   function getDayText(day) {
     switch (day % 10) {
@@ -141,7 +137,7 @@ const ViewManagementContract = (props) => {
       default:
         return day + "th";
     }
-  }  
+  }
 
   const handleCloseButton = (e) => {
     e.preventDefault();
@@ -152,113 +148,104 @@ const ViewManagementContract = (props) => {
     setExpanded(!expanded);
   };
 
-
-
   return (
-    <Container maxWidth="xl" sx={{ paddingBottom: "25px" }}>
+    <Container maxWidth='xl' sx={{ paddingBottom: "25px" }}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
-      
+
       <Grid container sx={{ paddingTop: "20px" }}>
-          <Grid item xs={12}>
+        <Grid item xs={12}>
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
-              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract</Typography>
-              <Box position="absolute" right={20}>
+            <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract</Typography>
+            <Box position='absolute' right={20}>
               <Button onClick={(e) => handleCloseButton(e)}>
-                  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+                <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
               </Button>
-              </Box>
+            </Box>
           </Box>
-          </Grid>
-          <Grid item xs={12}>
+        </Grid>
+        <Grid item xs={12}>
           <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract Details</Typography>
-              <Grid container>
+            <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract Details</Typography>
+            <Grid container>
               <Grid item xs={6}>
-                  <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Contract Name</Typography>
-                  <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {propertyList[index]?.contract_name}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                  <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Contract Status</Typography>
-                  <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {propertyList[index]?.contract_status}</Typography>
+                <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Contract Name</Typography>
+                <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {propertyList[index]?.contract_name}</Typography>
               </Grid>
               <Grid item xs={6}>
-                  <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Start Date</Typography>
-                  <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {propertyList[index]?.contract_start_date}</Typography>
+                <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Contract Status</Typography>
+                <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {propertyList[index]?.contract_status}</Typography>
               </Grid>
               <Grid item xs={6}>
-                  <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>End Date</Typography>
-                  <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {propertyList[index]?.contract_end_date}</Typography>
+                <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Start Date</Typography>
+                <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {propertyList[index]?.contract_start_date}</Typography>
               </Grid>
-                              
+              <Grid item xs={6}>
+                <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>End Date</Typography>
+                <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {propertyList[index]?.contract_end_date}</Typography>
               </Grid>
+            </Grid>
           </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract Fees</Typography>
-              {contractFees?.map((item, index) => (
-                <Grid container direction={"row"} key={index} sx={{ paddingBottom: "10px" }}>
-                  <Grid item xs={12} sx={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                    <Typography sx={{ color: "#3D5CAC", fontSize: "24px", fontWeight: 700 }}>{item.fee_name ? item.fee_name : "None"}</Typography>
-                  </Grid>
-                  {/* <Grid item xs={12} sx={{ paddingTop: "5px", paddingBottom: "5px" }}>
+        </Grid>
+        <Grid item xs={12}>
+          <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
+            <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract Fees</Typography>
+            {contractFees?.map((item, index) => (
+              <Grid container direction={"row"} key={index} sx={{ paddingBottom: "10px" }}>
+                <Grid item xs={12} sx={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                  <Typography sx={{ color: "#3D5CAC", fontSize: "24px", fontWeight: 700 }}>{item.fee_name ? item.fee_name : "None"}</Typography>
+                </Grid>
+                {/* <Grid item xs={12} sx={{ paddingTop: "5px", paddingBottom: "5px" }}>
                     <Typography sx={{ color: "#3D5CAC", fontSize: "24px", fontWeight: 700 }}>{item.fee_type ? item.fee_type : "None"}</Typography>
                   </Grid>  */}
-                  {  item.fee_type === "PERCENT" && 
-                    <Grid container sx={{ marginLeft: "10px" }}>
-                      <Grid item xs={4}>
-                        <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Amount</Typography>
-                        <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {`${item.charge} %` || "None"}</Typography>
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Of</Typography>
-                        <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {`${item.of}` || "None"}</Typography>
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Frequency</Typography>
-                        <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {item.frequency ? item.frequency : "None"}</Typography>
-                      </Grid>                      
+                {item.fee_type === "PERCENT" && (
+                  <Grid container sx={{ marginLeft: "10px" }}>
+                    <Grid item xs={4}>
+                      <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Amount</Typography>
+                      <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {`${item.charge} %` || "None"}</Typography>
                     </Grid>
-                  }
-                  {  item.fee_type === "FLAT-RATE" && 
-                    <Grid container sx={{ marginLeft: "15px" }}>
-                      <Grid item xs={6}>
-                        <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Amount</Typography>
-                        <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {`$${item.charge}` || "None"}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Frequency</Typography>
-                        <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {item.frequency ? item.frequency : "None"}</Typography>
-                      </Grid>                      
+                    <Grid item xs={4}>
+                      <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Of</Typography>
+                      <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {`${item.of}` || "None"}</Typography>
                     </Grid>
-                  }
-                </Grid>
-              ))}
-            </Box>
-          </Grid>
-                  
-          <Grid item xs={12}>
-          <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-              <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract Documents</Typography>
-              {contractDocuments.map((document, index) => (
-              <Box key={index} sx={{ cursor: "pointer", display: "flex", alignContent: "center", alignItems: "center" }} onClick={() => handleViewButton(document.link)}>
-                  <img src={documentIcon} style={{ width: "20px", height: "25px", margin: "5px", paddingRight: "5px" }} />
-                  <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#3D5CAC" }}>{document.filename}</Typography>
-              </Box>
-              ))}
+                    <Grid item xs={4}>
+                      <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Frequency</Typography>
+                      <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {item.frequency ? item.frequency : "None"}</Typography>
+                    </Grid>
+                  </Grid>
+                )}
+                {item.fee_type === "FLAT-RATE" && (
+                  <Grid container sx={{ marginLeft: "15px" }}>
+                    <Grid item xs={6}>
+                      <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Amount</Typography>
+                      <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {`$${item.charge}` || "None"}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Frequency</Typography>
+                      <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {item.frequency ? item.frequency : "None"}</Typography>
+                    </Grid>
+                  </Grid>
+                )}
+              </Grid>
+            ))}
           </Box>
-          </Grid>
-          
+        </Grid>
+
+        <Grid item xs={12}>
+          <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
+            <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract Documents</Typography>
+            {contractDocuments.map((document, index) => (
+              <Box key={index} sx={{ cursor: "pointer", display: "flex", alignContent: "center", alignItems: "center" }} onClick={() => handleViewButton(document.link)}>
+                <img src={documentIcon} style={{ width: "20px", height: "25px", margin: "5px", paddingRight: "5px" }} />
+                <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#3D5CAC" }}>{document.filename}</Typography>
+              </Box>
+            ))}
+          </Box>
+        </Grid>
       </Grid>
-                
     </Container>
   );
 };
 
-
 export default ViewManagementContract;
-
-
-

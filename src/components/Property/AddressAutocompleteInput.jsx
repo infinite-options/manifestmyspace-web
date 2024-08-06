@@ -1,15 +1,15 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 
-const libraries = ['places'];
+const libraries = ["places"];
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
-  console.log('In address autocomplete, checking address', defaultValue);
-  console.log('In address autocomplete, checking gray', gray);
+  // console.log('In address autocomplete, checking address', defaultValue);
+  // console.log('In address autocomplete, checking gray', gray);
   const autocomplete = useRef(null);
 
-  const [ address, setAddress ] = useState(defaultValue? defaultValue : "");
+  const [address, setAddress] = useState(defaultValue ? defaultValue : "");
 
   useEffect(() => {
     setAddress(defaultValue);
@@ -17,27 +17,27 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
 
   const extractAddress = (components) => {
     const address = {
-      street: '',
-      city: '',
-      state: '',
-      zip: '',
+      street: "",
+      city: "",
+      state: "",
+      zip: "",
     };
 
-    components.forEach(component => {
+    components.forEach((component) => {
       const types = component.types;
-      if (types.includes('street_number')) {
+      if (types.includes("street_number")) {
         address.street = `${component.long_name} `;
       }
-      if (types.includes('route')) {
+      if (types.includes("route")) {
         address.street += component.long_name;
       }
-      if (types.includes('locality')) {
+      if (types.includes("locality")) {
         address.city = component.long_name;
       }
-      if (types.includes('administrative_area_level_1')) {
+      if (types.includes("administrative_area_level_1")) {
         address.state = component.short_name;
       }
-      if (types.includes('postal_code')) {
+      if (types.includes("postal_code")) {
         address.zip = component.long_name;
       }
     });
@@ -59,7 +59,7 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
   }, [onAddressSelect]);
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
     }
   };
@@ -79,17 +79,19 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
 
   return (
     <Autocomplete
-      onLoad={auto => { autocomplete.current = auto; }}
+      onLoad={(auto) => {
+        autocomplete.current = auto;
+      }}
       onPlaceChanged={onPlaceChanged}
-      sx={{ width: '50%' }}
+      sx={{ width: "50%" }}
       options={{
-        types: ['address'],
-        componentRestrictions: { country: 'us' },
+        types: ["address"],
+        componentRestrictions: { country: "us" },
       }}
     >
       {gray ? (
         <input
-          type="text"
+          type='text'
           // defaultValue={defaultValue ? defaultValue : ""}
           // value={defaultValue ? defaultValue : "x"}
           value={address}
@@ -100,29 +102,29 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
             // marginBlock: 10,
             // width: '100%',
             padding: "5px",
-            outline: 'none',
-            border: 'none'
+            outline: "none",
+            border: "none",
           }}
           onChange={(e) => setAddress(e.target.value)}
           onKeyDown={handleKeyDown}
         />
       ) : (
         <input
-          type="text"
+          type='text'
           // defaultValue={defaultValue ? defaultValue : ""}
           // value={defaultValue ? defaultValue : "y"}
           value={address}
           style={{
-            boxSizing: 'border-box',
-            border: '1px solid transparent',
-            width: '100%',
-            height: '40px',
-            padding: '0 12px',
-            borderRadius: '3px',
-            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-            fontSize: '14px',
-            outline: 'none',
-            textOverflow: 'ellipses'
+            boxSizing: "border-box",
+            border: "1px solid transparent",
+            width: "100%",
+            height: "40px",
+            padding: "0 12px",
+            borderRadius: "3px",
+            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
+            fontSize: "14px",
+            outline: "none",
+            textOverflow: "ellipses",
           }}
           onChange={(e) => setAddress(e.target.value)}
           onKeyDown={handleKeyDown}

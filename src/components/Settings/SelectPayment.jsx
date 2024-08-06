@@ -6,7 +6,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider, Container, ThemeProvider, } from "@mui/material";
+import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider, Container, ThemeProvider } from "@mui/material";
 
 // Stripe Imports
 import StripeFeesDialog from "./StripeFeesDialog";
@@ -54,22 +54,22 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SelectPayment(props) {
   const location = useLocation();
-  const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole, } = useUser();
-  console.log("--DEBUG-- props", props);
-  console.log("--DEBUG-- location.state", location.state);
+  const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole } = useUser();
+  // console.log("--DEBUG-- props", props);
+  // console.log("--DEBUG-- location.state", location.state);
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  console.log("ROHIT - SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
-  console.log("ROHIT - selectedRole - ", selectedRole);
+  // console.log("ROHIT - SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
+  // console.log("ROHIT - selectedRole - ", selectedRole);
 
   const classes = useStyles();
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const [showSpinner, setShowSpinner] = useState(false);
   // const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState(location.state.paymentMethodInfo || {});
-  console.log("--DEBUG-- paymentData", paymentData);
+  // console.log("--DEBUG-- paymentData", paymentData);
   const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
   const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
@@ -83,12 +83,10 @@ export default function SelectPayment(props) {
   const [isMakePaymentDisabled, setIsMakePaymentDisabled] = useState(true); // State to control the disabled status of the Make Payment button
 
   //   console.log("DEBUG BALANCE IN SELECT PAYMENT", balance);
-  console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
-  console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
-  console.log("--debug-- location.state", location.state);
-  console.log("---debug--- convenience_fee", convenience_fee);
-
-
+  // console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
+  // console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
+  // console.log("--debug-- location.state", location.state);
+  // console.log("---debug--- convenience_fee", convenience_fee);
 
   useEffect(() => {
     console.log("In new UseEffect Current Convenience Fee is: ", convenience_fee);
@@ -103,11 +101,9 @@ export default function SelectPayment(props) {
   const [applePay, setApplePay] = useState(false);
   const [paymentConfirm, setPaymentConfirm] = useState(false);
 
-
-  
   useEffect(() => {
     // Check if selectedMethod is not empty and confirmationNumber is not empty for Zelle and method for payment is selected
-    if ((selectedMethod === "Zelle" && confirmationNumber === "") || !selectedMethod ) {
+    if ((selectedMethod === "Zelle" && confirmationNumber === "") || !selectedMethod) {
       setIsMakePaymentDisabled(true); // Disable button if conditions not met
     } else {
       setIsMakePaymentDisabled(false); // Enable button if conditions met
@@ -169,7 +165,7 @@ export default function SelectPayment(props) {
 
   const submit = async ({ paymentIntent, paymentMethod }) => {
     console.log("In Submit Function");
-    console.log("paymentData", paymentData)
+    console.log("paymentData", paymentData);
     console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
 
@@ -194,8 +190,7 @@ export default function SelectPayment(props) {
       payment_intent: paymentIntent,
       payment_method: paymentMethod,
     };
-    if (paymentMethod=='Zelle')
-      payment_request_payload.confirmation_number=confirmationNumber;
+    if (paymentMethod == "Zelle") payment_request_payload.confirmation_number = confirmationNumber;
 
     await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
       // await fetch("http://localhost:4000/makePayment2", {
@@ -268,9 +263,8 @@ export default function SelectPayment(props) {
     if (selectedValue !== "Zelle") {
       setConfirmationNumber("");
     }
-    
+
     update_fee(event);
-  
   };
 
   const handleSubmit = async (e) => {
@@ -329,30 +323,42 @@ export default function SelectPayment(props) {
     <>
       <ThemeProvider theme={theme}>
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color="inherit" />
+          <CircularProgress color='inherit' />
         </Backdrop>
 
-        <Container  disableGutters maxWidth="lg" sx={{ paddingTop: "10px", height: '90vh', }}>
-          <Grid container spacing={6} sx={{height: '90%'}}>          
+        <Container disableGutters maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
+          <Grid container spacing={6} sx={{ height: "90%" }}>
             <Grid item xs={12} md={4}>
-              {
-                selectedRole === "MANAGER" && (
-                  <ManagerCashflowWidget propsMonth={managerCashflowWidgetData?.propsMonth} propsYear={managerCashflowWidgetData?.propsYear} profitsTotal={managerCashflowWidgetData?.profitsTotal} rentsTotal={managerCashflowWidgetData?.rentsTotal} payoutsTotal={managerCashflowWidgetData?.payoutsTotal} graphData={managerCashflowWidgetData?.graphData}/>
-                )
-              }
+              {selectedRole === "MANAGER" && (
+                <ManagerCashflowWidget
+                  propsMonth={managerCashflowWidgetData?.propsMonth}
+                  propsYear={managerCashflowWidgetData?.propsYear}
+                  profitsTotal={managerCashflowWidgetData?.profitsTotal}
+                  rentsTotal={managerCashflowWidgetData?.rentsTotal}
+                  payoutsTotal={managerCashflowWidgetData?.payoutsTotal}
+                  graphData={managerCashflowWidgetData?.graphData}
+                />
+              )}
 
-              {
-                selectedRole === "TENANT" && (
-                  <AccountBalanceWidget selectedProperty={accountBalanceWidgetData?.selectedProperty} selectedLease={accountBalanceWidgetData?.selectedLease} propertyAddr={accountBalanceWidgetData?.propertyAddr} propertyData={accountBalanceWidgetData?.propertyData} total={accountBalanceWidgetData?.total} rentFees={accountBalanceWidgetData?.rentFees} lateFees={accountBalanceWidgetData?.lateFees} utilityFees={accountBalanceWidgetData?.utilityFees} />
-                )
-              }            
+              {selectedRole === "TENANT" && (
+                <AccountBalanceWidget
+                  selectedProperty={accountBalanceWidgetData?.selectedProperty}
+                  selectedLease={accountBalanceWidgetData?.selectedLease}
+                  propertyAddr={accountBalanceWidgetData?.propertyAddr}
+                  propertyData={accountBalanceWidgetData?.propertyData}
+                  total={accountBalanceWidgetData?.total}
+                  rentFees={accountBalanceWidgetData?.rentFees}
+                  lateFees={accountBalanceWidgetData?.lateFees}
+                  utilityFees={accountBalanceWidgetData?.utilityFees}
+                />
+              )}
             </Grid>
 
             <Grid container item xs={12} md={8} columnSpacing={6}>
               <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
               {/* <Stack direction="row" > */}
-              <Grid container item xs={12} justifyContent="center">
+              <Grid container item xs={12} justifyContent='center'>
                 {/* <Grid item xs={1} >
                   <Button onClick={() => navigate(-1)}>
                     <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
@@ -368,13 +374,13 @@ export default function SelectPayment(props) {
                 >
                   Select Payment Method
                 </Typography>
-              {/* </Stack> */}
+                {/* </Stack> */}
               </Grid>
               <Paper
                 style={{
-                  width: '100%',
+                  width: "100%",
                   margin: "25px",
-                  marginBottom: '0px',
+                  marginBottom: "0px",
                   padding: "10px",
                   backgroundColor: theme.palette.primary.main,
                   // height: "25%",
@@ -386,7 +392,7 @@ export default function SelectPayment(props) {
                   // },
                 }}
               >
-                <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
+                <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
                   <Typography
                     sx={{
                       justifySelf: "center",
@@ -399,7 +405,7 @@ export default function SelectPayment(props) {
                   </Typography>
                 </Stack>
 
-                <Stack direction="row" justifyContent="center" sx={{ paddingBottom: "5px" }}>
+                <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
                   <Typography
                     sx={{
                       justifySelf: "center",
@@ -409,12 +415,12 @@ export default function SelectPayment(props) {
                     }}
                   >
                     {"$" + (balance + convenience_fee).toFixed(2)}
-                    </Typography>
+                  </Typography>
                 </Stack>
                 <Divider light />
                 <Stack>
                   <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6} justifyContent="center" alignItems="center">
+                    <Grid item xs={6} justifyContent='center' alignItems='center'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -427,7 +433,7 @@ export default function SelectPayment(props) {
                       </Typography>
                     </Grid>
 
-                    <Grid container item xs={6} justifyContent="flex-end">
+                    <Grid container item xs={6} justifyContent='flex-end'>
                       <Typography
                         sx={{
                           justifySelf: "flex-end",
@@ -441,7 +447,7 @@ export default function SelectPayment(props) {
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={6} alignItems="center">
+                    <Grid item xs={6} alignItems='center'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -454,7 +460,7 @@ export default function SelectPayment(props) {
                       </Typography>
                     </Grid>
 
-                    <Grid container item xs={6} justifyContent="flex-end">
+                    <Grid container item xs={6} justifyContent='flex-end'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -467,7 +473,7 @@ export default function SelectPayment(props) {
                       </Typography>
                     </Grid>
 
-                    <Grid item xs={6} alignItems="center">
+                    <Grid item xs={6} alignItems='center'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -479,7 +485,7 @@ export default function SelectPayment(props) {
                         Total
                       </Typography>
                     </Grid>
-                    <Grid container item xs={6} justifyContent="flex-end">
+                    <Grid container item xs={6} justifyContent='flex-end'>
                       <Typography
                         sx={{
                           justifySelf: "center",
@@ -509,32 +515,36 @@ export default function SelectPayment(props) {
                   },
                 }}
               >
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Payment Methods</Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                  Payment Methods
+                </Typography>
                 <Divider light />
-                <FormControl component="fieldset">
-                  <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
+                <FormControl component='fieldset'>
+                  <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
                     <FormControlLabel
-                      value="Bank Transfer"
+                      value='Bank Transfer'
                       control={<Radio />}
                       label={
                         <>
                           <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
-                            <img src={BankIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+                            <img src={BankIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
                           </div>
                           <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>.08% Convenience Fee - max $5</Typography>
+                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>
+                              .08% Convenience Fee - max $5
+                            </Typography>
                           </div>
                         </>
                       }
                     />
                     <FormControlLabel
-                      value="Credit Card"
+                      value='Credit Card'
                       control={<Radio />}
                       label={
                         <>
                           <div style={{ display: "flex", alignItems: "center" }}>
-                            <img src={CreditCardIcon} alt="Chase" style={{ marginRight: "8px", height: "24px" }} />
+                            <img src={CreditCardIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
                             Credit Card
                           </div>
                           <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
@@ -546,52 +556,51 @@ export default function SelectPayment(props) {
                   </RadioGroup>
                 </FormControl>
 
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>
-                  Other Payment Methods
-                </Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>Other Payment Methods</Typography>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
-                  Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle, please include the transaction confirmation number.
+                  Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle,
+                  please include the transaction confirmation number.
                 </Typography>
 
                 <Divider light />
 
-                <FormControl component="fieldset">
-                  <RadioGroup aria-label="Number" name="number" value={selectedMethod} onChange={handleChange}>
+                <FormControl component='fieldset'>
+                  <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
                     <FormControlLabel
-                      value="PayPal"
+                      value='PayPal'
                       control={<Radio />}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={PayPal} alt="PayPal" style={{ marginRight: "8px", height: "24px" }} />
+                          <img src={PayPal} alt='PayPal' style={{ marginRight: "8px", height: "24px" }} />
                           Paypal {paymentMethodInfo.paypal ? paymentMethodInfo.paypal : "No Payment Info"}
                         </div>
                       }
                     />
                     <FormControlLabel
-                      value="Apple Pay"
+                      value='Apple Pay'
                       control={<Radio />}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={ApplePay} alt="Apple Pay" style={{ marginRight: "8px", height: "24px" }} />
+                          <img src={ApplePay} alt='Apple Pay' style={{ marginRight: "8px", height: "24px" }} />
                           Apple Pay {paymentMethodInfo.apple_pay ? `Make payment to: ${paymentMethodInfo.apple_pay}` : "No Payment Info"}
                         </div>
                       }
                     />
                     <FormControlLabel
-                      value="Zelle"
+                      value='Zelle'
                       control={<Radio />}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
+                          <img src={Zelle} alt='Zelle' style={{ marginRight: "8px", height: "24px" }} />
                           Zelle {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"}
                           <TextField
-                            id="confirmation-number"
-                            label="Confirmation Number"
-                            variant="outlined"
-                            size="small"
+                            id='confirmation-number'
+                            label='Confirmation Number'
+                            variant='outlined'
+                            size='small'
                             value={confirmationNumber}
                             sx={{ marginLeft: "10px" }} // Add some spacing between the image and the textfield
-                            disabled={selectedMethod!=='Zelle'}
+                            disabled={selectedMethod !== "Zelle"}
                             onChange={(e) => setConfirmationNumber(e.target.value)}
                           />
                         </div>
@@ -599,31 +608,31 @@ export default function SelectPayment(props) {
                     />
 
                     <FormControlLabel
-                      value="Venmo"
+                      value='Venmo'
                       control={<Radio />}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={Venmo} alt="Venmo" style={{ marginRight: "8px", height: "24px" }} />
+                          <img src={Venmo} alt='Venmo' style={{ marginRight: "8px", height: "24px" }} />
                           Venmo {paymentMethodInfo.venmo ? paymentMethodInfo.venmo : "No Payment Info"}
                         </div>
                       }
                     />
 
                     <FormControlLabel
-                      value="Stripe"
+                      value='Stripe'
                       control={<Radio />}
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={Stripe} alt="Stripe" style={{ marginRight: "8px", height: "24px" }} />
+                          <img src={Stripe} alt='Stripe' style={{ marginRight: "8px", height: "24px" }} />
                           Stripe
                         </div>
                       }
                     />
                   </RadioGroup>
                 </FormControl>
-                
+
                 <Button
-                  variant="contained"
+                  variant='contained'
                   onClick={handleSubmit}
                   sx={{
                     backgroundColor: "#3D5CAC",
@@ -632,7 +641,8 @@ export default function SelectPayment(props) {
                     borderRadius: "10px", // Rounded corners
                     marginTop: "20px", // Add some spacing to the top
                   }}
-                  disabled={isMakePaymentDisabled}>
+                  disabled={isMakePaymentDisabled}
+                >
                   Make Payment
                 </Button>
               </Paper>
@@ -645,15 +655,13 @@ export default function SelectPayment(props) {
                   show={stripePayment}
                   setShow={setStripePayment}
                 />
-              </Elements>                                  
+              </Elements>
             </Grid>
           </Grid>
         </Container>
       </ThemeProvider>
-      
-    {/* </div> */}
+
+      {/* </div> */}
     </>
   );
 }
-
-         

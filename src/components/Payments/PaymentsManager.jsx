@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, TextField, IconButton, Divider, Checkbox, Container } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -53,9 +53,9 @@ export default function PaymentsManager(props) {
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  console.log("ROHIT - managerCashflowWidgetData - ", managerCashflowWidgetData);
+  // console.log("ROHIT - managerCashflowWidgetData - ", managerCashflowWidgetData);
 
-  console.log("ROHIT - selectedRole - ", selectedRole);
+  // console.log("ROHIT - selectedRole - ", selectedRole);
 
   const [moneyPaid, setMoneyPaid] = useState([]);
   const [moneyReceived, setMoneyReceived] = useState([]);
@@ -248,18 +248,16 @@ export default function PaymentsManager(props) {
     <>
       <ThemeProvider theme={theme}>
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color="inherit" />
+          <CircularProgress color='inherit' />
         </Backdrop>
 
-        <Container maxWidth="lg" sx={{ height: '90vh', }}>
-          <Grid container spacing={6} sx={{height: '90%'}}>          
-            
-
+        <Container maxWidth='lg' sx={{ height: "90vh" }}>
+          <Grid container spacing={6} sx={{ height: "90%" }}>
             <Grid container item xs={12} columnSpacing={6}>
               <Paper
                 component={Stack}
-                direction="column"
-                justifyContent="center"
+                direction='column'
+                justifyContent='center'
                 style={{
                   justifyContent: "center",
                   width: "100%", // Take up full screen width
@@ -268,7 +266,7 @@ export default function PaymentsManager(props) {
                   boxShadow: "none",
                 }}
               >
-                <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative">
+                <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
                   <Typography
                     sx={{
                       justifySelf: "center",
@@ -325,10 +323,12 @@ export default function PaymentsManager(props) {
                     },
                   }}
                 >
-                  <Stack direction="row" justifyContent="left" m={2}>
-                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Balance</Typography>
+                  <Stack direction='row' justifyContent='left' m={2}>
+                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                      Balance
+                    </Typography>
                   </Stack>
-                  <Stack direction="row" justifyContent="center" m={2}>
+                  <Stack direction='row' justifyContent='center' m={2}>
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                       <Grid item xs={6}>
                         <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
@@ -350,12 +350,19 @@ export default function PaymentsManager(props) {
                             console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
                             console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
                             navigate("/selectPayment", {
-                              state: { paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo, managerCashflowWidgetData: managerCashflowWidgetData, accountBalanceWidgetData: accountBalanceWidgetData  },
+                              state: {
+                                paymentData: updatedPaymentData,
+                                total: total,
+                                selectedItems: selectedItems,
+                                paymentMethodInfo: paymentMethodInfo,
+                                managerCashflowWidgetData: managerCashflowWidgetData,
+                                accountBalanceWidgetData: accountBalanceWidgetData,
+                              },
                             });
                           }}
                         >
                           <Typography
-                            variant="outlined"
+                            variant='outlined'
                             style={{
                               textTransform: "none",
                               color: "#FFFFFF",
@@ -372,15 +379,15 @@ export default function PaymentsManager(props) {
                   </Stack>
 
                   <Stack
-                    direction="row"
-                    justifyContent="center"
+                    direction='row'
+                    justifyContent='center'
                     m={2}
                     sx={{
                       paddingTop: "25px",
                       paddingBottom: "15px",
                     }}
                   >
-                    <TextField variant="filled" fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label="Payment Notes" />
+                    <TextField variant='filled' fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label='Payment Notes' />
                   </Stack>
                 </Paper>
 
@@ -394,7 +401,7 @@ export default function PaymentsManager(props) {
                       // height: "25%",
                     }}
                   >
-                    <Stack direction="row" justifyContent="space-between">
+                    <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Balance Details - Money Payable
                       </Typography>
@@ -418,7 +425,7 @@ export default function PaymentsManager(props) {
                       // height: "25%",
                     }}
                   >
-                    <Stack direction="row" justifyContent="space-between">
+                    <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Balance Details - Money Payable
                       </Typography>
@@ -445,7 +452,7 @@ export default function PaymentsManager(props) {
                       // height: "25%",
                     }}
                   >
-                    <Stack direction="row" justifyContent="space-between">
+                    <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Money To Be Paid
                       </Typography>
@@ -471,11 +478,13 @@ export default function PaymentsManager(props) {
                     // height: "25%",
                   }}
                 >
-                  <Stack direction="row" justifyContent="space-between">
+                  <Stack direction='row' justifyContent='space-between'>
                     <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                       Payment History - Money Paid
                     </Typography>
-                    <Typography sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                    <Typography
+                      sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                    >
                       ${totalPaid.toFixed(2)}
                     </Typography>
                   </Stack>
@@ -495,7 +504,7 @@ export default function PaymentsManager(props) {
                       // height: "25%",
                     }}
                   >
-                    <Stack direction="row" justifyContent="space-between">
+                    <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Money Received
                       </Typography>
@@ -522,7 +531,7 @@ export default function PaymentsManager(props) {
                       // height: "25%",
                     }}
                   >
-                    <Stack direction="row" justifyContent="space-between">
+                    <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Money To Be Received
                       </Typography>
@@ -538,11 +547,10 @@ export default function PaymentsManager(props) {
                     </Stack>
                   </Paper>
                 )}
-            </Paper>                        
+              </Paper>
             </Grid>
           </Grid>
         </Container>
-        
       </ThemeProvider>
     </>
   );
@@ -795,9 +803,9 @@ function BalanceDetailsTable(props) {
         {/* {selectedRows.length > 0 && (
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
         )} */}
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-          <Grid item xs={1} alignItems="center"></Grid>
-          <Grid item xs={9} alignItems="center">
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems='center' sx={{ paddingTop: "15px" }}>
+          <Grid item xs={1} alignItems='center'></Grid>
+          <Grid item xs={9} alignItems='center'>
             <Typography
               sx={{
                 color: theme.typography.primary.blue,
@@ -811,7 +819,7 @@ function BalanceDetailsTable(props) {
             </Typography>
           </Grid>
 
-          <Grid item xs={2} alignItems="right">
+          <Grid item xs={2} alignItems='right'>
             <Typography
               sx={{
                 color: theme.typography.primary.blue,
@@ -1078,9 +1086,9 @@ function TenantBalanceTable(props) {
         {/* {selectedRows.length > 0 && (
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
         )} */}
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems="center" sx={{ paddingTop: "15px" }}>
-          <Grid item xs={1} alignItems="center"></Grid>
-          <Grid item xs={9} alignItems="center">
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems='center' sx={{ paddingTop: "15px" }}>
+          <Grid item xs={1} alignItems='center'></Grid>
+          <Grid item xs={9} alignItems='center'>
             <Typography
               sx={{
                 color: theme.typography.primary.blue,
@@ -1094,7 +1102,7 @@ function TenantBalanceTable(props) {
             </Typography>
           </Grid>
 
-          <Grid item xs={2} alignItems="right">
+          <Grid item xs={2} alignItems='right'>
             <Typography
               sx={{
                 color: theme.typography.primary.blue,
@@ -1636,4 +1644,3 @@ function MoneyPayableTable(props) {
     return <></>;
   }
 }
-

@@ -49,7 +49,7 @@ const useStyles = makeStyles({
 });
 
 function ProfileEditor() {
-  console.log("In Profile Editor function");
+  // console.log("In Profile Editor function");
 
   const classes = useStyles();
   const navigate = useNavigate();
@@ -68,12 +68,12 @@ function ProfileEditor() {
   const [settingsChanged, setSettingsChanged] = useState(false);
   const [RHS, setRHS] = useState("form");
 
-  console.log("In Profile Editor as (selected Role): ", selectedRole);
-  console.log("user data is", user);
+  // console.log("In Profile Editor as (selected Role): ", selectedRole);
+  // console.log("user data is", user);
   // setActiveForm(selectedRole);
 
   useEffect(() => {
-    console.log("ROHIT - ProfileEditor useEffect called. isSave - ", isSave);
+    // console.log("ROHIT - ProfileEditor useEffect called. isSave - ", isSave);
     if (user.dark_mode) {
       setDarkMode(user.dark_mode == "true");
     }
@@ -210,22 +210,22 @@ function ProfileEditor() {
   const getPasswordChangeForm = () => {
     if (profileData) {
       if (selectedRole === "OWNER") {
-        return <ChangePasswordSettings owner_data={profileData} setRHS={setRHS} />
+        return <ChangePasswordSettings owner_data={profileData} setRHS={setRHS} />;
       } else if (selectedRole === "MANAGER") {
-        return <ChangePasswordSettingsManager manager_data={profileData} setRHS={setRHS} />
+        return <ChangePasswordSettingsManager manager_data={profileData} setRHS={setRHS} />;
       } else if (selectedRole === "TENANT") {
-        return <ChangePasswordSettingsTenant tenant_data={profileData} setRHS={setRHS} />
+        return <ChangePasswordSettingsTenant tenant_data={profileData} setRHS={setRHS} />;
       } else {
-        return <ChangePasswordSettingsMaintenance maintenance_data={profileData} setRHS={setRHS} />
+        return <ChangePasswordSettingsMaintenance maintenance_data={profileData} setRHS={setRHS} />;
       }
     } else {
       console.log("Profile data is not loaded yet");
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid item xs={12}>
           <Box
             sx={{
@@ -250,28 +250,28 @@ function ProfileEditor() {
         </Grid>
         <Grid container spacing={6}>
           <Grid item xs={12} md={3}>
-            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick} setRHS={setRHS}/>
+            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick} setRHS={setRHS} />
           </Grid>
-          {RHS === "form" &&
+          {RHS === "form" && (
             <Grid item xs={12} md={9}>
               {renderForm()}
             </Grid>
-          }
-          {RHS === "passwordChange" &&
+          )}
+          {RHS === "passwordChange" && (
             <Grid item xs={12} md={9}>
               {getPasswordChangeForm()}
             </Grid>
-          }
-           {RHS === "privacyPolicy" &&
+          )}
+          {RHS === "privacyPolicy" && (
             <Grid item xs={12} md={9}>
-             <PrivacyPolicy setRHS={setRHS}/>
+              <PrivacyPolicy setRHS={setRHS} />
             </Grid>
-          }
-           {RHS === "termsAndConditions" &&
+          )}
+          {RHS === "termsAndConditions" && (
             <Grid item xs={12} md={9}>
-             <TermsAndConditions setRHS={setRHS} />
+              <TermsAndConditions setRHS={setRHS} />
             </Grid>
-          }
+          )}
         </Grid>
       </Container>
     </ThemeProvider>

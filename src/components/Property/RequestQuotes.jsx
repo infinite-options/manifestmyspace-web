@@ -36,15 +36,15 @@ const RequestQuotes = (props) => {
   const [announcementTitle, setAnnouncementTitle] = useState("");
   const [announcementMsg, setAnnouncementMsg] = useState("");
 
-  const {  propertyData, index } = location.state || props;
-  const [ managerData, setManagerData ] = useState(props.managerData);
+  const { propertyData, index } = location.state || props;
+  const [managerData, setManagerData] = useState(props.managerData);
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const onShowSearchManager = props.onShowSearchManager;
 
   useEffect(() => {
     const propertyData = props.propertyData;
     const index = props.index;
-    console.log("ROHIT - RequestQuotes - props.index - ", props.index);
+    // console.log("ROHIT - RequestQuotes - props.index - ", props.index);
     if (propertyData && index !== undefined) {
       setSelectedProperties([propertyData[index].property_uid]);
     }
@@ -146,12 +146,12 @@ const RequestQuotes = (props) => {
   };
 
   const navigateToPrev = () => {
-    if(isDesktop === true){
+    if (isDesktop === true) {
       onShowSearchManager();
-    }else{
+    } else {
       navigate(-1);
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -160,7 +160,7 @@ const RequestQuotes = (props) => {
           fontFamily: "Source Sans Pro",
           color: "text.darkblue",
           padding: "15px",
-          height: '100%',
+          height: "100%",
         }}
       >
         <Box
@@ -170,7 +170,7 @@ const RequestQuotes = (props) => {
             padding: "10px",
             paddingLeft: "15px",
             paddingRight: "15px",
-            height: '100%',
+            height: "100%",
           }}
         >
           <Box
@@ -195,7 +195,7 @@ const RequestQuotes = (props) => {
                 }}
                 onClick={() => navigateToPrev()}
               >
-                <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt="back" />
+                <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt='back' />
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -253,7 +253,7 @@ const RequestQuotes = (props) => {
                         borderColor: "black",
                         borderRadius: "7px",
                       }}
-                      size="small"
+                      size='small'
                       multiline={true}
                       onChange={handleTitleChange}
                     />
@@ -269,7 +269,7 @@ const RequestQuotes = (props) => {
                         borderColor: "black",
                         borderRadius: "7px",
                       }}
-                      size="small"
+                      size='small'
                       multiline={true}
                       onChange={handleMsgChange}
                     />
@@ -313,7 +313,7 @@ const RequestQuotes = (props) => {
               </Box>
             </Box>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 textTransform: "none",
                 background: "#3D5CAC",

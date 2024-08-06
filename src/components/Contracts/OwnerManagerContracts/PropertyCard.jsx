@@ -62,7 +62,7 @@ function TextInputField(props) {
         width: "100%",
       }}
     >
-      <input type="text" style={inputStyle} name={props.name} placeholder={props.placeholder} value={props.value} onChange={props.onChange} />
+      <input type='text' style={inputStyle} name={props.name} placeholder={props.placeholder} value={props.value} onChange={props.onChange} />
     </Box>
   );
 }
@@ -177,7 +177,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
         //     width: '100%',
         //     maxWidth: 'none',
         // }}
-        maxWidth="xl"
+        maxWidth='xl'
         sx={{
           "& .MuiDialog-paper": {
             width: "60%",
@@ -232,8 +232,8 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
               <Box>Fee Name</Box>
               {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
-                name="fee_name"
-                placeholder=""
+                name='fee_name'
+                placeholder=''
                 value={feeName}
                 onChange={(event) => {
                   setFeeName(event.target.value);
@@ -276,7 +276,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                 /> */}
               <Select
                 value={feeFrequency}
-                label="Frequency"
+                label='Frequency'
                 onChange={handleFrequencyChange}
                 sx={{
                   backgroundColor: "#D6D5DA",
@@ -307,21 +307,21 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
             color: "#3D5CAC",
           }}
         >
-          <RadioGroup row aria-label="fee-type-group-label" name="fee-type-radio-buttons-group" value={feeType} onChange={handleFeeTypeChange}>
+          <RadioGroup row aria-label='fee-type-group-label' name='fee-type-radio-buttons-group' value={feeType} onChange={handleFeeTypeChange}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
               }}
             >
-              <FormControlLabel value="PERCENT" control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label="Percent" />
+              <FormControlLabel value='PERCENT' control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label='Percent' />
               {/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
               {feeType === "PERCENT" && (
                 <Box>
                   <TextField
                     value={percentage}
-                    label=""
-                    variant="outlined"
+                    label=''
+                    variant='outlined'
                     // sx={{
                     //     width: '45px',
                     //     height: '3px',
@@ -347,7 +347,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                 flexDirection: "column",
               }}
             >
-              <FormControlLabel value="FLAT-RATE" control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label="Flat Rate" />
+              <FormControlLabel value='FLAT-RATE' control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label='Flat Rate' />
               <Box sx={{ width: "60px", height: "40px" }}></Box>
             </Box>
             {feeType === "FLAT-RATE" && (
@@ -360,11 +360,11 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
               >
                 Amount
                 <TextField
-                  name="flat-rate"
+                  name='flat-rate'
                   value={feeAmount}
-                  placeholder=""
-                  label=""
-                  variant="outlined"
+                  placeholder=''
+                  label=''
+                  variant='outlined'
                   // sx={{
                   //     width: '45px',
                   //     height: '3px',
@@ -395,7 +395,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                 Applied To
                 <Select
                   value={feeAppliedTo}
-                  label="Applied To"
+                  label='Applied To'
                   onChange={handleAppliedToChange}
                   sx={{
                     backgroundColor: "#D6D5DA",
@@ -425,7 +425,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
             Close
           </Button>
           <Button
-            type="submit"
+            type='submit'
             onClick={handleAddFee}
             sx={{
               "&:hover": {
@@ -547,7 +547,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
         //     width: '100%',
         //     maxWidth: 'none',
         // }}
-        maxWidth="xl"
+        maxWidth='xl'
         sx={{
           "& .MuiDialog-paper": {
             width: "60%",
@@ -602,8 +602,8 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
               <Box>Fee Name</Box>
               {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
-                name="fee_name"
-                placeholder=""
+                name='fee_name'
+                placeholder=''
                 value={feeName}
                 onChange={(event) => {
                   setFeeName(event.target.value);
@@ -646,7 +646,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                 /> */}
               <Select
                 value={feeFrequency}
-                label="Frequency"
+                label='Frequency'
                 onChange={handleFrequencyChange}
                 sx={{
                   backgroundColor: "#D6D5DA",
@@ -677,21 +677,21 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
             color: "#3D5CAC",
           }}
         >
-          <RadioGroup row aria-label="fee-type-group-label" name="fee-type-radio-buttons-group" value={feeType} onChange={handleFeeTypeChange}>
+          <RadioGroup row aria-label='fee-type-group-label' name='fee-type-radio-buttons-group' value={feeType} onChange={handleFeeTypeChange}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
               }}
             >
-              <FormControlLabel value="PERCENT" control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label="Percent" />
+              <FormControlLabel value='PERCENT' control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label='Percent' />
               {/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
               {feeType === "PERCENT" && (
                 <Box>
                   <TextField
                     value={percentage}
-                    label=""
-                    variant="outlined"
+                    label=''
+                    variant='outlined'
                     // sx={{
                     //     width: '45px',
                     //     height: '3px',
@@ -717,7 +717,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                 flexDirection: "column",
               }}
             >
-              <FormControlLabel value="FLAT-RATE" control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label="Flat Rate" />
+              <FormControlLabel value='FLAT-RATE' control={<Radio sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} label='Flat Rate' />
               <Box sx={{ width: "60px", height: "40px" }}></Box>
             </Box>
             {feeType === "FLAT-RATE" && (
@@ -730,11 +730,11 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
               >
                 Amount
                 <TextField
-                  name="flat-rate"
+                  name='flat-rate'
                   value={feeAmount}
-                  placeholder=""
-                  label=""
-                  variant="outlined"
+                  placeholder=''
+                  label=''
+                  variant='outlined'
                   // sx={{
                   //     width: '45px',
                   //     height: '3px',
@@ -787,7 +787,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     /> */}
                 <Select
                   value={feeAppliedTo}
-                  label="Applied To"
+                  label='Applied To'
                   onChange={handleAppliedToChange}
                   sx={{
                     backgroundColor: "#D6D5DA",
@@ -827,7 +827,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
               color: "#160449",
               textTransform: "none",
             }}
-            type="submit"
+            type='submit'
             onClick={handleEditFee}
           >
             Save Fee
@@ -843,10 +843,10 @@ const PropertyCard = (props) => {
   const { getProfileId } = useUser();
   console.log("PropertyCard - props - ", props);
 
-  const [ propertyData, setPropertyData ] = useState(props.data);
+  const [propertyData, setPropertyData] = useState(props.data);
   const timeDiff = props.timeDifference;
   const contractBusinessID = props.contractBusinessID;
-  const [ contractPropertyID, setContractPropertyID ] = useState(props.contractPropertyID);
+  const [contractPropertyID, setContractPropertyID] = useState(props.contractPropertyID);
   const today = dayjs(new Date()); // Convert new Date() to Day.js object
 
   // console.log("--debug-- PropertyCard props", props);
@@ -862,8 +862,8 @@ const PropertyCard = (props) => {
   const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false);
   const [indexForEditContactDialog, setIndexForEditContactDialog] = useState(false);
 
-  const [ allContracts, setAllContracts ] = useState(null);
-  const [ businessProfile, setBusinessProfile ] = useState(null);
+  const [allContracts, setAllContracts] = useState(null);
+  const [businessProfile, setBusinessProfile] = useState(null);
 
   //Contract Details
   const [contractUID, setContractUID] = useState();
@@ -944,18 +944,18 @@ const PropertyCard = (props) => {
   // }
 
   const setBusinessProfileDetails = () => {
-    if( businessProfile !== null && businessProfile !== undefined) {
+    if (businessProfile !== null && businessProfile !== undefined) {
       console.log("Business Services Fees", businessProfile["business_services_fees"]);
       setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
     }
-  }
+  };
 
   const setContractDetails = () => {
-    if(allContracts !== null && allContracts !== undefined ) {
+    if (allContracts !== null && allContracts !== undefined) {
       const contractData = allContracts?.find((contract) => contract.contract_uid === props.contractUID);
       console.log("setData - CONTRACT - ", contractData);
       // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
-      if( contractData ) {
+      if (contractData) {
         setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
         setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
         setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
@@ -964,20 +964,18 @@ const PropertyCard = (props) => {
         // setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
         const defaultContacts = [];
         const managerContact = {
-          contact_first_name : contractData["business_name"],
-          contact_last_name : "",
+          contact_first_name: contractData["business_name"],
+          contact_last_name: "",
           contact_email: contractData["business_email"],
           contact_phone_number: contractData["business_phone_number"],
-        }
-        defaultContacts.push(managerContact)
-        const assignedContacts = contractData["contract_assigned_contacts"]
-        if(assignedContacts && assignedContacts.length){
+        };
+        defaultContacts.push(managerContact);
+        const assignedContacts = contractData["contract_assigned_contacts"];
+        if (assignedContacts && assignedContacts.length) {
           setContractAssignedContacts(JSON.parse(contractData["contract_assigned_contacts"]));
         } else {
-          setContractAssignedContacts(defaultContacts)
+          setContractAssignedContacts(defaultContacts);
         }
-
-
 
         setContractFees(contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : []);
         const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
@@ -989,8 +987,7 @@ const PropertyCard = (props) => {
         setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
       }
     }
-
-  }
+  };
 
   useEffect(() => {
     setContractDetails();
@@ -998,37 +995,35 @@ const PropertyCard = (props) => {
 
   const fetchDataNew = async () => {
     console.log("props.contractUID:", props.contractUID);
-      setContractUID(props.contractUID);
-    if( allContracts === null){
+    setContractUID(props.contractUID);
+    if (allContracts === null) {
       const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
       const data = await result.json();
       console.log("--debug--", data);
 
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-      
+
       if (data !== "No records for this Uid") {
-        setAllContracts(data["result"]);      
-      }      
+        setAllContracts(data["result"]);
+      }
     }
-    if( businessProfile === null ){
+    if (businessProfile === null) {
       const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
       const data2 = await businessProfileResult.json();
       const businessProfileData = data2["result"];
-      const businessProf = businessProfileData?.find( item => item.business_uid === getProfileId())
+      const businessProf = businessProfileData?.find((item) => item.business_uid === getProfileId());
       // console.log("businessProf - ", businessProf);
       setBusinessProfile(businessProf);
-    }    
-    
-
-  }
+    }
+  };
 
   useEffect(() => {
-    setPropertyData(props.data);    
+    setPropertyData(props.data);
   }, [props.data]);
 
   useEffect(() => {
-    setContractPropertyID(props.contractPropertyID);    
+    setContractPropertyID(props.contractPropertyID);
   }, [props.contractPropertyID]);
 
   useEffect(() => {
@@ -1036,7 +1031,7 @@ const PropertyCard = (props) => {
     fetchDataNew();
     // if (allContracts !== null && businessProfile !== null) {
     //   setData();
-    // }    
+    // }
   }, [props.contractUID]);
 
   useEffect(() => {
@@ -1046,8 +1041,6 @@ const PropertyCard = (props) => {
   useEffect(() => {
     setBusinessProfileDetails();
   }, [businessProfile]);
-
-  
 
   useEffect(() => {
     if (isValidDate(contractStartDate.format("MM-DD-YYYY"))) {
@@ -1165,7 +1158,6 @@ const PropertyCard = (props) => {
     setIndexForEditContactDialog(contactIndex);
     setShowEditContactDialog(true);
     console.log("EDITING CONTACT, Index", contactIndex);
-    
   };
 
   const handleCloseEditContact = () => {
@@ -1191,7 +1183,7 @@ const PropertyCard = (props) => {
   // }
 
   const handleAddContact = (newContact) => {
-    console.log("ROHIT - newContact - ", newContact);
+    // console.log("ROHIT - newContact - ", newContact);
     setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
   };
 
@@ -1596,7 +1588,7 @@ const PropertyCard = (props) => {
               }}
             >
               Contract:
-              <a href={contractDocument.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "text.darkblue" }}>
+              <a href={contractDocument.link} target='_blank' rel='noopener noreferrer' style={{ textDecoration: "none", color: "text.darkblue" }}>
                 <Box sx={{ cursor: "pointer" }}>
                   <DescriptionIcon sx={{ fontSize: 16, color: "#3D5CAC" }} />
                 </Box>
@@ -1823,7 +1815,7 @@ const PropertyCard = (props) => {
       >
         Management Agreement Name *
       </Box>
-      <TextInputField name="management_agreement_name" placeholder="Enter contract name" value={contractName} onChange={handleContractNameChange} required>
+      <TextInputField name='management_agreement_name' placeholder='Enter contract name' value={contractName} onChange={handleContractNameChange} required>
         First Name
       </TextInputField>
 
@@ -1838,85 +1830,84 @@ const PropertyCard = (props) => {
           width: "100%",
         }}
       >
-          <Grid container item xs={12} columnSpacing={6}>
-            <Grid item xs={6} md={6}>
-              <Stack>
-                <Typography
-                  sx={{
-                    color: theme.typography.propertyPage.color,
-                    fontFamily: "Source Sans Pro",
-                    fontWeight: theme.typography.common.fontWeight,
-                    fontSize: theme.typography.smallFont,
+        <Grid container item xs={12} columnSpacing={6}>
+          <Grid item xs={6} md={6}>
+            <Stack>
+              <Typography
+                sx={{
+                  color: theme.typography.propertyPage.color,
+                  fontFamily: "Source Sans Pro",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {"Start Date"}
+              </Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={contractStartDate}
+                  // minDate={dayjs()}
+                  onChange={handleStartDateChange}
+                  slots={{
+                    openPickerIcon: CalendarIcon,
                   }}
-                >
-                  {"Start Date"}
-                </Typography>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    value={contractStartDate}
-                    // minDate={dayjs()}
-                    onChange={handleStartDateChange}
-                    slots={{
-                      openPickerIcon: CalendarIcon,
-                    }}
-                    slotProps={{
-                      textField: {
-                        size: "small",
-                        style: {
-                          width: "100%",
-                          fontSize: 12,
-                          backgroundColor: "#F2F2F2 !important",
-                          borderRadius: "10px !important",
-                        },
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      style: {
+                        width: "100%",
+                        fontSize: 12,
+                        backgroundColor: "#F2F2F2 !important",
+                        borderRadius: "10px !important",
                       },
-                    }}
-                  />
-                </LocalizationProvider>
-              </Stack>
-            </Grid>
-          
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Stack>
+          </Grid>
 
-            <Grid item xs={6} md={6}>
-              <Stack>
-                <Typography
-                  sx={{
-                    color: theme.typography.propertyPage.color,
-                    fontFamily: "Source Sans Pro",
-                    fontWeight: theme.typography.common.fontWeight,
-                    fontSize: theme.typography.smallFont,
+          <Grid item xs={6} md={6}>
+            <Stack>
+              <Typography
+                sx={{
+                  color: theme.typography.propertyPage.color,
+                  fontFamily: "Source Sans Pro",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {"End Date 89"}
+              </Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={contractEndDate}
+                  // minDate={dayjs()}
+                  onChange={handleEndDateChange}
+                  slots={{
+                    openPickerIcon: CalendarIcon,
                   }}
-                >
-                  {"End Date 89"}
-                </Typography>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    value={contractEndDate}
-                    // minDate={dayjs()}
-                    onChange={handleEndDateChange}
-                    slots={{
-                      openPickerIcon: CalendarIcon,
-                    }}
-                    slotProps={{
-                      textField: {
-                        size: "small",
-                        style: {
-                          width: "100%",
-                          fontSize: 24,
-                          backgroundColor: "#F2F2F2 !important",
-                          // borderRadius: "10px !important",
-                          borderRadius: "10px",
-                          border: "1px solid black",
-                          // border: "10px solid green", 
-                          'input': {
-                            border: "1px solid black", // Ensure input border is black
-                          },                         
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      style: {
+                        width: "100%",
+                        fontSize: 24,
+                        backgroundColor: "#F2F2F2 !important",
+                        // borderRadius: "10px !important",
+                        borderRadius: "10px",
+                        border: "1px solid black",
+                        // border: "10px solid green",
+                        input: {
+                          border: "1px solid black", // Ensure input border is black
                         },
                       },
-                    }}
-                  />
-                </LocalizationProvider>
-              </Stack>
-            </Grid>
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Stack>
+          </Grid>
         </Grid>
       </Box>
       {showInvalidStartDatePrompt && (
@@ -2001,7 +1992,7 @@ const PropertyCard = (props) => {
                 </Box>
 
                 <Button
-                  variant="text"
+                  variant='text'
                   onClick={(event) => {
                     handleDeleteFee(index, event);
                   }}
@@ -2070,7 +2061,7 @@ const PropertyCard = (props) => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                  <a href={doc.link} target='_blank' rel='noopener noreferrer'>
                     <Box
                       sx={{
                         height: "40px",
@@ -2085,7 +2076,7 @@ const PropertyCard = (props) => {
                   </a>
                   {doc.type}
                   <Button
-                    variant="text"
+                    variant='text'
                     onClick={(event) => {
                       handleDeletePrevUploadedFile(i);
                     }}
@@ -2152,7 +2143,7 @@ const PropertyCard = (props) => {
                 </Box>
                 <Select
                   value={contractFileTypes[i]}
-                  label="Document Type"
+                  label='Document Type'
                   onChange={(e) => {
                     const updatedTypes = [...contractFileTypes];
                     updatedTypes[i] = e.target.value;
@@ -2170,7 +2161,7 @@ const PropertyCard = (props) => {
                   <MenuItem value={"other"}>other</MenuItem>
                 </Select>
                 <Button
-                  variant="text"
+                  variant='text'
                   onClick={() => {
                     // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
                     handleRemoveFile(i);
@@ -2223,8 +2214,8 @@ const PropertyCard = (props) => {
               width: "100%",
             }}
           >
-            Contract Assigned Contacts:            
-            <Grid container sx={{color: "black",}}>
+            Contract Assigned Contacts:
+            <Grid container sx={{ color: "black" }}>
               <Grid item xs={3}>
                 Name
               </Grid>
@@ -2234,15 +2225,9 @@ const PropertyCard = (props) => {
               <Grid item xs={3}>
                 Phone Number
               </Grid>
-
             </Grid>
             {[...contractAssignedContacts].map((contact, i) => (
-              <ContactListItem
-                contact={contact}
-                i={i}
-                handleOpenEditContact={handleOpenEditContact}
-                handleDeleteContact={handleDeleteContact}
-              />
+              <ContactListItem contact={contact} i={i} handleOpenEditContact={handleOpenEditContact} handleDeleteContact={handleDeleteContact} />
             ))}
           </Box>
         </Box>
@@ -2298,13 +2283,13 @@ const PropertyCard = (props) => {
               color: "#3D5CAC",
             }}
           >
-            <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+            <label htmlFor='file-upload' style={{ cursor: "pointer" }}>
               <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} /> Add Document
             </label>
             <input
-              id="file-upload"
-              type="file"
-              accept=".doc,.docx,.txt,.pdf"
+              id='file-upload'
+              type='file'
+              accept='.doc,.docx,.txt,.pdf'
               hidden
               // onChange={(e) => setContractFiles(e.target.files)}
               onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
@@ -2326,7 +2311,7 @@ const PropertyCard = (props) => {
         }}
       >
         <Button
-          variant="contained"
+          variant='contained'
           sx={{
             backgroundColor: "#CB8E8E",
             textTransform: "none",
@@ -2351,7 +2336,7 @@ const PropertyCard = (props) => {
           </Typography>
         </Button>
         <Button
-          variant="contained"
+          variant='contained'
           sx={{
             backgroundColor: "#9EAED6",
             textTransform: "none",
@@ -2407,10 +2392,7 @@ const PropertyCard = (props) => {
   );
 };
 
-const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContact, }) => {
-  
-
-
+const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContact }) => {
   // return (
   //   <Box
   //     key={i}
@@ -2459,7 +2441,7 @@ const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContac
   // );
   return (
     <Grid container key={i} onClick={() => handleOpenEditContact(i)}>
-      <Grid item xs={3} >
+      <Grid item xs={3}>
         {contact.contact_first_name} {contact.contact_last_name}
       </Grid>
       <Grid item xs={4}>
@@ -2469,29 +2451,28 @@ const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContac
         {contact.contact_phone_number}
       </Grid>
       <Grid item xs={1}>
-      <Button
-      variant="text"
-      onClick={(event) => {
-        handleDeleteContact(i, event);
-      }}
-      sx={{
-        width: "10%",
-        cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: "bold",
-        color: "#3D5CAC",
-        "&:hover": {
-          backgroundColor: "transparent", // Set to the same color as the default state
-        },
-      }}
-    >
-      <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-    </Button>
-
+        <Button
+          variant='text'
+          onClick={(event) => {
+            handleDeleteContact(i, event);
+          }}
+          sx={{
+            width: "10%",
+            cursor: "pointer",
+            fontSize: "14px",
+            fontWeight: "bold",
+            color: "#3D5CAC",
+            "&:hover": {
+              backgroundColor: "transparent", // Set to the same color as the default state
+            },
+          }}
+        >
+          <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
+        </Button>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
 function AddContactDialog({ open, handleClose, onAddContact }) {
   const [contactFirstName, setContactFirstName] = useState("");
@@ -2524,7 +2505,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
         open={open}
         onClose={handleClose}
         fullWidth
-        maxWidth="sm"
+        maxWidth='sm'
         sx={{
           fontSize: "13px",
           fontWeight: "bold",
@@ -2558,8 +2539,8 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
               <Box sx={{ color: "#3D5CAC" }}>First Name</Box>
               {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
-                name="contact_first_name"
-                placeholder=""
+                name='contact_first_name'
+                placeholder=''
                 value={contactFirstName}
                 onChange={(event) => {
                   setContactFirstName(event.target.value);
@@ -2575,8 +2556,8 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Last Name</Box>
               <TextField
-                name="contact_last_name"
-                placeholder=""
+                name='contact_last_name'
+                placeholder=''
                 value={contactLastName}
                 onChange={(event) => {
                   setContactLastName(event.target.value);
@@ -2595,8 +2576,8 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Email</Box>
               <TextField
-                name="contact_email"
-                placeholder=""
+                name='contact_email'
+                placeholder=''
                 value={contactEmail}
                 onChange={(event) => {
                   setContactEmail(event.target.value);
@@ -2612,8 +2593,8 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Phone Number</Box>
               <TextField
-                name="contact_phone_number"
-                placeholder=""
+                name='contact_phone_number'
+                placeholder=''
                 value={contactPhone}
                 onChange={(event) => {
                   setContactPhone(event.target.value);
@@ -2643,7 +2624,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
             Close
           </Button>
           <Button
-            type="submit"
+            type='submit'
             onClick={handleSaveContact}
             sx={{
               "&:hover": {
@@ -2663,7 +2644,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 }
 
 function EditContactDialog({ open, handleClose, onEditContact, contactIndex, contacts }) {
-  console.log("ROHIT - contactIndex - ", contactIndex);
+  // console.log("ROHIT - contactIndex - ", contactIndex);
   const [contactFirstName, setContactFirstName] = useState(contacts[contactIndex].contact_first_name);
   const [contactLastName, setContactLastName] = useState(contacts[contactIndex].contact_last_name);
   const [contactEmail, setContactEmail] = useState(contacts[contactIndex].contact_email);
@@ -2694,7 +2675,7 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
         open={open}
         onClose={handleClose}
         fullWidth
-        maxWidth="sm"
+        maxWidth='sm'
         sx={{
           fontSize: "13px",
           fontWeight: "bold",
@@ -2728,8 +2709,8 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
               <Box sx={{ color: "#3D5CAC" }}>First Name</Box>
               {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
-                name="contact_first_name"
-                placeholder=""
+                name='contact_first_name'
+                placeholder=''
                 value={contactFirstName}
                 onChange={(event) => {
                   setContactFirstName(event.target.value);
@@ -2745,8 +2726,8 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Last Name</Box>
               <TextField
-                name="contact_last_name"
-                placeholder=""
+                name='contact_last_name'
+                placeholder=''
                 value={contactLastName}
                 onChange={(event) => {
                   setContactLastName(event.target.value);
@@ -2765,8 +2746,8 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Email</Box>
               <TextField
-                name="contact_email"
-                placeholder=""
+                name='contact_email'
+                placeholder=''
                 value={contactEmail}
                 onChange={(event) => {
                   setContactEmail(event.target.value);
@@ -2782,8 +2763,8 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
             <Grid item xs={12} sm={6}>
               <Box sx={{ color: "#3D5CAC" }}>Phone Number</Box>
               <TextField
-                name="contact_phone_number"
-                placeholder=""
+                name='contact_phone_number'
+                placeholder=''
                 value={contactPhone}
                 onChange={(event) => {
                   setContactPhone(event.target.value);
@@ -2813,7 +2794,7 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
             Close
           </Button>
           <Button
-            type="submit"
+            type='submit'
             onClick={handleSaveContact}
             sx={{
               "&:hover": {

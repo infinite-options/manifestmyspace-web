@@ -31,10 +31,10 @@ import {
   AccordionSummary,
   AccordionDetails,
   Snackbar,
-  Alert, 
+  Alert,
   AlertTitle,
 } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { makeStyles } from "@material-ui/core/styles";
 import PayPal from "../../images/PayPal.png";
 import ZelleIcon from "../../images/Zelle.png";
@@ -81,7 +81,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getProfileId } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
-  const[ employeePhoto, setEmployeePhoto]=useState('')
+  const [employeePhoto, setEmployeePhoto] = useState("");
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false, uid: "" },
     apple_pay: { value: "", checked: false, uid: "" },
@@ -97,7 +97,6 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const [deletedFiles, setDeletedFiles] = useState([]);
 
   const [states, setStates] = useState([]);
-
 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
@@ -122,65 +121,60 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const [isUpdate, setIsUpdate] = useState(false);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const getListDetails = async () => {
     try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-        if (!response.ok) {
-            console.log("Error fetching lists data");
-        }
-        const responseJson = await response.json();        
-        const states = responseJson.result.filter(res => res.list_category === "states");        
-        setStates(states);
+      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+      if (!response.ok) {
+        console.log("Error fetching lists data");
+      }
+      const responseJson = await response.json();
+      const states = responseJson.result.filter((res) => res.list_category === "states");
+      setStates(states);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  }
-
-  useEffect(() => {    
-    console.log("ROHIT - paymentMethods - ", paymentMethods);    
-  }, [paymentMethods]);
-
+  };
 
   useEffect(() => {
-    console.log("ROHIT - fees - ", fees);
+    // console.log("ROHIT - paymentMethods - ", paymentMethods);
+  }, [paymentMethods]);
+
+  useEffect(() => {
+    // console.log("ROHIT - fees - ", fees);
   }, [fees]);
 
   useEffect(() => {
-    console.log("ROHIT - modifiedData - ", modifiedData);    
+    // console.log("ROHIT - modifiedData - ", modifiedData);
   }, [modifiedData]);
 
   useEffect(() => {
-    console.log("ROHIT - documents - ", documents);    
+    // console.log("ROHIT - documents - ", documents);
   }, [documents]);
 
-
   const updateModifiedData = (updatedItem) => {
-    setModifiedData((prev) => {      
-      const existingKeyIndex = prev.findIndex(item => item.key === updatedItem.key);
-        
+    setModifiedData((prev) => {
+      const existingKeyIndex = prev.findIndex((item) => item.key === updatedItem.key);
+
       if (existingKeyIndex !== -1) {
-        return prev.map((item, index) => 
-          index === existingKeyIndex ? { ...item, value: updatedItem.value } : item
-        );
-      }  
+        return prev.map((item, index) => (index === existingKeyIndex ? { ...item, value: updatedItem.value } : item));
+      }
       return [...prev, { key: updatedItem.key, value: updatedItem.value }];
     });
-  }
-  
+  };
+
   const handleBusinessNameChange = (event) => {
     setBusinessName(event.target.value);
     updateModifiedData({ key: "business_name", value: event.target.value });
-  };  
+  };
 
   const handleBusinessAddressSelect = (address) => {
-    setAddress(address.street ? address.street : "");    
-    updateModifiedData({ key: "business_address", value: address.street ? address.street : "" });    
+    setAddress(address.street ? address.street : "");
+    updateModifiedData({ key: "business_address", value: address.street ? address.street : "" });
     setCity(address.city ? address.city : "");
-    updateModifiedData({ key: "business_city", value: address.city ? address.city : "" });  
+    updateModifiedData({ key: "business_city", value: address.city ? address.city : "" });
     setState(address.state ? address.state : "");
     updateModifiedData({ key: "business_state", value: address.state ? address.state : "" });
     setZip(address.zip ? address.zip : "");
@@ -201,15 +195,14 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     setPhoneNumber(formatPhoneNumber(event.target.value));
     updateModifiedData({ key: "business_phone_number", value: formatPhoneNumber(event.target.value) });
   };
-    
-  const handleEINChange = (event) => { 
+
+  const handleEINChange = (event) => {
     let value = event.target.value;
     if (value.length > 11) return;
-    setEin(value);    
-    
-    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });  
-  };
+    setEin(value);
 
+    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+  };
 
   const handleEmpFirstNameChange = (event) => {
     setEmpFirstName(event.target.value);
@@ -223,10 +216,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
   const handlePersonalAddressSelect = (address) => {
     setEmpAddress(address.street ? address.street : "");
-    
-    updateModifiedData({ key: "employee_address", value: address.street ? address.street : "" });    
+
+    updateModifiedData({ key: "employee_address", value: address.street ? address.street : "" });
     setEmpCity(address.city ? address.city : "");
-    updateModifiedData({ key: "employee_city", value: address.city ? address.city : "" });  
+    updateModifiedData({ key: "employee_city", value: address.city ? address.city : "" });
     setEmpState(address.state ? address.state : "");
     updateModifiedData({ key: "employee_state", value: address.state ? address.state : "" });
     setEmpZip(address.zip ? address.zip : "");
@@ -247,120 +240,117 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     setEmpPhoneNumber(formatPhoneNumber(event.target.value));
     updateModifiedData({ key: "employee_phone_number", value: formatPhoneNumber(event.target.value) });
   };
-    
-  const handleEmpSSNChange = (event) => { 
+
+  const handleEmpSSNChange = (event) => {
     let value = event.target.value;
     if (value.length > 11) return;
-    setEmpSsn(value);    
-    updateModifiedData({ key: "employee_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });  
+    setEmpSsn(value);
+    updateModifiedData({ key: "employee_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
   };
 
   const setProfileData = async () => {
     setShowSpinner(true);
     try {
-    //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
-    // const profileData = profileResponse.data.profile.result[0];
+      //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+      // const profileData = profileResponse.data.profile.result[0];
 
-    setBusinessName(profileData.business_name || "");
-    setEmail(profileData.business_email || "");
-    setPhoneNumber(formatPhoneNumber(profileData.business_phone_number || ""));
-    setPhoto(profileData.business_photo_url ? { image: profileData.business_photo_url } : null);
-    setEin(profileData.business_ein_number ? AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
-    setMask(profileData.business_ein_number ? maskNumber(AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
-    setAddress(profileData.business_address || "");
-    setUnit(profileData.business_unit || "");
-    setCity(profileData.business_city || "");
-    setState(profileData.business_state || "");
-    setZip(profileData.business_zip || "");
-    if(profileData.business_services_fees){
-      const parsedServices = JSON.parse(profileData.business_services_fees);
-      const servicesWithId = parsedServices.map((service, index) => ({
-        ...service,
-        id: index, // You can use index as an id, or generate a unique id if necessary
-      }));
-      setServices(servicesWithId);
-    }
-    if(profileData.business_locations){
+      setBusinessName(profileData.business_name || "");
+      setEmail(profileData.business_email || "");
+      setPhoneNumber(formatPhoneNumber(profileData.business_phone_number || ""));
+      setPhoto(profileData.business_photo_url ? { image: profileData.business_photo_url } : null);
+      setEin(profileData.business_ein_number ? AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+      setMask(profileData.business_ein_number ? maskNumber(AES.decrypt(profileData.business_ein_number, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+      setAddress(profileData.business_address || "");
+      setUnit(profileData.business_unit || "");
+      setCity(profileData.business_city || "");
+      setState(profileData.business_state || "");
+      setZip(profileData.business_zip || "");
+      if (profileData.business_services_fees) {
+        const parsedServices = JSON.parse(profileData.business_services_fees);
+        const servicesWithId = parsedServices.map((service, index) => ({
+          ...service,
+          id: index, // You can use index as an id, or generate a unique id if necessary
+        }));
+        setServices(servicesWithId);
+      }
+      if (profileData.business_locations) {
         setLocations(JSON.parse(profileData.business_locations));
-    }
-
-    const parsedDocs = JSON.parse(profileData.business_documents);
-      console.log("ROHIT - parsedDocs - ", parsedDocs);
-      const docs = parsedDocs ? parsedDocs.map((doc, index) => ({
-        ...doc,
-        id: index
-    })) : [];
-      // console.log('initial docs', docs);
-      setDocuments(docs || []);      
-   
-
-    const paymentMethodsData = JSON.parse(profileData.paymentMethods);
-            const updatedPaymentMethods = {
-                paypal: { value: "", checked: false, uid: "", status: "Inactive" },
-                apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
-                stripe: { value: "", checked: false, uid: "", status: "Inactive" },
-                zelle: { value: "", checked: false, uid: "", status: "Inactive" },
-                venmo: { value: "", checked: false, uid: "", status: "Inactive" },
-                credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
-                bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
-            };
-            paymentMethodsData.forEach((method) => {
-                const status = method.paymentMethod_status || "Inactive";
-                if (method.paymentMethod_type === "bank_account") {
-                    updatedPaymentMethods.bank_account = {
-                        account_number: method.paymentMethod_account_number || "",
-                        routing_number: method.paymentMethod_routing_number || "",
-                        checked: status === "Active",
-                        uid: method.paymentMethod_uid,
-                        status,
-                    };
-                } else {
-                    updatedPaymentMethods[method.paymentMethod_type] = {
-                        value: method.paymentMethod_name,
-                        checked: status === "Active",
-                        uid: method.paymentMethod_uid,
-                        status,
-                    };
-                }
-            });
-            setPaymentMethods(updatedPaymentMethods);
-
-        setShowSpinner(false);
-    } catch (error) {
-        console.error("Error fetching profile data:", error);
-        setShowSpinner(false);
-    }
-    try {
-        // const employeeResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`);
-        // const employeeData = employeeResponse.data.employee.result[0];
-  
-        setEmpFirstName(profileData.employee_first_name || "");
-        setEmpLastName(profileData.employee_last_name || "");
-        setEmpPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
-        setEmpEmail(profileData.employee_email || "");
-        setEmployeePhoto(profileData.employee_photo_url ? { image: profileData.employee_photo_url } : null);
-        setEmpSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
-        setEmpMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
-        setEmpAddress(profileData.employee_address || "");
-        setEmpUnit(profileData.employee_unit || "");
-        setEmpCity(profileData.employee_city || "");
-        setEmpState(profileData.employee_state || "");
-        setEmpZip(profileData.employee_zip || "");
-  
-        setShowSpinner(false);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-        setShowSpinner(false);
       }
 
-    
-  };
+      const parsedDocs = JSON.parse(profileData.business_documents);
+      // console.log("ROHIT - parsedDocs - ", parsedDocs);
+      const docs = parsedDocs
+        ? parsedDocs.map((doc, index) => ({
+            ...doc,
+            id: index,
+          }))
+        : [];
+      // console.log('initial docs', docs);
+      setDocuments(docs || []);
 
+      const paymentMethodsData = JSON.parse(profileData.paymentMethods);
+      const updatedPaymentMethods = {
+        paypal: { value: "", checked: false, uid: "", status: "Inactive" },
+        apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
+        stripe: { value: "", checked: false, uid: "", status: "Inactive" },
+        zelle: { value: "", checked: false, uid: "", status: "Inactive" },
+        venmo: { value: "", checked: false, uid: "", status: "Inactive" },
+        credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
+        bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
+      };
+      paymentMethodsData.forEach((method) => {
+        const status = method.paymentMethod_status || "Inactive";
+        if (method.paymentMethod_type === "bank_account") {
+          updatedPaymentMethods.bank_account = {
+            account_number: method.paymentMethod_account_number || "",
+            routing_number: method.paymentMethod_routing_number || "",
+            checked: status === "Active",
+            uid: method.paymentMethod_uid,
+            status,
+          };
+        } else {
+          updatedPaymentMethods[method.paymentMethod_type] = {
+            value: method.paymentMethod_name,
+            checked: status === "Active",
+            uid: method.paymentMethod_uid,
+            status,
+          };
+        }
+      });
+      setPaymentMethods(updatedPaymentMethods);
+
+      setShowSpinner(false);
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+      setShowSpinner(false);
+    }
+    try {
+      // const employeeResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`);
+      // const employeeData = employeeResponse.data.employee.result[0];
+
+      setEmpFirstName(profileData.employee_first_name || "");
+      setEmpLastName(profileData.employee_last_name || "");
+      setEmpPhoneNumber(formatPhoneNumber(profileData.employee_phone_number || ""));
+      setEmpEmail(profileData.employee_email || "");
+      setEmployeePhoto(profileData.employee_photo_url ? { image: profileData.employee_photo_url } : null);
+      setEmpSsn(profileData.employee_ssn ? AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8) : "");
+      setEmpMask(profileData.employee_ssn ? maskNumber(AES.decrypt(profileData.employee_ssn, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8)) : "");
+      setEmpAddress(profileData.employee_address || "");
+      setEmpUnit(profileData.employee_unit || "");
+      setEmpCity(profileData.employee_city || "");
+      setEmpState(profileData.employee_state || "");
+      setEmpZip(profileData.employee_zip || "");
+
+      setShowSpinner(false);
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+      setShowSpinner(false);
+    }
+  };
 
   useEffect(() => {
     console.log("calling useeffect");
     setIsSave(false);
-
 
     setProfileData();
 
@@ -396,7 +386,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       return;
     }
     readImage(file);
-  };  
+  };
 
   const readEmpImage = (file) => {
     const reader = new FileReader();
@@ -420,7 +410,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       return;
     }
     readEmpImage(file);
-  };  
+  };
 
   const addFeeRow = () => {
     setFees((prev) => [...prev, { id: prev.length + 1, fee_name: "", frequency: "", charge: "", of: "" }]);
@@ -429,56 +419,51 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const removeFeeRow = (id) => {
     setFees(fees.filter((fee) => fee.id !== id));
   };
-  
+
   const handleServiceChange = (event, id) => {
     const { name, value } = event.target;
-  
-    const updatedServices = services.map(service => {
-      if (service.id === id) {        
+
+    const updatedServices = services.map((service) => {
+      if (service.id === id) {
         const updatedService = { ...service, [name]: value };
 
         if (name === "charge" || name === "hours") {
-            if(updatedService.hours &&  updatedService.hours > 0 && value > 0){
-                updatedService.total_cost = updatedService.hours * updatedService.charge;                
-            }          
+          if (updatedService.hours && updatedService.hours > 0 && value > 0) {
+            updatedService.total_cost = updatedService.hours * updatedService.charge;
+          }
         }
-  
+
         return updatedService;
       }
       return service;
     });
-  
+
     // Update the state with the modified fees array
     setServices(updatedServices);
 
-    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedServices)});
+    updateModifiedData({ key: "business_services_fees", value: JSON.stringify(updatedServices) });
   };
 
   const addServiceRow = () => {
     // setServices((prev) => [...prev, { id: prev.length + 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
 
-    const updatedServices = [...services, { id: services.length + 1, service_name: "", hours: "", charge: "", total_cost: ""  }]    
+    const updatedServices = [...services, { id: services.length + 1, service_name: "", hours: "", charge: "", total_cost: "" }];
 
     setServices(updatedServices);
 
-    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedServices)});
+    updateModifiedData({ key: "business_services_fees", value: JSON.stringify(updatedServices) });
   };
 
   const removeServiceRow = (id) => {
     const updatedServices = services.filter((service) => service.id !== id);
     setServices(updatedServices);
 
-    updateModifiedData( {key: "business_services_fees", value: JSON.stringify(updatedServices)});
+    updateModifiedData({ key: "business_services_fees", value: JSON.stringify(updatedServices) });
   };
-  
 
   const handleFrequencyChange = (event, id) => {
     const { value } = event.target;
-    setFees((prevFees) =>
-      prevFees.map((fee) =>
-        fee.id === id ? { ...fee, frequency: value } : fee
-      )
-    );
+    setFees((prevFees) => prevFees.map((fee) => (fee.id === id ? { ...fee, frequency: value } : fee)));
   };
 
   const renderMaintenanceServices = () => {
@@ -496,16 +481,16 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 {"Service"}
               </Typography>
               <TextField
-                name="service_name"
+                name='service_name'
                 value={row.service_name}
-                variant="filled"
+                variant='filled'
                 fullWidth
-                placeholder="Service Name"
-                className={classes.root}                
+                placeholder='Service Name'
+                className={classes.root}
                 onChange={(e) => handleServiceChange(e, row.id)}
               />
             </Stack>
-          </Grid>          
+          </Grid>
           <Grid item xs={2}>
             <Stack spacing={-2} m={2}>
               <Typography
@@ -516,17 +501,9 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               >
                 {"# of Hours"}
               </Typography>
-              <TextField
-                name="hours"
-                value={row.hours}
-                variant="filled"
-                fullWidth
-                placeholder="Hours"
-                className={classes.root}                
-                onChange={(e) => handleServiceChange(e, row.id)}
-              />
+              <TextField name='hours' value={row.hours} variant='filled' fullWidth placeholder='Hours' className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
             </Stack>
-          </Grid>          
+          </Grid>
           <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
@@ -538,16 +515,16 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 {"Charge / Hr "}
               </Typography>
               <TextField
-                name="charge"
+                name='charge'
                 value={row.charge}
-                variant="filled"
+                variant='filled'
                 fullWidth
-                placeholder="Service Charge"
-                className={classes.root}                
+                placeholder='Service Charge'
+                className={classes.root}
                 onChange={(e) => handleServiceChange(e, row.id)}
               />
             </Stack>
-          </Grid>          
+          </Grid>
           <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
@@ -560,37 +537,35 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               </Typography>
               <TextField
                 disabled
-                name="total_cost"
+                name='total_cost'
                 value={row.total_cost}
-                variant="filled"
+                variant='filled'
                 fullWidth
-                placeholder="Total Cost"
-                className={classes.root}                
+                placeholder='Total Cost'
+                className={classes.root}
                 // onChange={(e) => handleServiceChange(e, row.id)}
               />
             </Stack>
           </Grid>
           <Grid container justifyContent='center' alignContent='center' item xs={1}>
             <Button
-              aria-label="delete"
-              sx={{  
-                color: '#000000',
-                fontWeight: 'bold',
-                '&:hover': {
+              aria-label='delete'
+              sx={{
+                color: "#000000",
+                fontWeight: "bold",
+                "&:hover": {
                   color: "#FFFFFF",
-                }
+                },
               }}
               onClick={() => removeServiceRow(row.id)}
             >
               <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
             </Button>
-          </Grid>          
-        </Grid>        
+          </Grid>
+        </Grid>
       </>
     ));
   };
-
-  
 
   const paymentMethodsArray = [
     { name: "PayPal", icon: PayPal, state: paymentMethods.paypal },
@@ -615,11 +590,11 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
             </Grid>
           )
         } */}
-        
-            <Grid container alignContent='center' item xs={1}>
-              <img src={method.icon} alt={method.name} />
-            </Grid>        
-        
+
+        <Grid container alignContent='center' item xs={1}>
+          <img src={method.icon} alt={method.name} />
+        </Grid>
+
         {method.name === "Bank Account" ? (
           <>
             <Grid item xs={5}>
@@ -627,7 +602,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 name={`${method.name.toLowerCase().replace(/\s/g, "_")}_account`}
                 value={method.state?.account_number}
                 onChange={handleChangeValue}
-                variant="filled"
+                variant='filled'
                 fullWidth
                 placeholder={`Enter Your Bank Account Number`}
                 disabled={!method.state?.checked}
@@ -639,7 +614,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 name={`${method.name.toLowerCase().replace(/\s/g, "_")}_routing`}
                 value={method.state?.routing_number}
                 onChange={handleChangeValue}
-                variant="filled"
+                variant='filled'
                 fullWidth
                 placeholder={`Enter Your Bank Routing Number`}
                 disabled={!method.state?.checked}
@@ -653,7 +628,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               name={method.name.toLowerCase().replace(/\s/g, "_")}
               value={method.state?.value}
               onChange={handleChangeValue}
-              variant="filled"
+              variant='filled'
               fullWidth
               placeholder={`Enter ${method.name}`}
               disabled={!method.state?.checked}
@@ -669,7 +644,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     const { name, checked } = e.target;
     const map = { ...paymentMethods };
     map[name].checked = checked;
-    console.log("ROHIT - handleChangeChecked - map[name]", map[name])
+    // console.log("ROHIT - handleChangeChecked - map[name]", map[name])
     // if (name === "bank_account") {
     //   if (!checked) {
     //     map.bank_account.account_number = "";
@@ -682,7 +657,6 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     // }
     setPaymentMethods(map);
   };
-
 
   const handleChangeValue = (e) => {
     const { name, value } = e.target;
@@ -701,7 +675,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       }));
     }
   };
-  
+
   const handlePaymentStep = async () => {
     setShowSpinner(true);
     const keys = Object.keys(paymentMethods);
@@ -718,7 +692,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           if (bankAccount.routing_number && bankAccount.account_number) {
             paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
             paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-            paymentMethodPayload.paymentMethod_status = bankAccount.checked? "Active" : "Inactive";
+            paymentMethodPayload.paymentMethod_status = bankAccount.checked ? "Active" : "Inactive";
             if (bankAccount.uid) {
               putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
             } else {
@@ -727,7 +701,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           }
         } else {
           paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-          paymentMethodPayload.paymentMethod_status = paymentMethods[key].checked? "Active" : "Inactive";
+          paymentMethodPayload.paymentMethod_status = paymentMethods[key].checked ? "Active" : "Inactive";
           if (paymentMethods[key].uid) {
             putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
           } else {
@@ -749,7 +723,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     setCookie("default_form_vals", { ...cookiesData, paymentMethods });
   };
 
-  const handleNextStep = async () => {    
+  const handleNextStep = async () => {
     if (firstName === "") {
       alert("Please enter first name");
       return;
@@ -777,7 +751,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     if (!DataValidator.ssn_validate(empSsn)) {
       alert("Please enter a valid SSN");
       return false;
-    }    
+    }
 
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
 
@@ -793,7 +767,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   };
 
   const showSnackbar = (message, severity) => {
-    console.log('Inside show snackbar');
+    console.log("Inside show snackbar");
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -805,202 +779,196 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
   const handleUpdate = () => {
     // setIsUpdate( prevState => !prevState);
-    console.log('handleUpdate called');
+    console.log("handleUpdate called");
     setIsSave(true);
-}  
+  };
 
   const saveProfile = async () => {
-    console.log('inside saveProfile', modifiedData);
+    console.log("inside saveProfile", modifiedData);
     try {
-        if (modifiedData.length > 0) {
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
+      if (modifiedData.length > 0) {
+        setShowSpinner(true);
+        const headers = {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Credentials": "*",
+        };
 
-            const profileFormData = new FormData();
+        const profileFormData = new FormData();
 
-            // const feesJSON = JSON.stringify(leaseFees)
-            // leaseApplicationFormData.append("lease_fees", feesJSON);
-            // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-            let hasEmployeeKey = false;
-            let hasBusinessKey = false;
-            modifiedData.forEach(item => {
-              console.log(`Key: ${item.key}`);              
-              profileFormData.append(item.key, item.value);                
+        // const feesJSON = JSON.stringify(leaseFees)
+        // leaseApplicationFormData.append("lease_fees", feesJSON);
+        // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+        let hasEmployeeKey = false;
+        let hasBusinessKey = false;
+        modifiedData.forEach((item) => {
+          console.log(`Key: ${item.key}`);
+          profileFormData.append(item.key, item.value);
 
-            if (item.key.startsWith("employee_")) {
-              hasEmployeeKey = true;
-            }            
-            if (item.key.startsWith("business_")) {
-              hasBusinessKey = true;
-            }            
+          if (item.key.startsWith("employee_")) {
+            hasEmployeeKey = true;
+          }
+          if (item.key.startsWith("business_")) {
+            hasBusinessKey = true;
+          }
         });
 
         if (hasBusinessKey) {
-          profileFormData.append('business_uid', profileData.business_uid);
+          profileFormData.append("business_uid", profileData.business_uid);
         }
-            
 
         if (hasEmployeeKey) {
-          profileFormData.append('employee_uid', profileData.employee_uid);
+          profileFormData.append("employee_uid", profileData.employee_uid);
         }
-            
-            
-        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
-        // axios.put('http://localhost:4000/profile', profileFormData, headers)
-            .then((response) => {
-                console.log('Data updated successfully', response);
-                showSnackbar("Your profile has been successfully updated.", "success");                
-                handleUpdate();
-                setShowSpinner(false);
-            })
-            .catch((error) => {
-                setShowSpinner(false);
-                showSnackbar("Cannot update your profile. Please try again", "error");
-                if (error.response) {
-                    console.log(error.response.data);
-                }
-            });
+
+        axios
+          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+          // axios.put('http://localhost:4000/profile', profileFormData, headers)
+          .then((response) => {
+            console.log("Data updated successfully", response);
+            showSnackbar("Your profile has been successfully updated.", "success");
+            handleUpdate();
+            setShowSpinner(false);
+          })
+          .catch((error) => {
+            setShowSpinner(false);
+            showSnackbar("Cannot update your profile. Please try again", "error");
+            if (error.response) {
+              console.log(error.response.data);
+            }
+          });
         setShowSpinner(false);
         setModifiedData([]);
-    }
-    // else {
-    //     showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
-    // }
+      }
+      // else {
+      //     showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+      // }
     } catch (error) {
-        showSnackbar("Cannot update your profile. Please try again", "error");
-        console.log("Cannot Update your profile", error);
-        setShowSpinner(false);
+      showSnackbar("Cannot update your profile. Please try again", "error");
+      console.log("Cannot Update your profile", error);
+      setShowSpinner(false);
     }
-  }
-
+  };
 
   const editOrUpdateProfile = async () => {
-    console.log('inside editOrUpdateProfile', modifiedData);
+    console.log("inside editOrUpdateProfile", modifiedData);
     try {
-        if (modifiedData.length > 0) {
-            setShowSpinner(true);
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Credentials": "*",
-            };
+      if (modifiedData.length > 0) {
+        setShowSpinner(true);
+        const headers = {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Credentials": "*",
+        };
 
-            const profileFormData = new FormData();
+        const profileFormData = new FormData();
 
-            // const feesJSON = JSON.stringify(leaseFees)
-            // leaseApplicationFormData.append("lease_fees", feesJSON);
-            // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-            modifiedData.forEach(item => {
-                console.log(`Key: ${item.key}`);
-                if (item.key === "uploadedFiles") {
-                    console.log('uploadedFiles', item.value);
-                    if (item.value.length) {
-                        const documentsDetails = [];
-                        [...item.value].forEach((file, i) => {
-                          profileFormData.append(`file-${i}`, file.file, file.name);
-                            const fileType = 'pdf';
-                            const documentObject = {
-                                // file: file,
-                                fileIndex: i,
-                                fileName: file.name,
-                                fileType: file.type,
-                                type: file.type,
-                            };
-                            documentsDetails.push(documentObject);
-                        });
-                        profileFormData.append("business_documents_details", JSON.stringify(documentsDetails));
-                    }
-                } else {
-                  profileFormData.append(item.key, JSON.stringify(item.value));
-                }
-            });
-            profileFormData.append('business_uid', profileData.business_uid);
-
-            console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
-            for (var pair of profileFormData.entries()) {
-              console.log(pair[0]+ ', ' + pair[1]); 
+        // const feesJSON = JSON.stringify(leaseFees)
+        // leaseApplicationFormData.append("lease_fees", feesJSON);
+        // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+        modifiedData.forEach((item) => {
+          console.log(`Key: ${item.key}`);
+          if (item.key === "uploadedFiles") {
+            console.log("uploadedFiles", item.value);
+            if (item.value.length) {
+              const documentsDetails = [];
+              [...item.value].forEach((file, i) => {
+                profileFormData.append(`file-${i}`, file.file, file.name);
+                const fileType = "pdf";
+                const documentObject = {
+                  // file: file,
+                  fileIndex: i,
+                  fileName: file.name,
+                  fileType: file.type,
+                  type: file.type,
+                };
+                documentsDetails.push(documentObject);
+              });
+              profileFormData.append("business_documents_details", JSON.stringify(documentsDetails));
             }
-            
-        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', profileFormData, headers)
-            .then((response) => {
-                console.log('Data updated successfully', response);
-                showSnackbar("Your profile has been successfully updated.", "success");                
-                handleUpdate();
-                setShowSpinner(false);
-            })
-            .catch((error) => {
-                setShowSpinner(false);
-                showSnackbar("Cannot update your profile. Please try again", "error");
-                if (error.response) {
-                    console.log(error.response.data);
-                }
-            });
+          } else {
+            profileFormData.append(item.key, JSON.stringify(item.value));
+          }
+        });
+        profileFormData.append("business_uid", profileData.business_uid);
+
+        // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
+        for (var pair of profileFormData.entries()) {
+          console.log(pair[0] + ", " + pair[1]);
+        }
+
+        axios
+          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+          .then((response) => {
+            console.log("Data updated successfully", response);
+            showSnackbar("Your profile has been successfully updated.", "success");
+            handleUpdate();
+            setShowSpinner(false);
+          })
+          .catch((error) => {
+            setShowSpinner(false);
+            showSnackbar("Cannot update your profile. Please try again", "error");
+            if (error.response) {
+              console.log(error.response.data);
+            }
+          });
         setShowSpinner(false);
         setModifiedData([]);
-    } else {
+      } else {
         showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
-    }
+      }
     } catch (error) {
-        showSnackbar("Cannot update the lease. Please try again", "error");
-        console.log("Cannot Update the lease", error);
-        setShowSpinner(false);
+      showSnackbar("Cannot update the lease. Please try again", "error");
+      console.log("Cannot Update the lease", error);
+      setShowSpinner(false);
     }
-  }
-
+  };
 
   return (
     <>
-      <Grid        
-        container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: '10px', padding: '10px', }}
-      >
+      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
         <Grid item xs={12}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f" }}>
+          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
             Maintenance Profile Information
           </Typography>
           <Grid container item xs={12}>
             <Grid container alignContent='center' item xs={3}>
               <Grid container justifyContent='center' item xs={12}>
                 {photo && photo.image ? (
-                <img
-                  key={Date.now()}
-                  src={photo.image}
-                  style={{
-                    width: "121px",
-                    height: "121px",
-                    objectFit: "cover",
-                    borderRadius: "50%",
-                  }}
-                  alt="profile"
-                />
+                  <img
+                    key={Date.now()}
+                    src={photo.image}
+                    style={{
+                      width: "121px",
+                      height: "121px",
+                      objectFit: "cover",
+                      borderRadius: "50%",
+                    }}
+                    alt='profile'
+                  />
                 ) : (
-                  <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                  <img src={DefaultProfileImg} alt='default' style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
                 )}
               </Grid>
-              <Grid  container justifyContent='center' item xs={12} sx={{ marginTop: '20px', }}>
+              <Grid container justifyContent='center' item xs={12} sx={{ marginTop: "20px" }}>
                 <Button
-                  component="label"
-                  variant="contained"
+                  component='label'
+                  variant='contained'
                   sx={{
                     backgroundColor: "#3D5CAC",
                     width: "193px",
                     height: "35px",
-                    color: '#FFFFFF',
-                    textTransform: 'none',
-                    fontWeight: 'bold',
+                    color: "#FFFFFF",
+                    textTransform: "none",
+                    fontWeight: "bold",
                   }}
                 >
                   {" "}
                   Add Profile Pic
-                  <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
+                  <input type='file' hidden accept='image/*' onChange={handlePhotoChange} />
                 </Button>
-
               </Grid>
             </Grid>
             <Grid item xs={9}>
@@ -1017,8 +985,16 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               </Grid>
               <Grid container item xs={12} columnSpacing={2}>
                 <Grid item xs={12}>
-                  <TextField name="businessName" value={businessName} onChange={(e) => handleBusinessNameChange(e)} variant="filled" fullWidth placeholder="Business name" className={classes.root} />
-                </Grid>                                
+                  <TextField
+                    name='businessName'
+                    value={businessName}
+                    onChange={(e) => handleBusinessNameChange(e)}
+                    variant='filled'
+                    fullWidth
+                    placeholder='Business name'
+                    className={classes.root}
+                  />
+                </Grid>
               </Grid>
               <Grid container item xs={12} columnSpacing={4}>
                 <Grid container item xs={3}>
@@ -1036,7 +1012,6 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   <Grid item xs={12}>
                     <AddressAutocompleteInput onAddressSelect={handleBusinessAddressSelect} gray={true} defaultValue={address} />
                   </Grid>
-                  
                 </Grid>
                 <Grid container item xs={2}>
                   <Grid item xs={12}>
@@ -1051,9 +1026,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField value={unit} onChange={ handleBusinessUnitChange } variant="filled" placeholder="3" className={classes.root}></TextField>
+                    <TextField value={unit} onChange={handleBusinessUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
                   </Grid>
-                  
                 </Grid>
                 <Grid container item xs={2}>
                   <Grid item xs={12}>
@@ -1068,9 +1042,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name="City" value={city} onChange={(e) => setCity(e.target.value)} variant="filled" placeholder="City" className={classes.root} />
+                    <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
                   </Grid>
-                  
                 </Grid>
 
                 <Grid container item xs={2}>
@@ -1086,9 +1059,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name="State" value={state} onChange={(e) => setState(e.target.value)} variant="filled" placeholder="State" className={classes.root} />
+                    <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
                   </Grid>
-                  
                 </Grid>
 
                 <Grid container item xs={3}>
@@ -1104,9 +1076,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name="Zip" value={zip} onChange={(e) => setZip(e.target.value)} variant="filled" placeholder="Zip" className={classes.root} />
+                    <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
                   </Grid>
-                  
                 </Grid>
               </Grid>
 
@@ -1124,9 +1095,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={email} onChange={handleBusinessEmailChange} variant="filled" placeholder="Business Email" className={classes.root}></TextField>
+                    <TextField fullWidth value={email} onChange={handleBusinessEmailChange} variant='filled' placeholder='Business Email' className={classes.root}></TextField>
                   </Grid>
-                  
                 </Grid>
                 <Grid container item xs={6}>
                   <Grid item xs={12}>
@@ -1141,11 +1111,17 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={phoneNumber} onChange={handleBusinessPhoneNumberChange} variant="filled" placeholder="Business Phone Number" className={classes.root}></TextField>
+                    <TextField
+                      fullWidth
+                      value={phoneNumber}
+                      onChange={handleBusinessPhoneNumberChange}
+                      variant='filled'
+                      placeholder='Business Phone Number'
+                      className={classes.root}
+                    ></TextField>
                   </Grid>
-                  
-                </Grid>                
-              </Grid>              
+                </Grid>
+              </Grid>
 
               <Grid container item xs={12} columnSpacing={4}>
                 <Grid container item xs={6}>
@@ -1161,90 +1137,71 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField 
+                    <TextField
                       fullWidth
                       // value={mask}
                       value={ein}
                       // onChange={(e) => setSsn(e.target.value)}
                       onChange={handleEINChange}
-                      variant="filled"
-                      placeholder="SSN"
+                      variant='filled'
+                      placeholder='SSN'
                       className={classes.root}
-                    >
-                    </TextField>
+                    ></TextField>
                   </Grid>
-                  
-                </Grid>                                                         
+                </Grid>
               </Grid>
             </Grid>
-
           </Grid>
         </Grid>
-
-        
       </Grid>
 
+      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+        <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
+          <Grid item xs={1}></Grid>
 
-
-
-      <Grid        
-        container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px' }}
-      >
-        <Grid container item xs={12} sx={{marginBottom: '10px', }}>
-        <Grid item xs={1}></Grid>
-
-        <Grid container justifyContent='center' alignItems='center' item xs={10}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
-            Maintenance Services
-          </Typography>
-        </Grid>
-        <Grid container justifyContent='center' alignItems='center' item xs={1}>
-          <Button
-            onClick={() => addServiceRow()}
-            sx={{
-              color: "#1f1f1f", 
-              "&:hover": {
-                color: '#FFFFFF',
-              }
-            }}
-          >
-            <Typography sx={{fontWeight: 'bold',}}>
-              +
+          <Grid container justifyContent='center' alignItems='center' item xs={10}>
+            <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+              Maintenance Services
             </Typography>
-          </Button>
+          </Grid>
+          <Grid container justifyContent='center' alignItems='center' item xs={1}>
+            <Button
+              onClick={() => addServiceRow()}
+              sx={{
+                color: "#1f1f1f",
+                "&:hover": {
+                  color: "#FFFFFF",
+                },
+              }}
+            >
+              <Typography sx={{ fontWeight: "bold" }}>+</Typography>
+            </Button>
+          </Grid>
         </Grid>
-
-        </Grid>
-        <Grid container item xs={12}>          
+        <Grid container item xs={12}>
           {renderMaintenanceServices()}
-        </Grid>        
+        </Grid>
       </Grid>
 
-      <Grid        
-        container
-        sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px',  }}
-      >
+      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
         <Grid item xs={12}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f", }}>
+          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
             Business Payment Methods
           </Typography>
-
         </Grid>
-        <Grid container item xs={12}>          
+        <Grid container item xs={12}>
           {renderPaymentMethods()}
         </Grid>
-        
       </Grid>
 
-      <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: '10px', padding: '10px', }}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '24px', fontWeight: "bold", color: "#1f1f1f" }}>
-            Maintenance Personal Information
-          </Typography>
-          <Grid container item xs={12}>
-            <Grid container alignContent='center' item xs={3}>
-              <Grid container justifyContent='center' item xs={12}>
-                {employeePhoto && employeePhoto.image ? (
+      <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+        <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+          Maintenance Personal Information
+        </Typography>
+        <Grid container item xs={12}>
+          <Grid container alignContent='center' item xs={3}>
+            <Grid container justifyContent='center' item xs={12}>
+              {employeePhoto && employeePhoto.image ? (
                 <img
                   key={Date.now()}
                   src={employeePhoto.image}
@@ -1254,256 +1211,260 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     objectFit: "cover",
                     borderRadius: "50%",
                   }}
-                  alt="profile"
+                  alt='profile'
                 />
-                ) : (
-                  <img src={DefaultProfileImg} alt="default" style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
-                )}
+              ) : (
+                <img src={DefaultProfileImg} alt='default' style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+              )}
+            </Grid>
+            <Grid container justifyContent='center' item xs={12} sx={{ marginTop: "20px" }}>
+              <Button
+                component='label'
+                variant='contained'
+                sx={{
+                  backgroundColor: "#3D5CAC",
+                  width: "193px",
+                  height: "35px",
+                  color: "#FFFFFF",
+                  textTransform: "none",
+                  fontWeight: "bold",
+                }}
+              >
+                {" "}
+                Add Profile Pic
+                <input type='file' hidden accept='image/*' onChange={handleEmpPhotoChange} />
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container item xs={9} columnSpacing={2}>
+            <Grid item xs={6}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  width: "100%",
+                }}
+              >
+                {"First Name"}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  width: "100%",
+                }}
+              >
+                {"Last Name"}
+              </Typography>
+            </Grid>
+            <Grid container item xs={12} columnSpacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  name='emp_first_name'
+                  value={empFirstName}
+                  onChange={(e) => handleEmpFirstNameChange(e)}
+                  variant='filled'
+                  fullWidth
+                  placeholder='First name'
+                  className={classes.root}
+                />
               </Grid>
-              <Grid  container justifyContent='center' item xs={12} sx={{ marginTop: '20px', }}>
-                <Button
-                  component="label"
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#3D5CAC",
-                    width: "193px",
-                    height: "35px",
-                    color: '#FFFFFF',
-                    textTransform: 'none',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {" "}
-                  Add Profile Pic
-                  <input type="file" hidden accept="image/*" onChange={handleEmpPhotoChange} />
-                </Button>
-
+              <Grid item xs={6}>
+                <TextField
+                  name='emp_last_name'
+                  value={empLastName}
+                  variant='filled'
+                  onChange={handleEmpLastNameChange}
+                  fullWidth
+                  placeholder='Last name'
+                  className={classes.root}
+                />
               </Grid>
             </Grid>
-            <Grid container item xs={9} columnSpacing={2}>
-                <Grid item xs={6}>
-                    <Typography
+            <Grid container item xs={12} columnSpacing={4}>
+              <Grid container item xs={3}>
+                <Grid item xs={12}>
+                  <Typography
                     sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
                     }}
-                    >
-                    {"First Name"}
-                    </Typography>
+                  >
+                    {"Personal Address"}
+                  </Typography>
                 </Grid>
-                <Grid item xs={6}>
-                    <Typography
-                    sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                    }}
-                    >
-                    {"Last Name"}
-                    </Typography>
+                <Grid item xs={12}>
+                  <AddressAutocompleteInput onAddressSelect={handlePersonalAddressSelect} gray={true} defaultValue={address} />
                 </Grid>
-              <Grid container item xs={12} columnSpacing={2}>
-                <Grid item xs={6}>
-                  <TextField name="emp_first_name" value={empFirstName} onChange={(e) => handleEmpFirstNameChange(e)} variant="filled" fullWidth placeholder="First name" className={classes.root} />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField name="emp_last_name" value={empLastName} variant="filled" onChange={handleEmpLastNameChange} fullWidth placeholder="Last name" className={classes.root} />
-                </Grid>
-                
-
               </Grid>
-              <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={3}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Personal Address"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <AddressAutocompleteInput onAddressSelect={handlePersonalAddressSelect} gray={true} defaultValue={address} />
-                  </Grid>
-                  
+              <Grid container item xs={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
+                    }}
+                  >
+                    {"Unit"}
+                  </Typography>
                 </Grid>
-                <Grid container item xs={2}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Unit"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField value={unit} onChange={ handleEmpUnitChange } variant="filled" placeholder="3" className={classes.root}></TextField>
-                  </Grid>
-                  
+                <Grid item xs={12}>
+                  <TextField value={unit} onChange={handleEmpUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
                 </Grid>
-                <Grid container item xs={2}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"City"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField disabled name="City" value={city} onChange={(e) => setCity(e.target.value)} variant="filled" placeholder="City" className={classes.root} />
-                  </Grid>
-                  
+              </Grid>
+              <Grid container item xs={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
+                    }}
+                  >
+                    {"City"}
+                  </Typography>
                 </Grid>
-
-                <Grid container item xs={2}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"State"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField disabled name="State" value={state} onChange={(e) => setState(e.target.value)} variant="filled" placeholder="State" className={classes.root} />
-                  </Grid>
-                  
-                </Grid>
-
-                <Grid container item xs={3}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Zip Code"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField disabled name="Zip" value={zip} onChange={(e) => setZip(e.target.value)} variant="filled" placeholder="Zip" className={classes.root} />
-                  </Grid>
-                  
+                <Grid item xs={12}>
+                  <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
                 </Grid>
               </Grid>
 
-              <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={6}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Personal Email"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField fullWidth value={empEmail} onChange={handleEmpEmailChange} variant="filled" placeholder="Email" className={classes.root}></TextField>
-                  </Grid>
-                  
+              <Grid container item xs={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
+                    }}
+                  >
+                    {"State"}
+                  </Typography>
                 </Grid>
-                <Grid container item xs={6}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Personal Phone Number"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField fullWidth value={empPhoneNumber} onChange={handleEmpPhoneNumberChange} variant="filled" placeholder="Phone Number" className={classes.root}></TextField>
-                  </Grid>
-                  
-                </Grid>                
-              </Grid>              
+                <Grid item xs={12}>
+                  <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
+                </Grid>
+              </Grid>
 
-              <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={6}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"SSN"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField 
-                      fullWidth
-                      // value={mask}
-                      value={empSsn}
-                      // onChange={(e) => setSsn(e.target.value)}
-                      onChange={handleEmpSSNChange}
-                      variant="filled"
-                      placeholder="SSN"
-                      className={classes.root}
-                    >
-                    </TextField>
-                  </Grid>
-                  
-                </Grid>                                                         
+              <Grid container item xs={3}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
+                    }}
+                  >
+                    {"Zip Code"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
+                </Grid>
               </Grid>
             </Grid>
 
+            <Grid container item xs={12} columnSpacing={4}>
+              <Grid container item xs={6}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
+                    }}
+                  >
+                    {"Personal Email"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField fullWidth value={empEmail} onChange={handleEmpEmailChange} variant='filled' placeholder='Email' className={classes.root}></TextField>
+                </Grid>
+              </Grid>
+              <Grid container item xs={6}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
+                    }}
+                  >
+                    {"Personal Phone Number"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    value={empPhoneNumber}
+                    onChange={handleEmpPhoneNumberChange}
+                    variant='filled'
+                    placeholder='Phone Number'
+                    className={classes.root}
+                  ></TextField>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid container item xs={12} columnSpacing={4}>
+              <Grid container item xs={6}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
+                    }}
+                  >
+                    {"SSN"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    // value={mask}
+                    value={empSsn}
+                    // onChange={(e) => setSsn(e.target.value)}
+                    onChange={handleEmpSSNChange}
+                    variant='filled'
+                    placeholder='SSN'
+                    className={classes.root}
+                  ></TextField>
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
+      </Grid>
 
-      <Grid        
-          container
-          justifyContent='center'
-          sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: '10px', marginBottom: '10px', }}
-      >
-          <Grid item xs={12} md={12}>            
-          <Documents 
-              documents={documents}
-              setDocuments={setDocuments}            
-              setuploadedFiles={setuploadedFiles}
-              editOrUpdateLease={ editOrUpdateProfile }              
-              setDeletedFiles={setDeletedFiles}
-              modifiedData={modifiedData}
-              setModifiedData={setModifiedData}
-              dataKey={"business_documents"}
-          />            
-          </Grid>
+      <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+        <Grid item xs={12} md={12}>
+          <Documents
+            documents={documents}
+            setDocuments={setDocuments}
+            setuploadedFiles={setuploadedFiles}
+            editOrUpdateLease={editOrUpdateProfile}
+            setDeletedFiles={setDeletedFiles}
+            modifiedData={modifiedData}
+            setModifiedData={setModifiedData}
+            dataKey={"business_documents"}
+          />
+        </Grid>
       </Grid>
       <Grid container justifyContent='center' item xs={12}>
-        <Button variant="contained" color="primary" onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC", }}>
-          <Typography sx={{ fontWeight: 'bold', color: '#FFFFFF', textTransform: 'none', }}>
-            Save
-          </Typography>
+        <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
         </Button>
       </Grid>
 
-      <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
-            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
-            {snackbarMessage}
+      <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%", height: "100%" }}>
+          <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </>

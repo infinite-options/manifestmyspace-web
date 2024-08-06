@@ -21,7 +21,7 @@ import PropertiesSearch from "./PropertiesSearch";
 import PMRent from "../Rent/PMRent/PMRent";
 
 export default function PropertiesList(props) {
-  console.log("In Property List: ", props.propertyList);
+  // console.log("In Property List: ", props.propertyList);
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
