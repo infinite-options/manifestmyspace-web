@@ -50,6 +50,7 @@ function Properties() {
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [returnIndex, setReturnIndex] = useState(location.state?.index || 0);
+  const [returnIndexTest, setReturnIndexTest] = useState(location.state?.index || 0);
   const [applicationIndex, setApplicationIndex] = useState(0);
 
   const [newContractUID, setNewContractUID] = useState(null);
@@ -342,9 +343,9 @@ function Properties() {
             )}
             {RHS === "EditProperty" && (
               <EditProperty
-                currentId={propertyList[returnIndex].property_uid}
-                property={propertyList[returnIndex]}
-                index={returnIndex}
+                currentId={propertyList[returnIndexTest].property_uid}
+                property={propertyList[returnIndexTest]}
+                index={returnIndexTest}
                 propertyList={propertyList}
                 page={page}
                 isDesktop={isDesktop}
