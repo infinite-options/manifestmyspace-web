@@ -36,7 +36,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
 
-export default function ImageUploader({selectedImageList, setSelectedImageList, setDeletedImageList, page}){
+export default function ImageUploader({updateFavoriteIcons, selectedImageList, setSelectedImageList, setDeletedImageList, page, setFavImage, favImage}) {
 
     const [imageOverLimit, setImageOverLimit] = useState(false);
     const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -76,18 +76,19 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
     const addFile = (event) => {
         const files = Array.from(event.target.files);
         let currentIndex = selectedImageList.length;
-
+      
         files.forEach((file, i) => {
-            const fileObj = {
-                index: currentIndex,
-                file: file,
-                image: null,
-                coverPhoto: currentIndex + i === 0,
-            };
-            readImage(fileObj);
-            currentIndex++;
+          const fileObj = {
+            index: currentIndex,
+            file: file,
+            image: null,
+            coverPhoto: currentIndex + i === 0 && !favImage, // Only set the first new image as cover if there's no favorite image
+          };
+          readImage(fileObj);
+          currentIndex++;
         });
-    };
+      };
+      
 
     const deleteImage = (image) => {
         const newSelectedImageList = selectedImageList.filter(
@@ -104,13 +105,15 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
     };
     
     const favoriteImage = (favoriteFile) => {
-        const newSelectedImageList = [...selectedImageList];
-        for (const file of newSelectedImageList) {
-            file.coverPhoto = file.index === favoriteFile.index;
-        }
+        const newSelectedImageList = selectedImageList.map((file) => ({
+          ...file,
+          coverPhoto: file.index === favoriteFile.index
+        }));
         setSelectedImageList(newSelectedImageList);
-    };
-
+        setFavImage(favoriteFile.image);
+        updateFavoriteIcons();
+      };
+      
     return (
         <>
             {showErrorMessage ? (
@@ -234,15 +237,15 @@ export default function ImageUploader({selectedImageList, setSelectedImageList, 
                                                 zIndex: 2,
                                             }}
                                         >
-                                            <IconButton onClick={() => favoriteImage(file)}>
-                                                {selectedImageList[index].coverPhoto === true ? (
-                                                    <FavoriteIcon color="primary" sx={{
-                                                        color: theme.typography.propertyPage.color,
-                                                    }}/>
-                                                ) : (
-                                                    <FavoriteBorderIcon color="black"/>
-                                                )}
-                                            </IconButton>
+                                             <IconButton onClick={() => favoriteImage(file)}>
+                      {file.image === favImage ? (
+                        <FavoriteIcon color="primary" sx={{
+                          color: "red",
+                        }}/>
+                      ) : (
+                        <FavoriteBorderIcon color="black"/>
+                      )}
+                    </IconButton>
                                         </Box>
                                     </Grid>
                                 </Box>
