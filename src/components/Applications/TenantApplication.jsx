@@ -14,19 +14,19 @@ import DialogTitle from "@mui/material/DialogTitle";
 import APIConfig from "../../utils/APIConfig";
 
 export default function TenantApplication(props) {
-  console.log("In Tenant Application");
+  // console.log("In Tenant Application");
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId, roleName } = useUser();
 
-  console.log("props in tenantApplication", props);
+  // console.log("props in tenantApplication", props);
 
   const [property, setProperty] = useState(props.data);
   const [status, setStatus] = useState(props.status);
   const [lease, setLease] = useState(props.lease);
-  console.log("in tenant application status", status);
-  console.log("lease", lease);
-  console.log("property", property);
+  // console.log("in tenant application status", status);
+  // console.log("lease", lease);
+  // console.log("property", property);
 
   const [tenantProfile, setTenantProfile] = useState(null);
 
@@ -42,10 +42,10 @@ export default function TenantApplication(props) {
   //     console.log("tenantDocuments - ", tenantDocuments);
   // }, [tenantDocuments])
 
-  useEffect(()=>{
+  useEffect(() => {
     const address = formatAddress();
     setFormattedAddress(address);
-  },[props.data])
+  }, [props.data]);
 
   const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
 
@@ -170,7 +170,7 @@ export default function TenantApplication(props) {
       const data = await response.json();
       const tenantProfileData = data.profile.result[0];
       setTenantProfile(tenantProfileData);
-      console.log("tenantProfileData", tenantProfileData);
+      // console.log("tenantProfileData", tenantProfileData);
     };
     getTenantProfileInformation();
   }, []);
@@ -192,7 +192,7 @@ export default function TenantApplication(props) {
     if (tenantProfile && (tenantProfile.tenant_ssn != null || tenantProfile.tenant_ssn != "")) {
       return `Last 4 digits: ${tenantProfile?.tenant_ssn.slice(-4)}`;
     } else {
-      return '-';
+      return "-";
     }
   }
 

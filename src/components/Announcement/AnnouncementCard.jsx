@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 
 function AnnouncementCard(props) {
-  console.log("In Announcements", props);
+  // console.log("In Announcements", props);
   const { selectedRole } = useUser();
   const { data, pageToNavigate, navigationParams, sent_or_received } = props;
   const navigate = useNavigate();
   const photoURL = data?.sender_photo_url || data?.receiver_photo_url || DefaultProfileImg;
 
   const handleAnnouncements = () => {
-    console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
+    // console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
   };
 
   const getBorderColor = () => {
@@ -43,10 +43,10 @@ function AnnouncementCard(props) {
   };
 
   return (
-    <div className="announcement-list-card" onClick={handleAnnouncements}>
-      <div className="announcement-list-card-picture-container">
+    <div className='announcement-list-card' onClick={handleAnnouncements}>
+      <div className='announcement-list-card-picture-container'>
         <div
-          className="announcement-list-card-picture"
+          className='announcement-list-card-picture'
           style={{ width: "40px", height: "40px", border: "4px solid transparent", borderRadius: "50%", borderColor: getBorderColor(), overflow: "hidden" }}
           onClick={(e) => {
             if (pageToNavigate) {
@@ -60,18 +60,20 @@ function AnnouncementCard(props) {
           ) : (
             <img src={DefaultProfileImg} alt="Default" className="announcement-list-card-profile-img" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
           )} */}
-          <img src={photoURL} alt="Sender" className="announcement-list-card-profile-img" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
+          <img src={photoURL} alt='Sender' className='announcement-list-card-profile-img' style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
         </div>
       </div>
-      <div className="announcement-list-card-text-container">
-        <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "To: " + (data?.receiver_first_name + data?.receiver_last_name) : "From: " + (data?.sender_first_name + data?.sender_last_name)}</div>
-        <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "To: " + data.announcement_receiver : "From: " + data.announcement_sender}</div>
-        <div className="announcement-list-card-text-from">{sent_or_received === "Sent" ? "Role: " + data?.receiver_role : "Role: " + data?.sender_role}</div>
-        <div className="announcement-list-card-text-contents">{"Title: " + data.announcement_title}</div>
-        <div className="announcement-list-card-text-contents">{data.announcement_msg.substring(0, 20) + "..."}</div>
-        <div className="announcement-list-card-text-date">{"Added: " + calculateAge(data.announcement_date)}</div>
+      <div className='announcement-list-card-text-container'>
+        <div className='announcement-list-card-text-from'>
+          {sent_or_received === "Sent" ? "To: " + (data?.receiver_first_name + data?.receiver_last_name) : "From: " + (data?.sender_first_name + data?.sender_last_name)}
+        </div>
+        <div className='announcement-list-card-text-from'>{sent_or_received === "Sent" ? "To: " + data.announcement_receiver : "From: " + data.announcement_sender}</div>
+        <div className='announcement-list-card-text-from'>{sent_or_received === "Sent" ? "Role: " + data?.receiver_role : "Role: " + data?.sender_role}</div>
+        <div className='announcement-list-card-text-contents'>{"Title: " + data.announcement_title}</div>
+        <div className='announcement-list-card-text-contents'>{data.announcement_msg.substring(0, 20) + "..."}</div>
+        <div className='announcement-list-card-text-date'>{"Added: " + calculateAge(data.announcement_date)}</div>
       </div>
-      <div className="announcement-list-card-options">
+      <div className='announcement-list-card-options'>
         {/* <div
           className="announcement-list-card-picture"
           onClick={(e) => {
@@ -90,12 +92,12 @@ function AnnouncementCard(props) {
           </svg>
         </div> */}
         <div
-          className="announcement-list-card-checkbox"
+          className='announcement-list-card-checkbox'
           onClick={(e) => {
             e.stopPropagation();
           }}
         >
-          <input type="checkbox" />
+          <input type='checkbox' />
         </div>
       </div>
     </div>

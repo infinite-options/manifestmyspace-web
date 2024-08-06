@@ -15,7 +15,7 @@ import Button from "@mui/material/Button";
 import APIConfig from "../../utils/APIConfig";
 
 export default function Announcements() {
-  console.log("intial commit");
+  // console.log("intial commit");
   const { user, getProfileId, selectedRole, selectRole, Name } = useUser();
   const [announcementData, setAnnouncementData] = useState([]);
   const [sentData, setSentData] = useState([]);
@@ -42,7 +42,6 @@ export default function Announcements() {
       setFilteredReceivedData(receivedData.filter((announcement) => announcement.announcement_title.toLowerCase().includes(searchTerm.toLowerCase())));
     }
   }, [searchTerm, sentData, receivedData]);
-
 
   useEffect(() => {
     setShowSpinner(true);
@@ -113,7 +112,7 @@ export default function Announcements() {
         console.error(e);
         setShowSpinner(false);
       });
-    console.log(dataDetails);
+    // console.log(dataDetails);
   };
 
   useEffect(() => {
@@ -125,7 +124,7 @@ export default function Announcements() {
 
   const handleAnnouncements = (announcement) => {
     if (announcement.announcement_mode == "PROPERTIES") {
-      console.log(announcement.announcement_title);
+      // console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
     } else if (announcement.announcement_mode == "CONTRACT") {
       // console.log(announcement.announcement_title)
@@ -133,19 +132,19 @@ export default function Announcements() {
       setAnnData(announcement);
       setShowAnnouncement(true);
     } else if (announcement.announcement_mode == "LEASE") {
-      console.log(announcement.announcement_title);
+      // console.log(announcement.announcement_title);
       setAnnData(announcement);
       setShowAnnouncement(true);
     }
   };
 
   return (
-    <div className="announcement-container">
+    <div className='announcement-container'>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Box
-        className="announcement-title"
+        className='announcement-title'
         sx={{
           display: "flex",
           flexDirection: "row",
@@ -154,7 +153,7 @@ export default function Announcements() {
         }}
       >
         <Box
-          className="announcement-title-text"
+          className='announcement-title-text'
           sx={{
             width: "95%",
             display: "flex",
@@ -162,7 +161,7 @@ export default function Announcements() {
             justifyContent: "center",
           }}
         >
-          <Box className="announcement-title-text">{"Announcements 1"}</Box>
+          <Box className='announcement-title-text'>{"Announcements 1"}</Box>
         </Box>
         <Box
           sx={{
@@ -207,12 +206,12 @@ export default function Announcements() {
                     103 N. Abel St unit #104
                 </div>
             </div> */}
-      <div className="announcement-searchbar-container">
+      <div className='announcement-searchbar-container'>
         {/* <Searchbar /> */}
-        <div className="announcement-searchbar-container">
+        <div className='announcement-searchbar-container'>
           <TextField
-            type="small"
-            placeholder="Search announcements..."
+            type='small'
+            placeholder='Search announcements...'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{
@@ -226,34 +225,34 @@ export default function Announcements() {
           />
         </div>
       </div>
-      <div className="announcement-menu-container">
-        <div className="announcement-menu-bar">
-          <div className="announcement-view">
-            <div className="announcement-view-icon">
-              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2.375" y="4.75" width="14.25" height="11.875" rx="2" stroke="#3D5CAC" strokeWidth="2" />
+      <div className='announcement-menu-container'>
+        <div className='announcement-menu-bar'>
+          <div className='announcement-view'>
+            <div className='announcement-view-icon'>
+              <svg width='19' height='19' viewBox='0 0 19 19' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                <rect x='2.375' y='4.75' width='14.25' height='11.875' rx='2' stroke='#3D5CAC' strokeWidth='2' />
                 <path
-                  d="M2.375 7.91667C2.375 6.828 2.375 6.28367 2.58125 5.86542C2.77598 5.47056 3.09556 5.15098 3.49042 4.95625C3.90867 4.75 4.453 4.75 5.54167 4.75H13.4583C14.547 4.75 15.0913 4.75 15.5096 4.95625C15.9044 5.15098 16.224 5.47056 16.4187 5.86542C16.625 6.28367 16.625 6.828 16.625 7.91667V7.91667H2.375V7.91667Z"
-                  fill="#3D5CAC"
+                  d='M2.375 7.91667C2.375 6.828 2.375 6.28367 2.58125 5.86542C2.77598 5.47056 3.09556 5.15098 3.49042 4.95625C3.90867 4.75 4.453 4.75 5.54167 4.75H13.4583C14.547 4.75 15.0913 4.75 15.5096 4.95625C15.9044 5.15098 16.224 5.47056 16.4187 5.86542C16.625 6.28367 16.625 6.828 16.625 7.91667V7.91667H2.375V7.91667Z'
+                  fill='#3D5CAC'
                 />
-                <path d="M5.54169 2.375L5.54169 4.75" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
-                <path d="M13.4583 2.375L13.4583 4.75" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
+                <path d='M5.54169 2.375L5.54169 4.75' stroke='#3D5CAC' strokeWidth='2' strokeLinecap='round' />
+                <path d='M13.4583 2.375L13.4583 4.75' stroke='#3D5CAC' strokeWidth='2' strokeLinecap='round' />
               </svg>
             </div>
-            <div className="announcement-view-text">View Last 30 Days</div>
+            <div className='announcement-view-text'>View Last 30 Days</div>
           </div>
-          <div className="announcement-readall">
-            <div className="announcement-readall-text">Read All</div>
-            <div className="announcement-readall-checkbox">
-              <input type="checkbox" />
+          <div className='announcement-readall'>
+            <div className='announcement-readall-text'>Read All</div>
+            <div className='announcement-readall-checkbox'>
+              <input type='checkbox' />
             </div>
           </div>
         </div>
-        <div style={{ marginBottom: "20px", fontSize: "20px" }} className="announcement-view-text">
+        <div style={{ marginBottom: "20px", fontSize: "20px" }} className='announcement-view-text'>
           Received
         </div>
         <div style={{ marginBottom: "30px", width: "100%", height: "420px", overflow: "auto" }}>
-          <div className="announcement-list-container" style={{ maxHeight: "100%", overflowY: "auto" }}>
+          <div className='announcement-list-container' style={{ maxHeight: "100%", overflowY: "auto" }}>
             {filteredReceivedData.length > 0
               ? filteredReceivedData.map((announcement, i) => {
                   let role = announcement?.sender_role;
@@ -301,11 +300,11 @@ export default function Announcements() {
               : "No announcements"}
           </div>
         </div>
-        <div style={{ marginBottom: "30px", fontSize: "20px" }} className="announcement-view-text">
+        <div style={{ marginBottom: "30px", fontSize: "20px" }} className='announcement-view-text'>
           Sent
         </div>
         <div style={{ width: "100%", height: "420px", overflow: "auto" }}>
-          <div className="announcement-list-container">
+          <div className='announcement-list-container'>
             {filteredSentData.length > 0
               ? filteredSentData.map((announcement, i) => {
                   let role = announcement?.receiver_role;

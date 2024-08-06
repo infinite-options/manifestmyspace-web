@@ -945,7 +945,7 @@ const PropertyCard = (props) => {
 
   const setBusinessProfileDetails = () => {
     if (businessProfile !== null && businessProfile !== undefined) {
-      console.log("Business Services Fees", businessProfile["business_services_fees"]);
+      // console.log("Business Services Fees", businessProfile["business_services_fees"]);
       setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
     }
   };
@@ -994,12 +994,12 @@ const PropertyCard = (props) => {
   }, [contractUID]);
 
   const fetchDataNew = async () => {
-    console.log("props.contractUID:", props.contractUID);
+    // console.log("props.contractUID:", props.contractUID);
     setContractUID(props.contractUID);
     if (allContracts === null) {
       const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
       const data = await result.json();
-      console.log("--debug--", data);
+      // console.log("--debug--", data);
 
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
@@ -2480,11 +2480,11 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
   const handleSaveContact = (event) => {
     event.preventDefault();
 
-    console.log("Adding Contact ");
-    console.log("   firstName:", contactFirstName);
-    console.log("   lastName:", contactLastName);
-    console.log("   email:", contactEmail);
-    console.log("   phone:", contactPhone);
+    // console.log("Adding Contact ");
+    // console.log("   firstName:", contactFirstName);
+    // console.log("   lastName:", contactLastName);
+    // console.log("   email:", contactEmail);
+    // console.log("   phone:", contactPhone);
 
     const newContact = {
       contact_first_name: contactFirstName,

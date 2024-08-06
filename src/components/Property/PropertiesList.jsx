@@ -78,7 +78,7 @@ export default function PropertiesList(props) {
   const onPropertyClick = (params) => {
     const property = params.row;
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
-    console.log("List Item Clicked", property, i, displayedItems);
+    // console.log("List Item Clicked", property, i, displayedItems);
     handlePropertyDetailNavigation(i, displayedItems);
     // setSelectedPropertyIndex(i);
     setPropertyIndex(i);
@@ -334,7 +334,7 @@ export default function PropertiesList(props) {
                 color: "#000000",
               }}
               onClick={(e) => {
-                console.log("selected in", params);
+                // console.log("selected in", params);
                 if (numOfMaintenanceReqs > 0) {
                   if (selectedRole === "OWNER") {
                     navigate("/ownerMaintenance", {

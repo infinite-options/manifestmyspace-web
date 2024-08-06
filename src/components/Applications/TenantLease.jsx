@@ -100,13 +100,13 @@ const initialFees = (property, application) => {
 };
 
 const TenantLease = () => {
-  console.log("In Tenant Lease");
+  // console.log("In Tenant Lease");
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
-  console.log("Application: ", application);
+  // console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(application.lease_start ? dayjs(application.lease_start) : dayjs());
   const [endDate, setEndDate] = useState(application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day"));
@@ -115,7 +115,7 @@ const TenantLease = () => {
   const [noOfOccupants, setNoOfOccupants] = useState(0);
   const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 0);
 
-  console.log("# of Occupants", noOfOccupants);
+  // console.log("# of Occupants", noOfOccupants);
 
   const [fees, setFees] = useState([]);
 
@@ -144,7 +144,7 @@ const TenantLease = () => {
       } else if (application?.lease_status === "NEW") {
         feesList = initialFees(property, application);
       }
-      console.log("Fees: ", feesList);
+      // console.log("Fees: ", feesList);
 
       let i = 0;
       feesList.forEach((fee) => {
@@ -263,7 +263,7 @@ const TenantLease = () => {
   //   setAvailableToPay(e.target.value);
   // };
   const handleDueByDateChange = (v, index) => {
-    console.log("handleDueByDateChange - v, index - ", v.format("MM-DD-YYYY"), index);
+    // console.log("handleDueByDateChange - v, index - ", v.format("MM-DD-YYYY"), index);
     const list = [...fees];
     list[index - 1].due_by_date = v.format("MM-DD-YYYY");
     setFees(list);
@@ -438,7 +438,7 @@ const TenantLease = () => {
         return false; // Return false if the index is out of bounds
       }
       const fileType = leaseFileTypes[i];
-      console.log("FILE TYPE: ", fileType);
+      // console.log("FILE TYPE: ", fileType);
       if (!fileType || fileType.trim() === "") {
         return false;
       }
@@ -469,7 +469,7 @@ const TenantLease = () => {
       // leaseApplicationFormData.append("documents", leaseFiles);
 
       const hasMissingType = !checkFileTypeSelected();
-      console.log("HAS MISSING TYPE", hasMissingType);
+      // console.log("HAS MISSING TYPE", hasMissingType);
 
       if (hasMissingType) {
         setShowMissingFileTypePrompt(true);
@@ -533,7 +533,7 @@ const TenantLease = () => {
       navigate("/managerDashboard");
       setShowSpinner(false);
     } catch (error) {
-      console.log("Error Creating Lease:", error);
+      // console.log("Error Creating Lease:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       navigate("/managerDashboard");
@@ -857,7 +857,7 @@ const TenantLease = () => {
           <Grid item xs={12}>
             <hr />
           </Grid>
-          {console.log("Fees right before we loop through it", fees)}
+          {/* {console.log("Fees right before we loop through it", fees)} */}
           {fees.map((row) => (
             <Grid item xs={12} key={row.id}>
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>

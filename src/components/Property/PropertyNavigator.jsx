@@ -509,9 +509,7 @@ export default function PropertyNavigator({
           getRowId={(row) => row.maintenance_request_uid}
           pageSizeOptions={[5]}
           onRowClick={(row) => {
-            {
-              // console.log("Row =", row);
-            }
+            // console.log("Row =", row);
             handleOnClickNavigateToMaintenance(row);
           }}
         />
@@ -595,7 +593,7 @@ export default function PropertyNavigator({
         index: currentIndex,
         isDesktop: isDesktop,
       };
-      // console.log("---inside prop nav state---", state);
+      console.log("---inside prop nav state---", state);
       setManagerDetailsState(state);
     } else {
       // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
