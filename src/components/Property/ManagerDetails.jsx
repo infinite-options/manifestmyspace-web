@@ -27,13 +27,13 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
   const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = managerDetailsState;
   const { user, selectedRole } = useUser();
 
-  console.log("ownerId", ownerId);
-  console.log("managerBusinessId", managerBusinessId);
-  console.log("managerData", managerData);
-  console.log("propertyData", propertyData);
-  console.log("index", index);
+  // console.log("ownerId", ownerId);
+  // console.log("managerBusinessId", managerBusinessId);
+  // console.log("managerData", managerData);
+  console.log("ROHIT - propertyData", propertyData);
+  // console.log("index", index);
 
-  propertyData.sort((a, b) => {
+  propertyData?.sort((a, b) => {
     if (a.address < b.address) {
       return -1;
     }
@@ -45,9 +45,11 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
 
   if (managerData !== undefined) {
     let businessLocations = JSON.parse(managerData.business_locations !== undefined ? managerData.business_locations : "");
-    let city = businessLocations[0] !== undefined ? businessLocations[0].location : "";
-    let distance = businessLocations[0] !== undefined ? businessLocations[0].distance : "";
-    let feesArray = JSON.parse(managerData.business_services_fees);
+    if(businessLocations){
+      let city = businessLocations[0] !== undefined ? businessLocations[0].location : "";
+      let distance = businessLocations[0] !== undefined ? businessLocations[0].distance : "";
+      let feesArray = JSON.parse(managerData.business_services_fees);
+    }
   } else {
     let business_locations = "";
     let city = "";
@@ -69,7 +71,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
     },
   ]);
   function sortProperties(properties) {
-    properties.sort((a, b) => {
+    properties?.sort((a, b) => {
       if (a.property_address < b.property_address) {
         return -1;
       }
@@ -89,9 +91,31 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
     setProperties(response.data.Property.result);
     setShowSpinner(false);
   };
+
+  const getManagerProperties = async () => {
+    // setShowSpinner(true);
+    // const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${managerBusinessId}`;
+    // const response = await axios.get(url);
+    // console.log("Properties endpoint results: ", response);
+    
+    // sortProperties(propertyData);
+    // const propertyList = propertyData
+    // sortProperties(propertyList);
+
+    const managedProperties = propertyData?.filter( property => property.contract_business_id === managerBusinessId);
+    console.log("managedProperties - ", managedProperties);
+    setProperties(managedProperties);
+    setShowSpinner(false);
+  };
   useEffect(() => {
-    fetchManagerProperties();
+    // fetchManagerProperties();
+    getManagerProperties();
   }, []);
+
+  useEffect(() => {
+    // fetchManagerProperties();
+    getManagerProperties();
+  }, [index]);
 
   function handleCancel(obj) {
     const headers = {
@@ -140,6 +164,78 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
     }
   }
 
+  if(managerBusinessId == null ){
+    return (
+      <ThemeProvider theme={theme}>
+        <Box
+        sx={{
+          fontFamily: "Source Sans Pro",
+          color: "text.darkblue",
+          padding: "15px",
+          paddingLeft: "0px",
+          paddingRight: "30px",
+          backgroundColor: "background.gray",
+          borderRadius: "10px",
+          height: '100%',
+        }}
+      >
+        <Box
+          sx={{
+            padding: "18px",
+            backgroundColor: "#F2F2F2",
+            borderRadius: "9px",
+            height: '95%',
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "text.darkblue",
+            }}
+          >
+            <Typography sx={{ flex: 1, textAlign: "center", paddingLeft: "22px", fontSize: "25px", fontWeight: 700 }}>{"No Manager"}</Typography>
+            
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "text.blue",
+              fontWeight: "bold",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+              onClick={navigateToPrev} // need to pass in the index and the propertyData
+            >
+              <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt="back" />
+              <Box>
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    cursor: "pointer",
+                  }}
+                >
+                  {"Return to Property"}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>          
+        </Box>
+      </Box>
+      </ThemeProvider>
+    )
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -149,18 +245,20 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
         sx={{
           fontFamily: "Source Sans Pro",
           color: "text.darkblue",
-          padding: "25px",
-          paddingLeft: "30px",
+          padding: "15px",
+          paddingLeft: "0px",
           paddingRight: "30px",
           backgroundColor: "background.gray",
           borderRadius: "10px",
+          height: '100%',
         }}
       >
         <Box
           sx={{
             padding: "18px",
             backgroundColor: "#F2F2F2",
-            borderRadius: "9px",
+            borderRadius: "10px",
+            height: '95%',
           }}
         >
           <Box
@@ -259,6 +357,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
                 border: "0 0 10px 10px",
                 paddingTop: "35px",
                 paddingBottom: "35px",
+                borderRadius: "0 0 10px 10px ",
               }}
             >
               <Grid container>
@@ -339,6 +438,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
                   fontFamily: "Source Sans Pro, sans-serif",
                   fontWeight: 800,
                   color: "#160449",
+                  marginTop: '10px',
                 }}
               >
                 {/* {`Manages ${properties.length} of your properties`} */}
@@ -347,7 +447,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
               </Typography>
               {properties
                 .filter((property) => property.business_uid === managerData.business_uid)
-                .map((p) => {
+                .map((p, i) => {
                   let index = properties.findIndex((property) => property.property_uid === p.property_uid);
                   let navIndex = propertyData.findIndex((property) => property.property_uid === p.property_uid);
                   // console.log(p)
@@ -357,7 +457,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
                   const contractDocumentLink = doc ? doc.link : "";
                   return (
                     <>
-                      <Grid container direction="row">
+                      <Grid container direction="row" key={i}>
                         <Grid item xs={8}>
                           <Box display="flex" alignItems="left">
                             <Typography
@@ -478,6 +578,8 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
                       fontFamily: "Source Sans Pro, sans-serif",
                       fontWeight: 800,
                       backgroundColor: "#160449",
+                      marginTop: '10px',
+                      marginLeft: '10px',
                     }}
                     onClick={openCancelContractDialog}
                   >

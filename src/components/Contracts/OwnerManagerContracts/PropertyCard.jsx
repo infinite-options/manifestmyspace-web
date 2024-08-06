@@ -33,7 +33,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { isValidDate } from "../../../utils/dates";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers";
+// import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ReactComponent as CalendarIcon } from "../../../images/datetime.svg";
 import dayjs from "dayjs";
 
@@ -1855,8 +1856,11 @@ const PropertyCard = (props) => {
                         width: "100%",
                         fontSize: 12,
                         backgroundColor: "#F2F2F2 !important",
-                        borderRadius: "10px !important",
+                        borderRadius: "10px",
+                        // border: "1px solid black",
+                        
                       },
+                      
                     },
                   }}
                 />
@@ -1874,9 +1878,10 @@ const PropertyCard = (props) => {
                   fontSize: theme.typography.smallFont,
                 }}
               >
-                {"End Date 89"}
+                {"End Date"}
               </Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
+                
                 <DatePicker
                   value={contractEndDate}
                   // minDate={dayjs()}
@@ -1893,10 +1898,10 @@ const PropertyCard = (props) => {
                         backgroundColor: "#F2F2F2 !important",
                         // borderRadius: "10px !important",
                         borderRadius: "10px",
-                        border: "1px solid black",
+                        // border: "1px solid black",
                         // border: "10px solid green",
                         input: {
-                          border: "1px solid black", // Ensure input border is black
+                          // border: "1px solid black", // Ensure input border is black
                         },
                       },
                     },
