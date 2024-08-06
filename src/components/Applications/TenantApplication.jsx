@@ -10,7 +10,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-
+import CloseIcon from "@mui/icons-material/Close";
 import APIConfig from "../../utils/APIConfig";
 
 export default function TenantApplication(props) {
@@ -288,6 +288,11 @@ export default function TenantApplication(props) {
     }
   }
 
+  const handleCloseButton = (e) => {
+    e.preventDefault();
+    props.setRightPane?.("");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Paper
@@ -314,6 +319,12 @@ export default function TenantApplication(props) {
               paddingTop: "20px",
             }}
           >
+            {props.from === "accwidget" && 
+            <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+              <Button onClick={(e) => handleCloseButton(e)}>
+                <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+              </Button>
+            </Box>}
             <Typography
               sx={{
                 justifySelf: "center",
