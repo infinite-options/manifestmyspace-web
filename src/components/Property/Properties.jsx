@@ -26,6 +26,7 @@ import SearchManager from "./SearchManager";
 import RequestQuotes from "./RequestQuotes";
 import { ManageHistory } from "@mui/icons-material";
 import AddListing from "./AddListing";
+import ManagerDetails from "./ManagerDetails";
 
 function Properties() {
   const location = useLocation();
@@ -58,6 +59,15 @@ function Properties() {
 
   const [managersList, setManagersList] = useState([]);
   const [managerData, setManagerData] = useState(null); // for request quotes
+
+  const [managerDetailsState, setManagerDetailsState] = useState(null);
+
+  useEffect(() => {
+    console.log("ROHIT - managerDetailsState - ", managerDetailsState);
+    if (managerDetailsState !== null) {
+      setRHS("ManagerDetails");
+    }
+  }, [managerDetailsState]);
 
   useEffect(() => {
     // console.log("Properties - newContractUID - ", newContractUID);
@@ -338,6 +348,7 @@ function Properties() {
                 onShowSearchManager={handleShowSearchManager}
                 handleShowRequestQuotes={handleShowRequestQuotes}
                 onAddListingClick={handleAddListingClick}
+                setManagerDetailsState={setManagerDetailsState}
               />
             )}
             {RHS === "EditProperty" && (
@@ -409,6 +420,14 @@ function Properties() {
             {RHS === "AddListing" && (
               <AddListing propertyList={propertyList} index={returnIndex} page={page} propertyId={propertyList[returnIndex]?.property_uid} setRHS={setRHS} />
             )}
+            { RHS === "ManagerDetails" && (
+              <ManagerDetails 
+                managerDetailsState={managerDetailsState}
+                handleBackClick={handleBackClick} 
+              />
+            )
+
+            }
           </Grid>
         </Grid>
       </Container>
