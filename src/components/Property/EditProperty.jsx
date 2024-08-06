@@ -174,6 +174,9 @@ function EditProperty(props) {
   const [initselectedImageList, setInitSelectedImageList] = useState("");
   const [initfavImage, setInitFavImage] = useState("");
 
+  const [hasChanges, setHasChanges] = useState(false);
+
+
   useEffect(() => {
     const property = propertyList[index];
     setInitialData(property);
@@ -517,8 +520,12 @@ function EditProperty(props) {
     const changedFields = getChangedFields();
 
     if (Object.keys(changedFields).length == 0) {
+      setHasChanges(false);
       console.log("No changes detected.");
       return;
+    }
+    else {
+      setHasChanges(true);
     }
 
     const formData = new FormData();
@@ -841,6 +848,12 @@ function EditProperty(props) {
     }
   };
 
+  useEffect(() => {
+    const changedFields = getChangedFields();
+    setHasChanges(Object.keys(changedFields).length > 0);
+  }, [address, city, propertyState, zip, propertyType, squareFootage, bedrooms, bathrooms, isListed, description, notes, unit, propertyValue, assessmentYear, deposit, listedRent, petsAllowed, depositForRent, taxes, mortgages, insurance, communityAmenities, unitAmenities, nearbyAmenities]);
+  
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -1127,39 +1140,38 @@ function EditProperty(props) {
         </Paper>
 
         <Box
-          sx={{
-            marginBottom: "30px",
-            width: "80%",
-            paddingBottom: "30px",
-          }}
-        >
-          <Grid container>
-            <Grid item xs={12} sx={{ paddingTop: "10px" }}>
-              <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
-                {page === "edit_property" && (
-                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Property</Typography>
-                )}
-                {page === "add_listing" && (
-                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Create Listing</Typography>
-                )}
-                {page === "edit_listing" && (
-                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Listing</Typography>
-                )}
-              </Button>
-            </Grid>
-            {page !== "add_listing" && (
-            <Grid item xs={12} sx={{ paddingTop: "10px" }}>
-              <Button
-                variant="contained"
-                sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}
-                onClick={(event) => handleSubmit(event, true)}
-              >
-              <Typography sx={{color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont}}> Update and Stay </Typography>
-              </Button>
-            </Grid>
+        sx={{
+          marginBottom: "30px",
+          width: "80%",
+          paddingBottom: "30px",
+        }}
+      >
+        <Stack direction="row" spacing={6} justifyContent="center" sx={{marginTop: "20px"}}>
+
+        {page !== "add_listing" && (
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: theme.typography.formButton.background}}
+              onClick={(event) => handleSubmit(event, true)}
+            >
+              <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save</Typography>
+            </Button>
           )}
-          </Grid>
-        </Box>
+          
+          <Button variant='contained' type='submit' form='editPropertyForm' sx={{ backgroundColor: theme.typography.formButton.background}} disabled={!hasChanges}>
+            {page === "edit_property" && (
+              <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save and Return to Dashboard</Typography>
+            )}
+            {page === "add_listing" && (
+              <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Create Listing</Typography>
+            )}
+            {page === "edit_listing" && (
+              <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Update Listing</Typography>
+            )}
+          </Button>
+        </Stack>
+      </Box>
+
       </Stack>
     </ThemeProvider>
   );

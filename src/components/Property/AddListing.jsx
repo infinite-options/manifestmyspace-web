@@ -52,16 +52,14 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function AddListing({}) {
+export default function AddListing(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  let { index, propertyList } = state;
+  let { index, propertyList, page} = props;
   // const propertyData = location.state.item;
   const [propertyData, setPropertyData] = useState(propertyList[index]);
-  const page = location.state.page;
-  const propertyId = location.state.propertyId;
   const { user, selectedRole, selectRole, Name } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());
@@ -327,7 +325,8 @@ export default function AddListing({}) {
 
   const handleBackButton = () => {
     console.log("handleBackButton");
-    navigate(-1);
+    props.setRHS("PropertyNavigator");
+    navigate("/propertiesPM", { state: { isBack: true } });
   };
 
   const handleSubmit = async (event) => {
