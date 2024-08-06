@@ -240,7 +240,7 @@ export default function ImageUploader({updateFavoriteIcons, selectedImageList, s
                                              <IconButton onClick={() => favoriteImage(file)}>
                       {file.image === favImage ? (
                         <FavoriteIcon color="primary" sx={{
-                          color: theme.typography.propertyPage.color,
+                          color: "red",
                         }}/>
                       ) : (
                         <FavoriteBorderIcon color="black"/>
