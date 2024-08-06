@@ -36,8 +36,8 @@ const RequestQuotes = (props) => {
   const [announcementTitle, setAnnouncementTitle] = useState("");
   const [announcementMsg, setAnnouncementMsg] = useState("");
 
-  const {  propertyData, index } = location.state || props;
-  const [ managerData, setManagerData ] = useState(props.managerData);
+  const { propertyData, index } = location.state || props;
+  const [managerData, setManagerData] = useState(props.managerData);
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const onShowSearchManager = props.onShowSearchManager;
 
@@ -78,6 +78,16 @@ const RequestQuotes = (props) => {
   };
 
   const handleRequestQuotes = async () => {
+    if (!announcementTitle) {
+      alert("Title should not be empty.");
+      return;
+    }
+
+    if (!announcementMsg) {
+      alert("Message should not be empty.");
+      return;
+    }
+
     if (selectedProperties.length === 0) {
       alert("Please select at least one property.");
       return;
@@ -146,12 +156,12 @@ const RequestQuotes = (props) => {
   };
 
   const navigateToPrev = () => {
-    if(isDesktop === true){
+    if (isDesktop === true) {
       onShowSearchManager();
-    }else{
+    } else {
       navigate(-1);
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>

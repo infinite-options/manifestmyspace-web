@@ -100,7 +100,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, }) => {
+const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, setReloadPropertyList }) => {
 	const classes = useStyles();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
@@ -320,6 +320,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 			responsePropertyUID = data.property_UID;
 			setNewContractPropertyUID(responsePropertyUID);
 			console.log("response data - property UID: ", responsePropertyUID);
+			setReloadPropertyList(true);
 		} catch (error) {
 			console.log("Error posting data:", error);
 		}

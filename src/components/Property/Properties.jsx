@@ -42,6 +42,7 @@ function Properties() {
   const [propertyIndex, setPropertyIndex] = useState(0);
   const [allRentStatus, setAllRentStatus] = useState([]);
   const [isFromRentWidget, setFromRentWidget] = useState(false);
+  const [reloadPropertyList, setReloadPropertyList]=useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
   const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
@@ -152,7 +153,8 @@ function Properties() {
     };
     fetchData();
     setShowSpinner(false);
-  }, []);
+    setReloadPropertyList(false)
+  }, [reloadPropertyList]);
 
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
@@ -338,6 +340,7 @@ function Properties() {
                 property_endpoint_resp={rawPropertyData}
                 setNewContractUID={setNewContractUID}
                 setNewContractPropertyUID={setNewContractPropertyUID}
+                setReloadPropertyList={setReloadPropertyList}
                 // showNewContract={showNewContract}
               />
             )}
@@ -361,6 +364,8 @@ function Properties() {
                   setManagersList={setManagersList}
                   handleBackClick={handleBackClick}
                   handleRequestQuotes={handleRequestQuotes}
+                  contracts={allContracts}
+                  propertyId={propertyList[returnIndex].property_uid}
                 />
               )
             }
