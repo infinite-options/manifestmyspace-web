@@ -63,7 +63,7 @@ function Properties() {
   const [managerDetailsState, setManagerDetailsState] = useState(null);
 
   useEffect(() => {
-    console.log("ROHIT - managerDetailsState - ", managerDetailsState);
+    // console.log("Properties - managerDetailsState - ", managerDetailsState);
     if (managerDetailsState !== null) {
       setRHS("ManagerDetails");
     }
@@ -78,7 +78,7 @@ function Properties() {
   // }, [newContractPropertyUID]);
 
   useEffect(() => {
-    // console.log("ROHIT - managersList - ", managersList);
+    // console.log("Properties - managersList - ", managersList);
   }, [managersList]);
 
   // LHS , RHS
@@ -290,7 +290,7 @@ function Properties() {
   };
 
   const handleRequestQuotes = (manager) => {
-    // console.log("ROHIT - Properties - handleRequestQuotes - managerData - ", manager);
+    // console.log("Properties - handleRequestQuotes - managerData - ", manager);
     setManagerData(manager);
     setRHS("RequestQuotes");
   };
