@@ -204,7 +204,7 @@ function ManagerDashboard() {
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget happinessData={happinessData} />
+                <HappinessMatrixWidget happinessData={happinessData}  page={"ManagerDashBoard"}/>
               </Grid>
               <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
                 <MaintenanceWidget maintenanceData={maintenanceStatusData} />

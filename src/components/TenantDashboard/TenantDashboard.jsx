@@ -1024,7 +1024,7 @@ const AccountBalanceWidget = ({
 
   function handleViewApplicationNavigate(property, lease) {
     const state = {
-      data: property, status: property.lease_status, lease: lease
+      data: property, status: property.lease_status, lease: lease, from: 'accwidget'
     }
     setTenantApplicationNavState(state);
   }

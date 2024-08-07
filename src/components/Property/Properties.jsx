@@ -44,6 +44,7 @@ function Properties() {
   const [propertyIndex, setPropertyIndex] = useState(0);
   const [allRentStatus, setAllRentStatus] = useState([]);
   const [isFromRentWidget, setFromRentWidget] = useState(false);
+  const [reloadPropertyList, setReloadPropertyList]=useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
   const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
@@ -63,10 +64,28 @@ function Properties() {
   const [managerDetailsState, setManagerDetailsState] = useState(null);
 
   useEffect(() => {
-    // console.log("Properties - managerDetailsState - ", managerDetailsState);
-    if (managerDetailsState !== null) {
-      setRHS("ManagerDetails");
+    
+    const properties = rawPropertyData?.Property?.result;
+    console.log("ROHIT - returnIndex useEffect - properties - ", properties)
+    if(properties != null){
+      const state = {
+        ownerId: properties[returnIndex]?.owner_uid,
+        managerBusinessId: properties[returnIndex]?.business_uid,
+        managerData: properties[returnIndex],
+        propertyData: properties,
+        index: returnIndex,
+        isDesktop: isDesktop,
+      };
+      console.log("---inside prop nav state---", state);
+      setManagerDetailsState(state);
     }
+  }, [returnIndex]);
+
+  useEffect(() => {
+    console.log("Properties - managerDetailsState - ", managerDetailsState);
+    // if (managerDetailsState !== null) {
+    //   setRHS("ManagerDetails");
+    // }
   }, [managerDetailsState]);
 
   useEffect(() => {
@@ -126,6 +145,7 @@ function Properties() {
       const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
       // console.log("In Properties > Property Endpoint: ", propertyList);
       setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
+      console.log("ROHIT - setting property list");
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
       setPropertyIndex(0);
@@ -164,7 +184,8 @@ function Properties() {
     };
     fetchData();
     setShowSpinner(false);
-  }, []);
+    setReloadPropertyList(false)
+  }, [reloadPropertyList]);
 
   const fetchProperties = async () => {
     setShowSpinner(true);
@@ -295,12 +316,17 @@ function Properties() {
     setRHS("RequestQuotes");
   };
   const handleSorting = (propertyList) => {
+    console.log("ROHIT - handleSorting called ");
     setPropertyList(propertyList);
   };
 
   const handleAddListingClick = (mode) => {
     setPage(mode);
     setRHS("AddListing");
+  };
+
+  const handleViewManagerDetailsClick = (mode) => {    
+    setRHS("ManagerDetails");
   };
 
   return (
@@ -349,6 +375,7 @@ function Properties() {
                 handleShowRequestQuotes={handleShowRequestQuotes}
                 onAddListingClick={handleAddListingClick}
                 setManagerDetailsState={setManagerDetailsState}
+                handleViewManagerDetailsClick={handleViewManagerDetailsClick}
               />
             )}
             {RHS === "EditProperty" && (
@@ -380,6 +407,7 @@ function Properties() {
                 property_endpoint_resp={rawPropertyData}
                 setNewContractUID={setNewContractUID}
                 setNewContractPropertyUID={setNewContractPropertyUID}
+                setReloadPropertyList={setReloadPropertyList}
                 // showNewContract={showNewContract}
                 refreshProperties={refreshProperties}
               />
@@ -399,13 +427,15 @@ function Properties() {
               />
             )}
             {RHS === "SearchManager" && (
-              <SearchManager
-                index={returnIndex}
-                propertyData={propertyList}
-                setManagersList={setManagersList}
-                handleBackClick={handleBackClick}
-                handleRequestQuotes={handleRequestQuotes}
-              />
+              <SearchManager 
+                  index={returnIndex}
+                  propertyData={propertyList}                  
+                  setManagersList={setManagersList}
+                  handleBackClick={handleBackClick}
+                  handleRequestQuotes={handleRequestQuotes}
+                  contracts={allContracts}
+                  propertyId={propertyList[returnIndex].property_uid}
+                />
             )}
             {RHS === "RequestQuotes" && (
               <RequestQuotes

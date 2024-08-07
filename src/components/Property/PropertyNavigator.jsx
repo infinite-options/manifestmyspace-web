@@ -84,6 +84,7 @@ export default function PropertyNavigator({
   handleViewApplication,
   handleViewPMQuotesRequested,
   onAddListingClick,
+  handleViewManagerDetailsClick,
   props,
 }) {
   // console.log("In Property Navigator", onEditClick);
@@ -593,8 +594,9 @@ export default function PropertyNavigator({
         index: currentIndex,
         isDesktop: isDesktop,
       };
-      console.log("---inside prop nav state---", state);
+      //console.log("---inside prop nav state---", state);
       setManagerDetailsState(state);
+      handleViewManagerDetailsClick();
     } else {
       // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
       const state = { index: currentIndex, propertyData, isDesktop };
@@ -1060,6 +1062,16 @@ export default function PropertyNavigator({
               {property
                 ? `${property.property_address} ${property.property_unit}, ${property.property_city} ${property.property_state} ${property.property_zip}`
                 : "No Property Selected"}
+            </Typography>
+            <Typography
+              sx={{
+                color: "#3D5CAC",
+                fontWeight: theme.typography.propertyPage.fontWeight,
+                fontSize: "16px",
+                textAlign: "center",
+              }}
+            >
+              Property UID: {property?.property_uid} 
             </Typography>
             <Typography
               sx={{
@@ -1981,10 +1993,11 @@ export default function PropertyNavigator({
                               sx={{
                                 display: "flex",
                                 alignItems: "center",
-                                cursor: "pointer",
+                                cursor: contractsNewSent ? "pointer" : "default",
                               }}
+                              onClick={contractsNewSent ? handleViewPMQuotesRequested : null}
                             >
-                              <Badge color='success' badgeContent={contractsNewSent} showZero />
+                              <Badge color="success" badgeContent={contractsNewSent} showZero />
                             </Box>
                           </Box>
                         </Grid>

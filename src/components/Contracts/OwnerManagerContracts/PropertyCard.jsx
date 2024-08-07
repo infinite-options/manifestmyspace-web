@@ -35,12 +35,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { isValidDate } from '../../../utils/dates';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers';
 import { ReactComponent as CalendarIcon } from '../../../images/datetime.svg';
 import dayjs from 'dayjs';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+// import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import APIConfig from '../../../utils/APIConfig';
 
@@ -1570,7 +1571,485 @@ const PropertyCard = (props) => {
 						<ArrowForwardIosIcon />
 					</IconButton>
 				</Box>
-		
+        </Grid>
+        {/* <Box
+          sx={{
+            fontSize: "13px",
+          }}
+        >
+          {timeDiff}
+        </Box> */}
+      </Box>
+      {/* Property Address */}
+      <Box
+        sx={{
+          display: "flex",
+          padding: "5px",
+          justifyContent: "space-evenly",
+          alignItems: "center",
+          fontSize: "20px",
+          color: "#160449",
+          // color: '#3D5CAC',
+        }}
+      >
+        <Box
+          sx={{
+            fontSize: "16px",
+            fontWeight: "600",
+          }}
+        >
+          {/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
+          {/* 789 Maple Lane, San Diego, CA 92101, USA */}
+          {propertyData.property_unit ? (
+            <span>
+              {propertyData.property_address}
+              {", "}
+              {propertyData.property_unit}
+              {", "}
+              {propertyData.property_city}
+              {", "}
+              {propertyData.property_state} {propertyData.property_zip}
+            </span>
+          ) : (
+            <span>
+              {propertyData.property_address}
+              {", "}
+              {propertyData.property_city}
+              {", "}
+              {propertyData.property_state} {propertyData.property_zip}
+            </span>
+          )}
+        </Box>
+      </Box>
+      {/* Property Owner and Status */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            {/* Owner: {propertyData.owner_first_name}{' '}{propertyData.owner_last_name} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }}  /> */}
+            Owner: {propertyOwnerName} <ChatIcon sx={{ fontSize: 16, color: "#3D5CAC" }} />
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            Property Management Contract Status: {contractStatus ? contractStatus : "<CONTRACT_STATUS>"}
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Rent and Lease */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            Rent:
+            {propertyData.property_listed_rent ? `$ ${propertyData.property_listed_rent}` : " -"}
+          </Box>
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingTop: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            Due: {propertyData.lease_rent_due_by ? `${propertyData.lease_rent_due_by} of every month` : " -"}
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {contractDocument ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                fontSize: "13px",
+                fontWeight: "bold",
+                padding: "5px",
+                paddingBottom: "0px",
+                color: "text.darkblue",
+              }}
+            >
+              Contract:
+              <a href={contractDocument.link} target='_blank' rel='noopener noreferrer' style={{ textDecoration: "none", color: "text.darkblue" }}>
+                <Box sx={{ cursor: "pointer" }}>
+                  <DescriptionIcon sx={{ fontSize: 16, color: "#3D5CAC" }} />
+                </Box>
+              </a>
+            </Box>
+          ) : (
+            <></>
+          )}
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingTop: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            Expiring: {contractEndDate ? contractEndDate.format("MM-DD-YYYY") : dayjs().format("MM-DD-YYYY")}
+          </Box>
+        </Box>
+      </Box>
+      {/* Property Value*/}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            Property Value:
+          </Box>
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingTop: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            {"$"}
+            {propertyData.property_value ? propertyData.property_value : "<$$$>"} {propertyData.property_value_year ? `(${propertyData.property_value_year})` : "(<YEAR>)"}
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            $ Per SqFt
+          </Box>
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingTop: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            {"$"}
+            {propertyData.property_value && propertyData.property_area ? (propertyData.property_value / propertyData.property_area).toFixed(2) : "<$$$>"}
+          </Box>
+        </Box>
+      </Box>
+      {/* Property Type */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            Type
+          </Box>
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingTop: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            {propertyData.property_type ? propertyData.property_type : "<TYPE>"}
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            SqFt
+          </Box>
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingTop: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            {propertyData.property_area ? propertyData.property_area : "<SFT>"}
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            Bed
+          </Box>
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingTop: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            {propertyData.property_num_beds >= 0 ? Number(propertyData.property_num_beds) : "<BEDS>"}
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingBottom: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            Bath
+          </Box>
+          <Box
+            sx={{
+              fontSize: "13px",
+              fontWeight: "bold",
+              padding: "5px",
+              paddingTop: "0px",
+              color: "text.darkblue",
+            }}
+          >
+            {propertyData.property_num_baths >= 0 ? propertyData.property_num_baths : "<BATHS>"}
+          </Box>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          fontSize: "15px",
+          fontWeight: "bold",
+          padding: "5px",
+          color: "#3D5CAC",
+        }}
+      >
+        Management Agreement Name *
+      </Box>
+      <TextInputField name='management_agreement_name' placeholder='Enter contract name' value={contractName} onChange={handleContractNameChange} required>
+        First Name
+      </TextInputField>
+
+      {/* Contract Start date and end date */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "7px",
+          width: "100%",
+        }}
+      >
+        <Grid container item xs={12} columnSpacing={6}>
+          <Grid item xs={6} md={6}>
+            <Stack>
+              <Typography
+                sx={{
+                  color: theme.typography.propertyPage.color,
+                  fontFamily: "Source Sans Pro",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {"Start Date"}
+              </Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={contractStartDate}
+                  // minDate={dayjs()}
+                  onChange={handleStartDateChange}
+                  slots={{
+                    openPickerIcon: CalendarIcon,
+                  }}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      style: {
+                        width: "100%",
+                        fontSize: 12,
+                        backgroundColor: "#F2F2F2 !important",
+                        borderRadius: "10px",
+                        // border: "1px solid black",
+                        
+                      },
+                      
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={6} md={6}>
+            <Stack>
+              <Typography
+                sx={{
+                  color: theme.typography.propertyPage.color,
+                  fontFamily: "Source Sans Pro",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {"End Date"}
+              </Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                
+                <DatePicker
+                  value={contractEndDate}
+                  // minDate={dayjs()}
+                  onChange={handleEndDateChange}
+                  slots={{
+                    openPickerIcon: CalendarIcon,
+                  }}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      style: {
+                        width: "100%",
+                        fontSize: 24,
+                        backgroundColor: "#F2F2F2 !important",
+                        // borderRadius: "10px !important",
+                        borderRadius: "10px",
+                        // border: "1px solid black",
+                        // border: "10px solid green",
+                        input: {
+                          // border: "1px solid black", // Ensure input border is black
+                        },
+                      },
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Stack>
+          </Grid>
         </Grid>
 			</Box>
 			{/* Time since Inquiry was created */}

@@ -78,6 +78,16 @@ const RequestQuotes = (props) => {
   };
 
   const handleRequestQuotes = async () => {
+    if (!announcementTitle) {
+      alert("Title should not be empty.");
+      return;
+    }
+
+    if (!announcementMsg) {
+      alert("Message should not be empty.");
+      return;
+    }
+
     if (selectedProperties.length === 0) {
       alert("Please select at least one property.");
       return;

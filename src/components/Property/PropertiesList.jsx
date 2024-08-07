@@ -61,6 +61,10 @@ export default function PropertiesList(props) {
     setIsDataReady(true);
   }, [props.LHS, props.allRentStatus, props.index, props.propertyList]);
 
+  useEffect(() => {
+    console.log("ROHIT - props.propertyList changed - ", props.propertyList);    
+  }, [props.propertyList]);
+
   // useEffect(() => {
   //   console.log("In Property List - propertyList: ", propertyList);
   //   console.log("In Property List - displayList: ", displayedItems);
@@ -70,6 +74,7 @@ export default function PropertiesList(props) {
   // }, [LHS, allRentStatus, displayedItems, propertyIndex, propertyList]);
 
   useEffect(() => {
+    console.log("ROHIT - displayedItems changed - ", displayedItems);
     if (LHS === "Rent") {
       onPropertyInRentWidgetClicked(initialPropInRent);
     }
