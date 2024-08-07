@@ -1514,7 +1514,7 @@ const PropertyCard = (props) => {
 						padding: 2,
 					}}
 				>
-					<IconButton onClick={() => handleScroll('left')} disabled={scrollRef.current?.scrollLeft === 0}>
+					<IconButton onClick={() => handleScroll('left')} disabled={scrollPosition === 0}>
 						<ArrowBackIosIcon />
 					</IconButton>
 					<Box

@@ -860,26 +860,26 @@ function EditProperty(props) {
 	const scrollRef = useRef(null);
 
 	useEffect(() => {
-		console.log('is useeffect triggered---', scrollRef.current);
 		if (scrollRef.current) {
-			console.log('---scrollRef.current---', scrollRef.current);
 			scrollRef.current.scrollLeft = scrollPosition;
-			console.log('---scrollRef.current.scrollLeft ---', scrollRef.current.scrollLeft );
 		}
 	}, [scrollPosition]);
 
 	const handleScroll = (direction) => {
 		if (scrollRef.current) {
 			const scrollAmount = 200;
-			const currentScrollPosition = scrollRef.current.scrollLeft;
-
-			if (direction === 'left') {
-				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-				setScrollPosition(newScrollPosition);
-			} else {
-				const newScrollPosition = currentScrollPosition + scrollAmount;
-				setScrollPosition(newScrollPosition);
-			}
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
 		}
 	};
 
@@ -1029,7 +1029,7 @@ function EditProperty(props) {
 								>
 									<IconButton
 										onClick={() => handleScroll('left')}
-										disabled={scrollRef.current?.scrollLeft === 0}
+										disabled={scrollPosition === 0}
 									>
 										<ArrowBackIosIcon />
 									</IconButton>
