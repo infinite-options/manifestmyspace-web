@@ -113,6 +113,14 @@ export default function ImageUploader({updateFavoriteIcons, selectedImageList, s
         setFavImage(favoriteFile.image);
         updateFavoriteIcons();
       };
+
+    //   const favoriteImage = (favoriteFile) => {
+    //     const newSelectedImageList = [...selectedImageList];
+    //     for (const file of newSelectedImageList) {
+    //         file.coverPhoto = file.index === favoriteFile.index;
+    //     }
+    //     setSelectedImageList(newSelectedImageList);
+    // };
       
     return (
         <>
@@ -245,6 +253,13 @@ export default function ImageUploader({updateFavoriteIcons, selectedImageList, s
                       ) : (
                         <FavoriteBorderIcon color="black"/>
                       )}
+                       {/* {selectedImageList[index].coverPhoto === true ? (
+                                                    <FavoriteIcon color="primary" sx={{
+                                                        color: theme.typography.propertyPage.color,
+                                                    }}/>
+                                                ) : (
+                                                    <FavoriteBorderIcon color="black"/>
+                                                )} */}
                     </IconButton>
                                         </Box>
                                     </Grid>
