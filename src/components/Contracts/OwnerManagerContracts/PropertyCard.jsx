@@ -1483,10 +1483,10 @@ const PropertyCard = (props) => {
 
 			if (direction === 'left') {
 				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-				scrollRef.current.scrollLeft = newScrollPosition;
+				setScrollPosition(newScrollPosition);
 			} else {
 				const newScrollPosition = currentScrollPosition + scrollAmount;
-				scrollRef.current.scrollLeft = newScrollPosition;
+				setScrollPosition(newScrollPosition);
 			}
 		}
 	};
@@ -1518,7 +1518,6 @@ const PropertyCard = (props) => {
 						<ArrowBackIosIcon />
 					</IconButton>
 					<Box
-						ref={scrollRef}
 						sx={{
 							display: 'flex',
 							overflowX: 'auto',
@@ -1530,7 +1529,7 @@ const PropertyCard = (props) => {
 						}}
 					>
 						<Box
-							ref={scrollRef}
+							
 							sx={{
 								display: 'flex',
 								overflowX: 'auto',
@@ -1541,7 +1540,7 @@ const PropertyCard = (props) => {
 								},
 							}}
 						>
-							<ImageList sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+							<ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
 								{images.map((image, index) => (
 									<ImageListItem
 										key={index}
