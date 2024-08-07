@@ -278,10 +278,10 @@ export default function MaintenanceRequestNavigatorNew({
 
 			if (direction === 'left') {
 				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-				scrollRef.current.scrollLeft = newScrollPosition;
+				setScrollPosition(newScrollPosition);
 			} else {
 				const newScrollPosition = currentScrollPosition + scrollAmount;
-				scrollRef.current.scrollLeft = newScrollPosition;
+				setScrollPosition(newScrollPosition);
 			}
 		}
 	};
@@ -414,12 +414,11 @@ export default function MaintenanceRequestNavigatorNew({
 							>
 								<IconButton
 									onClick={() => handleScroll('left')}
-									disabled={scrollRef.current?.scrollLeft === 0}
+									disabled={scrollPosition === 0}
 								>
 									<ArrowBackIosIcon />
 								</IconButton>
 								<Box
-									ref={scrollRef}
 									sx={{
 										display: 'flex',
 										overflowX: 'auto',
@@ -430,7 +429,8 @@ export default function MaintenanceRequestNavigatorNew({
 										},
 									}}
 								>
-									<ImageList sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+									<ImageList 
+									ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
 										{images.map((image, index) => (
 											<ImageListItem
 												key={index}
