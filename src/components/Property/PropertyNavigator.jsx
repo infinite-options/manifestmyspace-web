@@ -53,7 +53,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-
+import ImageUploader from '../ImageUploader';
 import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
 import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/MaintenanceManager.jsx";
 
@@ -118,6 +118,8 @@ export default function PropertyNavigator({
 
   const [applianceList, setApplianceList] = useState([]);
   const [initialApplData, setInitialApplData] = useState(null);
+
+  const [selectedImageList, setSelectedImageList] = useState([]);
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
@@ -2278,6 +2280,7 @@ export default function PropertyNavigator({
                         appliance_warranty_till: null,
                         appliance_purchase_order: "",
                         appliance_purchased_from: "",
+                        img_favorite:"",
                       });
                       setIsEditing(false);
                       handleOpen();
@@ -2348,6 +2351,11 @@ export default function PropertyNavigator({
                           ))}
                       </Select>
                     </FormControl>
+                    <ImageUploader
+									selectedImageList={selectedImageList}
+									setSelectedImageList={setSelectedImageList}
+									page={'Add'}
+								/>
                     <TextField
                       margin='dense'
                       label='Description'
@@ -2536,19 +2544,6 @@ export default function PropertyNavigator({
                       variant='outlined'
                       value={currentApplRow?.appliance_url || ""}
                       onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
-                    />
-                    <TextField
-                      margin='dense'
-                      label='Images'
-                      fullWidth
-                      variant='outlined'
-                      value={currentApplRow?.appliance_images || ""}
-                      onChange={(e) =>
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_images: e.target.value,
-                        })
-                      }
                     />
                   </DialogContent>
                   <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>

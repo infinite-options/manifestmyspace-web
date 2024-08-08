@@ -110,8 +110,15 @@ export default function ImageUploader({updateFavoriteIcons, selectedImageList, s
           coverPhoto: file.index === favoriteFile.index
         }));
         setSelectedImageList(newSelectedImageList);
-        setFavImage(favoriteFile.image);
-        updateFavoriteIcons();
+          // Conditionally call setFavImage if it is passed as a prop
+  if (setFavImage) {
+    setFavImage(favoriteFile.image);
+  }
+
+  // Conditionally call updateFavoriteIcons if it is passed as a prop
+  if (updateFavoriteIcons) {
+    updateFavoriteIcons();
+  }
       };
 
     //   const favoriteImage = (favoriteFile) => {
@@ -246,20 +253,19 @@ export default function ImageUploader({updateFavoriteIcons, selectedImageList, s
                                             }}
                                         >
                                              <IconButton onClick={() => favoriteImage(file)}>
-                      {file.image === favImage ? (
-                        <FavoriteIcon color="primary" sx={{
-                          color: "red",
-                        }}/>
-                      ) : (
-                        <FavoriteBorderIcon color="black"/>
-                      )}
-                       {/* {selectedImageList[index].coverPhoto === true ? (
-                                                    <FavoriteIcon color="primary" sx={{
-                                                        color: theme.typography.propertyPage.color,
-                                                    }}/>
-                                                ) : (
-                                                    <FavoriteBorderIcon color="black"/>
-                                                )} */}
+                                             {favImage ? (
+  file.image === favImage ? (
+    <FavoriteIcon color="primary" sx={{ color: "red" }} />
+  ) : (
+    <FavoriteBorderIcon color="black" />
+  )
+) : (
+  selectedImageList[index].coverPhoto ? (
+    <FavoriteIcon color="primary" sx={{ color: theme.typography.propertyPage.color }} />
+  ) : (
+    <FavoriteBorderIcon color="black" />
+  )
+)}
                     </IconButton>
                                         </Box>
                                     </Grid>
