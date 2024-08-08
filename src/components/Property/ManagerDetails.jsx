@@ -20,7 +20,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useUser } from "../../contexts/UserContext";
 
-const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
+const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchManager}) => {
   const navigate = useNavigate();
   const location = useLocation();
   // const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = location.state || managerDetailsState;
@@ -271,7 +271,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick}) => {
             }}
           >
             <Typography sx={{ flex: 1, textAlign: "center", paddingLeft: "22px", fontSize: "25px", fontWeight: 700 }}>{"Property Manager"}</Typography>
-            {selectedRole !== "MANAGER" ? <SearchIcon onClick={() => navigate("/searchManager")} /> : null}
+            {selectedRole !== "MANAGER" ? <SearchIcon onClick={handleShowSearchManager} /> : null}
           </Box>
           <Box
             sx={{
