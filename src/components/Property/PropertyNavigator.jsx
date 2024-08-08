@@ -23,6 +23,7 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Avatar,
 } from "@mui/material";
 import axios from "axios";
 import theme from "../../theme/theme";
@@ -157,7 +158,7 @@ export default function PropertyNavigator({
   }, []);
 
   useEffect(() => {
-    // console.log("ROHIT - appliances - ", appliances);
+    //console.log("ROHIT - appliances - ", appliances);
   }, [appliances]);
 
   useEffect(() => {
@@ -332,7 +333,7 @@ export default function PropertyNavigator({
       }
 
       const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-      // console.log("Appliances", propertyApplicances);
+      //console.log("Appliances", propertyApplicances);
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
 
@@ -802,6 +803,23 @@ export default function PropertyNavigator({
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
 
+      console.log('----selectedImageList---', selectedImageList);
+      let i = 0;
+		for (const file of selectedImageList) {
+			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+			let key = `img_${i++}`;
+			if (file.file !== null) {
+				// newProperty[key] = file.file;
+				applianceFormData.append(key, file.file);
+			} else {
+				// newProperty[key] = file.image;
+				applianceFormData.append(key, file.image);
+			}
+			if (file.coverPhoto) {
+				applianceFormData.append("img_favorite", key);
+			}
+		}
+
       axios
         .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
         .then((response) => {
@@ -819,6 +837,7 @@ export default function PropertyNavigator({
           }
         });
       setShowSpinner(false);
+      setSelectedImageList([]);
       // setModifiedData([]);
     } catch (error) {
       // showSnackbar("Cannot update the lease. Please try again", "error");
@@ -879,6 +898,7 @@ export default function PropertyNavigator({
         applianceFormData.append(key, value);
       }
 
+
       for (let [key, value] of applianceFormData.entries()) {
         console.log(key, value);
       }
@@ -938,6 +958,7 @@ export default function PropertyNavigator({
         editAppliance(currentApplRow);
       } else {
         // setAppliances([...appliances, { ...currentApplRow, appliance_uid: uuidv4() }]);
+        console.log("---currentApplRow---", currentApplRow);
         addAppliance(currentApplRow);
       }
       handleClose();
@@ -978,6 +999,32 @@ export default function PropertyNavigator({
     }
   };
 
+// Define the custom cell renderer for the appliance_images column
+const ImageCell = (params) => {
+  let images;
+  try {
+    images = JSON.parse(params.value); // Try to parse as JSON
+  } catch (e) {
+    images = params.value; // If parsing fails, treat as a single URL string
+  }
+  const imageUrl = images?.length > 0 ? images[0] : ''; // Get the first image URL
+  
+  return (
+    <Avatar
+      src={imageUrl}
+      alt="Appliance"
+      sx={{
+        borderRadius: "0",
+        width: "60px",
+        height: "60px",
+        margin: "0px",
+        padding: "0px",
+      }}
+    />
+  );
+};
+
+
   const applnColumns = [
     { field: "appliance_uid", headerName: "UID", width: 80 },
     { field: "appliance_item", headerName: "Appliance", width: 100 },
@@ -992,7 +1039,7 @@ export default function PropertyNavigator({
     { field: "appliance_warranty_till", headerName: "Warranty Till", width: 80 },
     { field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
     { field: "appliance_url", headerName: "URLs", width: 80 },
-    { field: "appliance_images", headerName: "Images", width: 80 },
+    { field: "appliance_images", headerName: "Image", width: 80, flex: 1, renderCell: ImageCell },
     { field: "appliance_documents", headerName: "Documents", width: 80 },
     {
       field: "actions",
