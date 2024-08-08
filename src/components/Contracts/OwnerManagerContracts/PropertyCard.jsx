@@ -947,7 +947,12 @@ const PropertyCard = (props) => {
   const setBusinessProfileDetails = () => {
     if (businessProfile !== null && businessProfile !== undefined) {
       // console.log("Business Services Fees", businessProfile["business_services_fees"]);
-      setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
+      const parsedFees = JSON.parse(businessProfile["business_services_fees"]);
+      if (parsedFees){
+        setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
+      } else {
+        setDefaultContractFees([]);
+      }
     }
   };
 

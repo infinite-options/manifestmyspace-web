@@ -335,7 +335,7 @@ const TenantApplicationNav = (props) => {
                               color: "#160449",
                             }}
                           >
-                            {"***-**-" + AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY).toString().slice(-4)}
+                            {application?.tenant_ssn && ("***-**-" + AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY)?.toString()?.slice(-4))}
                           </Typography>
                           <Typography
                             sx={{
