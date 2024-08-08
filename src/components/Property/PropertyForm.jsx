@@ -249,6 +249,31 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 
 	const handleSubmit = async (event) => {
 		console.log("is it in handlesubmit");
+
+		if (!address) {
+			alert("Address should not be empty.");
+			return;
+		  }
+	      
+		  if (!type) {
+			alert("Type of the property should not be empty.");
+			return;
+		  }
+		  
+		  if (!squareFootage) {
+			alert("Area of the property should not be empty.");
+			return;
+		  }
+
+		  if (!bedrooms) {
+			alert("No of beds should not be empty.");
+			return;
+		  }
+		  if (!bathrooms) {
+			alert("No of bath should not be empty.");
+			return;
+		  }
+		  
 		event.preventDefault();
 		setShowSpinner(true);
 		const formData = new FormData();

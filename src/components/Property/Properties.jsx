@@ -455,6 +455,7 @@ function Properties() {
               <ManagerDetails 
                 managerDetailsState={managerDetailsState}
                 handleBackClick={handleBackClick} 
+                handleShowSearchManager={handleShowSearchManager}
               />
             )
 

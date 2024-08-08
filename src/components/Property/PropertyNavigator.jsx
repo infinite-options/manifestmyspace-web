@@ -289,8 +289,9 @@ export default function PropertyNavigator({
 
   useEffect(() => {
     if (propertyData && propertyData[currentIndex]) {
-      console.log("propertyId use Effect called ***************************************************");
-      console.log("setting propertyId - ", propertyData[currentIndex]);
+      // console.log("propertyId use Effect called ***************************************************");
+      // console.log("setting propertyId - ", propertyData[currentIndex]);
+      // console.log("setting propertyId - ", propertyData[currentIndex].property_uid);
       setPropertyId(propertyData[currentIndex].property_uid);
 
       //   const getContractsForOwner = async () => {
@@ -340,7 +341,8 @@ export default function PropertyNavigator({
       }
 
       const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-      console.log("Appliances", propertyApplicances);
+       console.log("Appliances ****", propertyApplicances);
+       console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap)
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
 
@@ -835,8 +837,14 @@ export default function PropertyNavigator({
           // console.log("Data updated successfully", response);
           // showSnackbar("Your profile has been successfully updated.", "success");
           // handleUpdate();
-          setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid }]);
+          console.log("Appliance befor", appliance)
+          console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap)
+          const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
+          console.log("Appliance is $$", applianceCategory)
+          setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid, appliance_item:applianceCategory }]);
+          
           setShowSpinner(false);
+          console.log("Appliance after", appliance)
         })
         .catch((error) => {
           setShowSpinner(false);
