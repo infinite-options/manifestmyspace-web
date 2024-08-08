@@ -40,6 +40,24 @@ function HappinessMatrixWidget(props) {
 
   }
 
+  const adjustPoints = (points) => {
+    const margin = 5;
+    for (let i = 0; i < points.length; i++) {
+      for (let j = i + 1; j < points.length; j++) {
+        while (overlap(points[i], points[j], margin)) {
+          points[j].x += margin;
+          points[j].y += margin;
+        }
+      }
+    }
+    return points;
+  };
+
+  const overlap = (point1, point2, margin) => {
+    const distance = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+    return distance < margin;
+  };
+
   useEffect(() => {
     // console.log("In UseEffect: ", happinessData.matrix_data.result);
     setData(happinessData.matrix_data.result);
@@ -64,8 +82,10 @@ function HappinessMatrixWidget(props) {
       points.push(pointObject);
     });
 
+    const adjustedPoints = adjustPoints(points);
+
     // console.log("points to plot", points);
-    setPointsToPlot(points);
+    setPointsToPlot(adjustedPoints);
   }, [props.happinessData]);
 
   const [pointsToPlot, setPointsToPlot] = useState([]);

@@ -491,7 +491,7 @@ export default function AddListing(props) {
       await autoUpdate();
 
       console.log("propertyList after autoUpdate - ", propertyList);
-      navigate("/propertyDetail", { state: { index, propertyList } });
+      navigate("/propertiesPM", { state: { index, propertyList } });
     } catch (error) {
       console.error("Error:", error);
     }

@@ -358,6 +358,20 @@ function Properties() {
           </Grid>
 
           <Grid item xs={12} md={8}>
+          {(RHS === "AddProperty" || propertyList.length === 0) ? (
+              <PropertyForm
+                onBack={handleBackClick}
+                // onSubmit={handleBackClick}
+                showNewContract={showNewContract}
+                property_endpoint_resp={rawPropertyData}
+                setNewContractUID={setNewContractUID}
+                setNewContractPropertyUID={setNewContractPropertyUID}
+                setReloadPropertyList={setReloadPropertyList}
+                // showNewContract={showNewContract}
+                refreshProperties={refreshProperties}
+              />
+            ) : (
+            <>
             {RHS === "PropertyNavigator" && (
               <PropertyNavigator
                 // index={propertyIndex}
@@ -398,19 +412,6 @@ function Properties() {
             {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}
             {RHS === "Applications" && (
               <TenantApplicationNav index={applicationIndex} propertyIndex={returnIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
-            )}
-            {RHS === "AddProperty" && (
-              <PropertyForm
-                onBack={handleBackClick}
-                // onSubmit={handleBackClick}
-                showNewContract={showNewContract}
-                property_endpoint_resp={rawPropertyData}
-                setNewContractUID={setNewContractUID}
-                setNewContractPropertyUID={setNewContractPropertyUID}
-                setReloadPropertyList={setReloadPropertyList}
-                // showNewContract={showNewContract}
-                refreshProperties={refreshProperties}
-              />
             )}
             {RHS === "CreateContract" && (
               <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />
@@ -458,6 +459,8 @@ function Properties() {
             )
 
             }
+            </>
+            )}
           </Grid>
         </Grid>
       </Container>
