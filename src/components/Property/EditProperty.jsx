@@ -868,15 +868,18 @@ function EditProperty(props) {
 	const handleScroll = (direction) => {
 		if (scrollRef.current) {
 			const scrollAmount = 200;
-			const currentScrollPosition = scrollRef.current.scrollLeft;
-
-			if (direction === 'left') {
-				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-				scrollRef.current.scrollLeft = newScrollPosition;
-			} else {
-				const newScrollPosition = currentScrollPosition + scrollAmount;
-				scrollRef.current.scrollLeft = newScrollPosition;
-			}
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
 		}
 	};
 
@@ -1026,12 +1029,11 @@ function EditProperty(props) {
 								>
 									<IconButton
 										onClick={() => handleScroll('left')}
-										disabled={scrollRef.current?.scrollLeft === 0}
+										disabled={scrollPosition === 0}
 									>
 										<ArrowBackIosIcon />
 									</IconButton>
 									<Box
-										ref={scrollRef}
 										sx={{
 											display: 'flex',
 											overflowX: 'auto',
@@ -1043,7 +1045,6 @@ function EditProperty(props) {
 										}}
 									>
 										<Box
-											ref={scrollRef}
 											sx={{
 												display: 'flex',
 												overflowX: 'auto',
@@ -1054,7 +1055,9 @@ function EditProperty(props) {
 												},
 											}}
 										>
-											<ImageList sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+											<ImageList 
+											ref={scrollRef}
+											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
 												{JSON.parse(propertyData.property_images)?.map((image, index) => (
 													<ImageListItem
 														key={index}

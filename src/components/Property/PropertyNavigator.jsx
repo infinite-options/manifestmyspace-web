@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -23,6 +23,7 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Avatar,
 } from "@mui/material";
 import axios from "axios";
 import theme from "../../theme/theme";
@@ -53,7 +54,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-
+import ImageUploader from '../ImageUploader';
 import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
 import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/MaintenanceManager.jsx";
 
@@ -61,7 +62,14 @@ import APIConfig from "../../utils/APIConfig";
 import { v4 as uuidv4 } from "uuid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 //const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
@@ -119,6 +127,8 @@ export default function PropertyNavigator({
   const [applianceList, setApplianceList] = useState([]);
   const [initialApplData, setInitialApplData] = useState(null);
 
+  const [selectedImageList, setSelectedImageList] = useState([]);
+
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
   const getDataFromAPI = async () => {
@@ -155,7 +165,7 @@ export default function PropertyNavigator({
   }, []);
 
   useEffect(() => {
-    // console.log("ROHIT - appliances - ", appliances);
+    //console.log("ROHIT - appliances - ", appliances);
   }, [appliances]);
 
   useEffect(() => {
@@ -279,8 +289,8 @@ export default function PropertyNavigator({
 
   useEffect(() => {
     if (propertyData && propertyData[currentIndex]) {
-      // console.log("propertyId use Effect called ***************************************************");
-      // console.log("setting propertyId - ", propertyData[currentIndex].property_uid);
+      console.log("propertyId use Effect called ***************************************************");
+      console.log("setting propertyId - ", propertyData[currentIndex]);
       setPropertyId(propertyData[currentIndex].property_uid);
 
       //   const getContractsForOwner = async () => {
@@ -330,7 +340,7 @@ export default function PropertyNavigator({
       }
 
       const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-      // console.log("Appliances", propertyApplicances);
+      console.log("Appliances", propertyApplicances);
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
 
@@ -754,13 +764,15 @@ export default function PropertyNavigator({
     },
   ];
 
-  const handleEditClick = (row) => {
+  const handleEditClick = async (row) => {
     // console.log("ROHIT - handleEditClick - row - ", row);
-    setInitialApplData(row);
-    setcurrentApplRow(row);
-    setModifiedApplRow({ appliance_uid: row.appliance_uid });
-    setIsEditing(true);
-    handleOpen();
+    await setInitialApplData(row);
+    await setcurrentApplRow(row);
+    await setModifiedApplRow({ appliance_uid: row.appliance_uid });
+    console.log('---currentApplRow?.appliance_favorite_image---', row);
+    await setFavImage(currentApplRow?.appliance_favorite_image);
+    await setIsEditing(true);
+    await handleOpen();
   };
 
   const handleViewLeaseClick = () => {
@@ -800,6 +812,23 @@ export default function PropertyNavigator({
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
 
+      console.log('----selectedImageList---', selectedImageList);
+      let i = 0;
+		for (const file of selectedImageList) {
+			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+			let key = `img_${i++}`;
+			if (file.file !== null) {
+				// newProperty[key] = file.file;
+				applianceFormData.append(key, file.file);
+			} else {
+				// newProperty[key] = file.image;
+				applianceFormData.append(key, file.image);
+			}
+			if (file.coverPhoto) {
+				applianceFormData.append("img_favorite", key);
+			}
+		}
+
       axios
         .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
         .then((response) => {
@@ -817,6 +846,7 @@ export default function PropertyNavigator({
           }
         });
       setShowSpinner(false);
+      setSelectedImageList([]);
       // setModifiedData([]);
     } catch (error) {
       // showSnackbar("Cannot update the lease. Please try again", "error");
@@ -872,10 +902,36 @@ export default function PropertyNavigator({
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
+      if (imagesTobeDeleted.length > 0) {
+    
+        let updatedImages = currentApplRow.appliance_images;
+        updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
+        currentApplRow.appliance_images = updatedImages;
+        applianceFormData.append('delete_images', JSON.stringify(imagesTobeDeleted));
+      }
+
+      applianceFormData.append('appliance_images', JSON.stringify(currentApplRow.appliance_images));
+      applianceFormData.append('appliance_favorite_image', favImage);
+      let i = 0;
+		for (const file of selectedImageList) {
+			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+			let key = `img_${i++}`;
+			if (file.file !== null) {
+				// newProperty[key] = file.file;
+				applianceFormData.append(key, file.file);
+			} else {
+				// newProperty[key] = file.image;
+				applianceFormData.append(key, file.image);
+			 }
+			if (file.coverPhoto) {
+				applianceFormData.set('appliance_favorite_image', key);
+			}
+		}
 
       for (const [key, value] of Object.entries(changedFields)) {
         applianceFormData.append(key, value);
       }
+
 
       for (let [key, value] of applianceFormData.entries()) {
         console.log(key, value);
@@ -905,6 +961,7 @@ export default function PropertyNavigator({
             }
           });
           setShowSpinner(false);
+          setSelectedImageList([]);
         })
         .catch((error) => {
           setShowSpinner(false);
@@ -936,6 +993,7 @@ export default function PropertyNavigator({
         editAppliance(currentApplRow);
       } else {
         // setAppliances([...appliances, { ...currentApplRow, appliance_uid: uuidv4() }]);
+        //console.log("---currentApplRow---", currentApplRow);
         addAppliance(currentApplRow);
       }
       handleClose();
@@ -976,6 +1034,61 @@ export default function PropertyNavigator({
     }
   };
 
+// Define the custom cell renderer for the appliance_images column
+const ImageCell = (params) => {
+  console.log('---params----', params);
+  let images;
+  try {
+    images = JSON.parse(params.value); // Try to parse as JSON
+  } catch (e) {
+    images = params.value; // If parsing fails, treat as a single URL string
+  }
+  console.log('---images----', images);
+  const imageUrl = images?.length > 0 ? images[0] : ''; // Get the first image URL
+  
+  return (
+    <Avatar
+      src={imageUrl}
+      alt="Appliance"
+      sx={{
+        borderRadius: "0",
+        width: "60px",
+        height: "60px",
+        margin: "0px",
+        padding: "0px",
+      }}
+    />
+  );
+};
+
+const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
+		}
+	};
+
+
   const applnColumns = [
     { field: "appliance_uid", headerName: "UID", width: 80 },
     { field: "appliance_item", headerName: "Appliance", width: 100 },
@@ -990,7 +1103,7 @@ export default function PropertyNavigator({
     { field: "appliance_warranty_till", headerName: "Warranty Till", width: 80 },
     { field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
     { field: "appliance_url", headerName: "URLs", width: 80 },
-    { field: "appliance_images", headerName: "Images", width: 80 },
+    { field: "appliance_images", headerName: "Image", width: 80, flex: 1, renderCell: ImageCell },
     { field: "appliance_documents", headerName: "Documents", width: 80 },
     {
       field: "actions",
@@ -1009,6 +1122,48 @@ export default function PropertyNavigator({
     },
   ];
 
+  const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
+  const [favImage, setFavImage] = useState('');
+
+	const [deletedImageList, setDeletedImageList] = useState([]);
+  const [deletedIcons, setDeletedIcons] = useState(
+    currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []
+  );
+  
+  const [favoriteIcons, setFavoriteIcons] = useState(
+    currentApplRow?.appliance_images ? currentApplRow.appliance_images.map(image => image === currentApplRow.appliance_favorite_image) : []
+  );
+	const handleDelete = (index) => {
+		const updatedDeletedIcons = [...deletedIcons];
+		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
+		setDeletedIcons(updatedDeletedIcons);
+
+		const imageToDelete = currentApplRow.appliance_images[index];
+		setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
+
+		console.log('Delete image at index:', deletedIcons);
+	};
+
+	const handleFavorite = (index) => {
+    const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
+    updatedFavoriteIcons[index] = true;
+    setFavoriteIcons(updatedFavoriteIcons);
+  
+    const newFavImage = currentApplRow.appliance_images[index];
+    setFavImage(newFavImage);
+    setSelectedImageList(prevState =>
+      prevState.map((file, i) => ({
+        ...file,
+        coverPhoto: i === index
+      }))
+    );
+  
+    console.log(`Favorite image at index: ${index}`);
+  };
+
+  const handleUpdateFavoriteIcons = () => {
+    setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
+};
   return (
     <Paper
       style={{
@@ -2278,6 +2433,7 @@ export default function PropertyNavigator({
                         appliance_warranty_till: null,
                         appliance_purchase_order: "",
                         appliance_purchased_from: "",
+                        img_favorite:"",
                       });
                       setIsEditing(false);
                       handleOpen();
@@ -2348,6 +2504,118 @@ export default function PropertyNavigator({
                           ))}
                       </Select>
                     </FormControl>
+                    {isEditing && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 2,
+          }}
+        >
+          <IconButton
+            onClick={() => handleScroll('left')}
+            disabled={scrollPosition === 0}
+          >
+            <ArrowBackIosIcon />
+          </IconButton>
+          <Box
+            sx={{
+              display: 'flex',
+              overflowX: 'auto',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              '&::-webkit-scrollbar': {
+                display: 'none',
+              },
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                overflowX: 'auto',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                },
+              }}
+            >
+              <ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+                {(currentApplRow.appliance_images)?.map((image, index) => (
+                  <ImageListItem
+                    key={index}
+                    sx={{
+                      width: 'auto',
+                      flex: '0 0 auto',
+                      border: '1px solid #ccc',
+                      margin: '0 2px',
+                      position: 'relative', // Added to position icons
+                    }}
+                  >
+                    <img
+                      src={image}
+                      alt={`maintenance-${index}`}
+                      style={{
+                        height: '150px',
+                        width: '150px',
+                        objectFit: 'cover',
+                      }}
+                    />
+                    <Box sx={{ position: 'absolute', top: 0, right: 0 }}>
+                      <IconButton
+                        onClick={() => handleDelete(index)}
+                        sx={{
+                          color: deletedIcons[index] ? 'red' : 'black',
+                          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                          },
+                          margin: '2px',
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                    <Box sx={{ position: 'absolute', bottom: 0, left: 0 }}>
+                      <IconButton
+                        onClick={() => handleFavorite(index)}
+                        sx={{
+                          color: favoriteIcons[index] ? 'red' : 'black',
+                          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                          },
+                          margin: '2px',
+                        }}
+                      >
+                        {favoriteIcons[index] ? (
+                          <FavoriteIcon />
+                        ) : (
+                          <FavoriteBorderIcon />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </ImageListItem>
+                ))}
+              </ImageList>
+            </Box>
+          </Box>
+          <IconButton onClick={() => handleScroll('right')}>
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </Box>
+      )}
+                    <ImageUploader
+									selectedImageList={selectedImageList}
+									setSelectedImageList={setSelectedImageList}
+									page={'Add'}
+
+									setDeletedImageList={setDeletedImageList}
+                  setFavImage={setFavImage}
+                  favImage={favImage}
+                  updateFavoriteIcons={handleUpdateFavoriteIcons}
+								/>
                     <TextField
                       margin='dense'
                       label='Description'
@@ -2536,19 +2804,6 @@ export default function PropertyNavigator({
                       variant='outlined'
                       value={currentApplRow?.appliance_url || ""}
                       onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
-                    />
-                    <TextField
-                      margin='dense'
-                      label='Images'
-                      fullWidth
-                      variant='outlined'
-                      value={currentApplRow?.appliance_images || ""}
-                      onChange={(e) =>
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_images: e.target.value,
-                        })
-                      }
                     />
                   </DialogContent>
                   <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
