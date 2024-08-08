@@ -289,8 +289,8 @@ export default function PropertyNavigator({
 
   useEffect(() => {
     if (propertyData && propertyData[currentIndex]) {
-      // console.log("propertyId use Effect called ***************************************************");
-      // console.log("setting propertyId - ", propertyData[currentIndex].property_uid);
+      console.log("propertyId use Effect called ***************************************************");
+      console.log("setting propertyId - ", propertyData[currentIndex]);
       setPropertyId(propertyData[currentIndex].property_uid);
 
       //   const getContractsForOwner = async () => {
@@ -340,7 +340,7 @@ export default function PropertyNavigator({
       }
 
       const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-      //console.log("Appliances", propertyApplicances);
+      console.log("Appliances", propertyApplicances);
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
 
