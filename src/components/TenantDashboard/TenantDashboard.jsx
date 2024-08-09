@@ -26,6 +26,7 @@ import TenantMaintenanceItemDetail from "../Maintenance/TenantMaintenanceItemDet
 import AddTenantMaintenanceItem from "../Maintenance/AddTenantMaintenanceItem";
 import ViewLease from "../Leases/ViewLease";
 import Payments from "../Payments/Payments";
+import TenantApplicationEdit from "../Applications/TenantApplicationEdit";
 
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
@@ -299,9 +300,9 @@ function TenantDashboard(props) {
         return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
       case "tenantApplication":
         return <TenantApplication {...rightPane.state} setRightPane={setRightPane} />;
-      case "tenantProfileEdit":
-        // return <TenantProfileEdit {...rightPane.state} setRightPane={setRightPane} />;
-        navigate('/profileEditor');
+      case "tenantApplicationEdit":
+        return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} />;
+        // navigate('/profileEditor');
       case "announcements":
         return <Announcements setRightPane={setRightPane} />;
       case "tenantmaintenanceitem":

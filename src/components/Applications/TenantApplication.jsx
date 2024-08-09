@@ -319,12 +319,12 @@ export default function TenantApplication(props) {
               paddingTop: "20px",
             }}
           >
-            {props.from === "accwidget" && 
-            <Box sx={{ position: "absolute", top: 0, right: 0 }}>
-              <Button onClick={(e) => handleCloseButton(e)}>
-                <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
-              </Button>
-            </Box>}
+            {props.from === "accwidget" &&
+              <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                <Button onClick={(e) => handleCloseButton(e)}>
+                  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+                </Button>
+              </Box>}
             <Typography
               sx={{
                 justifySelf: "center",
@@ -958,7 +958,7 @@ export default function TenantApplication(props) {
                     display: "flex",
                     width: "45%",
                   }}
-                  onClick={() => props.setRightPane({ type: "tenantProfileEdit" })}
+                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease: lease, from: 'TenantApplication' }, })}
                 >
                   <Typography
                     sx={{
