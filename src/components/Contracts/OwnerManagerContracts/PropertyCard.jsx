@@ -1446,7 +1446,35 @@ const PropertyCard = (props) => {
     }
     return freq;
   };
+// Parse property images or use the default image if none are available
+const images =
+propertyData.property_images && JSON.parse(propertyData.property_images).length > 0
+	? JSON.parse(propertyData.property_images)
+	: [defaultHouseImage];
 
+const [scrollPosition, setScrollPosition] = useState(0);
+const scrollRef = useRef(null);
+
+useEffect(() => {
+if (scrollRef.current) {
+	scrollRef.current.scrollLeft = scrollPosition;
+}
+}, [scrollPosition]);
+
+const handleScroll = (direction) => {
+if (scrollRef.current) {
+	const scrollAmount = 200;
+	const currentScrollPosition = scrollRef.current.scrollLeft;
+
+	if (direction === 'left') {
+		const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+		setScrollPosition(newScrollPosition);
+	} else {
+		const newScrollPosition = currentScrollPosition + scrollAmount;
+		setScrollPosition(newScrollPosition);
+	}
+}
+};
   return (
     <>
       {/* Property Image Carousel */}
