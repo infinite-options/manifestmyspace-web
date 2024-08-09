@@ -246,12 +246,16 @@ export default function MaintenanceRequestDetailNew({
 
   const handleChange = (event, newValue, index = 0) => {
     console.log("----Handle change in req detail---", newValue);
-    setCurrentStatus(colorStatus[newValue].status);
-    setValue(newValue);
-    setMaintenanceRequestIndex(index);
-    const newStatus = colorStatus[newValue].mapping;
-    const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
-    setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
+    if (colorStatus && colorStatus.length > newValue) {
+      setCurrentStatus(colorStatus[newValue].status);
+      setValue(newValue);
+      setMaintenanceRequestIndex(index);
+      const newStatus = colorStatus[newValue].mapping;
+      const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
+      setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
+    } else {
+      console.error("Invalid index or colorStatus is undefined");
+    }
   };
 
   const handleMaintenaceRequestIndexChange = (index, direction) => {
@@ -443,6 +447,7 @@ export default function MaintenanceRequestDetailNew({
                   paddingTop: "0px",
                 }}
               >
+                {console.log("---colorStatus---", colorStatus, value)}
                 {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ? (
                   <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} />
                 ) : null}
