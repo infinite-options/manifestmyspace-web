@@ -26,7 +26,7 @@ import {
 
 import { darken } from '@mui/system';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FormHelperText from '@mui/material/FormHelperText';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -42,13 +42,24 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useMediaQuery } from '@mui/material';
 import APIConfig from '../../utils/APIConfig';
 
+import DeleteIcon from '@mui/icons-material/Delete';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import IconButton from '@mui/material/IconButton';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
 export default function EditMaintenanceItem() {
 	const location = useLocation();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	let testIssue1, testProperty1, testIssueItem1, testCost1;
     let testTitle1, testPriority1, completionStatus1;
-    let requestUid1, propID1;
+    let requestUid1, propID1, maintainanceImages, maintainanceFavImage;
 
 	if (isMobile) {
 		testIssue1 = location.state.testIssue;
@@ -70,6 +81,11 @@ export default function EditMaintenanceItem() {
 		completionStatus1 = sessionStorage.getItem('completionStatus');
 		requestUid1 = sessionStorage.getItem('requestUid');
 		propID1 = sessionStorage.getItem('propID');
+
+		maintainanceImages = sessionStorage.getItem('maintainanceImages');
+		maintainanceFavImage = sessionStorage.getItem('maintainanceFavImage');
+		console.log('---maintainanceImages---', maintainanceImages);
+		console.log('---maintainanceFavImage---', maintainanceFavImage);
 	}
 
 	// setCost(testCost1);
@@ -99,7 +115,18 @@ export default function EditMaintenanceItem() {
 	const [selectedImageList, setSelectedImageList] = useState([]);
 	const [showSpinner, setShowSpinner] = useState(false);
 
+	const [deletedImageList, setDeletedImageList] = useState([]);
+	const [favImage, setFavImage] = useState(maintainanceFavImage);
+
 	const profileId = getProfileId();
+
+	const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
+	const [deletedIcons, setDeletedIcons] = useState(
+		new Array(JSON.parse(maintainanceImages).length).fill(false)
+	);
+	const [favoriteIcons, setFavoriteIcons] = useState(
+    JSON.parse(maintainanceImages).map(image => image === maintainanceFavImage)
+  );
 
 	const handlePropertyChange = (event) => {
 		console.log('handlePropertyChange', event.target.value);
@@ -177,6 +204,8 @@ export default function EditMaintenanceItem() {
 			sessionStorage.removeItem('month');
 			sessionStorage.removeItem('year');
 			sessionStorage.removeItem('editMaintenanceView');
+			sessionStorage.removeItem('maintainanceImages');
+		sessionStorage.removeItem('maintainanceFavImage');
 
 			window.dispatchEvent(new Event('storage'));
 			// Dispatch the custom event
@@ -241,20 +270,48 @@ export default function EditMaintenanceItem() {
 		editFormData.append('maintenance_request_closed_date', null);
 		editFormData.append('maintenance_request_adjustment_date', null);
 
-		for (let i = 0; i < selectedImageList.length; i++) {
-			try {
-				let key = i === 0 ? 'img_cover' : `img_${i - 1}`;
+		if (imagesTobeDeleted.length > 0) {
+			console.log('-----deleted_images----', imagesTobeDeleted);
+		
+			let updatedImages = JSON.parse(maintainanceImages);
+			updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
+			maintainanceImages = JSON.stringify(updatedImages);
+			editFormData.append('delete_images', JSON.stringify(imagesTobeDeleted));
+		  }
 
-				if (selectedImageList[i].startsWith('data:image')) {
-					const imageBlob = dataURItoBlob(selectedImageList[i]);
-					editFormData.append(key, imageBlob);
-				} else {
-					editFormData.append(key, selectedImageList[i]);
-				}
-			} catch (error) {
-				console.log('Error uploading images', error);
-			}
-		}
+		  editFormData.append('maintenance_images', maintainanceImages);
+		  editFormData.append('maintenance_favorite_image', favImage);
+			  
+			  let i = 0;
+			  for (const file of selectedImageList) {
+				  // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+				  let key = `img_${i++}`;
+				  if (file.file !== null) {
+					  // newProperty[key] = file.file;
+					  editFormData.append(key, file.file);
+				  } else {
+					  // newProperty[key] = file.image;
+					  editFormData.append(key, file.image);
+				   }
+				  if (file.coverPhoto) {
+					editFormData.set('maintenance_favorite_image', key);
+				  }
+			  }
+
+		// for (let i = 0; i < selectedImageList.length; i++) {
+		// 	try {
+		// 		let key = i === 0 ? 'img_cover' : `img_${i - 1}`;
+
+		// 		if (selectedImageList[i].startsWith('data:image')) {
+		// 			const imageBlob = dataURItoBlob(selectedImageList[i]);
+		// 			editFormData.append(key, imageBlob);
+		// 		} else {
+		// 			editFormData.append(key, selectedImageList[i]);
+		// 		}
+		// 	} catch (error) {
+		// 		console.log('Error uploading images', error);
+		// 	}
+		// }
 		console.log('editFormData>>>>>>');
 		for (let [key, value] of editFormData.entries()) {
 			console.log(key, value);
@@ -307,7 +364,67 @@ export default function EditMaintenanceItem() {
 		// setTitle('')
 		// setDescription('')
 		navigate(maintenanceRoutingBasedOnSelectedRole());
+		handleBackButton();
 	};
+
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
+		}
+	};
+
+	const handleDelete = (index) => {
+		const updatedDeletedIcons = [...deletedIcons];
+		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
+		setDeletedIcons(updatedDeletedIcons);
+
+		const imageToDelete = JSON.parse(maintainanceImages)[index];
+		setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
+
+		console.log('Delete image at index:', JSON.stringify(deletedIcons));
+	};
+
+	const handleFavorite = (index) => {
+    const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
+    updatedFavoriteIcons[index] = true;
+    setFavoriteIcons(updatedFavoriteIcons);
+  
+    const newFavImage = JSON.parse(maintainanceImages)[index];
+    setFavImage(newFavImage);
+    setSelectedImageList(prevState =>
+      prevState.map((file, i) => ({
+        ...file,
+        coverPhoto: i === index
+      }))
+    );
+  
+    console.log(`Favorite image at index: ${index}`);
+  };
+
+  const handleUpdateFavoriteIcons = () => {
+    setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
+};
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -359,10 +476,129 @@ export default function EditMaintenanceItem() {
 							</Button>
 						</Box>
 					</Stack>
-					<Stack direction="column" justifyContent="center" alignItems="center" padding="25px">
 						<Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
-							<Grid container spacing={6}>
+							<Grid container columnSpacing={12} rowSpacing={6}>
 								{/* Select Field for Property */}
+								<Grid item xs={12}>
+								<Box
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										padding: 2,
+									}}
+								>
+									<IconButton
+										onClick={() => handleScroll('left')}
+										disabled={scrollPosition === 0}
+									>
+										<ArrowBackIosIcon />
+									</IconButton>
+									<Box
+										sx={{
+											display: 'flex',
+											overflowX: 'auto',
+											scrollbarWidth: 'none',
+											msOverflowStyle: 'none',
+											'&::-webkit-scrollbar': {
+												display: 'none',
+											},
+										}}
+									>
+										<Box
+											sx={{
+												display: 'flex',
+												overflowX: 'auto',
+												scrollbarWidth: 'none',
+												msOverflowStyle: 'none',
+												'&::-webkit-scrollbar': {
+													display: 'none',
+												},
+											}}
+										>
+											<ImageList 
+											ref={scrollRef}
+											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+												{JSON.parse(maintainanceImages)?.map((image, index) => (
+													<ImageListItem
+														key={index}
+														sx={{
+															width: 'auto',
+															flex: '0 0 auto',
+															border: '1px solid #ccc',
+															margin: '0 2px',
+															position: 'relative', // Added to position icons
+														}}
+													>
+														<img
+															src={image}
+															alt={`maintenance-${index}`}
+															style={{
+																height: '150px',
+																width: '150px',
+																objectFit: 'cover',
+															}}
+														/>
+														<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
+															<IconButton
+																onClick={() => handleDelete(index)}
+																sx={{
+																	color: deletedIcons[index] ? 'red' : 'black',
+																	backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																	'&:hover': {
+																		backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																	},
+																	margin: '2px',
+																}}
+															>
+																<DeleteIcon />
+															</IconButton>
+														</Box>
+														<Box sx={{ position: 'absolute', bottom: 0, left: 0 }}>
+															<IconButton
+																onClick={() => handleFavorite(index)}
+																sx={{
+																	color: favoriteIcons[index] ? 'red' : 'black',
+																	backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																	'&:hover': {
+																		backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																	},
+																	margin: '2px',
+																}}
+															>
+																{favoriteIcons[index] ? (
+																	<FavoriteIcon />
+																) : (
+																	<FavoriteBorderIcon />
+																)}
+															</IconButton>
+														</Box>
+													</ImageListItem>
+												))}
+											</ImageList>
+										</Box>
+									</Box>
+									<IconButton onClick={() => handleScroll('right')}>
+										<ArrowForwardIosIcon />
+									</IconButton>
+								</Box>
+							
+									
+
+								</Grid>
+								
+								<Grid item xs={12}>
+									<ImageUploader
+										selectedImageList={selectedImageList}
+										setSelectedImageList={setSelectedImageList}
+										page={'QuoteRequestForm'}
+
+									setDeletedImageList={setDeletedImageList}
+                  setFavImage={setFavImage}
+                  favImage={favImage}
+                  updateFavoriteIcons={handleUpdateFavoriteIcons}
+									/>
+								</Grid>
 								<Grid item xs={12}>
 									<Typography
 										sx={{
@@ -408,6 +644,7 @@ export default function EditMaintenanceItem() {
 										{/* </Tooltip> */}
 									</FormControl>
 								</Grid>
+
 
 								{/* Select Field for Issue and Cost Estimate */}
 								<Grid item xs={6}>
@@ -665,13 +902,7 @@ export default function EditMaintenanceItem() {
 								</Grid>
 
 								{/* File Upload Field */}
-								<Grid item xs={12}>
-									<ImageUploader
-										selectedImageList={selectedImageList}
-										setSelectedImageList={setSelectedImageList}
-										page={'QuoteRequestForm'}
-									/>
-								</Grid>
+								
 
 								{/* Submit Button */}
 								<Grid item xs={12}>
@@ -695,7 +926,7 @@ export default function EditMaintenanceItem() {
 								</Grid>
 							</Grid>
 						</Box>
-					</Stack>
+					
 				</Paper>
 			</Box>
 		</ThemeProvider>

@@ -765,17 +765,17 @@ function EditProperty(props) {
 			const updateResponse = await fetch(
 				`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`
 			);
-			console.log('---updateResponse---', updateResponse);
+			//console.log('---updateResponse---', updateResponse);
 			// const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
 			const updatedJson = await updateResponse.json();
-			console.log('---updatedJson---', updatedJson);
+			//console.log('---updatedJson---', updatedJson);
 			const updatedProperty = updatedJson.Property.result[0];
-			console.log('---updatedProperty---', updatedProperty);
+			//console.log('---updatedProperty---', updatedProperty);
 			propertyList = propertyList.map((property) => {
 				if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
 				return property;
 			});
-			console.log('---index---', index);
+			//console.log('---index---', index);
 			console.log('updatedPropertyList - ', propertyList);
 			setPropertyData(propertyList[index]);
 		};
