@@ -45,10 +45,12 @@ export default function PMQuotesRequested(props) {
   function getActiveContracts() {
     let activeContracts = [];
     contracts.forEach((contract) => {
+      console.log("Contract is ^^",contract)
       if (contract.contract_status === "ACTIVE") {
         activeContracts.push(contract);
       }
     });
+    console.log("Active set to ###$",activeContracts)
     return activeContracts;
   }
 
@@ -73,6 +75,7 @@ export default function PMQuotesRequested(props) {
       miles: "No data",
     };
   }
+  console.log("activeContracts is &&&", activeContracts)
 
   const [data, setData] = useState(property[index]);
 
@@ -216,6 +219,34 @@ export default function PMQuotesRequested(props) {
 
   function handleAccept(obj) {
     try {
+      console.log("obj is &&&", obj)
+      console.log("activeContract is &&&", activeContracts)
+    const newContractStart = new Date(obj.contract_start_date);
+    const newContractEnd = new Date(obj.contract_end_date);
+    const newPropertyId = obj.property_id;
+
+    // Iterate over the active contracts to check for overlaps
+    for (let i = 0; i < activeContracts.length; i++) {
+      const existingContract = activeContracts[i];
+
+      // Check if the property IDs match
+      if (existingContract.property_id === newPropertyId) {
+        const existingContractStart = new Date(existingContract.contract_start_date);
+        const existingContractEnd = new Date(existingContract.contract_end_date);
+
+        // Check if the dates overlap
+        if (
+          (newContractStart <= existingContractEnd && newContractStart >= existingContractStart) ||
+          (newContractEnd <= existingContractEnd && newContractEnd >= existingContractStart) ||
+          (newContractStart <= existingContractStart && newContractEnd >= existingContractEnd)
+        ) {
+          // Trigger an alert for overlap
+          alert("This contract overlaps with an existing contract for the same property.");
+          return; // Exit the function early
+        }
+      }
+    }
+
       const formData = new FormData();
       formData.append("contract_uid", obj.contract_uid);
       formData.append("contract_status", "ACTIVE");

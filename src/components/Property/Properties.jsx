@@ -62,6 +62,7 @@ function Properties() {
   const [managerData, setManagerData] = useState(null); // for request quotes
 
   const [managerDetailsState, setManagerDetailsState] = useState(null);
+  const [newPropertyUid,setNewPropertyUid]=useState("");
 
   useEffect(() => {
     
@@ -87,6 +88,8 @@ function Properties() {
     //   setRHS("ManagerDetails");
     // }
   }, [managerDetailsState]);
+
+  
 
   useEffect(() => {
     // console.log("Properties - newContractUID - ", newContractUID);
@@ -185,7 +188,25 @@ function Properties() {
     fetchData();
     setShowSpinner(false);
     setReloadPropertyList(false)
+
   }, [reloadPropertyList]);
+
+  useEffect(()=>{
+    if(newPropertyUid!=""){
+       let foundIndex = 0; // Initialize with 0 to indicate not found
+
+        for (let i = 0; i < propertyList.length; i++) {
+          if (propertyList[i].property_uid === newPropertyUid) {
+            foundIndex = i; // Found the index
+            break; // Exit the loop since we found the matching object
+          }
+          }
+
+// Now, use setReturnIndex to set the found index
+        setReturnIndex(foundIndex);
+        setNewPropertyUid("")
+    }
+    },[propertyList])
 
   const fetchProperties = async () => {
     setShowSpinner(true);
@@ -369,6 +390,7 @@ function Properties() {
                 setReloadPropertyList={setReloadPropertyList}
                 // showNewContract={showNewContract}
                 refreshProperties={refreshProperties}
+                setNewPropertyUid={setNewPropertyUid}
               />
             ) : (
             <>

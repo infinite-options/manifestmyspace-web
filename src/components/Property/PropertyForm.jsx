@@ -104,7 +104,7 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, refreshProperties, setReloadPropertyList,}) => {
+const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, refreshProperties, setReloadPropertyList,setNewPropertyUid}) => {
 	const classes = useStyles();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
@@ -112,6 +112,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);
 	//const [readOnlyNotes, setReadOnlyNotes] = useState(false);
 	const [selectedImageList, setSelectedImageList] = useState([]);
+	const [referedUser, setReferedUser]=useState(false);
 
 	const location = useLocation();
 	//const { property_endpoint_resp } = location.state;
@@ -273,6 +274,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 			alert("No of bath should not be empty.");
 			return;
 		  }
+
+		  if(selectedRole === "MANAGER" && referedUser==false){
+			alert("Please refer an owner for the property");
+			return;
+		  }
 		  
 		event.preventDefault();
 		setShowSpinner(true);
@@ -353,7 +359,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 			responsePropertyUID = data.property_UID;
 			setNewContractPropertyUID(responsePropertyUID);
 			console.log("response data - property UID: ", responsePropertyUID);
+			
 			setReloadPropertyList(true);
+			setNewPropertyUid(responsePropertyUID)
 		} catch (error) {
 			console.log("Error posting data:", error);
 		}
@@ -962,7 +970,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 				</Grid>
 				<Modal open={isModalOpen} onClose={handleCloseModal}>
 					<Box>
-						<ReferUser onClose={handleCloseModal} onReferralSuccess={handleSetSelectedOwner} />
+						<ReferUser onClose={handleCloseModal} onReferralSuccess={handleSetSelectedOwner} setReferedUser={setReferedUser}/>
 					</Box>
 				</Modal>
 				
