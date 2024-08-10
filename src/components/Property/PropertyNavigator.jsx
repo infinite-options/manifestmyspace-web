@@ -813,8 +813,6 @@ export default function PropertyNavigator({
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
-
-      console.log('----selectedImageList---', selectedImageList);
       let i = 0;
 		for (const file of selectedImageList) {
 			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
@@ -826,9 +824,9 @@ export default function PropertyNavigator({
 				// newProperty[key] = file.image;
 				applianceFormData.append(key, file.image);
 			}
-			if (file.coverPhoto) {
-				applianceFormData.append("img_favorite", key);
-			}
+			// if (file.coverPhoto) {
+			// 	applianceFormData.append("img_favorite", key);
+			// }
 		}
 
       axios
@@ -2441,7 +2439,6 @@ const [scrollPosition, setScrollPosition] = useState(0);
                         appliance_warranty_till: null,
                         appliance_purchase_order: "",
                         appliance_purchased_from: "",
-                        img_favorite:"",
                       });
                       setIsEditing(false);
                       handleOpen();
