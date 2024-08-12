@@ -74,6 +74,7 @@ function TenantDashboard(props) {
   const [viewLeaseState, setViewLeaseState] = useState(null);
   const [paymentState, setPaymentState] = useState(null);
   const [tenantApplicationNavState, setTenantApplicationNavState] = useState(null);
+  const [reload, setReload] = useState(false);
 
   const open = Boolean(anchorEl);
 
@@ -171,16 +172,16 @@ function TenantDashboard(props) {
     setRefresh(false);
 
     // List all dependencies in the dependency array
-  }, []);
+  }, [reload]);
   //[getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance, tenantId]);
   // End Main UseEffect
 
   useEffect(() => {
-    if(propertyData && propertyData.length === 0){
+    if (propertyData && propertyData.length === 0) {
       setRightPane({ type: "listings" });
     } else {
-    setRightPane("");
-  }
+      setRightPane("");
+    }
   }, [propertyData]);
 
   useEffect(() => {
@@ -307,7 +308,7 @@ function TenantDashboard(props) {
         return <TenantApplication {...rightPane.state} setRightPane={setRightPane} />;
       case "tenantApplicationEdit":
         return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} />;
-        // navigate('/profileEditor');
+      // navigate('/profileEditor');
       case "tenantLeases":
         return <TenantLeases {...rightPane.state} setRightPane={setRightPane} />;
       case "announcements":
@@ -315,7 +316,7 @@ function TenantDashboard(props) {
       case "tenantmaintenanceitem":
         return <TenantMaintenanceItemDetail tenantMaintenanceItemDetailState={tenantMaintenanceItemDetailState} setRightPane={setRightPane} />;
       case "addtenantmaintenance":
-        return <AddTenantMaintenanceItem newTenantMaintenanceState={newTenantMaintenanceState} setRightPane={setRightPane} />;
+        return <AddTenantMaintenanceItem newTenantMaintenanceState={newTenantMaintenanceState} setRightPane={setRightPane} setReload={setReload} />;
       case "viewlease":
         return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
       case "payment":
@@ -1317,47 +1318,47 @@ const AccountBalanceWidget = ({
           </Grid>
         </Grid>
       </Box>
-      {propertyData && propertyData.length > 0 && 
-      (selectedProperty?.lease_status === "NEW" || selectedProperty?.lease_status === "REFUSED" ||  
-      selectedProperty?.lease_status === "WITHDRAWN" || selectedProperty?.lease_status === "PROCESSING" || 
-      selectedProperty?.lease_status === "REJECTED" || selectedProperty?.lease_status === "RESCIND" ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItem: "left",
-            justifyContent: "left",
-            margin: isMobile ? "0px" : "20px",
-            paddingBottom: isMobile ? "5px" : "10px",
-            cursor: "pointer",
-            color: "#3D5CAC",
-            fontSize: "20px",
-            fontWeight: 600,
-          }}
-          onClick={() => handleViewApplicationNavigate(selectedProperty, selectedLease)}
-        >
-          <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-          <u>View Application</u>
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItem: "left",
-            justifyContent: "left",
-            margin: isMobile ? "0px" : "20px",
-            paddingBottom: isMobile ? "5px" : "10px",
-            cursor: "pointer",
-            color: "#3D5CAC",
-            fontSize: "20px",
-            fontWeight: 600,
-          }}
-          onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
-        >
-          <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-          <u>View Full Lease</u>
-        </Box>))}
+      {propertyData && propertyData.length > 0 &&
+        (selectedProperty?.lease_status === "NEW" || selectedProperty?.lease_status === "REFUSED" ||
+          selectedProperty?.lease_status === "WITHDRAWN" || selectedProperty?.lease_status === "PROCESSING" ||
+          selectedProperty?.lease_status === "REJECTED" || selectedProperty?.lease_status === "RESCIND" ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItem: "left",
+              justifyContent: "left",
+              margin: isMobile ? "0px" : "20px",
+              paddingBottom: isMobile ? "5px" : "10px",
+              cursor: "pointer",
+              color: "#3D5CAC",
+              fontSize: "20px",
+              fontWeight: 600,
+            }}
+            onClick={() => handleViewApplicationNavigate(selectedProperty, selectedLease)}
+          >
+            <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+            <u>View Application</u>
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItem: "left",
+              justifyContent: "left",
+              margin: isMobile ? "0px" : "20px",
+              paddingBottom: isMobile ? "5px" : "10px",
+              cursor: "pointer",
+              color: "#3D5CAC",
+              fontSize: "20px",
+              fontWeight: 600,
+            }}
+            onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
+          >
+            <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+            <u>View Full Lease</u>
+          </Box>))}
     </DashboardTab>
   );
 };
