@@ -1310,7 +1310,8 @@ const AccountBalanceWidget = ({
           </Grid>
         </Grid>
       </Box>
-      {selectedProperty?.lease_status === "NEW" || selectedProperty?.lease_status === "REFUSED" ||  
+      {propertyData && propertyData.length > 0 && 
+      (selectedProperty?.lease_status === "NEW" || selectedProperty?.lease_status === "REFUSED" ||  
       selectedProperty?.lease_status === "WITHDRAWN" || selectedProperty?.lease_status === "PROCESSING" || 
       selectedProperty?.lease_status === "REJECTED" || selectedProperty?.lease_status === "RESCIND" ? (
         <Box
@@ -1349,7 +1350,7 @@ const AccountBalanceWidget = ({
         >
           <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
           <u>View Full Lease</u>
-        </Box>)}
+        </Box>))}
     </DashboardTab>
   );
 };
