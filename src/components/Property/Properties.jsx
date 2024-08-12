@@ -64,6 +64,7 @@ function Properties() {
   const [managerDetailsState, setManagerDetailsState] = useState(null);
   const [newPropertyUid,setNewPropertyUid]=useState("");
 
+
   useEffect(() => {
     
     const properties = rawPropertyData?.Property?.result;
@@ -81,6 +82,17 @@ function Properties() {
       setManagerDetailsState(state);
     }
   }, [returnIndex]);
+
+  // For propertyRentWidget to show filtered vacant properties
+  const [filteredPropertyList, setFilteredPropertyList] = useState([]);
+
+  useEffect(() => {
+    let filteredList = propertyList;
+    if (location.state?.filterVacant) {
+      filteredList = propertyList.filter((property) => property.rent_status === "VACANT");
+    }
+    setFilteredPropertyList(filteredList);
+  }, [propertyList, location.state?.filterVacant]);
 
   useEffect(() => {
     console.log("Properties - managerDetailsState - ", managerDetailsState);
@@ -398,7 +410,7 @@ function Properties() {
               <PropertyNavigator
                 // index={propertyIndex}
                 index={returnIndex}
-                propertyList={propertyList}
+                propertyList={filteredPropertyList}
                 allRentStatus={allRentStatus}
                 isDesktop={isDesktop}
                 contracts={allContracts}
