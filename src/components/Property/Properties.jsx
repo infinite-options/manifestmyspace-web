@@ -53,6 +53,7 @@ function Properties() {
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [returnIndex, setReturnIndex] = useState(location.state?.index || 0);
   const [returnIndexTest, setReturnIndexTest] = useState(location.state?.index || 0);
+  const [returnIndexByProp, setReturnIndexByProperty]=useState("");
   const [applicationIndex, setApplicationIndex] = useState(0);
 
   const [newContractUID, setNewContractUID] = useState(null);
@@ -88,8 +89,19 @@ function Properties() {
     //   setRHS("ManagerDetails");
     // }
   }, [managerDetailsState]);
-
   
+  function updateNavPage(){
+    if(returnIndexByProp!=""){
+      setPropertyTo(returnIndexByProp)
+      setReturnIndexByProperty("")
+      
+    }
+    setRHS("PropertyNavigator")
+  }
+  
+  useEffect(()=>{
+    updateNavPage()
+  },[returnIndexByProp])
 
   useEffect(() => {
     // console.log("Properties - newContractUID - ", newContractUID);
@@ -191,19 +203,27 @@ function Properties() {
 
   }, [reloadPropertyList]);
 
-  useEffect(()=>{
-    if(newPropertyUid!=""){
-       let foundIndex = 0; // Initialize with 0 to indicate not found
+  function setPropertyTo(newPropertyUid){
 
-        for (let i = 0; i < propertyList.length; i++) {
-          if (propertyList[i].property_uid === newPropertyUid) {
-            foundIndex = i; // Found the index
-            break; // Exit the loop since we found the matching object
-          }
-          }
+    if(newPropertyUid!=""){
+      let foundIndex = 0; // Initialize with 0 to indicate not found
+
+       for (let i = 0; i < propertyList.length; i++) {
+         if (propertyList[i].property_uid === newPropertyUid) {
+           foundIndex = i; // Found the index
+           break; // Exit the loop since we found the matching object
+         }
+         }
 
 // Now, use setReturnIndex to set the found index
-        setReturnIndex(foundIndex);
+       setReturnIndex(foundIndex);
+   }
+
+  }
+
+  useEffect(()=>{
+    if(newPropertyUid!=""){
+       setPropertyTo(newPropertyUid)
         setNewPropertyUid("")
     }
     },[propertyList])
@@ -478,6 +498,7 @@ function Properties() {
                 managerDetailsState={managerDetailsState}
                 handleBackClick={handleBackClick} 
                 handleShowSearchManager={handleShowSearchManager}
+                setReturnIndexByProperty={setReturnIndexByProperty}
               />
             )
 
