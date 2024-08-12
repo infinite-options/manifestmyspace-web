@@ -11,6 +11,8 @@ export default function MaintenanceWidget({ maintenanceData }) {
   // console.log("In MaintenanceWidget");
   const navigate = useNavigate();
   const { maintenanceRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
+  const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
+
 
   // console.log("Role: ", user);
   // console.log("Selected Role: ", selectedRole);
@@ -88,7 +90,11 @@ export default function MaintenanceWidget({ maintenanceData }) {
             variant='outlined'
             onClick={(e) => {
               e.stopPropagation();
-              navigate("/addMaintenanceItem");
+              navigate("/managerMaintenance", {
+                state: {
+                  showAddMaintenance: true,
+                }
+              });
             }}
           >
             {"+"}

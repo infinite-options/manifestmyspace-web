@@ -166,6 +166,13 @@ export default function MaintenanceManager() {
   const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
   const [showNewMaintenance, setshowNewMaintenance] = useState(false);
   const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
+  const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.showAddMaintenance) {
+        setIsAddingNewMaintenance(true);
+    }
+  }, [location.state]);
 
   function navigateToAddMaintenanceItem() {
     if (isMobile) {
@@ -532,8 +539,8 @@ export default function MaintenanceManager() {
             <Grid item xs={12} md={8}>
               {editMaintenanceView && selectedRole === "MANAGER" ? (
                 <EditMaintenanceItem />
-              ) : showNewMaintenance ? (
-                <AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
+              ) : showNewMaintenance || isAddingNewMaintenance ? (
+                <AddMaintenanceItem onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
               ) : desktopView && selectedRole === "MANAGER" ? (
                 <>
                   <QuoteRequestForm maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))} navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))} />

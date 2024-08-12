@@ -20,7 +20,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useUser } from "../../contexts/UserContext";
 
-const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchManager}) => {
+const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchManager, setReturnIndexByProperty}) => {
   const navigate = useNavigate();
   const location = useLocation();
   // const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = location.state || managerDetailsState;
@@ -70,6 +70,8 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
       business_email: "",
     },
   ]);
+
+
   function sortProperties(properties) {
     properties?.sort((a, b) => {
       if (a.property_address < b.property_address) {
@@ -452,6 +454,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
                   let navIndex = propertyData.findIndex((property) => property.property_uid === p.property_uid);
                   // console.log(p)
                   let docList = JSON.parse(p.contract_documents);
+        
                   // console.log(docList, typeof(docList))
                   const doc = docList && docList.find((document) => document.type === "contract");
                   const contractDocumentLink = doc ? doc.link : "";
@@ -467,9 +470,9 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
                                 fontWeight: 600,
                                 color: "#160449",
                                 textDecoration: "underline",
-                                cursor: "pointer",
+                                cursor: "pointer", 
                               }}
-                              onClick={() => navigate("/propertyDetail", { state: { index: navIndex, propertyList: propertyData } })}
+                              onClick={() => setReturnIndexByProperty(p.property_uid)}
                             >
                               {`${p.property_address}, ${p.property_unit && p.property_unit + ", "} ${p.property_city}, ${p.property_state} ${p.property_zip}`}
                             </Typography>
