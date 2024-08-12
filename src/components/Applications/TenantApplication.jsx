@@ -23,7 +23,7 @@ export default function TenantApplication(props) {
   // console.log("props in tenantApplication", props);
 
   const [property, setProperty] = useState([]);
-  const [status, setStatus] = useState([]);
+  const [status, setStatus] = useState("");
   const [lease, setLease] = useState([]);
   // console.log("in tenant application status", status);
   // console.log("lease", lease);
@@ -56,7 +56,7 @@ export default function TenantApplication(props) {
       axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         .then((response) => {
           const fetchData = response.data["Lease_Details"].result;
-          const lease = fetchData.filter((lease)=> lease.lease_uid === props.lease.lease_uid)
+          const lease = fetchData.filter((lease) => lease.lease_uid === props.lease.lease_uid)
           console.log('lease data--', lease);
           setLease(lease);
         })
@@ -133,7 +133,8 @@ export default function TenantApplication(props) {
 
   function formatTenantVehicleInfo() {
     if (lease.length === 0) {
-      return "No Vehicle Information";
+      let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info):[];
+      setVehicles(info);
     } else {
       let info = JSON.parse(lease[0].lease_vehicles);
       setVehicles(info);
@@ -145,7 +146,8 @@ export default function TenantApplication(props) {
 
   function formatTenantAdultOccupants() {
     if (lease.length === 0) {
-      return "No Adult Occupants";
+      let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+      setAdultOccupants(info);
     } else {
       // console.log(tenantProfile?.tenant_adult_occupants)
       let info = JSON.parse(lease[0].lease_adults);
@@ -158,7 +160,8 @@ export default function TenantApplication(props) {
 
   function formatTenantPetOccupants() {
     if (lease.length === 0) {
-      return "No Pet Occupants";
+      let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+      setPetOccupants(info);
     } else {
       let info = JSON.parse(lease[0].lease_pets);
       setPetOccupants(info);
@@ -169,7 +172,8 @@ export default function TenantApplication(props) {
   }
   function formatTenantChildOccupants() {
     if (lease.length === 0) {
-      return "No Child Occupants";
+      let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+      setChildOccupants(info);
     } else {
       let info = JSON.parse(lease[0].lease_children);
       setChildOccupants(info);
@@ -193,7 +197,7 @@ export default function TenantApplication(props) {
       const data = await response.json();
       const tenantProfileData = data.profile.result[0];
       setTenantProfile(tenantProfileData);
-      // console.log("tenantProfileData", tenantProfileData);
+      console.log("tenantProfileData", tenantProfileData);
     };
     getTenantProfileInformation();
   }, []);
@@ -203,8 +207,12 @@ export default function TenantApplication(props) {
     formatTenantAdultOccupants();
     formatTenantPetOccupants();
     formatTenantChildOccupants();
-    setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
-  }, [lease]);
+    if (lease.length === 0) {
+      setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+    } else {
+      setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+    }
+  }, [lease, tenantProfile]);
 
   function getApplicationDate() {
     return "10-31-2023";
@@ -246,7 +254,7 @@ export default function TenantApplication(props) {
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     return `${month}-${day}-${year}`;
-}
+  }
 
   async function handleApplicationSubmit() {
     //submit to backend
@@ -265,10 +273,18 @@ export default function TenantApplication(props) {
       leaseApplicationData.append("lease_status", "NEW");
       leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
       leaseApplicationData.append("lease_documents", JSON.stringify(tenantDocuments));
-      leaseApplicationData.append("lease_adults", tenantProfile?.tenant_adult_occupants);
-      leaseApplicationData.append("lease_children", tenantProfile?.tenant_children_occupants);
-      leaseApplicationData.append("lease_pets", tenantProfile?.tenant_pet_occupants);
-      leaseApplicationData.append("lease_vehicles", tenantProfile?.tenant_vehicle_info);
+      if (status === "") {
+        leaseApplicationData.append("lease_adults", tenantProfile?.tenant_adult_occupants);
+        leaseApplicationData.append("lease_children", tenantProfile?.tenant_children_occupants);
+        leaseApplicationData.append("lease_pets", tenantProfile?.tenant_pet_occupants);
+        leaseApplicationData.append("lease_vehicles", tenantProfile?.tenant_vehicle_info);
+      } else {
+        leaseApplicationData.append("lease_adults", lease[0]?.lease_adults);
+        leaseApplicationData.append("lease_children", lease[0]?.lease_children);
+        leaseApplicationData.append("lease_pets", lease[0]?.lease_pets);
+        leaseApplicationData.append("lease_vehicles", lease[0]?.lease_vehicles);
+      }
+
       leaseApplicationData.append("lease_referred", "[]");
       leaseApplicationData.append("lease_rent", "[]");
       leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
@@ -952,35 +968,35 @@ export default function TenantApplication(props) {
                   justifyContent: "center",
                   alignItems: "center",
                   paddingTop: "10px",
-                  marginTop:"20px",
+                  marginTop: "20px",
                   marginBottom: "7px",
                   width: "100%",
                 }}
               >
-                {(status && status === "REJECTED" || status === "RESCIND") &&
-                <Button
-                  variant='contained'
-                  sx={{
-                    backgroundColor: "#9EAED6",
-                    textTransform: "none",
-                    borderRadius: "5px",
-                    display: "flex",
-                    width: "45%",
-                    marginRight:"10px"
-                  }}
-                  onClick={() => handleApplicationSubmit()}
-                >
-                  <Typography
+                {(status === "" || status === "REJECTED" || status === "RESCIND") &&
+                  <Button
+                    variant='contained'
                     sx={{
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: "14px",
-                      color: "#160449",
+                      backgroundColor: "#9EAED6",
                       textTransform: "none",
+                      borderRadius: "5px",
+                      display: "flex",
+                      width: "45%",
+                      marginRight: "10px"
                     }}
+                    onClick={() => handleApplicationSubmit()}
                   >
-                    Submit
-                  </Typography>
-                </Button>}
+                    <Typography
+                      sx={{
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: "14px",
+                        color: "#160449",
+                        textTransform: "none",
+                      }}
+                    >
+                      Submit
+                    </Typography>
+                  </Button>}
                 <Button
                   variant='contained'
                   sx={{
@@ -990,7 +1006,7 @@ export default function TenantApplication(props) {
                     display: "flex",
                     width: "45%",
                   }}
-                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid:lease[0].lease_uid, setRightPane:props.setRightPane , property:property, from:props.from}, })}
+                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid: lease.length > 0 ? lease[0].lease_uid:null, setRightPane: props.setRightPane, property: property, from: props.from }, })}
                 >
                   <Typography
                     sx={{
