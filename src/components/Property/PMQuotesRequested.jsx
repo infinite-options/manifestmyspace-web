@@ -36,17 +36,22 @@ export default function PMQuotesRequested(props) {
   const statusList = ["New Quotes", "Contracts"];
   const statusColor = ["#3D5CAC", "#160449"];
   const [tabStatus, setTabStatus] = useState(0);
-  const [activeContracts, setActiveContracts] = useState(getActiveContracts());
+  const [activeContracts, setActiveContracts] = useState();
 
   function getColor(status) {
     return statusColor[status];
   }
 
+  useEffect(()=>{
+    let validContracts=getActiveContracts();
+    setActiveContracts(validContracts)
+  },[])
+
   function getActiveContracts() {
     let activeContracts = [];
     contracts.forEach((contract) => {
       console.log("Contract is ^^",contract)
-      if (contract.contract_status === "ACTIVE") {
+      if (contract.contract_status == "ACTIVE") {
         activeContracts.push(contract);
       }
     });
@@ -200,7 +205,7 @@ export default function PMQuotesRequested(props) {
       <div>
         {activeContracts.length > 0 ? (
           <div>
-            These are all the active contracts
+           {/* These are all the active contracts */}
             {activeContracts.map((contract, index) => {
               return (
                 <div key={index}>
