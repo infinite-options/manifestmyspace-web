@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ThemeProvider, Box, Paper, Stack, Typography, Grid, Divider, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { ThemeProvider, Box, Paper, Typography, Grid, Snackbar, Alert, AlertTitle, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import theme from "../../theme/theme";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import APIConfig from "../../utils/APIConfig";
@@ -57,7 +57,6 @@ export default function TenantApplicationEdit({ profileData, lease_uid }) {
                     const fetchData = response.data["Lease_Details"].result;
                     const leaseData = fetchData.filter((lease) => lease.lease_uid === lease_uid)
                     setLease(leaseData);
-                    setIsReload(false);
                     setAdults(JSON.parse(leaseData[0].lease_adults) || []);
                     setChildren(JSON.parse(leaseData[0].lease_children) || []);
                     setPets(JSON.parse(leaseData[0].lease_pets) || []);
@@ -147,7 +146,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid }) {
                     .then((response) => {
                         console.log('Data updated successfullyyy', response);
                         showSnackbar("Your lease application has been successfully updated.", "success");
-                        setIsReload(true);
+                        setIsReload((prev)=>!prev);
                         setShowSpinner(false);
                     })
                     .catch((error) => {
@@ -189,7 +188,12 @@ export default function TenantApplicationEdit({ profileData, lease_uid }) {
                             Tenant Application Edit
                         </Typography>
                     </Grid>
-
+                    <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+                            {snackbarMessage}
+                        </Alert>
+                    </Snackbar>
                     <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
                             <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }}>
