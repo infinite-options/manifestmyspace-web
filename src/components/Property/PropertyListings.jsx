@@ -515,6 +515,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         data: property,
         status: status,
         lease: lease,
+        from:"PropertyInfo",
       },
     });
   }

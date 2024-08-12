@@ -15,7 +15,7 @@ import APIConfig from "../../utils/APIConfig";
 import axios from "axios";
 
 export default function TenantApplication(props) {
-  // console.log("In Tenant Application");
+  console.log("In Tenant Application", props);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId, roleName } = useUser();
@@ -56,8 +56,8 @@ export default function TenantApplication(props) {
       axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
         .then((response) => {
           const fetchData = response.data["Lease_Details"].result;
-          const lease = fetchData.filter((lease)=> lease.lease_uid === props.data.lease_uid)
-          console.log('lease--', fetchData, lease);
+          const lease = fetchData.filter((lease)=> lease.lease_uid === props.lease.lease_uid)
+          console.log('lease data--', lease);
           setLease(lease);
         })
         .catch((error) => {
@@ -978,7 +978,7 @@ export default function TenantApplication(props) {
                     display: "flex",
                     width: "45%",
                   }}
-                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid:lease[0].lease_uid, setRightPane:props.setRightPane , property:property}, })}
+                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid:lease[0].lease_uid, setRightPane:props.setRightPane , property:property, from:props.from}, })}
                 >
                   <Typography
                     sx={{

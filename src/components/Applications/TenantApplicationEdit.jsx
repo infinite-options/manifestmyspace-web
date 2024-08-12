@@ -18,8 +18,8 @@ import { useUser } from "../../contexts/UserContext";
 import CloseIcon from "@mui/icons-material/Close";
 
 
-export default function TenantApplicationEdit({ profileData, lease_uid, setRightPane, property}) {
-    console.log('Inside TenantApplicationEdit', profileData, lease_uid);
+export default function TenantApplicationEdit({ profileData, lease_uid, setRightPane, property, from}) {
+    console.log('Inside TenantApplicationEdit', profileData, lease_uid, from);
     const [adults, setAdults] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
     const [children, setChildren] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
     const [pets, setPets] = useState([{ id: 1, name: "", breed: "", type: "", weight: "" }]);
@@ -175,7 +175,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
     const handleCloseButton = (e) => {
         e.preventDefault();
         const state = {
-            data: property, status: property.lease_status, lease: lease, from: 'accwidget'
+            data: property, status: property.lease_status, lease: lease[0], from: from
           }
         setRightPane?.({ type: "tenantApplication", state: state });
       };
