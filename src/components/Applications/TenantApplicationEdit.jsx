@@ -11,18 +11,16 @@ import Documents from "../Leases/Documents";
 import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useUser } from "../../contexts/UserContext";
 
 
-export default function TenantApplicationEdit({ profileData, lease }) {
-    console.log('Inside TenantApplicationEdit', profileData, lease)
+export default function TenantApplicationEdit({ profileData, lease_uid }) {
+    console.log('Inside TenantApplicationEdit', profileData, lease_uid);
     const [adults, setAdults] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
     const [children, setChildren] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
     const [pets, setPets] = useState([{ id: 1, name: "", breed: "", type: "", weight: "" }]);
     const [vehicles, setVehicles] = useState([{ id: 1, make: "", model: "", year: "", license: "", state: "" }]);
     const [documents, setDocuments] = useState([]);
-    const childrenRef = useRef(children);
-    const petsRef = useRef(pets);
-    const vehiclesRef = useRef(vehicles);
     const documentsRef = useRef([]);
     const [relationships, setRelationships] = useState([]);
     const [states, setStates] = useState([]);
@@ -31,6 +29,9 @@ export default function TenantApplicationEdit({ profileData, lease }) {
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [showSpinner, setShowSpinner] = useState(false);
+    const [lease, setLease] = useState([]);
+    const { user, getProfileId, roleName } = useUser();
+    const [isReload, setIsReload] = useState(false);
 
     const getListDetails = async () => {
         try {
@@ -51,22 +52,29 @@ export default function TenantApplicationEdit({ profileData, lease }) {
     const setProfileData = async () => {
         setShowSpinner(true);
         try {
-            setAdults(JSON.parse(profileData.tenant_adult_occupants) || []);
-            setChildren(JSON.parse(profileData.tenant_children_occupants) || []);
-            setPets(JSON.parse(profileData.tenant_pet_occupants) || []);
-            setVehicles(JSON.parse(profileData.tenant_vehicle_info) || []);
+            axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+                .then((response) => {
+                    const fetchData = response.data["Lease_Details"].result;
+                    const leaseData = fetchData.filter((lease) => lease.lease_uid === lease_uid)
+                    setLease(leaseData);
+                    setIsReload(false);
+                    setAdults(JSON.parse(leaseData[0].lease_adults) || []);
+                    setChildren(JSON.parse(leaseData[0].lease_children) || []);
+                    setPets(JSON.parse(leaseData[0].lease_pets) || []);
+                    setVehicles(JSON.parse(leaseData[0].lease_vehicles) || []);
 
-            const parsedDocs = JSON.parse(profileData.tenant_documents);
-            const docs = parsedDocs
-                ? parsedDocs.map((doc, index) => ({
-                    ...doc,
-                    id: index,
-                }))
-                : [];
-            console.log('initial docs', docs);
-            setDocuments(docs);
-            documentsRef.current = parsedDocs;
-            setShowSpinner(false);
+                    const parsedDocs = JSON.parse(leaseData[0].lease_documents);
+                    const docs = parsedDocs
+                        ? parsedDocs.map((doc, index) => ({
+                            ...doc,
+                            id: index,
+                        }))
+                        : [];
+                    setDocuments(docs);
+                    documentsRef.current = parsedDocs;
+                    setShowSpinner(false);
+                })
+
         } catch (error) {
             console.error("Error fetching profile data:", error);
             setShowSpinner(false);
@@ -85,11 +93,6 @@ export default function TenantApplicationEdit({ profileData, lease }) {
     };
 
     useEffect(() => {
-        console.log("calling useeffect");
-        // setIsSave(false);
-
-        setProfileData();
-
         getListDetails();
     }, []);
 
@@ -98,7 +101,7 @@ export default function TenantApplicationEdit({ profileData, lease }) {
 
         // setIsSave(false);
         setProfileData();
-    }, [profileData]);
+    }, [lease_uid, isReload]);
 
     const editOrUpdateLease = async () => {
         console.log('inside edit', modifiedData);
@@ -138,13 +141,13 @@ export default function TenantApplicationEdit({ profileData, lease }) {
                         leaseApplicationFormData.append(item.key, JSON.stringify(item.value));
                     }
                 });
-                leaseApplicationFormData.append('lease_uid', lease.lease_uid);
+                leaseApplicationFormData.append('lease_uid', lease[0].lease_uid);
 
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
                         console.log('Data updated successfullyyy', response);
                         showSnackbar("Your lease application has been successfully updated.", "success");
-                        // handleUpdate();
+                        setIsReload(true);
                         setShowSpinner(false);
                     })
                     .catch((error) => {

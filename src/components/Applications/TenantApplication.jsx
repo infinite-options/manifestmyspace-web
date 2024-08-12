@@ -12,6 +12,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from "@mui/icons-material/Close";
 import APIConfig from "../../utils/APIConfig";
+import axios from "axios";
 
 export default function TenantApplication(props) {
   // console.log("In Tenant Application");
@@ -45,10 +46,29 @@ export default function TenantApplication(props) {
   useEffect(() => {
     setProperty(props.data);
     setStatus(props.status);
-    setLease(props.lease);
+    // setLease(props.lease);
     const address = formatAddress();
     setFormattedAddress(address);
   }, [props.data]);
+
+  useEffect(() => {
+    const getLeaseDetails = () => {
+      axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+        .then((response) => {
+          const fetchData = response.data["Lease_Details"].result;
+          const lease = fetchData.filter((lease)=> lease.lease_uid === props.lease.lease_uid)
+          console.log('lease--', fetchData, lease);
+          setLease(lease);
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error.response.data);
+          }
+        });
+    }
+
+    getLeaseDetails();
+  }, [props.data])
 
   const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
 
@@ -112,10 +132,10 @@ export default function TenantApplication(props) {
   }
 
   function formatTenantVehicleInfo() {
-    if (!tenantProfile) {
+    if (lease.length === 0) {
       return "No Vehicle Information";
     } else {
-      let info = JSON.parse(tenantProfile?.tenant_vehicle_info);
+      let info = JSON.parse(lease[0].lease_vehicles);
       setVehicles(info);
       // for (const vehicle of info){
       //     console.log(vehicle)
@@ -124,11 +144,11 @@ export default function TenantApplication(props) {
   }
 
   function formatTenantAdultOccupants() {
-    if (!tenantProfile) {
+    if (lease.length === 0) {
       return "No Adult Occupants";
     } else {
       // console.log(tenantProfile?.tenant_adult_occupants)
-      let info = JSON.parse(tenantProfile?.tenant_adult_occupants);
+      let info = JSON.parse(lease[0].lease_adults);
       setAdultOccupants(info);
       // for (const occupant of info){
       //     console.log(occupant)
@@ -137,10 +157,10 @@ export default function TenantApplication(props) {
   }
 
   function formatTenantPetOccupants() {
-    if (!tenantProfile) {
-      return "No Adult Occupants";
+    if (lease.length === 0) {
+      return "No Pet Occupants";
     } else {
-      let info = JSON.parse(tenantProfile?.tenant_pet_occupants);
+      let info = JSON.parse(lease[0].lease_pets);
       setPetOccupants(info);
       // for (const pet of info){
       //     console.log(pet)
@@ -148,10 +168,10 @@ export default function TenantApplication(props) {
     }
   }
   function formatTenantChildOccupants() {
-    if (!tenantProfile) {
-      return "No Adult Occupants";
+    if (lease.length === 0) {
+      return "No Child Occupants";
     } else {
-      let info = JSON.parse(tenantProfile?.tenant_children_occupants);
+      let info = JSON.parse(lease[0].lease_children);
       setChildOccupants(info);
       // for (const child of info){
       //     console.log(child)
@@ -183,8 +203,8 @@ export default function TenantApplication(props) {
     formatTenantAdultOccupants();
     formatTenantPetOccupants();
     formatTenantChildOccupants();
-    setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile?.tenant_documents) : []);
-  }, [tenantProfile]);
+    setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+  }, [lease]);
 
   function getApplicationDate() {
     return "10-31-2023";
@@ -385,7 +405,7 @@ export default function TenantApplication(props) {
                   fontSize: theme.typography.secondaryFont,
                 }}
               >
-                Applied on {lease.lease_application_date}
+                Applied on {lease.length > 0 && lease[0].lease_application_date}
               </Typography>
             </Box>
           ) : null}
@@ -958,7 +978,7 @@ export default function TenantApplication(props) {
                     display: "flex",
                     width: "45%",
                   }}
-                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease: lease, from: 'TenantApplication' }, })}
+                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid:lease[0].lease_uid }, })}
                 >
                   <Typography
                     sx={{
