@@ -67,7 +67,7 @@ const CustomTextField = withStyles({
 })(TextField);
 
 // Variable Declaration
-export default function ReferUser({ onClose, onReferralSuccess}) {
+export default function ReferUser({ onClose, onReferralSuccess, setReferedUser}) {
   console.log("In ReferUser.jsx");
   const location = useLocation();
 //   const { property_endpoint_resp } = location.state;
@@ -172,6 +172,7 @@ export default function ReferUser({ onClose, onReferralSuccess}) {
         if(emailResponse.status === 200){
           setShowEmailSentDialog(true);
           onReferralSuccess(data.owner_uid); 
+          setReferedUser(true)
         }
 
         setShowSpinner(false);

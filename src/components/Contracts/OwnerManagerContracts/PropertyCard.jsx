@@ -1477,22 +1477,6 @@ if (scrollRef.current) {
 };
   return (
     <>
-      {/* Property Image Carousel */}
-      <Box
-        sx={{
-          display: "flex",
-          padding: "5px",
-          justifyContent: "center",
-          alignItems: "center",
-          fontSize: "20px",
-          color: "#160449",
-          // color: '#3D5CAC',
-        }}
-      >
-        <ImageCarousel
-          images={propertyData.property_images && JSON.parse(propertyData.property_images).length > 0 ? JSON.parse(propertyData.property_images) : [defaultHouseImage]}
-        />
-      </Box>
       {/* Time since Inquiry was created */}
       <Box
         sx={{
@@ -1505,7 +1489,8 @@ if (scrollRef.current) {
           // color: '#3D5CAC',
         }}
       >
-        <Box
+		  <Grid item xs={12}>
+		  <Box
 					sx={{
 						display: 'flex',
 						alignItems: 'center',
@@ -1576,6 +1561,8 @@ if (scrollRef.current) {
         >
           {timeDiff}
         </Box> */}
+		  </Grid>
+        
       </Box>
       {/* Property Address */}
       <Box

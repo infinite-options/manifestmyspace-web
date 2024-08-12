@@ -204,6 +204,7 @@ export default function AddMaintenanceItem({onBack}) {
 				} else {
 					formData.append(key, selectedImageList[i]);
 				}
+				
 			} catch (error) {
 				console.log('Error uploading images', error);
 			}
