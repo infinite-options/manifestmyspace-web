@@ -175,8 +175,12 @@ function TenantDashboard(props) {
   // End Main UseEffect
 
   useEffect(() => {
+    if(propertyData && propertyData.length === 0){
+      setRightPane({ type: "listings" });
+    } else {
     setRightPane("");
-  }, []);
+  }
+  }, [propertyData]);
 
   useEffect(() => {
     if (tenantMaintenanceItemDetailState) {
