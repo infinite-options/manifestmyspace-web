@@ -75,7 +75,7 @@ export default function OwnerPropertyRentWidget(props) {
   const renderDefaultLegendText = (value, entry) => {
     return <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>No properties</span>;
   };
-
+ 
   return (
     <Grid container style={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%" }}>
       <Grid item xs={12} style={{ display: "flex", justifyContent: "center" }}>
@@ -97,7 +97,7 @@ export default function OwnerPropertyRentWidget(props) {
               filter='url(#shadow)'
               // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
               // onClick={() => navigate("/properties", { state: { showPropertyForm: true } })} - PM Changed
-              onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true } })}
+              onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true , showRHS: "PropertyNavigator"} })}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
