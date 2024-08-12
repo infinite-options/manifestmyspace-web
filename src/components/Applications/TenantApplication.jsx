@@ -239,6 +239,15 @@ export default function TenantApplication(props) {
     });
   }
 
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    console.log('check date', dateString, date)
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+}
+
   async function handleApplicationSubmit() {
     //submit to backend
     // console.log("Application Submitted")
@@ -262,7 +271,7 @@ export default function TenantApplication(props) {
       leaseApplicationData.append("lease_vehicles", tenantProfile?.tenant_vehicle_info);
       leaseApplicationData.append("lease_referred", "[]");
       leaseApplicationData.append("lease_rent", "[]");
-      leaseApplicationData.append("lease_application_date", date.toLocaleDateString());
+      leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
       leaseApplicationData.append("tenant_uid", getProfileId());
       const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
