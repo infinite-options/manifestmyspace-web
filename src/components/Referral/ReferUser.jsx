@@ -100,6 +100,22 @@ export default function ReferUser({ onClose, onReferralSuccess, setReferedUser})
       alert("Please select a role");
       return;
     }
+
+    if (!firstName) {
+      alert("FirstName should not be empty.");
+      return;
+    }
+
+    if (!lastName) {
+      alert("LastName should not be empty.");
+      return;
+    }
+
+    if (!email) {
+      alert("Email should not be empty.");
+      return;
+    }
+
     setShowSpinner(true);
     // const role = roles.join(",");
     const payload = {
@@ -369,12 +385,12 @@ export default function ReferUser({ onClose, onReferralSuccess, setReferedUser})
                             flexDirection: 'column', 
                         }}
                     >
-                        <FormControlLabel value="MANAGER" control={<Radio />} label="Property Manager" />                                            
+                        {/* <FormControlLabel value="MANAGER" control={<Radio />} label="Property Manager" />                                            
                         <FormControlLabel value="PM_EMPLOYEE" control={<Radio />} label="Property Manager - Employee" />                                            
                         <FormControlLabel value="MAINTENANCE" control={<Radio />} label="Maintenance" />
-                        <FormControlLabel value="MAINT_EMPLOYEE" control={<Radio />} label="Maintenance - Employee" />
+                        <FormControlLabel value="MAINT_EMPLOYEE" control={<Radio />} label="Maintenance - Employee" /> */}
                         <FormControlLabel value="OWNER" control={<Radio />} label="Owner" />                        
-                        <FormControlLabel value="TENANT" control={<Radio sx={{ color: "#3D5CAC", '&:checked': { color: "#3D5CAC" }, '&:active': { color: "#3D5CAC" } }} />} label="Tenant" />                                                
+                        {/* <FormControlLabel value="TENANT" control={<Radio sx={{ color: "#3D5CAC", '&:checked': { color: "#3D5CAC" }, '&:active': { color: "#3D5CAC" } }} />} label="Tenant" />                                                 */}
                     </RadioGroup>
                 </Grid>         
               </Grid>
