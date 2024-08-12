@@ -520,6 +520,16 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
     });
   }
 
+  const handleTenantLeasesButton = () => {
+    setRightPane({
+      type: "tenantLeases",
+      state: {
+        property: property,
+        lease: lease,
+      },
+    });
+  }
+
   function formatAddress() {
     if (property?.property_unit !== "") {
       return property?.property_address + " Unit " + property?.property_unit;
@@ -996,7 +1006,8 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
                   textTransform: "none",
                   whiteSpace: "nowrap",
                 }}
-                onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
+                // onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
+                 onClick={handleTenantLeasesButton}
               >
                 View Lease
               </Button>
