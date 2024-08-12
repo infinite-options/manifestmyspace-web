@@ -410,7 +410,7 @@ function Properties() {
               <PropertyNavigator
                 // index={propertyIndex}
                 index={returnIndex}
-                propertyList={filteredPropertyList}
+                propertyList={propertyList} // will change later - maybe
                 allRentStatus={allRentStatus}
                 isDesktop={isDesktop}
                 contracts={allContracts}
