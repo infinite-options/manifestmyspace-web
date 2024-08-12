@@ -940,13 +940,15 @@ export default function TenantApplication(props) {
                 sx={{
                   display: "flex",
                   flexDirection: "row",
-                  justifyContent: "space-between",
+                  justifyContent: "center",
                   alignItems: "center",
                   paddingTop: "10px",
+                  marginTop:"20px",
                   marginBottom: "7px",
                   width: "100%",
                 }}
               >
+                {(status && status === "REJECTED" || status === "RESCIND") &&
                 <Button
                   variant='contained'
                   sx={{
@@ -955,6 +957,7 @@ export default function TenantApplication(props) {
                     borderRadius: "5px",
                     display: "flex",
                     width: "45%",
+                    marginRight:"10px"
                   }}
                   onClick={() => handleApplicationSubmit()}
                 >
@@ -968,7 +971,7 @@ export default function TenantApplication(props) {
                   >
                     Submit
                   </Typography>
-                </Button>
+                </Button>}
                 <Button
                   variant='contained'
                   sx={{
@@ -997,11 +1000,11 @@ export default function TenantApplication(props) {
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <Button
                       sx={{
-                        marginTop: "30px",
+                        marginTop: "10px",
                         color: "#160449",
                         backgroundColor: "#ffe230",
                         fontWeight: theme.typography.medium.fontWeight,
-                        fontSize: theme.typography.mediumFont,
+                        fontSize: "14px",
                         textTransform: "none",
                         display: "flex",
                         justifyContent: "center",
