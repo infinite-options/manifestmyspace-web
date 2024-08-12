@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ThemeProvider, Box, Paper, Typography, Grid, Snackbar, Alert, AlertTitle, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import {
+    ThemeProvider, Box, Paper, Typography, Grid, Snackbar, Alert, AlertTitle, Accordion, AccordionSummary, AccordionDetails,
+    Button
+} from "@mui/material";
 import theme from "../../theme/theme";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import APIConfig from "../../utils/APIConfig";
@@ -12,9 +15,10 @@ import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUser } from "../../contexts/UserContext";
+import CloseIcon from "@mui/icons-material/Close";
 
 
-export default function TenantApplicationEdit({ profileData, lease_uid }) {
+export default function TenantApplicationEdit({ profileData, lease_uid, setRightPane, property}) {
     console.log('Inside TenantApplicationEdit', profileData, lease_uid);
     const [adults, setAdults] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
     const [children, setChildren] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
@@ -146,7 +150,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid }) {
                     .then((response) => {
                         console.log('Data updated successfullyyy', response);
                         showSnackbar("Your lease application has been successfully updated.", "success");
-                        setIsReload((prev)=>!prev);
+                        setIsReload((prev) => !prev);
                         setShowSpinner(false);
                     })
                     .catch((error) => {
@@ -168,6 +172,14 @@ export default function TenantApplicationEdit({ profileData, lease_uid }) {
         }
     }
 
+    const handleCloseButton = (e) => {
+        e.preventDefault();
+        const state = {
+            data: property, status: property.lease_status, lease: lease, from: 'accwidget'
+          }
+        setRightPane?.({ type: "tenantApplication", state: state });
+      };
+
     return (
         <ThemeProvider theme={theme}>
             <Paper
@@ -183,10 +195,17 @@ export default function TenantApplicationEdit({ profileData, lease_uid }) {
                     <CircularProgress color="inherit" />
                 </Backdrop>
                 <Grid container>
-                    <Grid item xs={12} md={12}>
+                    <Grid item xs={11} md={11}>
                         <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
                             Tenant Application Edit
                         </Typography>
+                    </Grid>
+                    <Grid item xs={1} md={1}>
+                        <Box>
+                            <Button onClick={(e) => handleCloseButton(e)}>
+                                <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+                            </Button>
+                        </Box>
                     </Grid>
                     <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
