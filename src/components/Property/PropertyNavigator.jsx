@@ -785,6 +785,7 @@ export default function PropertyNavigator({
     onViewContractClick("ViewContract");
   };
 
+  // check here
   const handleDeleteClick = (id) => {
     setAppliances(appliances.filter((appliance) => appliance.appliance_uid !== id));
   };
