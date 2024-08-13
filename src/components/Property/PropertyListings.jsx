@@ -515,6 +515,17 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         data: property,
         status: status,
         lease: lease,
+        from:"PropertyInfo",
+      },
+    });
+  }
+
+  const handleTenantLeasesButton = () => {
+    setRightPane({
+      type: "tenantLeases",
+      state: {
+        property: property,
+        lease: lease,
       },
     });
   }
@@ -995,7 +1006,8 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
                   textTransform: "none",
                   whiteSpace: "nowrap",
                 }}
-                onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
+                // onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
+                 onClick={handleTenantLeasesButton}
               >
                 View Lease
               </Button>

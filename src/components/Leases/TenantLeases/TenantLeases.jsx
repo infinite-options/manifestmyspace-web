@@ -26,20 +26,21 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import backButton from "../../Payments/backIcon.png";
+import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../../theme/theme";
 
 import APIConfig from "../../../utils/APIConfig";
 
 function TenantLeases(props) {
-  console.log("In Tenant Leases");
+  console.log("In Tenant Leases", props);
   const location = useLocation();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const [tenantLeases, setTenantLeases] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [property, setProperty] = useState(location.state.property);
+  const [property, setProperty] = useState(props.property);
   const [status, setStatus] = useState("01-01-2024");
-  const [lease, setLease] = useState(location.state.lease);
+  const [lease, setLease] = useState(props.lease);
   // const [pets, setPets] = useState(JSON.parse(lease.lease_pets));
   // const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
   // const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease.lease_adults));
@@ -80,11 +81,11 @@ function TenantLeases(props) {
       if (Array.isArray(detailed_property) && detailed_property.length > 0) {
         detailed_property = detailed_property[0];
         console.log("inside if Detailed Property: ", detailed_property);
-        setPets(JSON.parse(detailed_property?.lease_pets) ?? []);
-        setVehicles(JSON.parse(detailed_property?.lease_vehicles) ?? []);
-        setAdultOccupants(JSON.parse(detailed_property?.lease_adults) ?? []);
-        setChildrenOccupants(JSON.parse(detailed_property?.lease_children) ?? []);
-        setFees(JSON.parse(detailed_property?.leaseFees) ?? []);
+        setPets(detailed_property.lease_pets? JSON.parse(detailed_property?.lease_pets) : []);
+        setVehicles(detailed_property.lease_vehicles? JSON.parse(detailed_property?.lease_vehicles): []);
+        setAdultOccupants(detailed_property.lease_adults? JSON.parse(detailed_property?.lease_adults): []);
+        setChildrenOccupants(detailed_property.lease_children? JSON.parse(detailed_property?.lease_children) : []);
+        setFees(detailed_property?.lease_fees ? JSON.parse(detailed_property.lease_fees) : []);
         setStatus(detailed_property?.lease_effective_date ?? []);
       }
     }
@@ -332,6 +333,7 @@ function TenantLeases(props) {
   };
 
   return (
+    <Paper sx={{marginTop:'7px', backgroundColor: theme.palette.primary.main, borderRadius:"5px", boxShadow: "0px 2px 4px #00000040"}}>
     <Box
       sx={{
         fontFamily: "Source Sans Pro",
@@ -343,18 +345,7 @@ function TenantLeases(props) {
       </Backdrop>
 
       <Grid container>
-        <Grid item xs={2}>
-          <Button
-            onClick={() => navigate(-1)}
-            sx={{
-              textTransform: "none",
-              textDecoration: "underline",
-            }}
-          >
-            <img src={backButton} style={{ width: "20px", height: "20px", margin: "5px" }} />
-          </Button>
-        </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={11}>
           <Box
             sx={{
               display: "flex",
@@ -374,8 +365,16 @@ function TenantLeases(props) {
             </Typography>
           </Box>
         </Grid>
-        <Grid item xs={2}>
-          Help Icon
+        <Grid item xs={1}>
+        <Button
+            onClick={() =>  props.setRightPane({ type: "listings" })}
+            sx={{
+              textTransform: "none",
+              textDecoration: "underline",
+            }}
+          >
+           <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <CenteringBox>
@@ -475,7 +474,7 @@ function TenantLeases(props) {
             </CenteringBox>
           </Grid>
 
-          <Grid container>
+          <Grid container sx={{marginTop:'20px'}}>
             <Grid item xs={1}>
               <CenteringBox>
                 <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.mediumFont }}>Fee</Typography>
@@ -514,7 +513,7 @@ function TenantLeases(props) {
           </Grid>
           {fees &&
             fees.map((fee, index) => (
-              <Grid container key={index}>
+              <Grid container key={index} sx={{marginTop:'10px'}}>
                 <Divider sx={{ width: "100%", borderWidth: "1px", borderColor: "#D6D5DA" }} />
                 <Grid item xs={1}>
                   <Box>
@@ -761,6 +760,7 @@ function TenantLeases(props) {
         </Grid>
       </Paper>
     </Box>
+    </Paper>
   );
 }
 export default TenantLeases;

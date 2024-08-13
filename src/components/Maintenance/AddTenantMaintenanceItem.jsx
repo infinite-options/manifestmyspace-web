@@ -42,7 +42,7 @@ import ReturnButtonIcon from '../Property/refundIcon.png';
 
 import APIConfig from '../../utils/APIConfig';
 
-export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane}){   
+export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane, setReload}){   
     console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem); 
     const location = useLocation();
     let navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     const [lease, setLease] = useState(location.state?.leaseData || newTenantMaintenanceState?.leaseData);
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
-    const [toggleAlignment, setToggleAlignment] = useState('left');
+    const [toggleAlignment, setToggleAlignment] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -118,7 +118,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     };
 
     const handleBackButton = () => {
-        console.log("handleBackButton")
+        console.log("handleBackButton");
         setRightPane("");
     }
 
@@ -231,11 +231,12 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         setProperty('')
         setIssue('')
         setToggleGroupValue('tenant')
-        setToggleAlignment('left')
+        setToggleAlignment('')
         setPhoneNumber('')
         setTitle('')
         setDescription('')
-        setRightPane("")
+        setReload(prev => !prev);
+        setRightPane("");
         //navigate('/tenantDashboard');
         //navigate(dashboardRoutingBasedOnSelectedRole(), {state: {refresh: true, propertyId: property.property_uid}})
     }
