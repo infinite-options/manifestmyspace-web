@@ -295,6 +295,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
       alert(`Your file size is too large (${file_size} MB)`);
       return;
     }
+    updateModifiedData({ key: "owner_photo_url", value: e.target.files[0] });
     readImage(file);
   };
 
