@@ -12,9 +12,10 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from "@mui/icons-material/Close";
 import APIConfig from "../../utils/APIConfig";
+import axios from "axios";
 
 export default function TenantApplication(props) {
-  // console.log("In Tenant Application");
+  console.log("In Tenant Application", props);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId, roleName } = useUser();
@@ -22,7 +23,7 @@ export default function TenantApplication(props) {
   // console.log("props in tenantApplication", props);
 
   const [property, setProperty] = useState([]);
-  const [status, setStatus] = useState([]);
+  const [status, setStatus] = useState("");
   const [lease, setLease] = useState([]);
   // console.log("in tenant application status", status);
   // console.log("lease", lease);
@@ -45,10 +46,29 @@ export default function TenantApplication(props) {
   useEffect(() => {
     setProperty(props.data);
     setStatus(props.status);
-    setLease(props.lease);
+    // setLease(props.lease);
     const address = formatAddress();
     setFormattedAddress(address);
   }, [props.data]);
+
+  useEffect(() => {
+    const getLeaseDetails = () => {
+      axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+        .then((response) => {
+          const fetchData = response.data["Lease_Details"].result;
+          const lease = fetchData.filter((lease) => lease.lease_uid === props.lease.lease_uid)
+          console.log('lease data--', lease);
+          setLease(lease);
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error.response.data);
+          }
+        });
+    }
+
+    getLeaseDetails();
+  }, [props.data])
 
   const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
 
@@ -112,10 +132,11 @@ export default function TenantApplication(props) {
   }
 
   function formatTenantVehicleInfo() {
-    if (!tenantProfile) {
-      return "No Vehicle Information";
+    if (lease.length === 0) {
+      let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info):[];
+      setVehicles(info);
     } else {
-      let info = JSON.parse(tenantProfile?.tenant_vehicle_info);
+      let info = JSON.parse(lease[0].lease_vehicles);
       setVehicles(info);
       // for (const vehicle of info){
       //     console.log(vehicle)
@@ -124,11 +145,12 @@ export default function TenantApplication(props) {
   }
 
   function formatTenantAdultOccupants() {
-    if (!tenantProfile) {
-      return "No Adult Occupants";
+    if (lease.length === 0) {
+      let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+      setAdultOccupants(info);
     } else {
       // console.log(tenantProfile?.tenant_adult_occupants)
-      let info = JSON.parse(tenantProfile?.tenant_adult_occupants);
+      let info = JSON.parse(lease[0].lease_adults);
       setAdultOccupants(info);
       // for (const occupant of info){
       //     console.log(occupant)
@@ -137,10 +159,11 @@ export default function TenantApplication(props) {
   }
 
   function formatTenantPetOccupants() {
-    if (!tenantProfile) {
-      return "No Adult Occupants";
+    if (lease.length === 0) {
+      let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+      setPetOccupants(info);
     } else {
-      let info = JSON.parse(tenantProfile?.tenant_pet_occupants);
+      let info = JSON.parse(lease[0].lease_pets);
       setPetOccupants(info);
       // for (const pet of info){
       //     console.log(pet)
@@ -148,10 +171,11 @@ export default function TenantApplication(props) {
     }
   }
   function formatTenantChildOccupants() {
-    if (!tenantProfile) {
-      return "No Adult Occupants";
+    if (lease.length === 0) {
+      let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+      setChildOccupants(info);
     } else {
-      let info = JSON.parse(tenantProfile?.tenant_children_occupants);
+      let info = JSON.parse(lease[0].lease_children);
       setChildOccupants(info);
       // for (const child of info){
       //     console.log(child)
@@ -173,7 +197,7 @@ export default function TenantApplication(props) {
       const data = await response.json();
       const tenantProfileData = data.profile.result[0];
       setTenantProfile(tenantProfileData);
-      // console.log("tenantProfileData", tenantProfileData);
+      console.log("tenantProfileData", tenantProfileData);
     };
     getTenantProfileInformation();
   }, []);
@@ -183,8 +207,12 @@ export default function TenantApplication(props) {
     formatTenantAdultOccupants();
     formatTenantPetOccupants();
     formatTenantChildOccupants();
-    setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile?.tenant_documents) : []);
-  }, [tenantProfile]);
+    if (lease.length === 0) {
+      setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+    } else {
+      setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+    }
+  }, [lease, tenantProfile]);
 
   function getApplicationDate() {
     return "10-31-2023";
@@ -219,6 +247,15 @@ export default function TenantApplication(props) {
     });
   }
 
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    console.log('check date', dateString, date)
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+  }
+
   async function handleApplicationSubmit() {
     //submit to backend
     // console.log("Application Submitted")
@@ -236,13 +273,21 @@ export default function TenantApplication(props) {
       leaseApplicationData.append("lease_status", "NEW");
       leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
       leaseApplicationData.append("lease_documents", JSON.stringify(tenantDocuments));
-      leaseApplicationData.append("lease_adults", tenantProfile?.tenant_adult_occupants);
-      leaseApplicationData.append("lease_children", tenantProfile?.tenant_children_occupants);
-      leaseApplicationData.append("lease_pets", tenantProfile?.tenant_pet_occupants);
-      leaseApplicationData.append("lease_vehicles", tenantProfile?.tenant_vehicle_info);
+      if (status === "") {
+        leaseApplicationData.append("lease_adults", tenantProfile?.tenant_adult_occupants);
+        leaseApplicationData.append("lease_children", tenantProfile?.tenant_children_occupants);
+        leaseApplicationData.append("lease_pets", tenantProfile?.tenant_pet_occupants);
+        leaseApplicationData.append("lease_vehicles", tenantProfile?.tenant_vehicle_info);
+      } else {
+        leaseApplicationData.append("lease_adults", lease[0]?.lease_adults);
+        leaseApplicationData.append("lease_children", lease[0]?.lease_children);
+        leaseApplicationData.append("lease_pets", lease[0]?.lease_pets);
+        leaseApplicationData.append("lease_vehicles", lease[0]?.lease_vehicles);
+      }
+
       leaseApplicationData.append("lease_referred", "[]");
       leaseApplicationData.append("lease_rent", "[]");
-      leaseApplicationData.append("lease_application_date", date.toLocaleDateString());
+      leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
       leaseApplicationData.append("tenant_uid", getProfileId());
       const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
@@ -319,12 +364,12 @@ export default function TenantApplication(props) {
               paddingTop: "20px",
             }}
           >
-            {props.from === "accwidget" && 
-            <Box sx={{ position: "absolute", top: 0, right: 0 }}>
-              <Button onClick={(e) => handleCloseButton(e)}>
-                <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
-              </Button>
-            </Box>}
+            {props.from === "accwidget" &&
+              <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                <Button onClick={(e) => handleCloseButton(e)}>
+                  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+                </Button>
+              </Box>}
             <Typography
               sx={{
                 justifySelf: "center",
@@ -385,7 +430,7 @@ export default function TenantApplication(props) {
                   fontSize: theme.typography.secondaryFont,
                 }}
               >
-                Applied on {lease.lease_application_date}
+                Applied on {lease.length > 0 && lease[0].lease_application_date}
               </Typography>
             </Box>
           ) : null}
@@ -920,35 +965,38 @@ export default function TenantApplication(props) {
                 sx={{
                   display: "flex",
                   flexDirection: "row",
-                  justifyContent: "space-between",
+                  justifyContent: "center",
                   alignItems: "center",
                   paddingTop: "10px",
+                  marginTop: "20px",
                   marginBottom: "7px",
                   width: "100%",
                 }}
               >
-                <Button
-                  variant='contained'
-                  sx={{
-                    backgroundColor: "#9EAED6",
-                    textTransform: "none",
-                    borderRadius: "5px",
-                    display: "flex",
-                    width: "45%",
-                  }}
-                  onClick={() => handleApplicationSubmit()}
-                >
-                  <Typography
+                {(status === "" || status === "REJECTED" || status === "RESCIND") &&
+                  <Button
+                    variant='contained'
                     sx={{
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: "14px",
-                      color: "#160449",
+                      backgroundColor: "#9EAED6",
                       textTransform: "none",
+                      borderRadius: "5px",
+                      display: "flex",
+                      width: "45%",
+                      marginRight: "10px"
                     }}
+                    onClick={() => handleApplicationSubmit()}
                   >
-                    Submit
-                  </Typography>
-                </Button>
+                    <Typography
+                      sx={{
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: "14px",
+                        color: "#160449",
+                        textTransform: "none",
+                      }}
+                    >
+                      Submit
+                    </Typography>
+                  </Button>}
                 <Button
                   variant='contained'
                   sx={{
@@ -958,7 +1006,7 @@ export default function TenantApplication(props) {
                     display: "flex",
                     width: "45%",
                   }}
-                  onClick={() => props.setRightPane({ type: "tenantProfileEdit" })}
+                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid: lease.length > 0 ? lease[0].lease_uid:null, setRightPane: props.setRightPane, property: property, from: props.from }, })}
                 >
                   <Typography
                     sx={{
@@ -977,11 +1025,11 @@ export default function TenantApplication(props) {
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <Button
                       sx={{
-                        marginTop: "30px",
+                        marginTop: "10px",
                         color: "#160449",
                         backgroundColor: "#ffe230",
                         fontWeight: theme.typography.medium.fontWeight,
-                        fontSize: theme.typography.mediumFont,
+                        fontSize: "14px",
                         textTransform: "none",
                         display: "flex",
                         justifyContent: "center",
