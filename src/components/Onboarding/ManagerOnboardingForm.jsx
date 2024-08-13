@@ -359,7 +359,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     reader.readAsDataURL(file.file);
   };
 
-  const handlePhotoChange = (e) => {
+  const handlePhotoChange = async (e) => {
     const file = {
       index: 0,
       file: e.target.files[0],
@@ -371,8 +371,9 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
       alert(`Your file size is too large (${file_size} MB)`);
       return;
     }
-    updateModifiedData({ key: "business_photo", value: e.target.files[0] });
-    readImage(file);
+    await readImage(file);
+
+    await updateModifiedData({ key: "business_photo", value: e.target.files[0] });
   };
 
   const readEmpImage = (file) => {
@@ -384,7 +385,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     reader.readAsDataURL(file.file);
   };
 
-  const handleEmpPhotoChange = (e) => {
+  const handleEmpPhotoChange = async (e) => {
     const file = {
       index: 0,
       file: e.target.files[0],
@@ -396,8 +397,9 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
       alert(`Your file size is too large (${file_size} MB)`);
       return;
     }
-    updateModifiedData({ key: "employee_photo_url", value: e.target.files[0] });
-    readEmpImage(file);
+    await readEmpImage(file);
+    await updateModifiedData({ key: "employee_photo_url", value: e.target.files[0] });
+    
   };
 
   const addFeeRow = () => {
