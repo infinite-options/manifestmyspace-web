@@ -317,6 +317,7 @@ export default function TenantApplication(props) {
         if (props.from === "PropertyInfo") {
           props.setRightPane({ type: "listings" });
         } else {
+          props.setReload(prev => !prev);
           props.setRightPane("");
         }
       });

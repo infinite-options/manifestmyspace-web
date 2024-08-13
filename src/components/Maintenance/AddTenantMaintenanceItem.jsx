@@ -199,7 +199,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
             };
             // console.log("sendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
 
-            const annoucementsResponse = fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+            await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
             // const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
                 method: 'POST',
                 headers: {
