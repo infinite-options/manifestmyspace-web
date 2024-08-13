@@ -1144,7 +1144,7 @@ const [scrollPosition, setScrollPosition] = useState(0);
 useEffect(() => {
     if (currentApplRow?.appliance_images && propertyData[currentIndex]) {
         const newFavoriteIcons = currentApplRow.appliance_images.map((image) => {
-            return image === propertyData[currentIndex].appliance_favorite_image;
+            return image === currentApplRow.appliance_favorite_image;
         });
         setFavoriteIcons(newFavoriteIcons);
         console.log('Favorite Icons Updated:', newFavoriteIcons);
