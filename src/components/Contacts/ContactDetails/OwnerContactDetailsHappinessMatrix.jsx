@@ -281,8 +281,8 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   }, [searchTerm, contactsData]);
 
   return (
-    <Container sx={{ padding: "5px" }}>
-      <Grid container justifyContent='center' sx={{ padding: "10px 10px" }}>
+    <Container sx={{ padding: "5px", height: "100%"}}>
+      <Grid container justifyContent='center' sx={{ padding: "10px 10px", height: "100%" }}>
         <Typography sx={{ fontSize: "35px", color: "#160449", fontWeight: "bold" }}>All Owner Contacts</Typography>
         <Grid container item xs={12} justifyContent='center'>
           <TextField
@@ -307,7 +307,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
             }}
           />
         </Grid>
-        <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflow: "auto" }}>
+        <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
           {filteredContactsData?.map((contact, index) => (
             <Grid item xs={12} key={index} sx={{ marginBottom: "5px" }} onClick={() => setIndex(index)}>
               <Paper
@@ -316,6 +316,8 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
                   borderRadius: "10px",
                   backgroundColor: index === currentIndex ? "#9EAED6" : "#D6D5DA",
                   width: "100%",
+                  marginBottom: index === filteredContactsData.length - 1 ? "0px" : "10px", 
+                  flexShrink: 0,  
                 }}
               >
                 <Grid container sx={{ padding: "10px" }}>
