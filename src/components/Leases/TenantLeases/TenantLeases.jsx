@@ -87,7 +87,7 @@ function TenantLeases(props) {
         setAdultOccupants(detailed_property.lease_adults ? JSON.parse(detailed_property?.lease_adults) : []);
         setChildrenOccupants(detailed_property.lease_children ? JSON.parse(detailed_property?.lease_children) : []);
         setFees(detailed_property?.lease_fees ? JSON.parse(detailed_property.lease_fees) : []);
-        setStatus(detailed_property?.lease_effective_date ?? []);
+        setStatus(detailed_property?.lease_effective_date ?? null);
         //lease link
         const parsedDocs = JSON.parse(detailed_property.lease_documents);
         const leaseDoc = parsedDocs.find(doc => doc.type && doc.type === "Lease Agreement");
@@ -148,21 +148,6 @@ function TenantLeases(props) {
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
     leaseApplicationFormData.append("lease_status", "REFUSED");
 
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-        method: "PUT",
-        body: leaseApplicationFormData,
-      });
-      const data = await response.json();
-      if (data.lease_update.code === 200) {
-        navigate("/listings");
-      } else {
-        console.log(data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
     const sendAnnouncement = async () => {
       try {
         const receiverPropertyMapping = {
@@ -193,7 +178,23 @@ function TenantLeases(props) {
 
       }
     };
-    sendAnnouncement();
+    
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationFormData,
+      });
+      const data = await response.json();
+      if (data.lease_update.code === 200) {
+        alert("You have successfully Rejected the lease.");
+        await sendAnnouncement();
+        props.setRightPane({ type: "listings" });
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function handleTenantAccept() {
@@ -206,38 +207,6 @@ function TenantLeases(props) {
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
     console.log("Lease Application Data2: ", leaseApplicationFormData);
-
-    try {
-      var lease_status = "TENANT APPROVED";
-      // var status = "TENANT APPROVED";
-      const date = new Date();
-      console.log("Date: ", date);
-      console.log("Lease Effective Date, ", status);
-      const [month, day, year] = status.split("-").map(Number);
-      const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
-      console.log("Lease Effective Date, ", leaseDate);
-
-      if (leaseDate <= date) {
-        lease_status = "ACTIVE";
-        console.log("Lease Status Changed: ", lease_status);
-        // if (lease.lease_effective_date <= date) {
-        // status = "ACTIVE";
-      }
-      console.log("Status: ", status);
-      leaseApplicationFormData.append("lease_status", lease_status);
-      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-        method: "PUT",
-        body: leaseApplicationFormData,
-      });
-      const data = await response.json();
-      if (data.lease_update.code === 200) {
-        navigate("/listings");
-      } else {
-        console.log(data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
 
     const sendAnnouncement = async () => {
       try {
@@ -271,7 +240,43 @@ function TenantLeases(props) {
 
       }
     };
-    sendAnnouncement();
+
+    try {
+      var lease_status = "TENANT APPROVED";
+      // var status = "TENANT APPROVED";
+      const date = new Date();
+      console.log("Date: ", date);
+      console.log("Lease Effective Date, ", status);
+      if (status) {
+        const [month, day, year] = status.split("-").map(Number);
+        const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
+        console.log("Lease Effective Date, ", leaseDate);
+
+        if (leaseDate <= date) {
+          lease_status = "ACTIVE";
+          console.log("Lease Status Changed: ", lease_status);
+          // if (lease.lease_effective_date <= date) {
+          // status = "ACTIVE";
+        }
+      }
+      console.log("Status: ", status);
+      leaseApplicationFormData.append("lease_status", lease_status);
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationFormData,
+      });
+      const data = await response.json();
+      console.log('Divyy', data);
+      if (data.lease_docs.code === 200) {
+        alert("You have successfully Accepted the lease.");
+        await sendAnnouncement();
+        props.setRightPane({ type: "listings" });
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const getDateAdornmentString = (d) => {
