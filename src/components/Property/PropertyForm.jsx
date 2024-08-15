@@ -218,8 +218,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 	const handleOwnerChange = (event) => {
 		if (event.target.value === 'referOwner') {
 			setIsModalOpen(true);
+			setReferedUser(false);
 		} else {
 			setSelectedOwner(event.target.value);
+			setReferedUser(true);
 		}
 
 	};

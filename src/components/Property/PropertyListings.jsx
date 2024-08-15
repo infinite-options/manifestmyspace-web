@@ -515,6 +515,17 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         data: property,
         status: status,
         lease: lease,
+        from: "PropertyInfo",
+      },
+    });
+  }
+
+  const handleTenantLeasesButton = () => {
+    setRightPane({
+      type: "tenantLeases",
+      state: {
+        property: property,
+        lease: lease,
       },
     });
   }
@@ -540,8 +551,9 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         padding: "3px 5px",
         alignSelf: "flex-start",
         textTransform: "none",
+        cursor:"pointer",
       }}
-      onClick={() => navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } })}
+      onClick={handleTenantApplicationButton}
     >
       <Typography
         sx={{
@@ -568,10 +580,9 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         padding: "3px 5px",
         alignSelf: "flex-start",
         textTransform: "none",
+        cursor:"pointer",
       }}
-      onClick={() => {
-        navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
-      }}
+      onClick={handleTenantLeasesButton}
     >
       <Typography
         sx={{
@@ -981,7 +992,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
                 }}
                 // onClick={() => navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } })}
                 onClick={handleTenantApplicationButton}
-             >
+              >
                 View Application
               </Button>
             ) : null}
@@ -995,7 +1006,8 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
                   textTransform: "none",
                   whiteSpace: "nowrap",
                 }}
-                onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
+                // onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
+                onClick={handleTenantLeasesButton}
               >
                 View Lease
               </Button>
