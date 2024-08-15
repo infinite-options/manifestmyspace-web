@@ -101,7 +101,7 @@ export default function EditMaintenanceItem() {
 
 
 	let navigate = useNavigate();
-	const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole } = useUser();
+	const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole, selectedRole } = useUser();
 	const [propertyId, setPropertyId] = useState(propID1);
 	const [properties, setProperties] = useState([]);
 	const [property, setProperty] = useState(testProperty1);
@@ -667,7 +667,6 @@ export default function EditMaintenanceItem() {
 										}}
 										size="small"
 									>
-										<InputLabel>{testIssueItem1}</InputLabel>
 										<Select onChange={handleIssueChange} defaultValue={testIssueItem1}>
 											<MenuItem value={'Plumbing'}>Plumbing</MenuItem>
 											<MenuItem value={'Electrical'}>Electrical</MenuItem>
@@ -676,7 +675,7 @@ export default function EditMaintenanceItem() {
 										</Select>
 									</FormControl>
 								</Grid>
-
+								{selectedRole !== "TENANT" && (
 								<Grid item xs={6}>
 									<Typography
 										sx={{
@@ -704,7 +703,7 @@ export default function EditMaintenanceItem() {
 									/>
 								</Grid>
 
-								{/* Text Field for Title */}
+								)}{/* Text Field for Title */}
 								<Grid item xs={12}>
 									<Typography
 										sx={{
@@ -880,6 +879,7 @@ export default function EditMaintenanceItem() {
 								</Grid>
 
 								{/* Radio Button for Already Completed */}
+								{selectedRole !== "TENANT" && (
 								<Grid item xs={12}>
 									<Typography
 										sx={{
@@ -902,7 +902,7 @@ export default function EditMaintenanceItem() {
 									</FormControl>
 								</Grid>
 
-								{/* File Upload Field */}
+								)}{/* File Upload Field */}
 								
 
 								{/* Submit Button */}
