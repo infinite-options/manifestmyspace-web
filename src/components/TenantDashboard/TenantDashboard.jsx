@@ -28,7 +28,7 @@ import ViewLease from "../Leases/ViewLease";
 import Payments from "../Payments/Payments";
 import TenantApplicationEdit from "../Applications/TenantApplicationEdit";
 import TenantLeases from "../Leases/TenantLeases/TenantLeases";
-
+import EditMaintenanceItem from "../Maintenance/EditMaintenanceItem";
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
   const navigate = useNavigate();
@@ -321,6 +321,8 @@ function TenantDashboard(props) {
         return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
       case "payment":
         return <Payments accountBalanceWidgetData={paymentState} setRightPane={setRightPane} />;
+      case "editmaintenance":
+        return <EditMaintenanceItem setRightPane={setRightPane} />;
       default:
         return null;
     }
@@ -598,6 +600,7 @@ function TenantDashboard(props) {
                         navToMaintenance={handleTenantMaintenanceNavigate}
                         isMobile={isMobile}
                         isMedium={isMedium}
+                        selectedproperty={propertyAddr}
                       />
                     </Stack>
                   </DashboardTab>
@@ -1503,7 +1506,7 @@ function TenantPaymentHistoryTable(props) {
 }
 
 function TenantMaintenanceRequestsTable(props) {
-  console.log("In Maintenance Request Table from Stack");
+  console.log("In Maintenance Request Table from Stack", props);
   const data = props.data;
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;
@@ -1695,7 +1698,6 @@ function TenantMaintenanceRequestsTable(props) {
         getRowId={(row) => row.maintenance_request_uid}
         pageSizeOptions={[5, 10, 25, 100]}
         onRowClick={(row) => {
-          console.log("Row =", row);
 
           /*navigate(`/tenantMaintenanceItemDetail`, {
             state: {
@@ -1705,9 +1707,8 @@ function TenantMaintenanceRequestsTable(props) {
           */
           const state = {
             item: row.row,
+            property: props.selectedproperty,
           };
-          console.log("---state---", state);
-          console.log("---SetTenantMaintenanceItemDetailState---", props.setTenantMaintenanceItemDetailState);
           props.setTenantMaintenanceItemDetailState(state);
         }}
       />

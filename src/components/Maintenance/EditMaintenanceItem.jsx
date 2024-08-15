@@ -54,6 +54,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export default function EditMaintenanceItem() {
+	console.log("inside edit component");
 	const location = useLocation();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 

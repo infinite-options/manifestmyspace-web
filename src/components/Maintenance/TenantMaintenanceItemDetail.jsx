@@ -6,39 +6,19 @@ import {
   Stack,
   Paper,
   Button,
-  Card,
-  CardContent,
+  IconButton,
   Grid,
-  CardMedia,
-  Input,
-  Container,
-  Radio,
-  FormLabel,
-  TableCell,
-  TableRow,
-  TableBody,
-  Table,
-  Divider,
+  ImageList,
+  ImageListItem,
 } from "@mui/material";
 import theme from "../../theme/theme";
 import ReturnButtonIcon from "../Property/refundIcon.png";
-import maintenanceRequestImage from "./maintenanceRequest.png";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import MobileStepper from "@mui/material/MobileStepper";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import defaultMaintenanceImage from "../Property/maintenanceIcon.png";
-import IconButton from '@mui/material/IconButton';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import EditIcon from "@mui/icons-material/Edit";
 
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
-export default function TenantMaintenanceItemDetail({tenantMaintenanceItemDetailState, setRightPane}) {
+export default function TenantMaintenanceItemDetail({ tenantMaintenanceItemDetailState, setRightPane }) {
   console.log("In Tenant Maintenance Item Detail");
-  // const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
 
   const location = useLocation();
@@ -50,121 +30,88 @@ export default function TenantMaintenanceItemDetail({tenantMaintenanceItemDetail
   const item = location.state?.item || tenantMaintenanceItemDetailState?.item;
 
   function openDays(openday) {
-    // Convert maintenance_request_created_date to a Date object
     const createdDate = new Date(openday);
-
-    // Get the current date
     const currentDate = new Date();
-
-    // Calculate the difference in milliseconds between the current date and the created date
     const timeDifferenceMs = currentDate.getTime() - createdDate.getTime();
-
-    // Calculate the difference in days
     const daysDifference = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
-
-    console.log(`The item was created ${daysDifference} days ago.`);
-
     return daysDifference;
   }
-  // const handleNextCard = () => {
-  //     setCurrentIndex((prevIndex) => (prevIndex + 1) % requestData.length);
-  //   };
 
-  //   const handlePreviousCard = () => {
-  //     setCurrentIndex((prevIndex) => (prevIndex - 1 + requestData.length) % requestData.length);
-  //   };
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const scrollRef = useRef(null);
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollPosition;
+    }
+  }, [scrollPosition]);
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  const handleScroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = 200;
+      setScrollPosition((prevScrollPosition) => {
+        const currentScrollPosition = scrollRef.current.scrollLeft;
+        let newScrollPosition;
+
+        if (direction === "left") {
+          newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+        } else {
+          newScrollPosition = currentScrollPosition + scrollAmount;
+        }
+
+        return newScrollPosition;
+      });
+    }
   };
 
   function closeAddTenantMaintenanceItem() {
-    // navigate("/tenantDashboard");
-    //navigate("/tenantDashboard", { state: { propertyId: item.property_uid } });
     setRightPane("");
   }
 
-  // const images = [
-  //   {
-  //     label: "maintenanceRequest",
-  //     imgPath: maintenanceRequestImage,
-  //   },
-  //   {
-  //     label: "maintenanceRequest",
-  //     imgPath: maintenanceRequestImage,
-  //   },
-  //   {
-  //     label: "maintenanceRequest",
-  //     imgPath: maintenanceRequestImage,
-  //   },
-  //   {
-  //     label: "maintenanceRequest",
-  //     imgPath: maintenanceRequestImage,
-  //   },
-  // ];
   let images = [];
   if (item && item.maintenance_images) {
     try {
       images = JSON.parse(item.maintenance_images);
     } catch (error) {
       console.error("Failed to parse maintenance_images:", error);
-      images = [defaultMaintenanceImage];
+      images = [];
     }
   }
 
-  const statusTimeline = [
-    {
-      message: "Scheduled for [date] [time]",
-      date: "10/10/2021",
-      time: "10:00 AM",
-    },
-    {
-      message: "Assigned to Technician",
-      date: "10/10/2021",
-      time: "10:00 AM",
-    },
-    {
-      message: "Complaint Received",
-      date: "10/10/2021",
-      time: "10:00 AM",
-    },
-  ];
-  // const maxSteps = images.length;
-  const maxSteps = images.length === 0 ? 1 : images.length;
-
-  // console.log(item);
-  // console.log(color);
-
-  const [scrollPosition, setScrollPosition] = useState(0);
-	const scrollRef = useRef(null);
-
-	useEffect(() => {
-		if (scrollRef.current) {
-			scrollRef.current.scrollLeft = scrollPosition;
-		}
-	}, [scrollPosition]);
-
-	const handleScroll = (direction) => {
-		if (scrollRef.current) {
-			const scrollAmount = 200;
-			setScrollPosition((prevScrollPosition) => {
-				const currentScrollPosition = scrollRef.current.scrollLeft;
-				let newScrollPosition;
-	
-				if (direction === 'left') {
-					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-				} else {
-					newScrollPosition = currentScrollPosition + scrollAmount;
-				}
-	
-				return newScrollPosition;
-			});
-		}
-	};
+  function navigateToEditMaintenanceItem(
+		testIssue,
+		testProperty,
+		testIssueItem,
+		testCost,
+		testTitle,
+		testPriority,
+		completionStatus,
+		requestUid,
+		propID,
+		maintainanceImages,
+		maintainanceFavImage,
+	) {
+    console.log("going to edit component");
+			// Setting properties into sessionStorage
+			sessionStorage.setItem('testIssue', testIssue);
+			sessionStorage.setItem('testProperty', tenantMaintenanceItemDetailState.property);
+			sessionStorage.setItem('testIssueItem', testIssueItem);
+			sessionStorage.setItem('testCost', testCost);
+			sessionStorage.setItem('testTitle', testTitle);
+			sessionStorage.setItem('testPriority', testPriority);
+			sessionStorage.setItem('completionStatus', completionStatus);
+			sessionStorage.setItem('requestUid', requestUid);
+			sessionStorage.setItem('propID', propID);
+			sessionStorage.setItem('selectedRequestIndex', 0);
+			sessionStorage.setItem('selectedStatus', "NEW");
+			sessionStorage.setItem('maintainanceImages', maintainanceImages);
+			sessionStorage.setItem('maintainanceFavImage', maintainanceFavImage);
+			window.dispatchEvent(new Event('storage'));
+setRightPane({ type: "editmaintenance" });
+			setTimeout(() => {
+				window.dispatchEvent(new Event('maintenanceRequestSelected'));
+			}, 0);
+	}
 
   return (
     <Paper
@@ -178,129 +125,150 @@ export default function TenantMaintenanceItemDetail({tenantMaintenanceItemDetail
       <Stack direction="column" justifyContent="center" alignItems="center" position="relative">
         <Box left={0} direction="column" alignItems="center">
           <Button onClick={() => closeAddTenantMaintenanceItem()}>
-            {/* <ArrowBackIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/> */}
             <img src={ReturnButtonIcon} alt="Return Button Icon" style={{ width: "25px", height: "25px", marginRight: "10px" }} />
             <Typography sx={{ textTransform: "none", color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "16px" }}>
               Return to Dashboard
             </Typography>
           </Button>
         </Box>
+        {item?.maintenance_request_status === "NEW" && (
+          <IconButton
+            aria-label="edit"
+            sx={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              color: theme.typography.common.blue,
+            }}
+            onClick={() =>
+              navigateToEditMaintenanceItem(
+                item?.maintenance_desc,
+                item?.property_address,
+                item?.maintenance_request_type,
+                "",
+                item?.maintenance_title,
+                item?.maintenance_priority, // Use local state here
+                "",
+                item?.maintenance_request_uid,
+                item?.maintenance_property_id,
+                item?.maintenance_images,
+                item?.maintenance_favorite_image,
+
+              )
+            }
+          >
+            <EditIcon />
+          </IconButton>
+        )}
       </Stack>
       <Stack direction="column" justifyContent="center" alignItems="center" padding="10px" position="relative">
-        
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Typography sx={{ color: theme.typography.secondary.black, fontWeight: theme.typography.common.fontWeight, fontSize: "22px" }}>
-                  Maintenance Request {item?.maintenance_request_uid}
-                </Typography>
-              </Grid>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Typography sx={{ color: theme.typography.secondary.black, fontWeight: theme.typography.common.fontWeight, fontSize: "22px" }}>
+              Maintenance Request {item?.maintenance_request_uid}
+            </Typography>
+          </Grid>
 
-              <Grid item xs={7}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item?.maintenance_title}</Typography>
-              </Grid>
+          <Grid item xs={7}>
+            <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item?.maintenance_title}</Typography>
+          </Grid>
 
-              <Grid item xs={5}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Status: {item?.maintenance_request_status}</Typography>
-              </Grid>
+          <Grid item xs={5}>
+            <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Status: {item?.maintenance_request_status}</Typography>
+          </Grid>
 
-              <Grid item xs={7}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
-                  Reported: {item?.maintenance_request_created_date}
-                </Typography>
-              </Grid>
+          <Grid item xs={7}>
+            <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
+              Reported: {item?.maintenance_request_created_date}
+            </Typography>
+          </Grid>
 
-              <Grid item xs={5}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
-                  Open: {openDays(item?.maintenance_request_created_date)} Days
-                </Typography>
-              </Grid>
+          <Grid item xs={5}>
+            <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
+              Open: {openDays(item?.maintenance_request_created_date)} Days
+            </Typography>
+          </Grid>
 
-              <Grid
-                item
-                xs={12}
+          <Grid
+            item
+            xs={12}
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+              display: "flex",
+            }}
+          >
+            <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item?.maintenance_priority} Priority</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 2,
+              }}
+            >
+              <IconButton onClick={() => handleScroll("left")} disabled={scrollPosition === 0}>
+                <ArrowBackIosIcon />
+              </IconButton>
+              <Box
                 sx={{
-                  alignItems: "center",
-                  justifyContent: "center",
                   display: "flex",
+                  overflowX: "auto",
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
                 }}
               >
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item?.maintenance_priority} Priority</Typography>
-              </Grid>
-              <Grid item xs={12}>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										padding: 2,
-									}}
-								>
-									<IconButton
-										onClick={() => handleScroll('left')}
-										disabled={scrollPosition === 0}
-									>
-										<ArrowBackIosIcon />
-									</IconButton>
-									<Box
-										sx={{
-											display: 'flex',
-											overflowX: 'auto',
-											scrollbarWidth: 'none',
-											msOverflowStyle: 'none',
-											'&::-webkit-scrollbar': {
-												display: 'none',
-											},
-										}}
-									>
-										<Box
-											sx={{
-												display: 'flex',
-												overflowX: 'auto',
-												scrollbarWidth: 'none',
-												msOverflowStyle: 'none',
-												'&::-webkit-scrollbar': {
-													display: 'none',
-												},
-											}}
-										>
-											<ImageList 
-											ref={scrollRef}
-											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-												{images?.map((image, index) => (
-													<ImageListItem
-														key={index}
-														sx={{
-															width: 'auto',
-															flex: '0 0 auto',
-															border: '1px solid #ccc',
-															margin: '0 2px',
-															position: 'relative', // Added to position icons
-														}}
-													>
-														<img
-															src={image}
-															alt={`maintenance-${index}`}
-															style={{
-																height: '150px',
-																width: '150px',
-																objectFit: 'cover',
-															}}
-														/></ImageListItem>
-												))}
-											</ImageList>
-										</Box>
-									</Box>
-									<IconButton onClick={() => handleScroll('right')}>
-										<ArrowForwardIosIcon />
-									</IconButton>
-								</Box>
-							</Grid>
-              <Grid item xs={12}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{item?.maintenance_desc}</Typography>
-              </Grid>
-            </Grid>
-         
-        
+                <Box
+                  sx={{
+                    display: "flex",
+                    overflowX: "auto",
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                    "&::-webkit-scrollbar": {
+                      display: "none",
+                    },
+                  }}
+                >
+                  <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
+                    {images?.map((image, index) => (
+                      <ImageListItem
+                        key={index}
+                        sx={{
+                          width: "auto",
+                          flex: "0 0 auto",
+                          border: "1px solid #ccc",
+                          margin: "0 2px",
+                          position: "relative",
+                        }}
+                      >
+                        <img
+                          src={image}
+                          alt={`maintenance-${index}`}
+                          style={{
+                            height: "150px",
+                            width: "150px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </ImageListItem>
+                    ))}
+                  </ImageList>
+                </Box>
+              </Box>
+              <IconButton onClick={() => handleScroll("right")}>
+                <ArrowForwardIosIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{item?.maintenance_desc}</Typography>
+          </Grid>
+        </Grid>
       </Stack>
     </Paper>
   );
