@@ -307,7 +307,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
             }}
           />
         </Grid>
-        <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflowY: "auto", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+        <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflowY: "auto"}}>
           {filteredContactsData?.map((contact, index) => (
             <Grid item xs={12} key={index} sx={{ marginBottom: "5px" }} onClick={() => setIndex(index)}>
               <Paper
@@ -316,8 +316,6 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
                   borderRadius: "10px",
                   backgroundColor: index === currentIndex ? "#9EAED6" : "#D6D5DA",
                   width: "100%",
-                  marginBottom: index === filteredContactsData.length - 1 ? "0px" : "10px", 
-                  flexShrink: 0,  
                 }}
               >
                 <Grid container sx={{ padding: "10px" }}>
