@@ -188,7 +188,8 @@ function TenantLeases(props) {
       if (data.lease_update.code === 200) {
         alert("You have successfully Rejected the lease.");
         await sendAnnouncement();
-        props.setRightPane({ type: "listings" });
+        props.setRightPane({ type: "" });
+        props.setReload(prev => !prev);
       } else {
         console.log(data);
       }
@@ -270,7 +271,8 @@ function TenantLeases(props) {
       if (data.lease_docs.code === 200) {
         alert("You have successfully Accepted the lease.");
         await sendAnnouncement();
-        props.setRightPane({ type: "listings" });
+        props.setRightPane({ type: "" });
+        props.setReload(prev => !prev);
       } else {
         console.log(data);
       }

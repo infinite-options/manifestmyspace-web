@@ -1,102 +1,89 @@
-import { ThemeProvider, Typography, Box, Tabs, Tab, Paper, Card, CardHeader, Slider, Stack, Button, Grid } from "@mui/material";
-import documentIcon from "../../images/Subtract.png";
+import {
+  ThemeProvider,
+  Typography,
+  Box,
+  Tabs,
+  Tab,
+  Paper,
+  Stack,
+  Button,
+  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import refundIcon from "./refundIcon.png";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
-import { CustomTabPanel } from "../Maintenance/MaintenanceRequestDetail";
 import { useUser } from "../../contexts/UserContext";
-
 import APIConfig from "../../utils/APIConfig";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& .MuiFilledInput-root": {
+      backgroundColor: "#D6D5DA",
+      borderRadius: 10,
+      height: 30,
+      marginBlock: 10,
+      paddingBottom: "15px",
+    },
+  },
+}));
 
 export default function PMQuotesRequested(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
-  // console.log("--debug location.state--", location.state || pmQuoteRequestedState);
-  // console.log('----pmQuoteRequestedState.contracts---', props.contracts);
-  // const PMQuotesDetails = location.state || props;
   const PMQuotesDetails = props;
-  // console.log('ROHIT - PMQuotesDetails -', PMQuotesDetails);
-  // console.log('ROHIT - PMQuotesDetails props -', props);
   const handleBackClick = props.handleBackClick;
+  const classes = useStyles();
+  
 
   const [contracts, setContracts] = useState(PMQuotesDetails.contracts);
-
   const [refresh, setRefresh] = useState(false);
   const property = PMQuotesDetails.propertyData;
   const propertyId = property[PMQuotesDetails.index]?.property_uid;
   const index = PMQuotesDetails.index;
-  // const isDesktop = PMQuotesDetails.isDesktop;
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const statusList = ["New Quotes", "Contracts"];
   const statusColor = ["#3D5CAC", "#160449"];
   const [tabStatus, setTabStatus] = useState(0);
-  const [activeContracts, setActiveContracts] = useState();
+  const [activeContracts, setActiveContracts] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [conflictingContract, setConflictingContract] = useState(null);
+  const [newContract, setNewContract] = useState(null);
 
   function getColor(status) {
     return statusColor[status];
   }
 
-  useEffect(()=>{
-    let validContracts=getActiveContracts();
-    setActiveContracts(validContracts)
-  },[])
+  useEffect(() => {
+    const validContracts = getActiveContracts();
+    setActiveContracts(validContracts);
+  }, [contracts]);
 
   function getActiveContracts() {
-    let activeContracts = [];
-    contracts.forEach((contract) => {
-      console.log("Contract is ^^",contract)
-      if (contract.contract_status == "ACTIVE") {
-        activeContracts.push(contract);
-      }
-    });
-    console.log("Active set to ###$",activeContracts)
-    return activeContracts;
+    return contracts.filter((contract) => contract.contract_status === "ACTIVE");
   }
-
-  const address = property[index].business_locations;
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "*",
-    "Access-Control-Allow-Headers": "*",
-    "Access-Control-Allow-Credentials": "*",
-  };
-
-  let dataValue = {};
-
-  if (address != null && address != undefined) {
-    dataValue = {
-      city: JSON.parse(address)[0].city,
-      miles: JSON.parse(address)[0].miles,
-    };
-  } else {
-    dataValue = {
-      city: "No data",
-      miles: "No data",
-    };
-  }
-  console.log("activeContracts is &&&", activeContracts)
-
-  const [data, setData] = useState(property[index]);
 
   useEffect(() => {
     const getContractsForOwner = async () => {
       try {
         const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-
         const contractsResponse = await response.json();
-
-        const contractsData = contractsResponse.result.filter((contract) => contract.property_id === propertyId);
-        //
-        console.log("Contracts URL useEffect with Refresh var is running");
+        const contractsData = contractsResponse.result.filter(
+          (contract) => contract.property_id === propertyId
+        );
         setContracts(contractsData);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
     getContractsForOwner();
@@ -106,93 +93,97 @@ export default function PMQuotesRequested(props) {
     return (
       <div>
         {contracts.length > 0 ? (
-          <div>
-            {contracts.map((contract) => {
-              if (contract.contract_status === "SENT") {
-                return (
-                  <div>
-                    <DocumentCard data={contract} />
-                    <Stack direction='row' justifyContent='space-between' alignItems='center' position='relative' sx={{ padding: "8px", paddingTop: "8px" }}>
-                      <Button
-                        variant='contained'
-                        sx={{
-                          textTransform: "none",
-                          background: "#A52A2A",
-                          color: theme.palette.background.default,
-                          width: `40%`,
-                          height: `85%`,
-                          top: `10%`,
-                          borderRadius: "10px 10px 10px 10px",
-                          fontSize: `10px`,
-                        }}
-                        onClick={() => {
-                          handleDecline(contract);
-                        }}
-                      >
-                        Decline
-                      </Button>
-                      <Button
-                        variant='contained'
-                        sx={{
-                          textTransform: "none",
-                          background: "#76B148",
-                          color: theme.palette.background.default,
-                          width: `40%`,
-                          height: `85%`,
-                          top: `10%`,
-                          borderRadius: "10px 10px 10px 10px",
-                          fontSize: `10px`,
-                        }}
-                        onClick={() => {
-                          handleAccept(contract);
-                        }}
-                      >
-                        Accept
-                      </Button>
-                    </Stack>
-                  </div>
-                );
-              }
-              if (contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED") {
-                return (
-                  <div>
-                    {/* <DocumentCard data={contract}/> */}
-                    <p>this contract is withdraw/rejected</p>
-                  </div>
-                );
-              }
-              if (contract.contract_status === "NEW") {
-                return (
-                  <div>
-                    <DocumentCard data={contract} />
-                    <Stack direction='row' justifyContent='space-between' alignItems='center' position='relative' sx={{ padding: "8px", paddingTop: "8px" }}>
-                      <Button
-                        variant='contained'
-                        sx={{
-                          textTransform: "none",
-                          background: "#A52A2A",
-                          color: theme.palette.background.default,
-                          width: `40%`,
-                          height: `85%`,
-                          top: `10%`,
-                          borderRadius: "10px 10px 10px 10px",
-                          fontSize: `10px`,
-                        }}
-                        onClick={async () => {
-                          await handleStatusChange(contract, "CANCELLED");
-                          setTimeout(() => {
-                            setRefresh(!refresh);
-                          }, 100); // Adjust the delay time as needed
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </Stack>
-                  </div>
-                );
-              }
-            })}
-          </div>
+          contracts.map((contract) => {
+            if (contract.contract_status === "SENT") {
+              return (
+                <div key={contract.contract_uid}>
+                  <DocumentCard data={contract} />
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ padding: "8px" }}
+                  >
+                    <Button
+                      variant="contained"
+                      sx={{
+                        textTransform: "none",
+                        background: "#A52A2A",
+                        color: theme.palette.background.default,
+                        width: "40%",
+                        height: "85%",
+                        borderRadius: "10px",
+                        fontSize: "10px",
+                      }}
+                      onClick={() => handleDecline(contract)}
+                    >
+                      Decline
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        textTransform: "none",
+                        background: "#76B148",
+                        color: theme.palette.background.default,
+                        width: "40%",
+                        height: "85%",
+                        borderRadius: "10px",
+                        fontSize: "10px",
+                      }}
+                      onClick={() => handleAccept(contract)}
+                    >
+                      Accept
+                    </Button>
+                  </Stack>
+                </div>
+              );
+            }
+            if (
+              contract.contract_status === "WITHDRAW" ||
+              contract.contract_status === "REJECTED"
+            ) {
+              return (
+                <div key={contract.contract_uid}>
+                  <p>This contract is withdrawn/rejected</p>
+                </div>
+              );
+            }
+            if (contract.contract_status === "NEW") {
+              return (
+                <div key={contract.contract_uid}>
+                  <DocumentCard data={contract} />
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ padding: "8px" }}
+                  >
+                    <Button
+                      variant="contained"
+                      sx={{
+                        textTransform: "none",
+                        background: "#A52A2A",
+                        color: theme.palette.background.default,
+                        width: "40%",
+                        height: "85%",
+                        borderRadius: "10px",
+                        fontSize: "10px",
+                      }}
+                      onClick={async () => {
+                        await handleStatusChange(contract, "CANCELLED");
+                        setTimeout(() => {
+                          setRefresh(!refresh);
+                        }, 100);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Stack>
+                </div>
+              );
+            }
+            return null;
+          })
         ) : (
           <div>No Requested Contract Quotes</div>
         )}
@@ -204,17 +195,12 @@ export default function PMQuotesRequested(props) {
     return (
       <div>
         {activeContracts.length > 0 ? (
-          <div>
-           {/* These are all the active contracts */}
-            {activeContracts.map((contract, index) => {
-              return (
-                <div key={index}>
-                  <DocumentCard data={contract} />
-                  <p>{contract.contract_uid}</p>
-                </div>
-              );
-            })}
-          </div>
+          activeContracts.map((contract, index) => (
+            <div key={index}>
+              <DocumentCard data={contract} />
+              <p>{contract.contract_uid}</p>
+            </div>
+          ))
         ) : (
           <div>No active contracts</div>
         )}
@@ -224,44 +210,35 @@ export default function PMQuotesRequested(props) {
 
   function handleAccept(obj) {
     try {
-      console.log("obj is &&&", obj)
-      console.log("activeContract is &&&", activeContracts)
-    const newContractStart = new Date(obj.contract_start_date);
-    const newContractEnd = new Date(obj.contract_end_date);
-    const newPropertyId = obj.property_id;
+      const newContractStart = new Date(obj.contract_start_date);
+      const newContractEnd = new Date(obj.contract_end_date);
+      const newPropertyId = obj.property_id;
 
-    // Iterate over the active contracts to check for overlaps
-    for (let i = 0; i < activeContracts.length; i++) {
-      const existingContract = activeContracts[i];
+      for (let i = 0; i < activeContracts.length; i++) {
+        const existingContract = activeContracts[i];
 
-      // Check if the property IDs match
-      if (existingContract.property_id === newPropertyId) {
-        const existingContractStart = new Date(existingContract.contract_start_date);
-        const existingContractEnd = new Date(existingContract.contract_end_date);
+        if (existingContract.property_id === newPropertyId) {
+          const existingContractStart = new Date(existingContract.contract_start_date);
+          const existingContractEnd = new Date(existingContract.contract_end_date);
 
-        // Check if the dates overlap
-        if (
-          (newContractStart <= existingContractEnd && newContractStart >= existingContractStart) ||
-          (newContractEnd <= existingContractEnd && newContractEnd >= existingContractStart) ||
-          (newContractStart <= existingContractStart && newContractEnd >= existingContractEnd)
-        ) {
-          // Trigger an alert for overlap
-          alert("This contract overlaps with an existing contract for the same property.");
-          return; // Exit the function early
+          if (
+            (newContractStart <= existingContractEnd && newContractStart >= existingContractStart) ||
+            (newContractEnd <= existingContractEnd && newContractEnd >= existingContractStart) ||
+            (newContractStart <= existingContractStart && newContractEnd >= existingContractEnd)
+          ) {
+            setConflictingContract(existingContract);
+            setNewContract(obj);
+            setDialogOpen(true);
+            return;
+          }
         }
       }
-    }
 
       const formData = new FormData();
       formData.append("contract_uid", obj.contract_uid);
       formData.append("contract_status", "ACTIVE");
 
-      console.log(formData.contract_uid);
-      console.log(formData.contract_status);
-
-      const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
-
-      fetch(url, {
+      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
         method: "PUT",
         body: formData,
       })
@@ -276,30 +253,29 @@ export default function PMQuotesRequested(props) {
           console.error("There was a problem with the fetch operation:", error);
         });
     } catch (error) {
-      console.log("error", error);
-      return false;
+      console.error(error);
     }
     setRefresh(!refresh);
     setTabStatus(1);
   }
 
   function handleDecline(obj) {
+    
     try {
       const formData = new FormData();
       formData.append("contract_uid", obj.contract_uid);
       formData.append("contract_status", "REJECTED");
 
-      console.log(formData.contract_uid);
-      console.log(formData.contract_status);
-
-      const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData, headers);
-      console.log("PUT result", response);
-      if (response.code === 200) {
-        return true;
-      }
+      axios
+        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
+        .then((response) => {
+          console.log("PUT result", response);
+        })
+        .catch((error) => {
+          console.error("There was a problem with the decline operation:", error);
+        });
     } catch (error) {
-      console.log("error", error);
-      return false;
+      console.error(error);
     }
   }
 
@@ -309,68 +285,71 @@ export default function PMQuotesRequested(props) {
       formData.append("contract_uid", obj.contract_uid);
       formData.append("contract_status", status);
 
-      console.log(formData.contract_uid);
-      console.log(formData.contract_status);
-
-      const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData, headers);
-      console.log("PUT result", response);
-      if (response.code === 200) {
-        return true;
-      }
+      axios
+        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
+        .then((response) => {
+          console.log("PUT result", response);
+        })
+        .catch((error) => {
+          console.error("There was a problem with the status change operation:", error);
+        });
     } catch (error) {
-      console.log("error", error);
-      return false;
+      console.error(error);
     }
   };
 
   const viewAllProperties = () => {
-    if (isDesktop == true) {
+    if (isDesktop) {
       handleBackClick();
     } else {
       navigate(-1);
     }
   };
 
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setConflictingContract(null);
+    setNewContract(null);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box
-        style={{
+        sx={{
           display: "flex",
           justifyContent: "center",
-          // alignItems: 'center',
-          width: "100%", // Take up full screen width
-          minHeight: "100vh", // Set the Box height to full height
-          marginTop: theme.spacing(2), // Set the margin to 20px
+          width: "100%",
+          minHeight: "100vh",
+          marginTop: theme.spacing(2),
         }}
       >
         <Paper
-          style={{
+          sx={{
             margin: "30px",
             backgroundColor: theme.palette.primary.main,
-            width: "100%", // Occupy full width with 25px margins on each side
+            width: "100%",
             paddingTop: "10px",
           }}
         >
-          <Stack
-            direction='column'
-            justifyContent='center'
-            alignItems='center'
-            sx={{
-              paddingBottom: "0px",
-            }}
-          >
-            <Box direction='row' justifyContent='center' alignItems='center'>
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+          <Stack direction="column" justifyContent="center" alignItems="center" sx={{ paddingBottom: "0px" }}>
+            <Box direction="row" justifyContent="center" alignItems="center">
+              <Typography
+                sx={{
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.largeFont,
+                }}
+              >
                 Search for Properties Manager
               </Typography>
             </Box>
-            <Box position='absolute' right={30}>
+            <Box position="absolute" right={30}>
               <Button>
                 <SearchIcon />
               </Button>
             </Box>
           </Stack>
-          <Stack direction='column' justifyContent='center' alignItems='center'>
+          <Stack direction="column" justifyContent="center" alignItems="center">
             <Box onClick={viewAllProperties}>
               <Button
                 sx={{
@@ -381,7 +360,6 @@ export default function PMQuotesRequested(props) {
                   "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                 }}
               >
-                {/* <UTurnLeftIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px', transform: 'rotate(90deg)', fontWeight: theme.typography.common.fontWeight}}/> */}
                 <img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
                 <Typography>Return to Viewing All Properties</Typography>
               </Button>
@@ -400,7 +378,7 @@ export default function PMQuotesRequested(props) {
               }}
             >
               <Tabs
-                variant='fullWidth'
+                variant="fullWidth"
                 value={tabStatus}
                 onChange={(e) => console.log(e)}
                 TabIndicatorProps={{
@@ -414,7 +392,7 @@ export default function PMQuotesRequested(props) {
                 }}
                 sx={{
                   [theme.breakpoints.up("sm")]: {
-                    height: "5px", // padding for screens wider than 'sm'
+                    height: "5px",
                   },
                 }}
               >
@@ -427,15 +405,15 @@ export default function PMQuotesRequested(props) {
                     minWidth: "5px",
                     padding: "0px",
                     "&.Mui-selected": {
-                      color: "#FFFFFF", // Highlight color for selected tab
+                      color: "#FFFFFF",
                     },
                     "&.MuiTab-root": {
-                      color: "#FFFFFF", // Highlight color for unselected tab
+                      color: "#FFFFFF",
                     },
                     textTransform: "none",
                   }}
                   onClick={() => setTabStatus(0)}
-                  label='Quotes Requested'
+                  label="Quotes Requested"
                 />
                 <Tab
                   sx={{
@@ -446,15 +424,15 @@ export default function PMQuotesRequested(props) {
                     minWidth: "5px",
                     padding: "0px",
                     "&.Mui-selected": {
-                      color: "#FFFFFF", // Highlight color for selected tab
+                      color: "#FFFFFF",
                     },
                     "&.MuiTab-root": {
-                      color: "#FFFFFF", // Highlight color for unselected tab
+                      color: "#FFFFFF",
                     },
                     textTransform: "none",
                   }}
                   onClick={() => setTabStatus(1)}
-                  label='Active Contracts'
+                  label="Active Contracts"
                 />
               </Tabs>
               <Box
@@ -465,7 +443,7 @@ export default function PMQuotesRequested(props) {
               ></Box>
             </Box>
           </Stack>
-          <Stack direction='column' justifyContent='center' alignItems='center'>
+          <Stack direction="column" justifyContent="center" alignItems="center">
             <Box
               sx={{
                 borderBottom: 0,
@@ -491,62 +469,206 @@ export default function PMQuotesRequested(props) {
           </Stack>
         </Paper>
       </Box>
-    </ThemeProvider>
-  );
-}
 
-function NavTab(props) {
-  const color = props.color;
-  return (
-    <Box
-      sx={{
-        backgroundColor: color,
-        width: "50%",
-        height: "80px",
-        borderRadius: "10px",
-      }}
-    >
-      <Box
-        sx={{
-          marginTop: "5px",
-        }}
-      >
-        {props.children}
-      </Box>
-    </Box>
+      <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", color: theme.typography.common.blue }}>
+          CONFLICTING CONTRACTS
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: "flex", justifyContent: "space-between", padding: 2 }}>
+            <Box sx={{ width: "45%", padding: 2, backgroundColor: theme.palette.background.paper, borderRadius: "10px" }}>
+              <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                PropertyManager
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                    Contract Name
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={conflictingContract?.contract_name}
+                    variant="filled"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ marginBottom: 2 }}
+                    className={classes.root}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                    Start Date
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={conflictingContract?.contract_start_date}
+                    variant="filled"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ marginBottom: 2 }}
+                    className={classes.root}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                    End Date
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={conflictingContract?.contract_end_date}
+                    variant="filled"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ marginBottom: 2 }}
+                    className={classes.root}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                    Status
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={conflictingContract?.contract_status}
+                    variant="filled"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    className={classes.root}
+                  />
+                </Grid>
+              </Grid>
+              <Stack direction="row" spacing={2} sx={{ marginTop: 2 }}>
+              <Button fullWidth variant='contained' color='primary'  onClick={() => {
+                  navigate("/ownerContacts");
+                }} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Contact PM</Typography>
+             </Button>
+              </Stack>
+            </Box>
+
+            <Box sx={{ width: "45%", padding: 2, backgroundColor: theme.palette.background.paper, borderRadius: "10px" }}>
+              <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                PropertyManager
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                    Contract Name
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={newContract?.contract_name}
+                    variant="filled"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ marginBottom: 2 }}
+                    className={classes.root}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                    Start Date
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={newContract?.contract_start_date}
+                    variant="filled"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ marginBottom: 2 }}
+                    className={classes.root}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                    End Date
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={newContract?.contract_end_date}
+                    variant="filled"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ marginBottom: 2 }}
+                    className={classes.root}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                    Status
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={newContract?.contract_status}
+                    variant="filled"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    className={classes.root}
+                  />
+                </Grid>
+              </Grid>
+              <Stack direction="row" spacing={2} sx={{ marginTop: 2 }}>
+                <Button fullWidth variant='contained'   onClick={() => {
+                    handleDecline(newContract);
+                    handleDialogClose(); // Optional: Close dialog after rejecting
+                    setRefresh(!refresh); // Optional: Refresh contracts list
+                  }} sx={{ mb: 2, backgroundColor: "#A52A2A" }}>
+             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Decline</Typography>
+             </Button>
+                <Button fullWidth variant='contained' color='primary'  onClick={() => {
+                  navigate("/ownerContacts");
+                }} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Contact PM</Typography>
+             </Button>
+              </Stack>
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button  variant='contained' color='primary' onClick={handleDialogClose}  sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Close</Typography>
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+    </ThemeProvider>
   );
 }
 
 function DocumentCard(props) {
   const data = props.data;
-
   const [fees, setFees] = useState([]);
 
   let navigate = useNavigate();
 
   const getContractDocumentLink = () => {
-    // const documents = JSON.parse(obj.documents);
     const documents = JSON.parse(data.contract_documents);
     if (documents === null || documents === undefined) return null;
     const contractDocument = documents.find((doc) => doc.type === "contract");
-    //console.log("contractDocument link: ", contractDocument.link);
-
     return contractDocument ? contractDocument.link : "";
   };
 
   const contractDocumentLink = getContractDocumentLink();
 
   useEffect(() => {
-    const getBusinessProfileFees = async (obj) => {
+    const getBusinessProfileFees = async () => {
       try {
-        // const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${data.business_uid}`, {
         const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile`, {
           method: "GET",
         });
         const responseData = await response.json();
-        // console.log(responseData.result[0].business_services_fees)
-        // console.log("data for businessProfile fees", responseData.result[0].business_services_fees)
-        if (responseData.result.business_services_fees !== null && responseData.result[0].business_services_fees !== undefined) {
+        if (
+          responseData.result.business_services_fees !== null &&
+          responseData.result[0].business_services_fees !== undefined
+        ) {
           setFees(JSON.parse(responseData.result[0].business_services_fees));
         }
       } catch (error) {
@@ -582,7 +704,9 @@ function DocumentCard(props) {
           alignItems: "center",
         }}
       >
-        <Typography sx={{ fontWeight: "bold", fontSize: "26px" }}>{data.business_name}</Typography>
+        <Typography sx={{ fontWeight: "bold", fontSize: "26px" }}>
+          {data.business_name}
+        </Typography>
       </Box>
       <Box>
         <Typography sx={textStyle}>
@@ -600,7 +724,6 @@ function DocumentCard(props) {
         <Typography sx={textStyle}>Estimated Fees</Typography>
       </Box>
 
-      {console.log(data.contract_fees, typeof data.contract_fees)}
       {data !== null ? (
         data.contract_status === "NEW" ? (
           fees.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
@@ -618,14 +741,6 @@ function DocumentCard(props) {
       ) : (
         <Typography sx={textStyle}>No data available</Typography>
       )}
-      {/* {contractDocumentLink!=="" ? <Box onClick={()=>{
-                window.open(contractDocumentLink, "_blank");
-                // console.log("we should show a document here")
-            }}>
-                <Typography sx={textStyle}>
-                    View Contract <img src={documentIcon} style={{width: '15px', height: '20px', margin:'0px', paddingLeft: "15px"}}/>
-                </Typography>
-            </Box>:<div></div>} */}
     </Box>
   );
 }
@@ -641,21 +756,21 @@ function FeesTextCard(props) {
   let fee = props.fee;
 
   function displayFee() {
-    if (fee.fee_type == "%") {
+    if (fee.fee_type === "%") {
       return (
         <Typography sx={textStyle}>
           {fee.fee_name}: {fee.charge}
           {fee.fee_type} of {fee.of} <b>{fee.frequency}</b>
         </Typography>
       );
-    } else if (fee.fee_type == "$") {
+    } else if (fee.fee_type === "$") {
       return (
         <Typography sx={textStyle}>
           {fee.fee_name}: {fee.fee_type}
           {fee.charge} of {fee.of} <b>{fee.frequency}</b>
         </Typography>
       );
-    } else if (fee.fee_type == "FLAT-RATE") {
+    } else if (fee.fee_type === "FLAT-RATE") {
       const type = "$";
       return (
         <Typography sx={textStyle}>

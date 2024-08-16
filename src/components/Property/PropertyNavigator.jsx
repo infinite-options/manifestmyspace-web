@@ -587,6 +587,12 @@ export default function PropertyNavigator({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  // const handleTenantChange = (index) => {
+  //   if (property) {
+
+  //   }
+  // }
+
   const handleManagerChange = (index) => {
     if (property && property.business_uid) {
       /* navigate('/managerDetails', {
@@ -1186,6 +1192,21 @@ console.log('Favorite Icons:', favoriteIcons);
   const handleUpdateFavoriteIcons = () => {
     setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
 };
+
+  const handleTenantClick = (tenantId) => {
+    if (tenant_detail === "No Tenant") {
+      console.log("There is no tenant");
+    }
+    else { 
+    navigate("/PMContacts", {
+      state: {
+        contactsTab: "Tenant",
+        tenantId: tenantId,
+      }
+    });
+  }
+  };
+
   return (
     <Paper
       style={{
@@ -1525,7 +1546,7 @@ console.log('Favorite Icons:', favoriteIcons);
                             fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {property ? `$${(property.property_value / property.property_area).toFixed(2)}` : "-"}
+                          {property.property_area ? `$${(property.property_value / property.property_area).toFixed(2)}` : "-"}
                         </Typography>
                       </Grid>
                     </Grid>
@@ -1858,22 +1879,40 @@ console.log('Favorite Icons:', favoriteIcons);
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.secondary.fontWeight,
                           fontSize: theme.typography.smallFont,
+                          // cursor: "pointer",
                         }}
+                        onClick={() => handleTenantClick(property.tenant_uid)}
                       >
                         Tenant:
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
                       <Typography
                         sx={{
                           textTransform: "none",
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.light.fontWeight,
                           fontSize: theme.typography.smallFont,
+                          cursor: "pointer",
                         }}
+                        onClick={() => handleTenantClick(property.tenant_uid)}
                       >
                         {tenant_detail}
                       </Typography>
+                      <KeyboardArrowRightIcon
+                        sx={{
+                          color: theme.typography.common.blue,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleTenantClick(property.tenant_uid)}
+                      />
+                    </Box>
                     </Grid>
                     <Grid item xs={6}>
                       <Typography
