@@ -661,7 +661,6 @@ function EditProperty(props) {
 		addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
 		addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
     if (imagesTobeDeleted.length > 0) {
-      console.log('-----deleted_images----', imagesTobeDeleted);
   
       let updatedImages = JSON.parse(propertyData.property_images);
       updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
@@ -688,7 +687,7 @@ function EditProperty(props) {
 			}
 		}
 
-    console.log('---FavImage----', favImage);
+    //console.log('---FavImage----', favImage);
 
 		if (deletedImageList.length > 0) {
 			formData.append('deleted_images', JSON.stringify(deletedImageList));
@@ -708,7 +707,7 @@ function EditProperty(props) {
 				})
 			);
 			// promises_added.push("putData");
-
+			setImageState([])
 			setShowSpinner(false);
 
 			// navigate("/propertyDetail", { state: { index, propertyList }});
