@@ -542,16 +542,11 @@ export default function PMQuotesRequested(props) {
                 </Grid>
               </Grid>
               <Stack direction="row" spacing={2} sx={{ marginTop: 2 }}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ marginTop: 2, backgroundColor: theme.palette.primary.main }}
-                onClick={() => {
+              <Button fullWidth variant='contained' color='primary'  onClick={() => {
                   navigate("/ownerContacts");
-                }}
-              >
-                Contact PM
-              </Button>
+                }} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Contact PM</Typography>
+             </Button>
               </Stack>
             </Box>
 
@@ -621,35 +616,25 @@ export default function PMQuotesRequested(props) {
                 </Grid>
               </Grid>
               <Stack direction="row" spacing={2} sx={{ marginTop: 2 }}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{ backgroundColor: "#A52A2A" }}
-                  onClick={() => {
+                <Button fullWidth variant='contained'   onClick={() => {
                     handleDecline(newContract);
                     handleDialogClose(); // Optional: Close dialog after rejecting
                     setRefresh(!refresh); // Optional: Refresh contracts list
-                  }}
-                >
-                  Reject Contract
-                </Button>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{ backgroundColor: theme.palette.primary.main }}
-                  onClick={() => {
-                    navigate("/ownerContacts");
-                  }}
-                >
-                  Contact PM
-                </Button>
+                  }} sx={{ mb: 2, backgroundColor: "#A52A2A" }}>
+             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Decline</Typography>
+             </Button>
+                <Button fullWidth variant='contained' color='primary'  onClick={() => {
+                  navigate("/ownerContacts");
+                }} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Contact PM</Typography>
+             </Button>
               </Stack>
             </Box>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} variant="contained" color="primary">
-            Close
+          <Button  variant='contained' color='primary' onClick={handleDialogClose}  sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Close</Typography>
           </Button>
         </DialogActions>
       </Dialog>
