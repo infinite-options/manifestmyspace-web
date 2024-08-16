@@ -57,8 +57,9 @@ import PaymentsInformation from "../ContactDetail/PaymentsInformation";
 
 const PMContacts = () => {
   const { getProfileId, selectedRole } = useUser();
+  const location = useLocation();
   const [showSpinner, setShowSpinner] = useState(false);
-  const [contactsTab, setContactsTab] = useState("Owner");
+  const [contactsTab, setContactsTab] = useState(location.state?.contactsTab || "Owner");
   const [contactsData, setContactsData] = useState([]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -98,12 +99,31 @@ const PMContacts = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (location?.state) {
+      const { contactsTab, tenantId } = location.state;
+
+      if (contactsTab) {
+        setContactsTab(contactsTab);
+      }
+
+      if (tenantId && contactsTab === "Tenant") {
+        const tenantIndex = contactsData?.tenants?.findIndex(
+          (tenant) => tenant.tenant_uid === tenantId
+        );
+        if (tenantIndex >= 0) {
+          setCurrentIndex(tenantIndex);
+        }
+      }
+    }
+  }, [location.state, contactsData]);
+
   return (
     <Container disableGutters maxWidth='lg'>
       <Grid container>
         <Grid container item xs={12} md={4}>
           <Grid item xs={12} sx={{ padding: "5px", height: "100%" }}>
-            <ContactsList data={contactsData} tab={"Owner"} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+            <ContactsList data={contactsData} tab={contactsTab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
           </Grid>
         </Grid>
         <Grid container item xs={12} md={8}>
