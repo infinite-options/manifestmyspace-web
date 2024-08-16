@@ -32,6 +32,7 @@ export default function Announcements() {
   const [annData, setAnnData] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMsgRead, setIsMsgRead] = useState(false);
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -70,7 +71,7 @@ export default function Announcements() {
 
       setShowSpinner(false);
     });
-  }, []);
+  }, [isMsgRead]);
 
   // Handle Navigation to the Contacts
 
@@ -122,7 +123,7 @@ export default function Announcements() {
   // function onClick
   //
 
-  const handleAnnouncements = (announcement) => {
+  const handleAnnouncements = async (announcement) => {
     if (announcement.announcement_mode == "PROPERTIES") {
       // console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
@@ -134,9 +135,26 @@ export default function Announcements() {
     } else if (announcement.announcement_mode == "LEASE") {
       // console.log(announcement.announcement_title);
       setAnnData(announcement);
-      setShowAnnouncement(true);
+      await setShowAnnouncement(true);
+      await markAnnouncementAsRead(announcement.announcement_uid);
     }
   };
+
+  const markAnnouncementAsRead = (announcement_uid) => {
+    fetch(`${APIConfig.baseURL.dev}/announcements`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        announcement_uid: [announcement_uid]
+      }),
+    }).then((res)=> {
+      setIsMsgRead(prev => !prev);
+    }).catch((err)=>{
+      console.log('Cannot update read', err)
+    })
+  }
 
   return (
     <div className='announcement-container'>
@@ -255,48 +273,48 @@ export default function Announcements() {
           <div className='announcement-list-container' style={{ maxHeight: "100%", overflowY: "auto" }}>
             {filteredReceivedData.length > 0
               ? filteredReceivedData.map((announcement, i) => {
-                  let role = announcement?.sender_role;
-                  let pageToNavigate;
-                  let navigationParams;
-                  try {
-                    let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_sender);
-                    if (indx >= 0) {
-                      pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
-                      navigationParams = {
-                        state: {
-                          dataDetails: dataDetails[role],
-                          tab: role,
-                          index: indx,
-                          viewData: dataDetails[role],
-                        },
-                      };
-                    }
-                  } catch (e) {
-                    // console.log(e);
+                let role = announcement?.sender_role;
+                let pageToNavigate;
+                let navigationParams;
+                try {
+                  let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_sender);
+                  if (indx >= 0) {
+                    pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
+                    navigationParams = {
+                      state: {
+                        dataDetails: dataDetails[role],
+                        tab: role,
+                        index: indx,
+                        viewData: dataDetails[role],
+                      },
+                    };
                   }
+                } catch (e) {
+                  // console.log(e);
+                }
 
-                  return (
-                    <div key={i}>
-                      <Box
-                        onClick={() => {
-                          handleAnnouncements(announcement);
-                        }}
-                      >
-                        {
-                          <AnnouncementCard
-                            data={announcement}
-                            role={getProfileId}
-                            isContract={announcement.announcement_mode == "CONTRACT"}
-                            isLease={announcement.announcement_mode == "LEASE"}
-                            pageToNavigate={pageToNavigate}
-                            navigationParams={navigationParams}
-                            sent_or_received={"Received"}
-                          />
-                        }
-                      </Box>
-                    </div>
-                  );
-                })
+                return (
+                  <div key={i}>
+                    <Box
+                      onClick={() => {
+                        handleAnnouncements(announcement);
+                      }}
+                    >
+                      {
+                        <AnnouncementCard
+                          data={announcement}
+                          role={getProfileId}
+                          isContract={announcement.announcement_mode == "CONTRACT"}
+                          isLease={announcement.announcement_mode == "LEASE"}
+                          pageToNavigate={pageToNavigate}
+                          navigationParams={navigationParams}
+                          sent_or_received={"Received"}
+                        />
+                      }
+                    </Box>
+                  </div>
+                );
+              })
               : "No announcements"}
           </div>
         </div>
@@ -307,48 +325,48 @@ export default function Announcements() {
           <div className='announcement-list-container'>
             {filteredSentData.length > 0
               ? filteredSentData.map((announcement, i) => {
-                  let role = announcement?.receiver_role;
-                  let pageToNavigate;
-                  let navigationParams;
-                  try {
-                    let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_receiver);
-                    if (indx >= 0) {
-                      pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
-                      navigationParams = {
-                        state: {
-                          dataDetails: dataDetails[role],
-                          tab: role,
-                          index: indx,
-                          viewData: dataDetails[role],
-                        },
-                      };
-                    }
-                  } catch (e) {
-                    // console.log(e);
+                let role = announcement?.receiver_role;
+                let pageToNavigate;
+                let navigationParams;
+                try {
+                  let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_receiver);
+                  if (indx >= 0) {
+                    pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
+                    navigationParams = {
+                      state: {
+                        dataDetails: dataDetails[role],
+                        tab: role,
+                        index: indx,
+                        viewData: dataDetails[role],
+                      },
+                    };
                   }
+                } catch (e) {
+                  // console.log(e);
+                }
 
-                  return (
-                    <div key={i}>
-                      <Box
-                        onClick={() => {
-                          handleAnnouncements(announcement);
-                        }}
-                      >
-                        {
-                          <AnnouncementCard
-                            data={announcement}
-                            role={getProfileId}
-                            isContract={announcement.announcement_mode == "CONTRACT"}
-                            isLease={announcement.announcement_mode == "LEASE"}
-                            pageToNavigate={pageToNavigate}
-                            navigationParams={navigationParams}
-                            sent_or_received={"Sent"}
-                          />
-                        }
-                      </Box>
-                    </div>
-                  );
-                })
+                return (
+                  <div key={i}>
+                    <Box
+                      onClick={() => {
+                        handleAnnouncements(announcement);
+                      }}
+                    >
+                      {
+                        <AnnouncementCard
+                          data={announcement}
+                          role={getProfileId}
+                          isContract={announcement.announcement_mode == "CONTRACT"}
+                          isLease={announcement.announcement_mode == "LEASE"}
+                          pageToNavigate={pageToNavigate}
+                          navigationParams={navigationParams}
+                          sent_or_received={"Sent"}
+                        />
+                      }
+                    </Box>
+                  </div>
+                );
+              })
               : "No announcements"}
           </div>
         </div>
