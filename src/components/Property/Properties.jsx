@@ -65,11 +65,23 @@ function Properties() {
   const [managerDetailsState, setManagerDetailsState] = useState(null);
   const [newPropertyUid,setNewPropertyUid]=useState("");
 
+  
+  const [ currentProperty, setCurrentProperty ] = useState(location?.state?.currentProperty? location?.state?.currentProperty : null);
 
   useEffect(() => {
+    console.log("ROHIT - currentProperty - ", currentProperty);
+    if(currentProperty){
+      setPropertyTo(currentProperty);
+    }
+  }, [currentProperty, propertyList]);
+  
+
+
+  useEffect(() => {
+    console.log("ROHIT - returnIndex - ", returnIndex);
     
     const properties = rawPropertyData?.Property?.result;
-    console.log("ROHIT - returnIndex useEffect - properties - ", properties)
+    console.log("returnIndex useEffect - properties - ", properties);
     if(properties != null){
       const state = {
         ownerId: properties[returnIndex]?.owner_uid,
@@ -216,6 +228,8 @@ function Properties() {
   }, [reloadPropertyList]);
 
   function setPropertyTo(newPropertyUid){
+    console.log("ROHIT - setPropertyTo - newPropertyUid - ", newPropertyUid);
+    setShowSpinner(true);
 
     if(newPropertyUid!=""){
       let foundIndex = 0; // Initialize with 0 to indicate not found
@@ -229,6 +243,7 @@ function Properties() {
 
 // Now, use setReturnIndex to set the found index
        setReturnIndex(foundIndex);
+       setShowSpinner(false);
    }
 
   }
