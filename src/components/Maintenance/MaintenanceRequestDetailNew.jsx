@@ -447,7 +447,7 @@ export default function MaintenanceRequestDetailNew({
                   paddingTop: "0px",
                 }}
               >
-                {console.log("---colorStatus---", colorStatus, value)}
+                {console.log("---colorStatus---", colorStatus, value, colorStatus[value], maintenanceRequestIndex, maintenanceItemsForStatus)}
                 {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ? (
                   <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} />
                 ) : null}

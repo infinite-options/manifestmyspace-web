@@ -103,7 +103,7 @@ export default function TenantMaintenanceItemDetail({ tenantMaintenanceItemDetai
 			sessionStorage.setItem('requestUid', requestUid);
 			sessionStorage.setItem('propID', propID);
 			sessionStorage.setItem('selectedRequestIndex', 0);
-			sessionStorage.setItem('selectedStatus', "NEW");
+			sessionStorage.setItem('selectedStatus', "New Requests");
 			sessionStorage.setItem('maintainanceImages', maintainanceImages);
 			sessionStorage.setItem('maintainanceFavImage', maintainanceFavImage);
 			window.dispatchEvent(new Event('storage'));
