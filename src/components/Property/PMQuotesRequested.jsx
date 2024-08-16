@@ -45,8 +45,9 @@ export default function PMQuotesRequested(props) {
   const handleBackClick = props.handleBackClick;
   const classes = useStyles();
   
+  console.log("PMQuotesDetails.contracts 789", PMQuotesDetails.contracts)
 
-  const [contracts, setContracts] = useState(PMQuotesDetails.contracts);
+  const [contracts, setContracts] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const property = PMQuotesDetails.propertyData;
   const propertyId = property[PMQuotesDetails.index]?.property_uid;
