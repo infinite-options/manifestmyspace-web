@@ -468,12 +468,13 @@ function Properties() {
                 property={propertyList[returnIndex]}
                 index={returnIndex}
                 propertyList={propertyList}
+                setPropertyList={setPropertyList}
                 page={page}
                 isDesktop={isDesktop}
                 allRentStatus={allRentStatus}
                 rawPropertyData={propertyList}
                 onBackClick={handleBackClick}
-                setRHS={setRHS}
+                setRHS={setRHS}                
               />
             )}
             {RHS === "ViewLease" && (
