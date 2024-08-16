@@ -10,7 +10,7 @@ function HappinessMatrixWidget(props) {
   const navigate = useNavigate();
   // const chartWidth = 400;
   // const chartHeight = 350;
-  const chartMargin = { top: 20, right: 30, bottom: -10, left: -30 };
+  const chartMargin = { top: 20, right: 30, bottom: 0, left: 0 };
   const { happinessData, contactDetails, page, setHappinessData, setOwnerUID, currentOwnerUID } = props;
   const [data, setData] = useState([]);
 
@@ -141,7 +141,7 @@ function HappinessMatrixWidget(props) {
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "", borderRadius: "15px" }}>
-            <ResponsiveContainer width='100%' height={380}>
+            <ResponsiveContainer width='100%' height={370}>
               <ScatterChart
                 // width={chartWidth}
                 // height={chartHeight}
@@ -160,7 +160,17 @@ function HappinessMatrixWidget(props) {
                   // domain={[-1.1, 0.1]}
                   domain={[-100, 0]}
                   // ticks={[-1.1, -0.5, 0.1]}
-                  tick={false}
+                  tick={false} 
+                  label={{
+                    value: "Revenue", 
+                    angle: -90,  
+                    position: "insideLeft", 
+                    offset: 10,  
+                    fill: "#160449",
+                    fontSize: 14, 
+                    fontWeight: "bold",
+                  }}
+            
                 />
 
                 <XAxis
@@ -171,8 +181,17 @@ function HappinessMatrixWidget(props) {
                   tickLine={false}
                   style={axisLabelStyle}
                   domain={[-100, 0]}
+                  tick={false} 
+                  label={{
+                    value: "Vacancies",
+                    position: "insideBottom",
+                    offset: 10,
+                    fill: "#160449",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                  }}
                   // ticks={[-100, -50, 0]} // Add this line
-                  tick={false}
+                  // tick={false}
                 />
 
                 <Tooltip

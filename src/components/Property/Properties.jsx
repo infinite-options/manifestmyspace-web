@@ -263,8 +263,24 @@ function Properties() {
     }
     setShowSpinner(false);
   };
+
+  const fetchContracts = async () => {
+    const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
+      // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+      if (!contract_response.ok) {
+        // console.log("Error fetching Contract Details data");
+      }
+      const contractsResponse = await contract_response.json();
+      // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
+      setAllContracts(contractsResponse.result);
+  }
   const refreshProperties = () => {
     fetchProperties();
+  };
+
+  const refreshContracts = () => {
+    console.log("Refresh Contracts called");
+    fetchContracts();
   };
 
   function getPropertyList(data) {
@@ -452,12 +468,13 @@ function Properties() {
                 property={propertyList[returnIndex]}
                 index={returnIndex}
                 propertyList={propertyList}
+                setPropertyList={setPropertyList}
                 page={page}
                 isDesktop={isDesktop}
                 allRentStatus={allRentStatus}
                 rawPropertyData={propertyList}
                 onBackClick={handleBackClick}
-                setRHS={setRHS}
+                setRHS={setRHS}                
               />
             )}
             {RHS === "ViewLease" && (
@@ -500,10 +517,19 @@ function Properties() {
                 propertyData={propertyList}
                 managerData={managerData}
                 onShowSearchManager={handleShowSearchManager}
+                refreshContracts={refreshContracts}
               />
             )}
             {RHS === "AddListing" && (
-              <AddListing propertyList={propertyList} index={returnIndex} page={page} propertyId={propertyList[returnIndex]?.property_uid} setRHS={setRHS} />
+              <AddListing 
+                propertyList={propertyList}
+                index={returnIndex}
+                page={page}
+                propertyId={propertyList[returnIndex]?.property_uid} 
+                setRHS={setRHS} 
+                refreshProperties={refreshProperties}  
+                showPropertyNavigator={updateNavPage}
+              />
             )}
             { RHS === "ManagerDetails" && (
               <ManagerDetails 
