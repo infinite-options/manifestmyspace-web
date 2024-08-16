@@ -1506,7 +1506,7 @@ function TenantPaymentHistoryTable(props) {
 }
 
 function TenantMaintenanceRequestsTable(props) {
-  console.log("In Maintenance Request Table from Stack", props);
+  console.log("In Maintenance Request Table from Stack");
   const data = props.data;
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;
@@ -1534,18 +1534,19 @@ function TenantMaintenanceRequestsTable(props) {
     }
     return date;
   }
+  console.log('----data in dashboard----', data);
+  // data.forEach((item) => {
+  //   let favoriteImage = "";
+  //   const maintenanceImagesList = JSON.parse(item.maintenance_images);
 
-  data.forEach((item) => {
-    let favoriteImage = "";
-    const maintenanceImagesList = JSON.parse(item.maintenance_images);
 
-    if (maintenanceImagesList && maintenanceImagesList.length > 0) {
-      favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));
-    } else {
-      favoriteImage = PlaceholderImage;
-    }
-    item.favorite_image = favoriteImage;
-  });
+  //   if (maintenanceImagesList && maintenanceImagesList.length > 0) {
+  //     favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));
+  //   }else {
+  //     favoriteImage = PlaceholderImage;
+  //   }
+  //   item.favorite_image = favoriteImage;
+  // });
 
   const getColorForStatus = (status) => {
     switch (status) {
@@ -1614,10 +1615,13 @@ function TenantMaintenanceRequestsTable(props) {
 
   const columnsListDesktop = [
     {
-      field: "favorite_image",
+      field: "maintenance_favorite_image",
       headerName: "Images",
       flex: 0.5,
-      renderCell: (params) => <img src={params.value} alt='Maintenance' style={{ width: "60px", height: "55px" }} />,
+      renderCell: (params) => {
+        const imageUrl = params.value ? params.value : PlaceholderImage;
+        return <img src={imageUrl} alt='Maintenance' style={{ width: "60px", height: "55px" }} />;
+      },
       headerAlign: "center",
     },
     {

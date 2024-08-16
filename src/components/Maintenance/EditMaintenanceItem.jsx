@@ -53,7 +53,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-export default function EditMaintenanceItem() {
+export default function EditMaintenanceItem({setRightPane}) {
 	console.log("inside edit component");
 	const location = useLocation();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -85,8 +85,6 @@ export default function EditMaintenanceItem() {
 
 		maintainanceImages = sessionStorage.getItem('maintainanceImages');
 		maintainanceFavImage = sessionStorage.getItem('maintainanceFavImage');
-		console.log('---maintainanceImages---', maintainanceImages);
-		console.log('---maintainanceFavImage---', maintainanceFavImage);
 	}
 
 	// setCost(testCost1);
@@ -122,12 +120,15 @@ export default function EditMaintenanceItem() {
 	const profileId = getProfileId();
 
 	const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
-	const [deletedIcons, setDeletedIcons] = useState(
-		new Array(JSON.parse(maintainanceImages).length).fill(false)
-	);
-	const [favoriteIcons, setFavoriteIcons] = useState(
-    JSON.parse(maintainanceImages).map(image => image === maintainanceFavImage)
-  );
+	const parsedMaintainanceImages = maintainanceImages ? JSON.parse(maintainanceImages) : [];
+
+const [deletedIcons, setDeletedIcons] = useState(
+  parsedMaintainanceImages.length > 0 ? new Array(parsedMaintainanceImages.length).fill(false) : []
+);
+
+const [favoriteIcons, setFavoriteIcons] = useState(
+  parsedMaintainanceImages.map(image => image === maintainanceFavImage)
+);
 
 	const handlePropertyChange = (event) => {
 		console.log('handlePropertyChange', event.target.value);
@@ -216,6 +217,10 @@ export default function EditMaintenanceItem() {
 			setTimeout(() => {
 				window.dispatchEvent(new Event('maintenanceUpdate'));
 			}, 0);
+			if(selectedRole === "TENANT"){
+
+				setRightPane({type: "tenantmaintenanceitem"})
+			}
         }
 	};
 
@@ -364,8 +369,13 @@ export default function EditMaintenanceItem() {
 		// setCost('')
 		// setTitle('')
 		// setDescription('')
-		navigate(maintenanceRoutingBasedOnSelectedRole());
-		handleBackButton();
+		if (selectedRole === "TENANT"){
+
+			handleBackButton();
+		} else {
+
+			navigate(maintenanceRoutingBasedOnSelectedRole());
+		}
 	};
 
 	const [scrollPosition, setScrollPosition] = useState(0);
