@@ -385,6 +385,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       alert(`Your file size is too large (${file_size} MB)`);
       return;
     }
+    updateModifiedData({ key: "business_photo", value: e.target.files[0] })
     readImage(file);
   };
 
@@ -409,6 +410,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       alert(`Your file size is too large (${file_size} MB)`);
       return;
     }
+    updateModifiedData({ key: "employee_photo_url", value: e.target.files[0] });
+    
     readEmpImage(file);
   };
 

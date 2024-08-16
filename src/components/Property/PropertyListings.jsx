@@ -515,7 +515,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         data: property,
         status: status,
         lease: lease,
-        from:"PropertyInfo",
+        from: "PropertyInfo",
       },
     });
   }
@@ -551,8 +551,9 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         padding: "3px 5px",
         alignSelf: "flex-start",
         textTransform: "none",
+        cursor:"pointer",
       }}
-      onClick={() => navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } })}
+      onClick={handleTenantApplicationButton}
     >
       <Typography
         sx={{
@@ -579,10 +580,9 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         padding: "3px 5px",
         alignSelf: "flex-start",
         textTransform: "none",
+        cursor:"pointer",
       }}
-      onClick={() => {
-        navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
-      }}
+      onClick={handleTenantLeasesButton}
     >
       <Typography
         sx={{
@@ -992,7 +992,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
                 }}
                 // onClick={() => navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } })}
                 onClick={handleTenantApplicationButton}
-             >
+              >
                 View Application
               </Button>
             ) : null}
@@ -1007,7 +1007,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
                   whiteSpace: "nowrap",
                 }}
                 // onClick={() => navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } })}
-                 onClick={handleTenantLeasesButton}
+                onClick={handleTenantLeasesButton}
               >
                 View Lease
               </Button>

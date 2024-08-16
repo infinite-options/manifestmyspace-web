@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Typography,
@@ -29,6 +29,12 @@ import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import defaultMaintenanceImage from "../Property/maintenanceIcon.png";
+import IconButton from '@mui/material/IconButton';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export default function TenantMaintenanceItemDetail({tenantMaintenanceItemDetailState, setRightPane}) {
   console.log("In Tenant Maintenance Item Detail");
@@ -130,8 +136,35 @@ export default function TenantMaintenanceItemDetail({tenantMaintenanceItemDetail
   // const maxSteps = images.length;
   const maxSteps = images.length === 0 ? 1 : images.length;
 
-  console.log(item);
-  console.log(color);
+  // console.log(item);
+  // console.log(color);
+
+  const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
+		}
+	};
 
   return (
     <Paper
@@ -153,23 +186,11 @@ export default function TenantMaintenanceItemDetail({tenantMaintenanceItemDetail
           </Button>
         </Box>
       </Stack>
-      <Stack direction="column" justifyContent="center" alignItems="center" padding="10px">
-        <Box
-          sx={{
-            margin: "0px",
-          }}
-        >
-          <Paper
-            style={{
-              margin: "30px",
-              padding: theme.spacing(2),
-              backgroundColor: color,
-              padding: "20px",
-            }}
-          >
+      <Stack direction="column" justifyContent="center" alignItems="center" padding="10px" position="relative">
+        
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Typography sx={{ color: theme.typography.secondary.white, fontWeight: theme.typography.common.fontWeight, fontSize: "22px" }}>
+                <Typography sx={{ color: theme.typography.secondary.black, fontWeight: theme.typography.common.fontWeight, fontSize: "22px" }}>
                   Maintenance Request {item?.maintenance_request_uid}
                 </Typography>
               </Grid>
@@ -206,82 +227,80 @@ export default function TenantMaintenanceItemDetail({tenantMaintenanceItemDetail
                 <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "18px" }}>{item?.maintenance_priority} Priority</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Card
-                  sx={{
-                    backgroundColor: color,
-                    boxShadow: "none",
-                    elevation: "0",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "100%",
-                      }}
-                    >
-                      <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                        {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                      </Button>
-                      <CardMedia
-                        component="img"
-                        // image={images[activeStep]}
-                        image={images.length > 0 ? images[activeStep] : defaultMaintenanceImage}
-                        sx={{
-                          elevation: "0",
-                          boxShadow: "none",
-                          maxWidth: "450px",
-                          center: "true",
-                          alignContent: "center",
-                          justifyContent: "center",
-                        }}
-                      />
-                      <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                        {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                      </Button>
-                    </div>
-                    <MobileStepper
-                      steps={maxSteps}
-                      position="static"
-                      activeStep={activeStep}
-                      variant="text"
-                      sx={{
-                        backgroundColor: color,
-                        width: "100%",
-                        justifyContent: "center",
-                        alignContent: "center",
-                        alignItems: "center",
-                        elevation: "0",
-                        boxShadow: "none",
-                      }}
-                      nextButton={<></>}
-                      backButton={<></>}
-                    />
-                  </CardContent>
-                </Card>
-              </Grid>
+								<Box
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										padding: 2,
+									}}
+								>
+									<IconButton
+										onClick={() => handleScroll('left')}
+										disabled={scrollPosition === 0}
+									>
+										<ArrowBackIosIcon />
+									</IconButton>
+									<Box
+										sx={{
+											display: 'flex',
+											overflowX: 'auto',
+											scrollbarWidth: 'none',
+											msOverflowStyle: 'none',
+											'&::-webkit-scrollbar': {
+												display: 'none',
+											},
+										}}
+									>
+										<Box
+											sx={{
+												display: 'flex',
+												overflowX: 'auto',
+												scrollbarWidth: 'none',
+												msOverflowStyle: 'none',
+												'&::-webkit-scrollbar': {
+													display: 'none',
+												},
+											}}
+										>
+											<ImageList 
+											ref={scrollRef}
+											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+												{images?.map((image, index) => (
+													<ImageListItem
+														key={index}
+														sx={{
+															width: 'auto',
+															flex: '0 0 auto',
+															border: '1px solid #ccc',
+															margin: '0 2px',
+															position: 'relative', // Added to position icons
+														}}
+													>
+														<img
+															src={image}
+															alt={`maintenance-${index}`}
+															style={{
+																height: '150px',
+																width: '150px',
+																objectFit: 'cover',
+															}}
+														/></ImageListItem>
+												))}
+											</ImageList>
+										</Box>
+									</Box>
+									<IconButton onClick={() => handleScroll('right')}>
+										<ArrowForwardIosIcon />
+									</IconButton>
+								</Box>
+							</Grid>
               <Grid item xs={12}>
                 <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{item?.maintenance_desc}</Typography>
               </Grid>
             </Grid>
-          </Paper>
-        </Box>
+         
+        
       </Stack>
     </Paper>
   );

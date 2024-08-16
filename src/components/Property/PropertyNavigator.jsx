@@ -831,9 +831,9 @@ export default function PropertyNavigator({
 				// newProperty[key] = file.image;
 				applianceFormData.append(key, file.image);
 			}
-			// if (file.coverPhoto) {
-			// 	applianceFormData.append("img_favorite", key);
-			// }
+			if (file.coverPhoto) {
+				applianceFormData.append("img_favorite", key);
+			}
 		}
 
       axios
@@ -1122,16 +1122,18 @@ const [scrollPosition, setScrollPosition] = useState(0);
       field: "actions",
       headerName: "Actions",
       width: 100,
-      renderCell: (params) => (
-        <Box>
-          <IconButton onClick={() => handleEditClick(params.row)}>
-            <EditIcon />
-          </IconButton>
-          <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
-            <DeleteIcon />
-          </IconButton>
-        </Box>
-      ),
+      renderCell: (params) => {
+        return (
+          <Box>
+            <IconButton onClick={() => handleEditClick(params.row)}>
+              <EditIcon />
+            </IconButton>
+            <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        );
+      }
     },
   ];
 
@@ -1142,10 +1144,22 @@ const [scrollPosition, setScrollPosition] = useState(0);
   const [deletedIcons, setDeletedIcons] = useState(
     currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []
   );
-  
-  const [favoriteIcons, setFavoriteIcons] = useState(
-    currentApplRow?.appliance_images ? currentApplRow.appliance_images.map(image => image === currentApplRow.appliance_favorite_image) : []
-  );
+  console.log('---currentApplRow before fav---', currentApplRow);
+  const [favoriteIcons, setFavoriteIcons] = useState([]);
+
+useEffect(() => {
+    if (currentApplRow?.appliance_images && propertyData[currentIndex]) {
+        const newFavoriteIcons = currentApplRow.appliance_images.map((image) => {
+            return image === currentApplRow.appliance_favorite_image;
+        });
+        setFavoriteIcons(newFavoriteIcons);
+        console.log('Favorite Icons Updated:', newFavoriteIcons);
+    }
+}, [currentApplRow, propertyData, currentIndex]);
+
+// Logging to ensure the correct values are being set
+console.log('Favorite Icons:', favoriteIcons);
+
 	const handleDelete = (index) => {
 		const updatedDeletedIcons = [...deletedIcons];
 		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
