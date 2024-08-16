@@ -136,18 +136,18 @@ export default function Announcements() {
       // console.log(announcement.announcement_title);
       setAnnData(announcement);
       await setShowAnnouncement(true);
-      await markAnnouncementAsRead(announcement.announcement_uid);
+      await markAnnouncementAsRead([announcement.announcement_uid]);
     }
   };
 
-  const markAnnouncementAsRead = (announcement_uid) => {
+  const markAnnouncementAsRead = (announcementList) => {
     fetch(`${APIConfig.baseURL.dev}/announcements`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        announcement_uid: [announcement_uid]
+        announcement_uid: announcementList
       }),
     }).then((res)=> {
       setIsMsgRead(prev => !prev);
