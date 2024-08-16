@@ -133,7 +133,7 @@ export default function TenantApplication(props) {
 
   function formatTenantVehicleInfo() {
     if (lease.length === 0) {
-      let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info):[];
+      let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
       setVehicles(info);
     } else {
       let info = JSON.parse(lease[0].lease_vehicles);
@@ -316,9 +316,10 @@ export default function TenantApplication(props) {
         // navigate("/listings"); // send success data back to the propertyInfo page
         if (props.from === "PropertyInfo") {
           props.setRightPane({ type: "listings" });
-        } else {
           props.setReload(prev => !prev);
+        } else {
           props.setRightPane("");
+          props.setReload(prev => !prev);
         }
       });
     } catch (error) {
@@ -328,8 +329,10 @@ export default function TenantApplication(props) {
       // navigate("/listings");
       if (props.from === "PropertyInfo") {
         props.setRightPane({ type: "listings" });
+        props.setReload(prev => !prev);
       } else {
         props.setRightPane("");
+        props.setReload(prev => !prev);
       }
     }
   }
@@ -1007,7 +1010,7 @@ export default function TenantApplication(props) {
                     display: "flex",
                     width: "45%",
                   }}
-                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid: lease.length > 0 ? lease[0].lease_uid:null, setRightPane: props.setRightPane, property: property, from: props.from }, })}
+                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid: lease.length > 0 ? lease[0].lease_uid : null, setRightPane: props.setRightPane, property: property, from: props.from }, })}
                 >
                   <Typography
                     sx={{
