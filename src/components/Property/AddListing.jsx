@@ -152,6 +152,7 @@ export default function AddListing(props) {
   const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
   // const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
   const [isListed, setListed] = useState(true);
+  const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -258,6 +259,7 @@ export default function AddListing(props) {
 
   const handleUtilityChange = (utility, entity) => {
     const utilityObject = { [utility]: `${entity}` };
+    setHasUtilitiesChanges(true); 
     console.log("----- handleUtilityChange called - ", utilityObject);
     // setMappedUtilitiesPaidBy((prevState)=> ({...prevState, ...utility}))
 
@@ -341,36 +343,107 @@ export default function AddListing(props) {
     const promises_added = []; // debug
 
     formData.append("property_uid", propertyData.property_uid);
+    let hasPropertyChanges = false;
 
-    if (propertyData.property_address !== address) formData.append("property_address", address);
-    if (propertyData.property_unit !== unit) formData.append("property_unit", unit);
-    if (propertyData.property_city !== city) formData.append("property_city", city);
-    if (propertyData.property_state !== propertyState) formData.append("property_state", propertyState);
-    if (propertyData.property_zip !== zip) formData.append("property_zip", zip);
-    if (propertyData.property_type !== propertyType) formData.append("property_type", propertyType);
-    if (propertyData.property_num_beds !== bedrooms) formData.append("property_num_beds", bedrooms);
-    if (propertyData.property_num_baths !== bathrooms) formData.append("property_num_baths", bathrooms);
-    if (propertyData.property_area !== squareFootage) formData.append("property_area", squareFootage);
-    if (propertyData.property_listed_rent !== rent) formData.append("property_listed_rent", rent);
-    if (propertyData.property_deposit !== deposit) formData.append("property_deposit", deposit);
-    if (propertyData.property_pets_allowed !== (petsAllowed ? 1 : 0)) formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
-    if (propertyData.property_deposit_for_rent !== (depositForRent ? 1 : 0)) formData.append("property_deposit_for_rent", depositForRent ? 1 : 0);
-    if (propertyData.property_taxes !== taxes) formData.append("property_taxes", taxes ? taxes : "null");
-    if (propertyData.property_mortgages !== mortgages) formData.append("property_mortgages", mortgages ? mortgages : "null");
-    if (propertyData.property_insurance !== insurance) formData.append("property_insurance", insurance ? insurance : "null");
-    if (propertyData.property_description !== description) formData.append("property_description", description);
-    if (propertyData.property_notes !== notes) formData.append("property_notes", notes);
-    if (propertyData.property_available_to_rent !== (isListed ? 1 : 0)) formData.append("property_available_to_rent", isListed ? 1 : 0);
-    if (propertyData.property_amenities_community !== communityAmenities) formData.append("property_amenities_community", communityAmenities);
-    if (propertyData.property_amenities_unit !== apartmentAmenities) formData.append("property_amenities_unit", apartmentAmenities);
-    if (propertyData.property_amenities_nearby !== nearbyAmenities) formData.append("property_amenities_nearby", nearbyAmenities);
+    if (propertyData.property_address !== address) {
+      formData.append("property_address", address);
+      hasPropertyChanges = true;
+    }
+    if (propertyData.property_unit !== unit) {
+        formData.append("property_unit", unit);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_city !== city) {
+        formData.append("property_city", city);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_state !== propertyState) {
+        formData.append("property_state", propertyState);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_zip !== zip) {
+        formData.append("property_zip", zip);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_type !== propertyType) {
+        formData.append("property_type", propertyType);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_num_beds !== bedrooms) {
+        formData.append("property_num_beds", bedrooms);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_num_baths !== bathrooms) {
+        formData.append("property_num_baths", bathrooms);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_area !== squareFootage) {
+        formData.append("property_area", squareFootage);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_listed_rent !== rent) {
+        formData.append("property_listed_rent", rent);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_deposit !== deposit) {
+        formData.append("property_deposit", deposit);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_pets_allowed !== (petsAllowed ? 1 : 0)) {
+        formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_deposit_for_rent !== (depositForRent ? 1 : 0)) {
+        formData.append("property_deposit_for_rent", depositForRent ? 1 : 0);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_taxes !== taxes) {
+        formData.append("property_taxes", taxes ? taxes : "null");
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_mortgages !== mortgages) {
+        formData.append("property_mortgages", mortgages ? mortgages : "null");
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_insurance !== insurance) {
+        formData.append("property_insurance", insurance ? insurance : "null");
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_description !== description) {
+        formData.append("property_description", description);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_notes !== notes) {
+        formData.append("property_notes", notes);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_available_to_rent !== (isListed ? 1 : 0)) {
+        formData.append("property_available_to_rent", isListed ? 1 : 0);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_amenities_community !== communityAmenities) {
+        formData.append("property_amenities_community", communityAmenities);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_amenities_unit !== apartmentAmenities) {
+        formData.append("property_amenities_unit", apartmentAmenities);
+        hasPropertyChanges = true;
+    }
+    if (propertyData.property_amenities_nearby !== nearbyAmenities) {
+        formData.append("property_amenities_nearby", nearbyAmenities);
+        hasPropertyChanges = true;
+    }
 
     //utilities data
     // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy));
-    const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
-    console.log("----- Submitted uitilitiesPaidBy JSON string");
-    console.log(utilitiesJSONString);
+    // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
+    // console.log("----- Submitted uitilitiesPaidBy JSON string");
+    // console.log(utilitiesJSONString);
     // formData.append('property_utilities', utilitiesJSONString)
+
+    const updatedUtilities = mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy);
+    // const currentUtilities = utilitiesInUIDForm;
+    // const utilitiesToUpdate = {};
 
     const files = selectedImageList;
     let i = 0;
@@ -393,25 +466,28 @@ export default function AddListing(props) {
       formData.append("deleted_images", JSON.stringify(deletedImageList));
     }
 
-    utilitiesFormData.append("property_uid", propertyData.property_uid);
-    utilitiesFormData.append("property_utility", utilitiesJSONString);
+    // utilitiesFormData.append("property_uid", propertyData.property_uid);
+    // utilitiesFormData.append("property_utility", utilitiesJSONString);
 
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+        // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     const putData = async () => {
-      setShowSpinner(true);
-      promises.push(
-        fetch(`${APIConfig.baseURL.dev}/properties`, {
-          method: "PUT",
-          body: formData,
-        })
-      );
-      promises_added.push("putData");
-
-      setShowSpinner(false);
+      if (hasPropertyChanges) {
+          setShowSpinner(true);
+          promises.push(
+              fetch(`${APIConfig.baseURL.dev}/properties`, {
+                  method: "PUT",
+                  body: formData,
+              })
+          );
+          setShowSpinner(false);
+      } else {
+          console.log("No changes for properties");
+      }
     };
+
     const postUtilitiesData = async () => {
       setShowSpinner(true);
 
@@ -426,53 +502,75 @@ export default function AddListing(props) {
       setShowSpinner(false);
     };
 
+    // const putUtilitiesData = async () => {
+    //   setShowSpinner(true);
+
+    //   promises.push(
+    //     fetch(`${APIConfig.baseURL.dev}/utilities`, {
+    //       method: "PUT",
+    //       body: utilitiesFormData,
+    //     })
+    //   );
+    //   promises_added.push("putUtilitiesData - PUT");
+
+    //   setShowSpinner(false);
+
+    //   const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
+    //   console.log("----- addedUtilitiesJSONString");
+    //   console.log(addedUtilitiesJSONString);
+
+    //   const addedUtilitiesFormData = new FormData();
+    //   addedUtilitiesFormData.append("property_uid", propertyData.property_uid);
+    //   addedUtilitiesFormData.append("property_utility", addedUtilitiesJSONString);
+
+    //   const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
+    //   if (numberOfAddedUtilities > 0) {
+    //     promises.push(
+    //       fetch(`${APIConfig.baseURL.dev}/utilities`, {
+    //         method: "POST",
+    //         body: addedUtilitiesFormData,
+    //       })
+    //     );
+    //     promises_added.push("putUtilitiesData - POST");
+
+    //     setShowSpinner(false);
+    //   }
+    // };
+
     const putUtilitiesData = async () => {
-      setShowSpinner(true);
-
-      promises.push(
-        fetch(`${APIConfig.baseURL.dev}/utilities`, {
-          method: "PUT",
-          body: utilitiesFormData,
-        })
-      );
-      promises_added.push("putUtilitiesData - PUT");
-
-      setShowSpinner(false);
-
-      const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
-      console.log("----- addedUtilitiesJSONString");
-      console.log(addedUtilitiesJSONString);
-
-      const addedUtilitiesFormData = new FormData();
-      addedUtilitiesFormData.append("property_uid", propertyData.property_uid);
-      addedUtilitiesFormData.append("property_utility", addedUtilitiesJSONString);
-
-      const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
-      if (numberOfAddedUtilities > 0) {
-        promises.push(
-          fetch(`${APIConfig.baseURL.dev}/utilities`, {
-            method: "POST",
-            body: addedUtilitiesFormData,
-          })
-        );
-        promises_added.push("putUtilitiesData - POST");
-
-        setShowSpinner(false);
+      if (hasUtilitiesChanges) {
+          const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
+          const utilitiesFormData = new FormData();
+  
+          utilitiesFormData.append("property_uid", propertyData.property_uid);
+          utilitiesFormData.append("property_utility", utilitiesJSONString);
+  
+          setShowSpinner(true);
+          await fetch(`${APIConfig.baseURL.dev}/utilities`, {
+              method: "PUT",
+              body: utilitiesFormData,
+          });
+          setShowSpinner(false);
+  
+          console.log("Utilities changes saved.");
+      } else {
+          console.log("No changes for utilities.");
       }
     };
+  
 
-    const autoUpdate = async () => {
-      const updateResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyData.property_uid}`);
-      // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
-      const updatedJson = await updateResponse.json();
-      const updatedProperty = updatedJson.result[0];
-      propertyList = propertyList.map((property) => {
-        if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
-        return property;
-      });
-      // console.log("updatedPropertyList - ", propertyList);
-      setPropertyData(propertyList[index]);
-    };
+    // const autoUpdate = async () => {
+    //   const updateResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyData.property_uid}`);
+    //   // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
+    //   const updatedJson = await updateResponse.json();
+    //   const updatedProperty = updatedJson.result[0];
+    //   propertyList = propertyList.map((property) => {
+    //     if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
+    //     return property;
+    //   });
+    //   // console.log("updatedPropertyList - ", propertyList);
+    //   setPropertyData(propertyList[index]);
+    // };
 
     putData();
     if (page === "create_listing") {
@@ -485,10 +583,10 @@ export default function AddListing(props) {
       // console.log("promises added - ", promises_added);
       await Promise.all(promises);
       console.log("All Changes saved to the Database", promises);
-      await autoUpdate();
+      // await autoUpdate();
 
-      console.log("propertyList after autoUpdate - ", propertyList);
-      navigate("/propertiesPM", { state: { index, propertyList } });
+      // console.log("propertyList after autoUpdate - ", propertyList);
+      // navigate("/propertiesPM", { state: { index, propertyList } });
     } catch (error) {
       console.error("Error:", error);
     }
