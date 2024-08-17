@@ -48,6 +48,7 @@ import "../../css/selectMonth.css";
 const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, rentsTotal, rentsByProperty, payoutsTotal, payouts, setMonth, setYear, }) => {
 
     const { user, getProfileId, selectedRole } = useUser();
+    const navigate = useNavigate();
     const [ activeButton, setActiveButton ] = useState("Cashflow");
     
     const [ showSelectMonth, setShowSelectMonth ] = useState(false);
@@ -56,6 +57,11 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
   
     const month = propsMonth || "July"; //fix
     const year = propsYear || "2024";
+
+    const handleViewPropertyClick = (e, property_uid) => {
+      e.stopPropagation();
+      navigate("/propertiesPM", { state: {currentProperty: property_uid}});      
+    }
   
   
     return (
@@ -177,7 +183,8 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
               <AccordionDetails>
               {
                     profits && Object.keys(profits)?.map( (propertyUID, index) => {                            
-                        const property = profits[propertyUID]                                                        
+                        const property = profits[propertyUID]
+                        // console.log("property - ", property);
                         return (
                             <>                                   
                                 <Accordion
@@ -197,6 +204,21 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                         {property?.propertyInfo?.property_unit && 'Unit - '}
                                                         {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                                     </Typography>
+                                                    <Button 
+                                                      sx={{ 
+                                                        padding: '0px',
+                                                        marginLeft: '10px',
+                                                        color: "#160449",
+                                                        '&:hover': {
+                                                          color: "#FFFFFF",
+                                                        }
+                                                      }} 
+                                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
+                                                    >
+                                                      <Typography sx={{ fontWeight: theme.typography.common.fontWeight, textTransform: 'none',  }}>
+                                                        View 
+                                                      </Typography>
+                                                    </Button>
                                                 </AccordionSummary>
                                             </Grid>                                            
                                         </Grid>

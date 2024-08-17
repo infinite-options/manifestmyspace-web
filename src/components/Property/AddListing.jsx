@@ -58,6 +58,8 @@ export default function AddListing(props) {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   let { index, propertyList, page} = props;
+  const refreshProperties = props.refreshProperties;
+  const showPropertyNavigator = props.showPropertyNavigator
   // const propertyData = location.state.item;
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   const { user, selectedRole, selectRole, Name } = useUser();
@@ -558,12 +560,12 @@ export default function AddListing(props) {
       }
     };
   
-
+    // Take care of this later - Abhinav
     // const autoUpdate = async () => {
     //   const updateResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyData.property_uid}`);
     //   // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
     //   const updatedJson = await updateResponse.json();
-    //   const updatedProperty = updatedJson.result[0];
+    //   const updatedProperty = updatedJson?.Property?.result[0];
     //   propertyList = propertyList.map((property) => {
     //     if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
     //     return property;
@@ -585,8 +587,12 @@ export default function AddListing(props) {
       console.log("All Changes saved to the Database", promises);
       // await autoUpdate();
 
-      // console.log("propertyList after autoUpdate - ", propertyList);
+      console.log("propertyList after autoUpdate - ", propertyList);
+
+      refreshProperties();
+      showPropertyNavigator();
       // navigate("/propertiesPM", { state: { index, propertyList } });
+
     } catch (error) {
       console.error("Error:", error);
     }

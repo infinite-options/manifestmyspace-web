@@ -100,13 +100,13 @@ export default function ManagerCashflow() {
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
 
-  const [rentsByProperty, setRentsByProperty] = useState([]);
-  const [profits, setProfits] = useState([]);
-  const [payouts, setPayouts] = useState([]);
+  const [rentsByProperty, setRentsByProperty] = useState([]); //current month
+  const [profits, setProfits] = useState([]); //current month
+  const [payouts, setPayouts] = useState([]); //current month
 
-  const [profitsTotal, setProfitsTotal] = useState({});
-  const [rentsTotal, setRentsTotal] = useState({});
-  const [payoutsTotal, setPayoutsTotal] = useState({});
+  const [profitsTotal, setProfitsTotal] = useState({}); //current month
+  const [rentsTotal, setRentsTotal] = useState({}); //current month
+  const [payoutsTotal, setPayoutsTotal] = useState({}); //current month
 
   const [profitabilityData, setProfitabilityData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
@@ -153,15 +153,15 @@ export default function ManagerCashflow() {
   }
 
   useEffect(() => {
-    // console.log("ROHIT - cashflowData - ", cashflowData);
+    // console.log("cashflowData - ", cashflowData);
   }, [cashflowData]);
 
   useEffect(() => {
-    // console.log("ROHIT - propertyList - ", propertyList);
+    // console.log("propertyList - ", propertyList);
   }, [propertyList]);
 
   useEffect(() => {
-    // console.log("ROHIT - ManagerCashflow - selectedProperty - ", selectedProperty);
+    // console.log("ManagerCashflow - selectedProperty - ", selectedProperty);
   }, [selectedProperty]);
 
   //   useEffect(() => {
@@ -215,16 +215,29 @@ export default function ManagerCashflow() {
     let filteredProfitData = [];
     if (selectedProperty === "ALL") {
       filteredProfitData = allProfitData;
-      // console.log("ROHIT - filteredProfitData - ", filteredProfitData);
+      // console.log("filteredProfitData - ", filteredProfitData);
     } else {
       filteredProfitData = allProfitData?.filter((item) => item.property_id === selectedProperty);
-      // console.log("ROHIT - filteredProfitData - ", filteredProfitData);
+      // console.log("filteredProfitData - ", filteredProfitData);
     }
-    const profitDatacurrentMonth = filteredProfitData?.filter((item) => item.cf_month === month && item.cf_year === year);
+    
+    // const profitDatacurrentMonth = filteredProfitData;
+    const profitDatacurrentMonth = filteredProfitData?.filter((item) => item.cf_month === month && item.cf_year === year); 
+    // const profitDatacurrentMonth = filteredProfitData?.filter( item => item.cf_month != null && item.cf_year != null); // testing - uncomment to test last 12 months
 
-    const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "revenue");
+    // console.table("226 - profitDatacurrentMonth - ", profitDatacurrentMonth)
+    
+    
+    // const rentDataCurrentMonth = filteredProfitData?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "revenue");
+    // const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "revenue");
+    const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600"));
 
-    const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "expense");
+    
+    // const payoutsCurrentMonth = filteredProfitData?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "expense");    
+    // const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "expense");
+    const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110"));
+
+
     const payoutsByProperty = payoutsCurrentMonth?.reduce((acc, item) => {
       const propertyUID = item.property_id;
       const propertyInfo = {
@@ -268,6 +281,8 @@ export default function ManagerCashflow() {
     // const profitsCurrentMonth = profitDatacurrentMonth?.filter(item => item.purchase_type === "Management" || item.purchase_type === "Management - Late Fees");
     // const profitsCurrentMonth = profitDatacurrentMonth?.filter(item => item.purchase_type === "Management" || item.purchase_type === "Management - Late Fees");
     const profitsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600"));
+    // const profitsCurrentMonth = filteredProfitData?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600"));
+    
 
     const profitsByProperty = profitsCurrentMonth?.reduce((acc, item) => {
       const propertyUID = item.property_id;

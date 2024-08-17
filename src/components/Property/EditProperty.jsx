@@ -60,7 +60,7 @@ function EditProperty(props) {
 	// Check with Laysa
 	// replaced with line below
 	// let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state || editPropertyState;
-	let { index, propertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick } = props;
+	let { index, propertyList, setPropertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick, } = props;
 
 	const [cookies, setCookie] = useCookies(['default_form_vals']);
 	const cookiesData = cookies['default_form_vals'];
@@ -268,8 +268,10 @@ function EditProperty(props) {
 			changes.property_amenities_community = communityAmenities;
 		if (unitAmenities !== initialData.property_amenities_unit) changes.property_amenities_unit = unitAmenities;
 		if (nearbyAmenities !== initialData.property_amenities_nearby)
-			changes.property_amenities_nearby = nearbyAmenities;
-		// console.log("CHANGES", changes.bedrooms);
+			changes.property_amenities_nearby = nearbyAmenities;		
+		if (favImage !== initialData.property_favorite_image) changes.property_favorite_image = favImage;
+		
+		console.log("ROHIT - changes - ", changes);
 
 		return changes;
 	};
@@ -277,6 +279,13 @@ function EditProperty(props) {
 	useEffect(() => {
 		// console.log("deletedImageList - ", deletedImageList);
 	}, [deletedImageList]);
+
+	useEffect(() => {
+		console.log("ROHIT - imageState - ", imageState);
+	}, [imageState]);
+
+
+	
 	const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
 	const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
 
@@ -537,7 +546,7 @@ function EditProperty(props) {
 
 		const changedFields = getChangedFields();
 
-		if (Object.keys(changedFields).length == 0) {
+		if (Object.keys(changedFields).length === 0 && imageState.length === 0) {
 			setHasChanges(false);
 			console.log('No changes detected.');
 			return;
@@ -576,75 +585,6 @@ function EditProperty(props) {
 			formData.append('property_longitude', coordinates.longitude);
 		}
 
-		// if (coordinates) {
-		//   formData.append("property_latitude", coordinates.latitude);
-		//   formData.append("property_longitude", coordinates.longitude);
-		// }
-
-		// formData.append("property_uid", propertyData.property_uid);
-		// formData.append("property_address", address);
-		// formData.append("property_unit", unit);
-		// formData.append("property_city", city);
-		// formData.append("property_state", propertyState);
-		// formData.append("property_zip", zip);
-		// formData.append("property_type", propertyType);
-		// formData.append("property_num_beds", bedrooms); // Double
-		// formData.append("property_num_baths", bathrooms); // Double
-		// formData.append("property_area", squareFootage);
-		// formData.append("property_listed_rent", listedRent); // Int
-		// formData.append("property_deposit", deposit); // Int
-		// formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
-		// formData.append("property_deposit_for_rent", depositForRent ? 1 : 0); // Int
-		// formData.append("property_taxes", taxes);
-		// formData.append("property_mortgages", mortgages);
-		// formData.append("property_insurance", insurance);
-		// formData.append("property_featured", 0);
-		// formData.append("property_description", description);
-		// formData.append("property_notes", notes);
-		// if (page === "add_listing" || page === "edit_listing") {
-		//   formData.append("property_available_to_rent", isListed ? 1 : 0);
-		// }
-		// formData.append("property_value", propertyValue);
-		// formData.append("property_value_year", assessmentYear);
-		// formData.append("property_active_date", activeDate);
-		// // formData.append('property_utilities', utilities);
-		// formData.append("property_amenities_community", communityAmenities);
-		// formData.append("property_amenities_unit", unitAmenities);
-		// formData.append("property_amenities_nearby", nearbyAmenities);
-		// if (coordinates) {
-		//   formData.append("property_latitude", coordinates.latitude);
-		//   formData.append("property_longitude", coordinates.longitude);
-		// }
-
-		//     formData.append("property_uid", propertyData.property_uid);
-		//     if (address !== initaddress) formData.append("property_address", address);
-		// if (unit !== initunit) formData.append("property_unit", unit);
-		// if (city !== initcity) formData.append("property_city", city);
-		// if (propertyState !== initpropertyState) formData.append("property_state", propertyState);
-		// if (zip !== initzip) formData.append("property_zip", zip);
-		// if (propertyType !== initpropertyType) formData.append("property_type", propertyType);
-		// if (bedrooms !== initbedrooms) formData.append("property_num_beds", bedrooms); // Double
-		// if (bathrooms !== initbathrooms) formData.append("property_num_baths", bathrooms); // Double
-		// if (squareFootage !== initsquareFootage) formData.append("property_area", squareFootage);
-		//formData.append("property_listed_rent", listedRent);
-		//formData.append("property_deposit", deposit); // Int
-		//formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
-		//formData.append("property_deposit_for_rent", depositForRent ? 1 : 0); // Int
-		//formData.append("property_taxes", taxes);
-		//formData.append("property_mortgages", mortgages);
-		//formData.append("property_insurance", insurance);
-		//formData.append("property_featured", 0);
-		//formData.append("property_description", description);
-		// if (notes !== initnotes) formData.append("property_notes", notes);
-		// if ((page === "add_listing" || page === "edit_listing") && isListed !== initisListed) formData.append("property_available_to_rent", isListed ? 1 : 0);
-		// if (propertyValue !== initpropertyValue) formData.append("property_value", propertyValue);
-		// if (assessmentYear !== initassessmentYear) formData.append("property_value_year", assessmentYear);
-		//formData.append("property_active_date", activeDate);
-		// formData.append('property_utilities', utilities);
-		//formData.append("property_amenities_community", communityAmenities);
-		//formData.append("property_amenities_unit", unitAmenities);
-		//formData.append("property_amenities_nearby", nearbyAmenities);
-
 		//utilities form data
 		const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
 		//console.log("----- Submitted uitilitiesPaidBy JSON string");
@@ -661,7 +601,6 @@ function EditProperty(props) {
 		addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
 		addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
     if (imagesTobeDeleted.length > 0) {
-      console.log('-----deleted_images----', imagesTobeDeleted);
   
       let updatedImages = JSON.parse(propertyData.property_images);
       updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
@@ -670,8 +609,8 @@ function EditProperty(props) {
     }
 		//console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
 		formData.append('property_images', propertyData.property_images);
-    formData.append('property_favorite_image', favImage);
-		const files = imageState;
+    	formData.append('property_favorite_image', favImage);
+		// const files = imageState;
 		let i = 0;
 		for (const file of imageState) {
 			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
@@ -688,7 +627,7 @@ function EditProperty(props) {
 			}
 		}
 
-    console.log('---FavImage----', favImage);
+    //console.log('---FavImage----', favImage);
 
 		if (deletedImageList.length > 0) {
 			formData.append('deleted_images', JSON.stringify(deletedImageList));
@@ -708,7 +647,7 @@ function EditProperty(props) {
 				})
 			);
 			// promises_added.push("putData");
-
+			setImageState([])
 			setShowSpinner(false);
 
 			// navigate("/propertyDetail", { state: { index, propertyList }});
@@ -765,19 +704,28 @@ function EditProperty(props) {
 			const updateResponse = await fetch(
 				`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`
 			);
+
+			// const updateResponse = await fetch(
+			// 	`http://localhost:4000/properties/${propertyData.property_uid}`
+			// );
+
 			//console.log('---updateResponse---', updateResponse);
 			// const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
 			const updatedJson = await updateResponse.json();
 			//console.log('---updatedJson---', updatedJson);
 			const updatedProperty = updatedJson.Property.result[0];
-			//console.log('---updatedProperty---', updatedProperty);
-			propertyList = propertyList.map((property) => {
-				if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
-				return property;
-			});
+			console.log('ROHIT - updatedProperty---', updatedProperty);
+			const newPropertyList = propertyList.map((property) => {
+				if (property.property_uid === updatedProperty.property_uid) {
+					return { ...property, ...updatedProperty }
+				} else {
+					return property;
+				}
+			});			
 			//console.log('---index---', index);
-			console.log('updatedPropertyList - ', propertyList);
-			setPropertyData(propertyList[index]);
+			console.log('updatedPropertyList - ', newPropertyList);
+			setPropertyData(newPropertyList[index]);
+			setPropertyList(newPropertyList) // props.setPropertyList - setting propertyList in parent
 		};
 
 		putData();
@@ -1129,9 +1077,9 @@ function EditProperty(props) {
 									setSelectedImageList={setImageState}
 									setDeletedImageList={setDeletedImageList}
 									page={page}
-                  setFavImage={setFavImage}
-                  favImage={favImage}
-                  updateFavoriteIcons={handleUpdateFavoriteIcons}
+									setFavImage={setFavImage}
+									favImage={favImage}
+									updateFavoriteIcons={handleUpdateFavoriteIcons}
 								/>
 							</Grid>
 

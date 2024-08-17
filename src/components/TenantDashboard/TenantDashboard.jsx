@@ -28,7 +28,7 @@ import ViewLease from "../Leases/ViewLease";
 import Payments from "../Payments/Payments";
 import TenantApplicationEdit from "../Applications/TenantApplicationEdit";
 import TenantLeases from "../Leases/TenantLeases/TenantLeases";
-
+import EditMaintenanceItem from "../Maintenance/EditMaintenanceItem";
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
   const navigate = useNavigate();
@@ -321,6 +321,8 @@ function TenantDashboard(props) {
         return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
       case "payment":
         return <Payments accountBalanceWidgetData={paymentState} setRightPane={setRightPane} />;
+      case "editmaintenance":
+        return <EditMaintenanceItem setRightPane={setRightPane} />;
       default:
         return null;
     }
@@ -598,6 +600,7 @@ function TenantDashboard(props) {
                         navToMaintenance={handleTenantMaintenanceNavigate}
                         isMobile={isMobile}
                         isMedium={isMedium}
+                        selectedproperty={propertyAddr}
                       />
                     </Stack>
                   </DashboardTab>
@@ -1531,18 +1534,19 @@ function TenantMaintenanceRequestsTable(props) {
     }
     return date;
   }
+  console.log('----data in dashboard----', data);
+  // data.forEach((item) => {
+  //   let favoriteImage = "";
+  //   const maintenanceImagesList = JSON.parse(item.maintenance_images);
 
-  data.forEach((item) => {
-    let favoriteImage = "";
-    const maintenanceImagesList = JSON.parse(item.maintenance_images);
 
-    if (maintenanceImagesList && maintenanceImagesList.length > 0) {
-      favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));
-    } else {
-      favoriteImage = PlaceholderImage;
-    }
-    item.favorite_image = favoriteImage;
-  });
+  //   if (maintenanceImagesList && maintenanceImagesList.length > 0) {
+  //     favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));
+  //   }else {
+  //     favoriteImage = PlaceholderImage;
+  //   }
+  //   item.favorite_image = favoriteImage;
+  // });
 
   const getColorForStatus = (status) => {
     switch (status) {
@@ -1611,10 +1615,13 @@ function TenantMaintenanceRequestsTable(props) {
 
   const columnsListDesktop = [
     {
-      field: "favorite_image",
+      field: "maintenance_favorite_image",
       headerName: "Images",
       flex: 0.5,
-      renderCell: (params) => <img src={params.value} alt='Maintenance' style={{ width: "60px", height: "55px" }} />,
+      renderCell: (params) => {
+        const imageUrl = params.value ? params.value : PlaceholderImage;
+        return <img src={imageUrl} alt='Maintenance' style={{ width: "60px", height: "55px" }} />;
+      },
       headerAlign: "center",
     },
     {
@@ -1695,7 +1702,6 @@ function TenantMaintenanceRequestsTable(props) {
         getRowId={(row) => row.maintenance_request_uid}
         pageSizeOptions={[5, 10, 25, 100]}
         onRowClick={(row) => {
-          console.log("Row =", row);
 
           /*navigate(`/tenantMaintenanceItemDetail`, {
             state: {
@@ -1705,9 +1711,8 @@ function TenantMaintenanceRequestsTable(props) {
           */
           const state = {
             item: row.row,
+            property: props.selectedproperty,
           };
-          console.log("---state---", state);
-          console.log("---SetTenantMaintenanceItemDetailState---", props.setTenantMaintenanceItemDetailState);
           props.setTenantMaintenanceItemDetailState(state);
         }}
       />

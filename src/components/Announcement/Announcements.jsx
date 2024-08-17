@@ -7,7 +7,7 @@ import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography, Alert, AlertTitle, Snackbar } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
@@ -32,6 +32,11 @@ export default function Announcements() {
   const [annData, setAnnData] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMsgRead, setIsMsgRead] = useState(false);
+  const [readAll, setReadAll] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -70,7 +75,7 @@ export default function Announcements() {
 
       setShowSpinner(false);
     });
-  }, []);
+  }, [isMsgRead]);
 
   // Handle Navigation to the Contacts
 
@@ -122,7 +127,7 @@ export default function Announcements() {
   // function onClick
   //
 
-  const handleAnnouncements = (announcement) => {
+  const handleAnnouncements = async (announcement) => {
     if (announcement.announcement_mode == "PROPERTIES") {
       // console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
@@ -134,8 +139,61 @@ export default function Announcements() {
     } else if (announcement.announcement_mode == "LEASE") {
       // console.log(announcement.announcement_title);
       setAnnData(announcement);
-      setShowAnnouncement(true);
+      await setShowAnnouncement(true);
+      await markAnnouncementAsRead([announcement.announcement_uid]);
     }
+  };
+
+  const markAnnouncementAsRead = (announcementList) => {
+    fetch(`${APIConfig.baseURL.dev}/announcements`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        announcement_uid: announcementList
+      }),
+    }).then((res) => {
+      console.log('res is', res);
+      if (res.status === 200) {
+        setIsMsgRead(prev => !prev);
+        return res.status
+      }
+
+    }).catch((err) => {
+      console.log('Cannot update read', err)
+    })
+  }
+
+  const handleReadAll = () => {
+    setReadAll(prev => !prev);
+    const announcementList = [];
+
+    receivedData.forEach((ann) => {
+      // console.log(ann);
+      if (ann.announcement_read === null) {
+        announcementList.push(ann.announcement_uid);
+      }
+    })
+    console.log('read all', announcementList, readAll);
+    if (readAll === false) { //check with prev state
+      if (announcementList.length === 0) {
+        showSnackbar("You do not have any unread announcements", "error");
+      } else {
+        markAnnouncementAsRead(announcementList);
+      }
+    }
+  }
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (message, severity) => {
+    console.log('Inside show snackbar');
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
   };
 
   return (
@@ -162,6 +220,12 @@ export default function Announcements() {
           }}
         >
           <Box className='announcement-title-text'>{"Announcements 1"}</Box>
+          <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+              <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
         </Box>
         <Box
           sx={{
@@ -244,7 +308,7 @@ export default function Announcements() {
           <div className='announcement-readall'>
             <div className='announcement-readall-text'>Read All</div>
             <div className='announcement-readall-checkbox'>
-              <input type='checkbox' />
+              <input type='checkbox' onClick={handleReadAll} checked={readAll} />
             </div>
           </div>
         </div>
@@ -255,48 +319,48 @@ export default function Announcements() {
           <div className='announcement-list-container' style={{ maxHeight: "100%", overflowY: "auto" }}>
             {filteredReceivedData.length > 0
               ? filteredReceivedData.map((announcement, i) => {
-                  let role = announcement?.sender_role;
-                  let pageToNavigate;
-                  let navigationParams;
-                  try {
-                    let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_sender);
-                    if (indx >= 0) {
-                      pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
-                      navigationParams = {
-                        state: {
-                          dataDetails: dataDetails[role],
-                          tab: role,
-                          index: indx,
-                          viewData: dataDetails[role],
-                        },
-                      };
-                    }
-                  } catch (e) {
-                    // console.log(e);
+                let role = announcement?.sender_role;
+                let pageToNavigate;
+                let navigationParams;
+                try {
+                  let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_sender);
+                  if (indx >= 0) {
+                    pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
+                    navigationParams = {
+                      state: {
+                        dataDetails: dataDetails[role],
+                        tab: role,
+                        index: indx,
+                        viewData: dataDetails[role],
+                      },
+                    };
                   }
+                } catch (e) {
+                  // console.log(e);
+                }
 
-                  return (
-                    <div key={i}>
-                      <Box
-                        onClick={() => {
-                          handleAnnouncements(announcement);
-                        }}
-                      >
-                        {
-                          <AnnouncementCard
-                            data={announcement}
-                            role={getProfileId}
-                            isContract={announcement.announcement_mode == "CONTRACT"}
-                            isLease={announcement.announcement_mode == "LEASE"}
-                            pageToNavigate={pageToNavigate}
-                            navigationParams={navigationParams}
-                            sent_or_received={"Received"}
-                          />
-                        }
-                      </Box>
-                    </div>
-                  );
-                })
+                return (
+                  <div key={i}>
+                    <Box
+                      onClick={() => {
+                        handleAnnouncements(announcement);
+                      }}
+                    >
+                      {
+                        <AnnouncementCard
+                          data={announcement}
+                          role={getProfileId}
+                          isContract={announcement.announcement_mode == "CONTRACT"}
+                          isLease={announcement.announcement_mode == "LEASE"}
+                          pageToNavigate={pageToNavigate}
+                          navigationParams={navigationParams}
+                          sent_or_received={"Received"}
+                        />
+                      }
+                    </Box>
+                  </div>
+                );
+              })
               : "No announcements"}
           </div>
         </div>
@@ -307,48 +371,48 @@ export default function Announcements() {
           <div className='announcement-list-container'>
             {filteredSentData.length > 0
               ? filteredSentData.map((announcement, i) => {
-                  let role = announcement?.receiver_role;
-                  let pageToNavigate;
-                  let navigationParams;
-                  try {
-                    let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_receiver);
-                    if (indx >= 0) {
-                      pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
-                      navigationParams = {
-                        state: {
-                          dataDetails: dataDetails[role],
-                          tab: role,
-                          index: indx,
-                          viewData: dataDetails[role],
-                        },
-                      };
-                    }
-                  } catch (e) {
-                    // console.log(e);
+                let role = announcement?.receiver_role;
+                let pageToNavigate;
+                let navigationParams;
+                try {
+                  let indx = dataDetails[role].findIndex((contact) => contact.contact_uid === announcement?.announcement_receiver);
+                  if (indx >= 0) {
+                    pageToNavigate = `/${role.toLowerCase()}ContactDetails`;
+                    navigationParams = {
+                      state: {
+                        dataDetails: dataDetails[role],
+                        tab: role,
+                        index: indx,
+                        viewData: dataDetails[role],
+                      },
+                    };
                   }
+                } catch (e) {
+                  // console.log(e);
+                }
 
-                  return (
-                    <div key={i}>
-                      <Box
-                        onClick={() => {
-                          handleAnnouncements(announcement);
-                        }}
-                      >
-                        {
-                          <AnnouncementCard
-                            data={announcement}
-                            role={getProfileId}
-                            isContract={announcement.announcement_mode == "CONTRACT"}
-                            isLease={announcement.announcement_mode == "LEASE"}
-                            pageToNavigate={pageToNavigate}
-                            navigationParams={navigationParams}
-                            sent_or_received={"Sent"}
-                          />
-                        }
-                      </Box>
-                    </div>
-                  );
-                })
+                return (
+                  <div key={i}>
+                    <Box
+                      onClick={() => {
+                        handleAnnouncements(announcement);
+                      }}
+                    >
+                      {
+                        <AnnouncementCard
+                          data={announcement}
+                          role={getProfileId}
+                          isContract={announcement.announcement_mode == "CONTRACT"}
+                          isLease={announcement.announcement_mode == "LEASE"}
+                          pageToNavigate={pageToNavigate}
+                          navigationParams={navigationParams}
+                          sent_or_received={"Sent"}
+                        />
+                      }
+                    </Box>
+                  </div>
+                );
+              })
               : "No announcements"}
           </div>
         </div>
