@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 
 function AnnouncementCard(props) {
-  // console.log("In Announcements", props);
+  console.log("In Announcements", props);
   const { selectedRole } = useUser();
   const { data, pageToNavigate, navigationParams, sent_or_received } = props;
   const navigate = useNavigate();
   const photoURL = data?.sender_photo_url || data?.receiver_photo_url || DefaultProfileImg;
 
   const handleAnnouncements = () => {
-    // console.log("Handling announcement for " + selectedRole + " from " + data.announcement_sender);
+    console.log("Handling announcement for " + selectedRole + " from " + data);
   };
 
   const getBorderColor = () => {
@@ -97,7 +97,7 @@ function AnnouncementCard(props) {
             e.stopPropagation();
           }}
         >
-          <input type='checkbox' />
+          <input type='checkbox' readOnly checked={props.data.announcement_read !== null ? true: false}/>
         </div>
       </div>
     </div>
