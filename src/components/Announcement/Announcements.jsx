@@ -7,7 +7,7 @@ import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography, Alert, AlertTitle, Snackbar } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
@@ -33,6 +33,10 @@ export default function Announcements() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isMsgRead, setIsMsgRead] = useState(false);
+  const [readAll, setReadAll] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -149,12 +153,48 @@ export default function Announcements() {
       body: JSON.stringify({
         announcement_uid: announcementList
       }),
-    }).then((res)=> {
-      setIsMsgRead(prev => !prev);
-    }).catch((err)=>{
+    }).then((res) => {
+      console.log('res is', res);
+      if (res.status === 200) {
+        setIsMsgRead(prev => !prev);
+        return res.status
+      }
+
+    }).catch((err) => {
       console.log('Cannot update read', err)
     })
   }
+
+  const handleReadAll = () => {
+    setReadAll(prev => !prev);
+    const announcementList = [];
+
+    receivedData.forEach((ann) => {
+      // console.log(ann);
+      if (ann.announcement_read === null) {
+        announcementList.push(ann.announcement_uid);
+      }
+    })
+    console.log('read all', announcementList, readAll);
+    if (readAll === false) { //check with prev state
+      if (announcementList.length === 0) {
+        showSnackbar("You do not have any unread announcements", "error");
+      } else {
+        markAnnouncementAsRead(announcementList);
+      }
+    }
+  }
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (message, severity) => {
+    console.log('Inside show snackbar');
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
 
   return (
     <div className='announcement-container'>
@@ -180,6 +220,12 @@ export default function Announcements() {
           }}
         >
           <Box className='announcement-title-text'>{"Announcements 1"}</Box>
+          <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+              <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
         </Box>
         <Box
           sx={{
@@ -262,7 +308,7 @@ export default function Announcements() {
           <div className='announcement-readall'>
             <div className='announcement-readall-text'>Read All</div>
             <div className='announcement-readall-checkbox'>
-              <input type='checkbox' />
+              <input type='checkbox' onClick={handleReadAll} checked={readAll} />
             </div>
           </div>
         </div>
