@@ -341,32 +341,29 @@ export default function AddListing(props) {
     const promises_added = []; // debug
 
     formData.append("property_uid", propertyData.property_uid);
-    // formData.append('property_owner_id', ownerId);
-    formData.append("property_available_to_rent", 1);
-    formData.append("property_active_date", formattedDate);
-    formData.append("property_address", address);
-    formData.append("property_unit", unit);
-    formData.append("property_city", city);
-    formData.append("property_state", propertyState);
-    formData.append("property_zip", zip);
-    formData.append("property_type", propertyType);
-    formData.append("property_num_beds", bedrooms);
-    formData.append("property_num_baths", bathrooms);
-    formData.append("property_area", squareFootage);
-    formData.append("property_listed_rent", rent);
-    formData.append("property_deposit", deposit);
-    formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
-    formData.append("property_deposit_for_rent", depositForRent ? 1 : 0);
-    formData.append("property_taxes", taxes ? taxes : "null");
-    formData.append("property_mortgages", mortgages ? mortgages : "null");
-    formData.append("property_insurance", insurance ? insurance : "null");
-    formData.append("property_featured", 0);
-    formData.append("property_description", description);
-    formData.append("property_notes", notes);
-    formData.append("property_available_to_rent", isListed ? 1 : 0);
-    formData.append("property_amenities_community", communityAmenities);
-    formData.append("property_amenities_unit", apartmentAmenities);
-    formData.append("property_amenities_nearby", nearbyAmenities);
+
+    if (propertyData.property_address !== address) formData.append("property_address", address);
+    if (propertyData.property_unit !== unit) formData.append("property_unit", unit);
+    if (propertyData.property_city !== city) formData.append("property_city", city);
+    if (propertyData.property_state !== propertyState) formData.append("property_state", propertyState);
+    if (propertyData.property_zip !== zip) formData.append("property_zip", zip);
+    if (propertyData.property_type !== propertyType) formData.append("property_type", propertyType);
+    if (propertyData.property_num_beds !== bedrooms) formData.append("property_num_beds", bedrooms);
+    if (propertyData.property_num_baths !== bathrooms) formData.append("property_num_baths", bathrooms);
+    if (propertyData.property_area !== squareFootage) formData.append("property_area", squareFootage);
+    if (propertyData.property_listed_rent !== rent) formData.append("property_listed_rent", rent);
+    if (propertyData.property_deposit !== deposit) formData.append("property_deposit", deposit);
+    if (propertyData.property_pets_allowed !== (petsAllowed ? 1 : 0)) formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
+    if (propertyData.property_deposit_for_rent !== (depositForRent ? 1 : 0)) formData.append("property_deposit_for_rent", depositForRent ? 1 : 0);
+    if (propertyData.property_taxes !== taxes) formData.append("property_taxes", taxes ? taxes : "null");
+    if (propertyData.property_mortgages !== mortgages) formData.append("property_mortgages", mortgages ? mortgages : "null");
+    if (propertyData.property_insurance !== insurance) formData.append("property_insurance", insurance ? insurance : "null");
+    if (propertyData.property_description !== description) formData.append("property_description", description);
+    if (propertyData.property_notes !== notes) formData.append("property_notes", notes);
+    if (propertyData.property_available_to_rent !== (isListed ? 1 : 0)) formData.append("property_available_to_rent", isListed ? 1 : 0);
+    if (propertyData.property_amenities_community !== communityAmenities) formData.append("property_amenities_community", communityAmenities);
+    if (propertyData.property_amenities_unit !== apartmentAmenities) formData.append("property_amenities_unit", apartmentAmenities);
+    if (propertyData.property_amenities_nearby !== nearbyAmenities) formData.append("property_amenities_nearby", nearbyAmenities);
 
     //utilities data
     // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy));
