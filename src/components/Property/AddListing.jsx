@@ -336,6 +336,16 @@ export default function AddListing(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("handleSubmit");
+
+    if(!deposit){
+      alert("Deposit cannot be empty!");
+      return ;
+    }
+
+    if(!rent){
+      alert("Rent cannot be empty!");
+      return ;
+    }
     const formData = new FormData();
     const utilitiesFormData = new FormData();
     const currentDate = new Date();

@@ -628,8 +628,8 @@ export default function PropertyNavigator({
     /* navigate('/tenantApplicationNav', {
 			state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop },
 		}); */
-
-    handleViewApplication();
+    
+    handleViewApplication(index);
     const state = { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop };
     // setTenantAppNavState(state);
   };
