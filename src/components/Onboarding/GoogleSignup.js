@@ -7,12 +7,12 @@ import googleImg from "../../images/ContinueWithGoogle.svg";
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 const GOOGLE_LOGIN = process.env.REACT_APP_GOOGLE_LOGIN;
-let SCOPES =
-  "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile email";
+let SCOPES = "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile email";
 
 const GoogleSignup = (props) => {
   const { isReferral } = props;
-  const { userID } = props || {};  
+  const { userID } = props || {};
+  const { role } = props;
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [socialId, setSocialId] = useState("");
@@ -40,8 +40,7 @@ const GoogleSignup = (props) => {
           // gets back authorization code
           if (tokenResponse && tokenResponse.code) {
             let auth_code = tokenResponse.code;
-            let authorization_url =
-              "https://accounts.google.com/o/oauth2/token";
+            let authorization_url = "https://accounts.google.com/o/oauth2/token";
 
             var details = {
               code: auth_code,
@@ -61,8 +60,7 @@ const GoogleSignup = (props) => {
             fetch(authorization_url, {
               method: "POST",
               headers: {
-                "Content-Type":
-                  "application/x-www-form-urlencoded;charset=UTF-8",
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
               },
               body: formBody,
             })
@@ -81,10 +79,7 @@ const GoogleSignup = (props) => {
                 setAccessExpiresIn(ax);
                 //  use ACCESS token, to get email and other account info
                 axios
-                  .get(
-                    "https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" +
-                      at
-                  )
+                  .get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" + at)
                   .then((response) => {
                     let data = response.data;
 
@@ -105,9 +100,10 @@ const GoogleSignup = (props) => {
                         social_id: si,
                         access_expires_in: String(ax),
                         phone_number: "",
+                        role: role,
                       };
-                      if (isReferral) {                        
-                        navigate(`/referralGoogleSignup/${userID}`, { state: { googleUserInfo: user, } });
+                      if (isReferral) {
+                        navigate(`/referralGoogleSignup/${userID}`, { state: { googleUserInfo: user } });
                       } else {
                         // navigate("/selectRole", {
                         //   state: {
@@ -126,9 +122,7 @@ const GoogleSignup = (props) => {
                   .catch((error) => {
                     console.log(error);
                   });
-                return (
-                  accessToken, refreshToken, accessExpiresIn, email, socialId
-                );
+                return accessToken, refreshToken, accessExpiresIn, email, socialId;
               })
               .catch((err) => {
                 console.log(err);
@@ -148,14 +142,14 @@ const GoogleSignup = (props) => {
         // paddingTop: "5%",
       }}
     >
-      <div className="w-100">
+      <div className='w-100'>
         <div></div>
         <div>
           <div></div>
-          <div id="signUpDiv">
+          <div id='signUpDiv'>
             <Button
               onClick={() => getAuthorizationCode()}
-              role="button"
+              role='button'
               sx={{
                 textTransform: "none",
                 "&:hover, &:focus, &:active": {
@@ -167,7 +161,7 @@ const GoogleSignup = (props) => {
                 style={{
                   width: "100%",
                 }}
-                alt="Google sign-up"
+                alt='Google sign-up'
                 src={googleImg}
               />
             </Button>
