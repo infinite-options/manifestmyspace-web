@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -45,9 +46,9 @@ export default function PMQuotesRequested(props) {
   const handleBackClick = props.handleBackClick;
   const classes = useStyles();
   
-
-  const [contracts, setContracts] = useState(PMQuotesDetails.contracts);
+  const [contracts, setContracts] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const [loading, setLoading] = useState(true); // New loading state
   const property = PMQuotesDetails.propertyData;
   const propertyId = property[PMQuotesDetails.index]?.property_uid;
   const index = PMQuotesDetails.index;
@@ -75,6 +76,7 @@ export default function PMQuotesRequested(props) {
 
   useEffect(() => {
     const getContractsForOwner = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
         const contractsResponse = await response.json();
@@ -84,6 +86,8 @@ export default function PMQuotesRequested(props) {
         setContracts(contractsData);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
     getContractsForOwner();
@@ -462,7 +466,13 @@ export default function PMQuotesRequested(props) {
                     padding: "15px",
                   }}
                 >
-                  {tabStatus === 0 ? displayPMQuotesRequested() : displayActiveContracts()}
+                  {loading ? (
+                    <CircularProgress />
+                  ) : tabStatus === 0 ? (
+                    displayPMQuotesRequested()
+                  ) : (
+                    displayActiveContracts()
+                  )}
                 </Box>
               </Box>
             </Box>
