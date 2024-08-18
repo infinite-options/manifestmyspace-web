@@ -1001,6 +1001,7 @@ export default function TenantApplication(props) {
                       Submit
                     </Typography>
                   </Button>}
+                {(status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND") &&
                 <Button
                   variant='contained'
                   sx={{
@@ -1023,6 +1024,7 @@ export default function TenantApplication(props) {
                     Edit
                   </Typography>
                 </Button>
+                }
               </Box>
               {status && status === "NEW" ? (
                 <>

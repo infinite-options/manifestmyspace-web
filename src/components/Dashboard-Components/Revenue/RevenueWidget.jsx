@@ -11,11 +11,14 @@ export default function RevenueWidget({ revenueData }) {
   const revenueReceived = revenueData?.revenue?.result[0]?.received_actual;
   const expensesReceived = revenueData?.expense?.result[0]?.paid_actual;
   const profitReceived = revenueReceived - expensesReceived;
+  let currentDate = new Date();
+  let currentMonth = currentDate.toLocaleString("default", { month: "long" });  
+  let currentYear = currentDate.getFullYear().toString();
 
   return (
     <>
       <Grid
-        onClick={() => navigate("/managerCashflow", { state: { currentWindow: "PROFITABILITY" } })}
+        onClick={() => navigate("/managerCashflow", { state: { currentWindow: "PROFITABILITY", month: currentMonth, year: currentYear } })}
         container
         sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer" }}
       >
@@ -35,7 +38,7 @@ export default function RevenueWidget({ revenueData }) {
           >
             <Grid container>
               <Grid item xs={8}>
-                <Typography sx={{ fontWeight: "bold" }}>Monthly Profit (Expected vs Actual)</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Profit (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
                 <Typography sx={{ fontWeight: "bold" }}>{profit.toFixed(2)}</Typography>
@@ -58,7 +61,7 @@ export default function RevenueWidget({ revenueData }) {
           >
             <Grid container>
               <Grid item xs={8}>
-                <Typography sx={{ fontWeight: "bold" }}>Monthly Revenue (Expected vs Actual)</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Revenue (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
                 <Typography sx={{ fontWeight: "bold" }}>{revenue}</Typography>
@@ -80,7 +83,7 @@ export default function RevenueWidget({ revenueData }) {
           >
             <Grid container>
               <Grid item xs={8}>
-                <Typography sx={{ fontWeight: "bold" }}>Monthly Expenses (Expected vs Actual)</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Expenses (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
                 <Typography sx={{ fontWeight: "bold" }}>{expenses}</Typography>

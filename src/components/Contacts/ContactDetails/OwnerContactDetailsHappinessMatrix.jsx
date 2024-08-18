@@ -281,8 +281,8 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   }, [searchTerm, contactsData]);
 
   return (
-    <Container sx={{ padding: "5px" }}>
-      <Grid container justifyContent='center' sx={{ padding: "10px 10px" }}>
+    <Container sx={{ padding: "5px", height: "100%"}}>
+      <Grid container justifyContent='center' sx={{ padding: "10px 10px", height: "100%" }}>
         <Typography sx={{ fontSize: "35px", color: "#160449", fontWeight: "bold" }}>All Owner Contacts</Typography>
         <Grid container item xs={12} justifyContent='center'>
           <TextField
@@ -307,7 +307,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
             }}
           />
         </Grid>
-        <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflow: "auto" }}>
+        <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflowY: "auto"}}>
           {filteredContactsData?.map((contact, index) => (
             <Grid item xs={12} key={index} sx={{ marginBottom: "5px" }} onClick={() => setIndex(index)}>
               <Paper

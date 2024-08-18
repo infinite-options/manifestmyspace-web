@@ -40,6 +40,7 @@ const RequestQuotes = (props) => {
   const [managerData, setManagerData] = useState(props.managerData);
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const onShowSearchManager = props.onShowSearchManager;
+  const refreshContracts = props.refreshContracts;
 
   useEffect(() => {
     const propertyData = props.propertyData;
@@ -144,6 +145,8 @@ const RequestQuotes = (props) => {
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }
+    console.log("Calling refreshContracts");
+    refreshContracts();
     navigateToPrev();
   };
 
