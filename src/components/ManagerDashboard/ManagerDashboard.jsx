@@ -240,7 +240,7 @@ const ShimmerUI = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <Paper
-              style={{
+              sx={{
                 borderRadius: "10px",
                 backgroundColor: theme.palette.primary.main,
                 height: 780,
@@ -256,7 +256,7 @@ const ShimmerUI = () => {
           <Grid item xs={12} md={9} rowSpacing={6}>
             {/* <RevenueWidget revenueData={null} shimmer /> */}
             <Paper
-              style={{
+              sx={{
                 borderRadius: "10px",
                 backgroundColor: theme.palette.primary.main,
                 height: 162,
@@ -272,7 +272,7 @@ const ShimmerUI = () => {
             </Paper>
 
             <Paper
-              style={{
+              sx={{
                 marginTop: "10px",
                 borderRadius: "10px",
                 backgroundColor: theme.palette.primary.main,
@@ -291,7 +291,7 @@ const ShimmerUI = () => {
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
                 <Paper
-                  style={{
+                  sx={{
                     marginTop: "10px",
                     borderRadius: "10px",
                     backgroundColor: theme.palette.primary.main,
@@ -309,7 +309,7 @@ const ShimmerUI = () => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Paper
-                  style={{
+                  sx={{
                     marginTop: "10px",
                     borderRadius: "10px",
                     backgroundColor: theme.palette.primary.main,

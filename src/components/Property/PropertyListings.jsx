@@ -345,7 +345,7 @@ const PropertyListings = ({ setRightPane }) => {
           }}
         >
           <Paper
-            style={{
+            sx={{
               // margin: "30px",
               padding: theme.spacing(2),
               backgroundColor: theme.palette.primary.main,
