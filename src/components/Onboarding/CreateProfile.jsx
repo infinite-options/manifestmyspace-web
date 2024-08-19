@@ -1,4 +1,4 @@
-import React, {useEffect, useState, } from 'react';
+import React, {useEffect, useState } from 'react';
 import { 
     Paper,
     Box,
@@ -321,6 +321,7 @@ const CreateProfile = () => {
             });
 
         } else {
+            console.log("In here");
             const url = "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE";        
             const data = {
                 ...user, 
@@ -336,6 +337,7 @@ const CreateProfile = () => {
                 body: JSON.stringify(data),
             })
             .then(response => {
+                console.log("Response status", response.status);
                 if (!response.ok) {
                     return Promise.reject(new Error('Failed to fetch')); 
                 }
@@ -416,7 +418,7 @@ const CreateProfile = () => {
                         <Grid container item xs={10} justifyContent='center' spacing={20} >
                         <Grid item xs={12}>
                             <Typography sx={{ fontSize: '28px', color: '#160449', fontWeight: 'bold' }}>
-                                {user.role.charAt(0) + user.role.slice(1).toLowerCase()} Profile
+                                {user?.role ? user.role.charAt(0) + user.role.slice(1).toLowerCase() : ''} Profile
                             </Typography>
                         </Grid> 
                             <Grid item xs={6}>

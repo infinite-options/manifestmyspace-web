@@ -79,10 +79,22 @@ function TenantDashboard(props) {
   const [paymentState, setPaymentState] = useState(null);
   const [tenantApplicationNavState, setTenantApplicationNavState] = useState(null);
   const [reload, setReload] = useState(false);
+  const [listingData, setListingData] = useState([]);
+  const [tenantData, setTenantData] = useState([]);
 
   const open = Boolean(anchorEl);
 
   const { user } = useUser();
+
+  useEffect (() => {
+    async function fetchData() {
+      const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
+      const propertyData = await propertyResponse.json();
+      setListingData(propertyData?.Available_Listings.result); //
+      setTenantData(propertyData?.Tenant_Leases.result); //
+    }
+    fetchData();
+  }, [getProfileId]);
 
   //  Main UseEffect
   useEffect(() => {
@@ -314,7 +326,7 @@ function TenantDashboard(props) {
         return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} />;
       // navigate('/profileEditor');
       case "tenantLeases":
-        return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
+        return <TenantLeases {...rightPane.state} property={listingData} lease={tenantData} setRightPane={setRightPane} setReload={setReload} />;
       case "announcements":
         return <Announcements setRightPane={setRightPane} />;
       case "tenantmaintenanceitem":
@@ -1375,6 +1387,7 @@ const AccountBalanceWidget = ({
         (selectedProperty?.lease_status === "NEW" || selectedProperty?.lease_status === "REFUSED" ||
           selectedProperty?.lease_status === "WITHDRAWN" || selectedProperty?.lease_status === "PROCESSING" ||
           selectedProperty?.lease_status === "REJECTED" || selectedProperty?.lease_status === "RESCIND" ? (
+        <>
           <Box
             sx={{
               display: "flex",
@@ -1393,6 +1406,27 @@ const AccountBalanceWidget = ({
             <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
             <u>View Application</u>
           </Box>
+          <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItem: "left",
+                justifyContent: "left",
+                margin: isMobile ? "0px" : "20px",
+                paddingBottom: isMobile ? "5px" : "10px",
+                cursor: "pointer",
+                color: "#3D5CAC",
+                fontSize: "20px",
+                fontWeight: 600,
+              }}
+              onClick={() => setRightPane({ 
+                type: "tenantLeases"
+              })}
+            >
+              <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+              <u>View Lease Application</u>
+              </Box>
+            </>
         ) : (
           <Box
             sx={{
