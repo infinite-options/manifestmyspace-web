@@ -160,6 +160,10 @@ export default function PropertyNavigator({
   // };
 
   useEffect(() => {
+    console.log("PropertyNavigator - props.contracts - ", contracts);
+  }, [contracts]);
+
+  useEffect(() => {
     getDataFromAPI();
     // fetchApplianceList();
     getApplianceCategories();
@@ -217,16 +221,17 @@ export default function PropertyNavigator({
 
   // console.log('MaxSteps: ', maxSteps); // Log maxSteps outside of useEffect
 
-  const [activeStep, setActiveStep] = useState(0);
-  const [showSpinner, setShowSpinner] = useState(false);
-  const [contractsData, setContractsData] = useState(contracts);
-  const [contractsNewSent, setContractsNewSent] = useState(0);
-  const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
+  const [ activeStep, setActiveStep ] = useState(0);
+  const [ showSpinner, setShowSpinner ] = useState(false);
+  const [ contractsData, setContractsData ] = useState(contracts);
+  const [ activeContracts, setActiveContracts ] = useState([]);
+  const [ contractsNewSent, setContractsNewSent ] = useState(0);
+  const [ maintenanceReqData, setMaintenanceReqData ] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
-  const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
+  const [ displayMaintenanceData, setDisplayMaintenanceData ] = useState([{}]);
 
   const color = theme.palette.form.main;
-  const [propertyId, setPropertyId] = useState(propertyData && propertyData[currentIndex] ? propertyData[currentIndex].property_uid : null);
+  const [ propertyId, setPropertyId ] = useState(propertyData && propertyData[currentIndex] ? propertyData[currentIndex].property_uid : null);
   let data = "";
   const role = roleName();
   if (role === "Manager") {
@@ -319,6 +324,7 @@ export default function PropertyNavigator({
       //   getContractsForOwner();
       var count = 0;
       const filtered = contracts?.filter((contract) => contract.property_id === propertyId);
+      const active = filtered?.filter(contract => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
         if (contract.contract_status == "SENT" || contract.contract_status == "NEW") {
@@ -328,6 +334,7 @@ export default function PropertyNavigator({
       // console.log("ROHIT - PropertyNavigator - contract count - ", count);
       setContractsNewSent(count);
       setContractsData(contracts);
+      setActiveContracts(active);
 
       const rentDetails = getRentStatus();
       // console.log("rentDetails - ", rentDetails);
@@ -1540,7 +1547,7 @@ export default function PropertyNavigator({
                             fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {property.property_area ? `$${(property.property_value / property.property_area).toFixed(2)}` : "-"}
+                          {property && property.property_area ? `$${(property?.property_value / property?.property_area).toFixed(2)}` : "-"}
                         </Typography>
                       </Grid>
                     </Grid>
@@ -2063,7 +2070,8 @@ export default function PropertyNavigator({
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {property && property.business_uid ? `${property.business_name}` : "No Manager Selected"}
+                              {/* {property && property.business_uid ? `${property.business_name}` : "No Manager Selected"} */}
+                              {activeContracts?.length > 0? activeContracts[0]?.business_name : "No Manager Selected"}
                             </Typography>
                             <KeyboardArrowRightIcon
                               sx={{
@@ -2131,59 +2139,7 @@ export default function PropertyNavigator({
                       </Grid>
                     )}
 
-                    <Grid container item spacing={2}>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Typography
-                          sx={{
-                            textTransform: "none",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            paddingRight: "50px",
-                            paddingLeft: "4px",
-                          }}
-                        >
-                          Open Maintenance Tickets:
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            if (property && property.maintenanceCount > 0) {
-                              if (selectedRole === "OWNER") {
-                                navigate("/ownerMaintenance", {
-                                  state: {
-                                    propertyId: propertyId,
-                                    fromProperty: true,
-                                    index: currentIndex,
-                                  },
-                                });
-                              } else {
-                                navigate("/managerMaintenance", {
-                                  state: {
-                                    propertyId: propertyId,
-                                    fromProperty: true,
-                                    index: currentIndex,
-                                  },
-                                });
-                              }
-                            }
-                          }}
-                        >
-                          <Badge
-                            badgeContent={property?.maintenanceCount || 0}
-                            showZero
-                            color='error'
-                            sx={{
-                              paddingRight: "10px",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                    </Grid>
+                    
                     {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
                       <>
                         <Grid item xs={10.7} md={10.7}>
@@ -2249,6 +2205,59 @@ export default function PropertyNavigator({
                         )}
                       </>
                     ) : null}
+                    <Grid container item spacing={2}>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            paddingRight: "50px",
+                            paddingLeft: "4px",
+                          }}
+                        >
+                          Open Maintenance Tickets:
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            if (property && property.maintenanceCount > 0) {
+                              if (selectedRole === "OWNER") {
+                                navigate("/ownerMaintenance", {
+                                  state: {
+                                    propertyId: propertyId,
+                                    fromProperty: true,
+                                    index: currentIndex,
+                                  },
+                                });
+                              } else {
+                                navigate("/managerMaintenance", {
+                                  state: {
+                                    propertyId: propertyId,
+                                    fromProperty: true,
+                                    index: currentIndex,
+                                  },
+                                });
+                              }
+                            }
+                          }}
+                        >
+                          <Badge
+                            badgeContent={property?.maintenanceCount || 0}
+                            showZero
+                            color='error'
+                            sx={{
+                              paddingRight: "10px",
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                    </Grid>
                     {property && property.applications.length > 0 && (
                       <>
                         <Grid item xs={12} md={12}>

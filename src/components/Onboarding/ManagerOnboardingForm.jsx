@@ -548,7 +548,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     value={row.charge}
                     variant='filled'
                     fullWidth
-                    placeholder='15%'
+                    placeholder='15'
                     className={classes.root}
                     onChange={(e) => handleFeeChange(e, row.id)}
                     InputProps={{
