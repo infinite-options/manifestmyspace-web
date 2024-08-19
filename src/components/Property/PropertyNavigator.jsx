@@ -54,7 +54,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import ImageUploader from '../ImageUploader';
+import ImageUploader from "../ImageUploader";
 import { maintenanceOwnerDataCollectAndProcess } from "../Maintenance/MaintenanceOwner.jsx";
 import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/MaintenanceManager.jsx";
 
@@ -62,14 +62,14 @@ import APIConfig from "../../utils/APIConfig";
 import { v4 as uuidv4 } from "uuid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
 
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
 //const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
@@ -318,10 +318,10 @@ export default function PropertyNavigator({
       //   };
       //   getContractsForOwner();
       var count = 0;
-      const filtered = contractsData.filter((contract) => contract.property_id === propertyId);
-      // console.log("ROHIT - PropertyNavigator - filtered contracts - ", filtered);
+      const filtered = contracts?.filter((contract) => contract.property_id === propertyId);
+      // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
-        if (contract.contract_status === "SENT" || contract.contract_status === "NEW") {
+        if (contract.contract_status == "SENT" || contract.contract_status == "NEW") {
           count++;
         }
       });
@@ -342,8 +342,8 @@ export default function PropertyNavigator({
       }
 
       const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-       console.log("Appliances ****", propertyApplicances);
-       console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap)
+      console.log("Appliances ****", propertyApplicances);
+      console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
 
@@ -629,7 +629,7 @@ export default function PropertyNavigator({
 			state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop },
 		}); */
 
-    handleViewApplication();
+    handleViewApplication(index);
     const state = { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop };
     // setTenantAppNavState(state);
   };
@@ -778,7 +778,7 @@ export default function PropertyNavigator({
     await setInitialApplData(row);
     await setcurrentApplRow(row);
     await setModifiedApplRow({ appliance_uid: row.appliance_uid });
-    console.log('---currentApplRow?.appliance_favorite_image---', row);
+    console.log("---currentApplRow?.appliance_favorite_image---", row);
     await setFavImage(currentApplRow?.appliance_favorite_image);
     await setIsEditing(true);
     await handleOpen();
@@ -822,20 +822,20 @@ export default function PropertyNavigator({
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
       let i = 0;
-		for (const file of selectedImageList) {
-			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-			let key = `img_${i++}`;
-			if (file.file !== null) {
-				// newProperty[key] = file.file;
-				applianceFormData.append(key, file.file);
-			} else {
-				// newProperty[key] = file.image;
-				applianceFormData.append(key, file.image);
-			}
-			if (file.coverPhoto) {
-				applianceFormData.append("img_favorite", key);
-			}
-		}
+      for (const file of selectedImageList) {
+        // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+        let key = `img_${i++}`;
+        if (file.file !== null) {
+          // newProperty[key] = file.file;
+          applianceFormData.append(key, file.file);
+        } else {
+          // newProperty[key] = file.image;
+          applianceFormData.append(key, file.image);
+        }
+        if (file.coverPhoto) {
+          applianceFormData.append("img_favorite", key);
+        }
+      }
 
       axios
         .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
@@ -843,14 +843,14 @@ export default function PropertyNavigator({
           // console.log("Data updated successfully", response);
           // showSnackbar("Your profile has been successfully updated.", "success");
           // handleUpdate();
-          console.log("Appliance befor", appliance)
-          console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap)
+          console.log("Appliance befor", appliance);
+          console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
           const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
-          console.log("Appliance is $$", applianceCategory)
-          setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid, appliance_item:applianceCategory }]);
-          
+          console.log("Appliance is $$", applianceCategory);
+          setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid, appliance_item: applianceCategory }]);
+
           setShowSpinner(false);
-          console.log("Appliance after", appliance)
+          console.log("Appliance after", appliance);
         })
         .catch((error) => {
           setShowSpinner(false);
@@ -917,35 +917,33 @@ export default function PropertyNavigator({
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
       if (imagesTobeDeleted.length > 0) {
-    
         let updatedImages = currentApplRow.appliance_images;
-        updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
+        updatedImages = updatedImages.filter((image) => !imagesTobeDeleted.includes(image));
         currentApplRow.appliance_images = updatedImages;
-        applianceFormData.append('delete_images', JSON.stringify(imagesTobeDeleted));
+        applianceFormData.append("delete_images", JSON.stringify(imagesTobeDeleted));
       }
 
-      applianceFormData.append('appliance_images', JSON.stringify(currentApplRow.appliance_images));
-      applianceFormData.append('appliance_favorite_image', favImage);
+      applianceFormData.append("appliance_images", JSON.stringify(currentApplRow.appliance_images));
+      applianceFormData.append("appliance_favorite_image", favImage);
       let i = 0;
-		for (const file of selectedImageList) {
-			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-			let key = `img_${i++}`;
-			if (file.file !== null) {
-				// newProperty[key] = file.file;
-				applianceFormData.append(key, file.file);
-			} else {
-				// newProperty[key] = file.image;
-				applianceFormData.append(key, file.image);
-			 }
-			if (file.coverPhoto) {
-				applianceFormData.set('appliance_favorite_image', key);
-			}
-		}
+      for (const file of selectedImageList) {
+        // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+        let key = `img_${i++}`;
+        if (file.file !== null) {
+          // newProperty[key] = file.file;
+          applianceFormData.append(key, file.file);
+        } else {
+          // newProperty[key] = file.image;
+          applianceFormData.append(key, file.image);
+        }
+        if (file.coverPhoto) {
+          applianceFormData.set("appliance_favorite_image", key);
+        }
+      }
 
       for (const [key, value] of Object.entries(changedFields)) {
         applianceFormData.append(key, value);
       }
-
 
       for (let [key, value] of applianceFormData.entries()) {
         console.log(key, value);
@@ -1048,60 +1046,59 @@ export default function PropertyNavigator({
     }
   };
 
-// Define the custom cell renderer for the appliance_images column
-const ImageCell = (params) => {
-  console.log('---params----', params);
-  let images;
-  try {
-    images = JSON.parse(params.value); // Try to parse as JSON
-  } catch (e) {
-    images = params.value; // If parsing fails, treat as a single URL string
-  }
-  console.log('---images----', images);
-  const imageUrl = images?.length > 0 ? images[0] : ''; // Get the first image URL
-  
-  return (
-    <Avatar
-      src={imageUrl}
-      alt="Appliance"
-      sx={{
-        borderRadius: "0",
-        width: "60px",
-        height: "60px",
-        margin: "0px",
-        padding: "0px",
-      }}
-    />
-  );
-};
+  // Define the custom cell renderer for the appliance_images column
+  const ImageCell = (params) => {
+    console.log("---params----", params);
+    let images;
+    try {
+      images = JSON.parse(params.value); // Try to parse as JSON
+    } catch (e) {
+      images = params.value; // If parsing fails, treat as a single URL string
+    }
+    console.log("---images----", images);
+    const imageUrl = images?.length > 0 ? images[0] : ""; // Get the first image URL
 
-const [scrollPosition, setScrollPosition] = useState(0);
-	const scrollRef = useRef(null);
+    return (
+      <Avatar
+        src={imageUrl}
+        alt='Appliance'
+        sx={{
+          borderRadius: "0",
+          width: "60px",
+          height: "60px",
+          margin: "0px",
+          padding: "0px",
+        }}
+      />
+    );
+  };
 
-	useEffect(() => {
-		if (scrollRef.current) {
-			scrollRef.current.scrollLeft = scrollPosition;
-		}
-	}, [scrollPosition]);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const scrollRef = useRef(null);
 
-	const handleScroll = (direction) => {
-		if (scrollRef.current) {
-			const scrollAmount = 200;
-			setScrollPosition((prevScrollPosition) => {
-				const currentScrollPosition = scrollRef.current.scrollLeft;
-				let newScrollPosition;
-	
-				if (direction === 'left') {
-					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-				} else {
-					newScrollPosition = currentScrollPosition + scrollAmount;
-				}
-	
-				return newScrollPosition;
-			});
-		}
-	};
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollPosition;
+    }
+  }, [scrollPosition]);
 
+  const handleScroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = 200;
+      setScrollPosition((prevScrollPosition) => {
+        const currentScrollPosition = scrollRef.current.scrollLeft;
+        let newScrollPosition;
+
+        if (direction === "left") {
+          newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+        } else {
+          newScrollPosition = currentScrollPosition + scrollAmount;
+        }
+
+        return newScrollPosition;
+      });
+    }
+  };
 
   const applnColumns = [
     { field: "appliance_uid", headerName: "UID", width: 80 },
@@ -1134,77 +1131,74 @@ const [scrollPosition, setScrollPosition] = useState(0);
             </IconButton>
           </Box>
         );
-      }
+      },
     },
   ];
 
   const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
-  const [favImage, setFavImage] = useState('');
+  const [favImage, setFavImage] = useState("");
 
-	const [deletedImageList, setDeletedImageList] = useState([]);
-  const [deletedIcons, setDeletedIcons] = useState(
-    currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []
-  );
-  console.log('---currentApplRow before fav---', currentApplRow);
+  const [deletedImageList, setDeletedImageList] = useState([]);
+  const [deletedIcons, setDeletedIcons] = useState(currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []);
+  console.log("---currentApplRow before fav---", currentApplRow);
   const [favoriteIcons, setFavoriteIcons] = useState([]);
 
-useEffect(() => {
+  useEffect(() => {
     if (currentApplRow?.appliance_images && propertyData[currentIndex]) {
-        const newFavoriteIcons = currentApplRow.appliance_images.map((image) => {
-            return image === currentApplRow.appliance_favorite_image;
-        });
-        setFavoriteIcons(newFavoriteIcons);
-        console.log('Favorite Icons Updated:', newFavoriteIcons);
+      const newFavoriteIcons = currentApplRow.appliance_images.map((image) => {
+        return image === currentApplRow.appliance_favorite_image;
+      });
+      setFavoriteIcons(newFavoriteIcons);
+      console.log("Favorite Icons Updated:", newFavoriteIcons);
     }
-}, [currentApplRow, propertyData, currentIndex]);
+  }, [currentApplRow, propertyData, currentIndex]);
 
-// Logging to ensure the correct values are being set
-console.log('Favorite Icons:', favoriteIcons);
+  // Logging to ensure the correct values are being set
+  console.log("Favorite Icons:", favoriteIcons);
 
-	const handleDelete = (index) => {
-		const updatedDeletedIcons = [...deletedIcons];
-		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
-		setDeletedIcons(updatedDeletedIcons);
+  const handleDelete = (index) => {
+    const updatedDeletedIcons = [...deletedIcons];
+    updatedDeletedIcons[index] = !updatedDeletedIcons[index];
+    setDeletedIcons(updatedDeletedIcons);
 
-		const imageToDelete = currentApplRow.appliance_images[index];
-		setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
+    const imageToDelete = currentApplRow.appliance_images[index];
+    setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
 
-		console.log('Delete image at index:', deletedIcons);
-	};
+    console.log("Delete image at index:", deletedIcons);
+  };
 
-	const handleFavorite = (index) => {
+  const handleFavorite = (index) => {
     const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
     updatedFavoriteIcons[index] = true;
     setFavoriteIcons(updatedFavoriteIcons);
-  
+
     const newFavImage = currentApplRow.appliance_images[index];
     setFavImage(newFavImage);
-    setSelectedImageList(prevState =>
+    setSelectedImageList((prevState) =>
       prevState.map((file, i) => ({
         ...file,
-        coverPhoto: i === index
+        coverPhoto: i === index,
       }))
     );
-  
+
     console.log(`Favorite image at index: ${index}`);
   };
 
   const handleUpdateFavoriteIcons = () => {
     setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
-};
+  };
 
   const handleTenantClick = (tenantId) => {
     if (tenant_detail === "No Tenant") {
       console.log("There is no tenant");
+    } else {
+      navigate("/PMContacts", {
+        state: {
+          contactsTab: "Tenant",
+          tenantId: tenantId,
+        },
+      });
     }
-    else { 
-    navigate("/PMContacts", {
-      state: {
-        contactsTab: "Tenant",
-        tenantId: tenantId,
-      }
-    });
-  }
   };
 
   return (
@@ -1269,7 +1263,7 @@ console.log('Favorite Icons:', favoriteIcons);
                 textAlign: "center",
               }}
             >
-              Property UID: {property?.property_uid} 
+              Property UID: {property?.property_uid}
             </Typography>
             <Typography
               sx={{
@@ -1887,32 +1881,32 @@ console.log('Favorite Icons:', favoriteIcons);
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Typography
+                      <Box
                         sx={{
-                          textTransform: "none",
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
                         }}
-                        onClick={() => handleTenantClick(property.tenant_uid)}
                       >
-                        {tenant_detail}
-                      </Typography>
-                      <KeyboardArrowRightIcon
-                        sx={{
-                          color: theme.typography.common.blue,
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleTenantClick(property.tenant_uid)}
-                      />
-                    </Box>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleTenantClick(property.tenant_uid)}
+                        >
+                          {tenant_detail}
+                        </Typography>
+                        <KeyboardArrowRightIcon
+                          sx={{
+                            color: theme.typography.common.blue,
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleTenantClick(property.tenant_uid)}
+                        />
+                      </Box>
                     </Grid>
                     <Grid item xs={6}>
                       <Typography
@@ -2213,7 +2207,7 @@ console.log('Favorite Icons:', favoriteIcons);
                               }}
                               onClick={contractsNewSent ? handleViewPMQuotesRequested : null}
                             >
-                              <Badge color="success" badgeContent={contractsNewSent} showZero />
+                              <Badge color='success' badgeContent={contractsNewSent} showZero />
                             </Box>
                           </Box>
                         </Grid>
@@ -2565,117 +2559,109 @@ console.log('Favorite Icons:', favoriteIcons);
                       </Select>
                     </FormControl>
                     {isEditing && (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 2,
-          }}
-        >
-          <IconButton
-            onClick={() => handleScroll('left')}
-            disabled={scrollPosition === 0}
-          >
-            <ArrowBackIosIcon />
-          </IconButton>
-          <Box
-            sx={{
-              display: 'flex',
-              overflowX: 'auto',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              '&::-webkit-scrollbar': {
-                display: 'none',
-              },
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                overflowX: 'auto',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                '&::-webkit-scrollbar': {
-                  display: 'none',
-                },
-              }}
-            >
-              <ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-                {(currentApplRow.appliance_images)?.map((image, index) => (
-                  <ImageListItem
-                    key={index}
-                    sx={{
-                      width: 'auto',
-                      flex: '0 0 auto',
-                      border: '1px solid #ccc',
-                      margin: '0 2px',
-                      position: 'relative', // Added to position icons
-                    }}
-                  >
-                    <img
-                      src={image}
-                      alt={`maintenance-${index}`}
-                      style={{
-                        height: '150px',
-                        width: '150px',
-                        objectFit: 'cover',
-                      }}
-                    />
-                    <Box sx={{ position: 'absolute', top: 0, right: 0 }}>
-                      <IconButton
-                        onClick={() => handleDelete(index)}
+                      <Box
                         sx={{
-                          color: deletedIcons[index] ? 'red' : 'black',
-                          backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                          },
-                          margin: '2px',
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: 2,
                         }}
                       >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                    <Box sx={{ position: 'absolute', bottom: 0, left: 0 }}>
-                      <IconButton
-                        onClick={() => handleFavorite(index)}
-                        sx={{
-                          color: favoriteIcons[index] ? 'red' : 'black',
-                          backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                          },
-                          margin: '2px',
-                        }}
-                      >
-                        {favoriteIcons[index] ? (
-                          <FavoriteIcon />
-                        ) : (
-                          <FavoriteBorderIcon />
-                        )}
-                      </IconButton>
-                    </Box>
-                  </ImageListItem>
-                ))}
-              </ImageList>
-            </Box>
-          </Box>
-          <IconButton onClick={() => handleScroll('right')}>
-            <ArrowForwardIosIcon />
-          </IconButton>
-        </Box>
-      )}
+                        <IconButton onClick={() => handleScroll("left")} disabled={scrollPosition === 0}>
+                          <ArrowBackIosIcon />
+                        </IconButton>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            overflowX: "auto",
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                            "&::-webkit-scrollbar": {
+                              display: "none",
+                            },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              overflowX: "auto",
+                              scrollbarWidth: "none",
+                              msOverflowStyle: "none",
+                              "&::-webkit-scrollbar": {
+                                display: "none",
+                              },
+                            }}
+                          >
+                            <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
+                              {currentApplRow.appliance_images?.map((image, index) => (
+                                <ImageListItem
+                                  key={index}
+                                  sx={{
+                                    width: "auto",
+                                    flex: "0 0 auto",
+                                    border: "1px solid #ccc",
+                                    margin: "0 2px",
+                                    position: "relative", // Added to position icons
+                                  }}
+                                >
+                                  <img
+                                    src={image}
+                                    alt={`maintenance-${index}`}
+                                    style={{
+                                      height: "150px",
+                                      width: "150px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                  <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                                    <IconButton
+                                      onClick={() => handleDelete(index)}
+                                      sx={{
+                                        color: deletedIcons[index] ? "red" : "black",
+                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                        "&:hover": {
+                                          backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                        },
+                                        margin: "2px",
+                                      }}
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Box>
+                                  <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
+                                    <IconButton
+                                      onClick={() => handleFavorite(index)}
+                                      sx={{
+                                        color: favoriteIcons[index] ? "red" : "black",
+                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                        "&:hover": {
+                                          backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                        },
+                                        margin: "2px",
+                                      }}
+                                    >
+                                      {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                                    </IconButton>
+                                  </Box>
+                                </ImageListItem>
+                              ))}
+                            </ImageList>
+                          </Box>
+                        </Box>
+                        <IconButton onClick={() => handleScroll("right")}>
+                          <ArrowForwardIosIcon />
+                        </IconButton>
+                      </Box>
+                    )}
                     <ImageUploader
-									selectedImageList={selectedImageList}
-									setSelectedImageList={setSelectedImageList}
-									page={'Add'}
-
-									setDeletedImageList={setDeletedImageList}
-                  setFavImage={setFavImage}
-                  favImage={favImage}
-                  updateFavoriteIcons={handleUpdateFavoriteIcons}
-								/>
+                      selectedImageList={selectedImageList}
+                      setSelectedImageList={setSelectedImageList}
+                      page={"Add"}
+                      setDeletedImageList={setDeletedImageList}
+                      setFavImage={setFavImage}
+                      favImage={favImage}
+                      updateFavoriteIcons={handleUpdateFavoriteIcons}
+                    />
                     <TextField
                       margin='dense'
                       label='Description'
