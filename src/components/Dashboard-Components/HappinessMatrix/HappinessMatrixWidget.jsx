@@ -121,7 +121,7 @@ function HappinessMatrixWidget(props) {
     <ThemeProvider theme={theme}>
       <Paper
         elevation={0}
-        style={{
+        sx={{
           // margin: '50p', // Add margin here
           borderRadius: "10px",
           backgroundColor: theme.palette.primary.main,
