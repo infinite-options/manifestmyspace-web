@@ -318,8 +318,8 @@ export default function PropertyNavigator({
       //   };
       //   getContractsForOwner();
       var count = 0;
-      const filtered = contractsData.filter((contract) => contract.property_id === propertyId);
-      // console.log("ROHIT - PropertyNavigator - filtered contracts - ", filtered);
+      const filtered = contracts?.filter((contract) => contract.property_id === propertyId);
+      // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
         if (contract.contract_status == "SENT" || contract.contract_status == "NEW") {
           count++;
