@@ -764,7 +764,7 @@ function TenantLeases(props) {
                     width: "150px",
                     fontSize: "14px",
                     fontWeight: "700",
-                    color: "#160449",
+                    color: "#FFFFFF",
                     textTransform: "none",
                   }}
                   onClick={() => handleTenantRefuse()}
@@ -787,7 +787,7 @@ function TenantLeases(props) {
                     width: "150px",
                     fontSize: "14px",
                     fontWeight: "600",
-                    color: "#160449",
+                    color: "#FFFFFF",
                     textTransform: "none",
                   }}
                   onClick={() => handleTenantAccept()}
