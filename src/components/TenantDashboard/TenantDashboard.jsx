@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid, Menu, MenuItem, Paper, Stack, ThemeProvider, Typography } from "@mui/material";
+import { Box, Button, Container, CardMedia, Grid, Menu, MenuItem, Paper, Stack, ThemeProvider, Typography, MobileStepper } from "@mui/material";
 import PlaceholderImage from "./MaintenanceIcon.png"; // "./PlaceholderImage.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
@@ -29,6 +29,10 @@ import Payments from "../Payments/Payments";
 import TenantApplicationEdit from "../Applications/TenantApplicationEdit";
 import TenantLeases from "../Leases/TenantLeases/TenantLeases";
 import EditMaintenanceItem from "../Maintenance/EditMaintenanceItem";
+import defaultHouseImage from "../Property/defaultHouseImage.png";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+
 function TenantDashboard(props) {
   console.log("In Tenant Dashboard");
   const navigate = useNavigate();
@@ -976,7 +980,6 @@ const AccountBalanceWidget = ({
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
-
   const [anchorEl, setAnchorEl] = useState(null);
 
   const open = Boolean(anchorEl);
@@ -1086,6 +1089,32 @@ const AccountBalanceWidget = ({
     handleClose();
   }
 
+  const [image, setImage] = useState(defaultHouseImage);
+
+  useEffect(() => {
+    if (selectedProperty) {
+      const selectedPropertyImages = propertyData.find(property => property.property_uid === selectedProperty.property_uid)?.property_favorite_image;
+      if (selectedPropertyImages) {
+        setImage(selectedPropertyImages);
+      } else {
+        setImage(defaultHouseImage);
+      }
+    }
+  }, [selectedProperty, propertyData]);
+
+  function handlePropertyChange(item) {
+    setPropertyAddr(item.property_address + " " + item.property_unit);
+    setPropertyId(item.property_uid);
+    setTotal(item.balance);
+    setSelectedProperty(item);
+
+    const lease = propertyData.find((lease) => lease.lease_uid === item.lease_uid);
+    setSelectedLease(lease);
+
+    handleClose();
+  }
+
+
   return (
     <DashboardTab fullHeight={!isMobile ? true : false}>
       <Box
@@ -1113,6 +1142,27 @@ const AccountBalanceWidget = ({
             }}
           >
             <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Account Balance</Typography>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: '20px',
+                }}
+            >
+              <Box sx={{ flexGrow: 1, maxWidth: 200 }}> {/* Adjusted size */}
+                    <CardMedia
+                        component="img"
+                        image={image}
+                        alt="property image"
+                        sx={{
+                            width: '100%',
+                            height: 'auto',
+                            maxHeight: '150px',
+                        }}
+                    />
+                </Box>
+            </Box>
             <Box
               sx={{
                 display: "flex",
