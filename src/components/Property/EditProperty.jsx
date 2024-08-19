@@ -1351,7 +1351,7 @@ function EditProperty(props) {
 							>
 								<Typography
 									sx={{
-										color: 'black',
+										color: '#FFFFFF',
 										fontWeight: theme.typography.primary.fontWeight,
 										fontSize: theme.typography.mediumFont,
 									}}

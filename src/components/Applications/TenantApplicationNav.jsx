@@ -780,14 +780,14 @@ const TenantApplicationNav = (props) => {
                             onClick={handleWithdrawLease}
                             sx={{
                               backgroundColor: "#CB8E8E",
-                              color: "#160449",
+                              color: "#FFFFFF",
                               textTransform: "none",
                               width: "160px", // Adjusted width to accommodate the text on one line
                               marginRight: "10px", // Add space between buttons
                               marginRight: "30px", // Add space between buttons
                               whiteSpace: "nowrap", // Prevent line breaks
                               "&:hover, &:focus, &:active": {
-                                backgroundColor: "#9EAED6",
+                                backgroundColor: "#bb6b6b",
                               },
                             }}
                           >
@@ -797,11 +797,11 @@ const TenantApplicationNav = (props) => {
                             onClick={handleEditLease}
                             sx={{
                               backgroundColor: "#9EAED6",
-                              color: "#160449",
+                              color: "#FFFFFF",
                               textTransform: "none",
                               width: "120px",
                               "&:hover, &:focus, &:active": {
-                                backgroundColor: "#9EAED6",
+                                backgroundColor: "#6780bf",
                               },
                             }}
                           >
