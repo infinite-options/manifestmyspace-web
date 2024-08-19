@@ -33,6 +33,8 @@ import {
   Snackbar,
   Alert,
   AlertTitle,
+  RadioGroup,
+  Radio,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { makeStyles } from "@material-ui/core/styles";
@@ -1220,10 +1222,39 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
-                  <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
+                  {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
                     <MenuItem value='SSN'>SSN</MenuItem>
                     <MenuItem value='EIN'>EIN</MenuItem>
-                  </Select>
+                  </Select> */}
+
+                  <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
+                    <FormControlLabel 
+                      value='SSN'
+                      control={
+                        <Radio
+                          sx={{
+                            color: 'defaultColor', 
+                            '&.Mui-checked': {
+                              color: '#3D5CAC',
+                            },
+                          }}
+                        />
+                      }
+                      label='SSN' />
+                    <FormControlLabel
+                      value='EIN'
+                      control={
+                        <Radio
+                          sx={{
+                            color: 'defaultColor', 
+                            '&.Mui-checked': {
+                              color: '#3D5CAC', 
+                            },
+                          }}
+                        />
+                      }
+                      label='EIN' />                    
+                  </RadioGroup>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
