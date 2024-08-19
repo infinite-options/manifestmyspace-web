@@ -79,8 +79,8 @@ function TenantDashboard(props) {
   const [paymentState, setPaymentState] = useState(null);
   const [tenantApplicationNavState, setTenantApplicationNavState] = useState(null);
   const [reload, setReload] = useState(false);
-  const [listingData, setListingData] = useState([]);
-  const [tenantData, setTenantData] = useState([]);
+  const [propertyListingData, setPropertyListingData] = useState([]);
+  const [leaseListingData, setLeaseListingData] = useState([]);
 
   const open = Boolean(anchorEl);
 
@@ -90,8 +90,18 @@ function TenantDashboard(props) {
     async function fetchData() {
       const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
       const propertyData = await propertyResponse.json();
-      setListingData(propertyData?.Available_Listings.result); //
-      setTenantData(propertyData?.Tenant_Leases.result); //
+
+      const listings = propertyData?.Available_Listings?.result;
+      const tenants = propertyData?.Tenant_Leases?.result;
+
+      const filteredListings = listings.filter(listing =>
+        tenants.some(tenant => 
+          tenant.lease_property_id === listing.property_uid
+        )
+      );
+
+      setPropertyListingData(filteredListings);
+      setLeaseListingData(tenants);
     }
     fetchData();
   }, [getProfileId]);
@@ -326,7 +336,7 @@ function TenantDashboard(props) {
         return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} />;
       // navigate('/profileEditor');
       case "tenantLeases":
-        return <TenantLeases {...rightPane.state} property={listingData} lease={tenantData} setRightPane={setRightPane} setReload={setReload} />;
+        return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
       case "announcements":
         return <Announcements setRightPane={setRightPane} />;
       case "tenantmaintenanceitem":
@@ -443,6 +453,8 @@ function TenantDashboard(props) {
               setPaymentState={setPaymentState}
               setRightPane={setRightPane}
               setTenantApplicationNavState={setTenantApplicationNavState}
+              property={propertyListingData}
+              lease={leaseListingData} 
             />
           </Grid>
 
@@ -984,6 +996,8 @@ const AccountBalanceWidget = ({
   setPaymentState,
   setRightPane,
   setTenantApplicationNavState,
+  property,
+  lease,
 }) => {
   const navigate = useNavigate();
   console.log("---selectedProperty in acc---", selectedProperty);
@@ -1419,8 +1433,12 @@ const AccountBalanceWidget = ({
                 fontSize: "20px",
                 fontWeight: 600,
               }}
-              onClick={() => setRightPane({ 
-                type: "tenantLeases"
+              onClick={() => setRightPane({
+                type: "tenantLeases",
+                state: {
+                  property: property,
+                  lease: lease,
+                },
               })}
             >
               <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />

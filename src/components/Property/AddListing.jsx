@@ -327,10 +327,42 @@ export default function AddListing(props) {
     console.log("propertyState", propertyState);
   }, [propertyState]);
 
-  const handleBackButton = () => {
-    console.log("handleBackButton");
-    props.setRHS("PropertyNavigator");
-    navigate("/propertiesPM", { state: { isBack: true } });
+  const handleBackButton = async () => {
+    const hasPropertyChanges = propertyData.property_address !== address ||
+      propertyData.property_unit !== unit ||
+      propertyData.property_city !== city ||
+      propertyData.property_state !== propertyState ||
+      propertyData.property_zip !== zip ||
+      propertyData.property_type !== propertyType ||
+      propertyData.property_num_beds !== bedrooms ||
+      propertyData.property_num_baths !== bathrooms ||
+      propertyData.property_area !== squareFootage ||
+      propertyData.property_listed_rent !== rent ||
+      propertyData.property_deposit !== deposit ||
+      propertyData.property_pets_allowed !== (petsAllowed ? 1 : 0) ||
+      propertyData.property_deposit_for_rent !== (depositForRent ? 1 : 0) ||
+      propertyData.property_taxes !== taxes ||
+      propertyData.property_mortgages !== mortgages ||
+      propertyData.property_insurance !== insurance ||
+      propertyData.property_description !== description ||
+      propertyData.property_notes !== notes ||
+      propertyData.property_available_to_rent !== (isListed ? 1 : 0) ||
+      propertyData.property_amenities_community !== communityAmenities ||
+      propertyData.property_amenities_unit !== apartmentAmenities ||
+      propertyData.property_amenities_nearby !== nearbyAmenities ||
+      hasUtilitiesChanges;
+  
+    if (hasPropertyChanges) {
+      const confirmSave = window.confirm("You have unsaved changes. Do you want to save them before leaving?");
+  
+      if (confirmSave) {
+        await saveChanges(true); 
+      } else {
+        navigate("/propertiesPM", { state: { isBack: true } }); 
+      }
+    } else {
+      navigate("/propertiesPM", { state: { isBack: true } }); 
+    }
   };
 
   // const handleSubmit = async (event) => {

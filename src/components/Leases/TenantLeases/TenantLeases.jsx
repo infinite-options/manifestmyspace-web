@@ -53,6 +53,12 @@ function TenantLeases(props) {
   const [signedLease, setSignedLease] = useState(null);
 
   useEffect(() => {
+    console.log("Props passed to TenantLeases: ", props);
+    setProperty(props.property);
+    setLease(props.lease);
+  }, [props.property, props.lease]);
+
+  useEffect(() => {
     // console.log("property", property);
     // console.log("status", status);
     console.log("lease", lease);
