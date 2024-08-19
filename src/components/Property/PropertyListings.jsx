@@ -350,12 +350,12 @@ const PropertyListings = ({ setRightPane }) => {
               padding: theme.spacing(2),
               backgroundColor: theme.palette.primary.main,
               width: "100%",
-              [theme.breakpoints.down("sm")]: {
-                width: "80%",
-              },
-              [theme.breakpoints.up("sm")]: {
-                width: "50%",
-              },
+              // [theme.breakpoints.down("sm")]: {
+              //   width: "80%",
+              // },
+              // [theme.breakpoints.up("sm")]: {
+              //   width: "50%",
+              // },
               // paddingTop: "10px",
             }}
           >

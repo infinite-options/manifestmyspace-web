@@ -126,12 +126,12 @@ function HappinessMatrixWidget(props) {
           borderRadius: "10px",
           backgroundColor: theme.palette.primary.main,
           height: 450,
-          [theme.breakpoints.down("sm")]: {
-            width: "80%",
-          },
-          [theme.breakpoints.up("sm")]: {
-            width: "50%",
-          },
+          // [theme.breakpoints.down("sm")]: {
+          //   width: "80%",
+          // },
+          // [theme.breakpoints.up("sm")]: {
+          //   width: "50%",
+          // },
         }}
       >
         <Grid container style={{ paddingTop: "10px" }}>
