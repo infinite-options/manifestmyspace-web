@@ -736,9 +736,9 @@ function DocumentCard(props) {
 
       {data !== null ? (
         data.contract_status === "NEW" ? (
-          fees.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
+          fees?.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
         ) : data.contract_fees !== null ? (
-          JSON.parse(data.contract_fees).map((fee, index) => (
+          JSON.parse(data.contract_fees)?.map((fee, index) => (
             <Typography sx={textStyle}>
               <FeesTextCard key={index} fee={fee} />
             </Typography>
