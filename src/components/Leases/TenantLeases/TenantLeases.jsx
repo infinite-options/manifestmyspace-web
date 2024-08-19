@@ -178,7 +178,7 @@ function TenantLeases(props) {
 
       }
     };
-    
+
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
@@ -380,7 +380,15 @@ function TenantLeases(props) {
           </Grid>
           <Grid item xs={1}>
             <Button
-              onClick={() => props.setRightPane({ type: "listings" })}
+              onClick={() => {
+                if (props.from && props.from === "accwidget") {
+                  props.setRightPane("");
+                } else {
+                  props.setRightPane({ type: "listings" });
+                }
+              }
+              }
+
               sx={{
                 textTransform: "none",
                 textDecoration: "underline",
