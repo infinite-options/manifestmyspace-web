@@ -53,6 +53,7 @@ function TenantLeases(props) {
   const [signedLease, setSignedLease] = useState(null);
 
   useEffect(() => {
+    setShowSpinner(true);
     // console.log("property", property);
     // console.log("status", status);
     console.log("lease", lease);
@@ -97,6 +98,7 @@ function TenantLeases(props) {
     }
 
     fetchData();
+    setShowSpinner(false);
   }, []);
 
   const CenteringBox = ({ children, flexDirection = "column", justifyContent = "flex-start" }) => (
@@ -353,10 +355,6 @@ function TenantLeases(props) {
           padding: "10px",
         }}
       >
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-
         <Grid container>
           <Grid item xs={11}>
             <Box
