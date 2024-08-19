@@ -461,7 +461,7 @@ const PropertyListings = ({ setRightPane }) => {
 function PropertyCard({ data, status, leaseData, setRightPane }) {
   const navigate = useNavigate();
   const [lease, setLease] = useState(leaseData || {});
-  console.log("In PropertyCard: ", data);
+  // console.log("In PropertyCard: ", data);
   const property = data;
   const propertyImages = property?.property_images || "";
   const ppt_images = propertyImages.split(",");
@@ -518,7 +518,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         from: "PropertyInfo",
       },
     });
-  }
+  };
 
   const handleTenantLeasesButton = () => {
     setRightPane({
@@ -528,7 +528,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         lease: lease,
       },
     });
-  }
+  };
 
   function formatAddress() {
     if (property?.property_unit !== "") {
@@ -551,7 +551,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         padding: "3px 5px",
         alignSelf: "flex-start",
         textTransform: "none",
-        cursor:"pointer",
+        cursor: "pointer",
       }}
       onClick={handleTenantApplicationButton}
     >
@@ -580,7 +580,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
         padding: "3px 5px",
         alignSelf: "flex-start",
         textTransform: "none",
-        cursor:"pointer",
+        cursor: "pointer",
       }}
       onClick={handleTenantLeasesButton}
     >

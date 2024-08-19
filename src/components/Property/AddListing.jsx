@@ -57,9 +57,9 @@ export default function AddListing(props) {
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  let { index, propertyList, page} = props;
+  let { index, propertyList, page } = props;
   const refreshProperties = props.refreshProperties;
-  const showPropertyNavigator = props.showPropertyNavigator
+  const showPropertyNavigator = props.showPropertyNavigator;
   // const propertyData = location.state.item;
   const [propertyData, setPropertyData] = useState(propertyList[index]);
   const { user, selectedRole, selectRole, Name } = useUser();
@@ -261,7 +261,7 @@ export default function AddListing(props) {
 
   const handleUtilityChange = (utility, entity) => {
     const utilityObject = { [utility]: `${entity}` };
-    setHasUtilitiesChanges(true); 
+    setHasUtilitiesChanges(true);
     console.log("----- handleUtilityChange called - ", utilityObject);
     // setMappedUtilitiesPaidBy((prevState)=> ({...prevState, ...utility}))
 
@@ -543,23 +543,23 @@ export default function AddListing(props) {
   //     if (hasUtilitiesChanges) {
   //         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
   //         const utilitiesFormData = new FormData();
-  
+
   //         utilitiesFormData.append("property_uid", propertyData.property_uid);
   //         utilitiesFormData.append("property_utility", utilitiesJSONString);
-  
+
   //         setShowSpinner(true);
   //         await fetch(`${APIConfig.baseURL.dev}/utilities`, {
   //             method: "PUT",
   //             body: utilitiesFormData,
   //         });
   //         setShowSpinner(false);
-  
+
   //         console.log("Utilities changes saved.");
   //     } else {
   //         console.log("No changes for utilities.");
   //     }
   //   };
-  
+
   //   // Take care of this later - Abhinav
   //   // const autoUpdate = async () => {
   //   //   const updateResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyData.property_uid}`);
@@ -602,7 +602,7 @@ export default function AddListing(props) {
   //   const formData = new FormData();
   //   formData.append("property_uid", propertyData.property_uid);
   //   let hasPropertyChanges = false;
-    
+
   //   if (propertyData.property_address !== address) {
   //     formData.append("property_address", address);
   //     hasPropertyChanges = true;
@@ -696,23 +696,23 @@ export default function AddListing(props) {
   //     if (hasUtilitiesChanges) {
   //         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
   //         const utilitiesFormData = new FormData();
-  
+
   //         utilitiesFormData.append("property_uid", propertyData.property_uid);
   //         utilitiesFormData.append("property_utility", utilitiesJSONString);
-  
+
   //         setShowSpinner(true);
   //         await fetch(`${APIConfig.baseURL.dev}/utilities`, {
   //             method: "PUT",
   //             body: utilitiesFormData,
   //         });
   //         setShowSpinner(false);
-  
+
   //         console.log("Utilities changes saved.");
   //     } else {
   //         console.log("No changes for utilities.");
   //     }
   //   };
-  
+
   //   if (hasPropertyChanges || hasUtilitiesChanges) {
   //     try {
   //       setShowSpinner(true);
@@ -722,11 +722,11 @@ export default function AddListing(props) {
   //           body: formData,
   //         });
   //       }
-  
+
   //       if (hasUtilitiesChanges) {
   //         await putUtilitiesData();
   //       }
-  
+
   //       setShowSpinner(false);
   //       console.log("Changes saved successfully.");
   //     } catch (error) {
@@ -742,7 +742,7 @@ export default function AddListing(props) {
     const formData = new FormData();
     formData.append("property_uid", propertyData.property_uid);
     let hasPropertyChanges = false;
-  
+
     // Check for property changes and append to formData
     if (propertyData.property_address !== address) {
       formData.append("property_address", address);
@@ -832,27 +832,27 @@ export default function AddListing(props) {
       formData.append("property_amenities_nearby", nearbyAmenities);
       hasPropertyChanges = true;
     }
-  
+
     const putUtilitiesData = async () => {
       if (hasUtilitiesChanges) {
         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
         const utilitiesFormData = new FormData();
         utilitiesFormData.append("property_uid", propertyData.property_uid);
         utilitiesFormData.append("property_utility", utilitiesJSONString);
-  
+
         setShowSpinner(true);
         await fetch(`${APIConfig.baseURL.dev}/utilities`, {
           method: "PUT",
           body: utilitiesFormData,
         });
         setShowSpinner(false);
-  
+
         console.log("Utilities changes saved.");
       } else {
         console.log("No changes for utilities.");
       }
     };
-  
+
     if (hasPropertyChanges || hasUtilitiesChanges) {
       try {
         setShowSpinner(true);
@@ -862,14 +862,14 @@ export default function AddListing(props) {
             body: formData,
           });
         }
-  
+
         if (hasUtilitiesChanges) {
           await putUtilitiesData();
         }
-  
+
         setShowSpinner(false);
         console.log("Changes saved successfully.");
-  
+
         if (navigateAfterSave) {
           refreshProperties();
           showPropertyNavigator();
@@ -886,14 +886,24 @@ export default function AddListing(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("handleSubmit");
+
+    if (!deposit) {
+      alert("Deposit cannot be empty!");
+      return;
+    }
+
+    if (!rent) {
+      alert("Rent cannot be empty!");
+      return;
+    }
+
     await saveChanges(true);
   };
-  
+
   const handleUpdateAndStay = async () => {
     console.log("handleUpdateAndStay");
-    await saveChanges(false); 
+    await saveChanges(false);
   };
-  
 
   const formatUtilityName = (utility) => {
     const formattedUtility = utility.replace(/_/g, " ");
@@ -938,7 +948,7 @@ export default function AddListing(props) {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Stack
         style={{
@@ -967,21 +977,21 @@ export default function AddListing(props) {
             paddingTop: "10px",
           }}
         >
-          <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
-            <Box direction="row" justifyContent="center" alignItems="center">
+          <Stack direction='row' justifyContent='center' alignItems='center' position='relative'>
+            <Box direction='row' justifyContent='center' alignItems='center'>
               <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                 {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
               </Typography>
             </Box>
-            <Box position="absolute" right={0}>
+            <Box position='absolute' right={0}>
               <Button onClick={() => handleBackButton()}>
                 <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>
           </Stack>
 
-          <Stack direction="column" justifyContent="center" alignItems="center" padding="25px">
-            <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off" id="editPropertyForm">
+          <Stack direction='column' justifyContent='center' alignItems='center' padding='25px'>
+            <Box component='form' onSubmit={handleSubmit} noValidate autoComplete='off' id='editPropertyForm'>
               <Grid container columnSpacing={12} rowSpacing={6}>
                 {/* Select Field for Property */}
                 <Grid item xs={12}>
@@ -994,11 +1004,11 @@ export default function AddListing(props) {
                       width: "100%",
                     }}
                   >
-                    <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                    <Button size='small' onClick={handleBack} disabled={activeStep === 0}>
                       {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
                     </Button>
                     <CardMedia
-                      component="img"
+                      component='img'
                       image={selectedImageList[activeStep] ? selectedImageList[activeStep].image : defaultHouseImage}
                       // image={coverImage}
                       sx={{
@@ -1015,7 +1025,7 @@ export default function AddListing(props) {
                         justifyContent: "center",
                       }}
                     />
-                    <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                    <Button size='small' onClick={handleNext} disabled={activeStep === maxSteps - 1}>
                       {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                     </Button>
                   </div>
@@ -1039,7 +1049,7 @@ export default function AddListing(props) {
                     }}
                     placeholder={address}
                     value={address}
-                    size="small"
+                    size='small'
                     fullWidth
                   />
                 </Grid>
@@ -1056,7 +1066,7 @@ export default function AddListing(props) {
                     }}
                     placeholder={unit}
                     value={unit}
-                    size="small"
+                    size='small'
                     fullWidth
                   />
                 </Grid>
@@ -1070,7 +1080,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     fullWidth
                     placeholder={propertyData.property_city}
                     value={city}
@@ -1087,7 +1097,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     fullWidth
                     onChange={(e) => setPropertyState(e.target.value)}
                     value={propertyState}
@@ -1115,7 +1125,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     onChange={(e) => setZip(e.target.value)}
                     value={zip}
                   />
@@ -1129,7 +1139,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     fullWidth
                     onChange={(e) => setPropertyType(e.target.value)}
                     value={propertyType}
@@ -1153,7 +1163,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     placeholder={squareFootage}
                     onChange={(e) => setSquareFootage(e.target.value)}
                     value={squareFootage}
@@ -1171,7 +1181,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     placeholder={bedrooms}
                     onChange={(e) => setBedrooms(e.target.value)}
                     value={bedrooms}
@@ -1189,7 +1199,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     placeholder={bathrooms}
                     onChange={(e) => setBathrooms(e.target.value)}
                     value={bathrooms}
@@ -1206,7 +1216,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={notes}
                     onChange={(e) => setNotes(e.target.value)}
@@ -1215,8 +1225,8 @@ export default function AddListing(props) {
                 </Grid>
                 <Grid item xs={12}>
                   {selectedRole === "MANAGER" || selectedRole === "OWNER" ? (
-                    <Stack direction="column" justifyContent="left" padding="15px" width="85%">
-                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label="Available to rent" />
+                    <Stack direction='column' justifyContent='left' padding='15px' width='85%'>
+                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label='Available to rent' />
                     </Stack>
                   ) : (
                     <div></div>
@@ -1243,10 +1253,10 @@ export default function AddListing(props) {
           }}
         >
           <Stack
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            padding="25px"
+            direction='column'
+            justifyContent='center'
+            alignItems='center'
+            padding='25px'
             sx={{
               display: "flex",
             }}
@@ -1268,7 +1278,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     placeholder={activeDate}
                     value={activeDate}
                     onChange={(e) => setActiveDate(e.target.value)}
@@ -1285,9 +1295,9 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                     }}
                     value={deposit}
                     onChange={(e) => setDeposit(e.target.value)}
@@ -1302,9 +1312,9 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                     }}
                     onChange={(e) => setRent(e.target.value)}
                     value={rent}
@@ -1343,10 +1353,10 @@ export default function AddListing(props) {
           }}
         >
           <Stack
-            direction="column"
-            justifyContent="left"
-            alignItems="left"
-            padding="25px"
+            direction='column'
+            justifyContent='left'
+            alignItems='left'
+            padding='25px'
             sx={{
               display: "flex",
             }}
@@ -1357,7 +1367,7 @@ export default function AddListing(props) {
                 paddingBottom: "20px",
               }}
               noValidate
-              autoComplete="off"
+              autoComplete='off'
             >
               {/* {console.log("MAPPED UTILITIES PAID BY", mappedUtilitiesPaidBy)} */}
               {/* <UtilitySelection existingSelection={mappedUtilitiesPaidBy} onChangeUtilities={handleUtilityChange}/> */}
@@ -1383,14 +1393,14 @@ export default function AddListing(props) {
                         </Grid>
                         <Grid item xs={6}>
                           <FormControlLabel
-                            value="owner"
+                            value='owner'
                             control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                            label="Owner"
+                            label='Owner'
                           />
                           <FormControlLabel
-                            value="tenant"
+                            value='tenant'
                             control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                            label="Tenant"
+                            label='Tenant'
                           />
                         </Grid>
                       </Fragment>
@@ -1404,14 +1414,14 @@ export default function AddListing(props) {
                         </Grid>
                         <Grid item xs={6}>
                           <FormControlLabel
-                            value="owner"
+                            value='owner'
                             control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                            label="Owner"
+                            label='Owner'
                           />
                           <FormControlLabel
-                            value="tenant"
+                            value='tenant'
                             control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                            label="Tenant"
+                            label='Tenant'
                           />
                         </Grid>
                       </Fragment>
@@ -1459,7 +1469,7 @@ export default function AddListing(props) {
                             </Grid> */}
             <Grid item xs={12}>
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={handleAddUtilityButtonClick}
                 sx={{
                   backgroundColor: "#3D5CAC",
@@ -1497,21 +1507,21 @@ export default function AddListing(props) {
           }}
         >
           <Stack
-            direction="column"
-            justifyContent="left"
-            alignItems="left"
-            padding="25px"
+            direction='column'
+            justifyContent='left'
+            alignItems='left'
+            padding='25px'
             sx={{
               display: "flex",
             }}
           >
             <Box
-              component="form"
+              component='form'
               sx={{
                 display: "flex",
               }}
               noValidate
-              autoComplete="off"
+              autoComplete='off'
             >
               <Grid container columnSpacing={12} rowSpacing={6}>
                 <Grid item xs={12}>
@@ -1525,7 +1535,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -1543,7 +1553,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={communityAmenities}
                     onChange={(e) => setCommunityAmenities(e.target.value)}
@@ -1561,7 +1571,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={apartmentAmenities}
                     onChange={(e) => setApartmentAmenities(e.target.value)}
@@ -1579,7 +1589,7 @@ export default function AddListing(props) {
                       borderColor: "black",
                       borderRadius: "7px",
                     }}
-                    size="small"
+                    size='small'
                     multiline={true}
                     placeholder={nearbyAmenities}
                     onChange={(e) => setNearbyAmenities(e.target.value)}
@@ -1593,9 +1603,9 @@ export default function AddListing(props) {
 
         {/* Submit Button */}
         <Stack
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
+          direction='column'
+          justifyContent='center'
+          alignItems='center'
           sx={{
             display: "flex",
           }}
@@ -1610,21 +1620,15 @@ export default function AddListing(props) {
             <Grid container>
               <Grid item xs={12}>
                 {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
-                <Button variant="contained" type="submit" form="editPropertyForm" sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
+                <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
                   <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>
                 </Button>
 
-              <Button
-                variant="outlined"
-                onClick={handleUpdateAndStay}
-                sx={{ width: "100%", backgroundColor: theme.typography.formButton.background, marginTop: "10px" }}
-              >
-                <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                  Save Changes and Stay
-                </Typography>
-              </Button>
+                <Button variant='outlined' onClick={handleUpdateAndStay} sx={{ width: "100%", backgroundColor: theme.typography.formButton.background, marginTop: "10px" }}>
+                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
+                </Button>
               </Grid>
             </Grid>
           </Box>
