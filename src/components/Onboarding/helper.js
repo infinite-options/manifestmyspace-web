@@ -21,6 +21,41 @@ const formatPhoneNumber = (value) => {
   )}-${phoneNumber.slice(6, 10)}`;
 };
 
+const formatSSN = (value) => {
+  if (!value) return value;
+
+  const SSN = value.replace(/[^\d]/g, "");
+
+  const SSNLength = SSN.length;
+
+  if (SSNLength < 4) return SSN;
+
+  if (SSNLength < 6) {
+    return `${SSN.slice(0, 3)}-${SSN.slice(3)}`;
+  }
+
+  return `${SSN.slice(0, 3)}-${SSN.slice(
+    3,
+    5
+  )}-${SSN.slice(5, 9)}`;
+};
+
+const formatEIN = (value) => {
+  if (!value) return value;
+
+  const EIN = value.replace(/[^\d]/g, "");
+
+  const EINLength = EIN.length;
+
+  if (EINLength < 3) return EIN;
+
+  // if (EINLength < 10) {
+  //   return `${SSN.slice(0, 3)}-${SSN.slice(3)}`;
+  // }
+
+  return `${EIN.slice(0, 2)}-${EIN.slice(2,9)}`;
+};
+
 const maskNumber = (value) => {
   const len = value.length;
   const mask = "***-**-****";
@@ -76,6 +111,8 @@ const photoFields = new Set(["owner_photo", "employee_photo_url","owner_photo_ur
 export {
   MaskCharacter,
   formatPhoneNumber,
+  formatSSN,
+  formatEIN,
   headers,
   maskNumber,
   maskEin,

@@ -8,7 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
+import { formatPhoneNumber, formatSSN, formatEIN, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
   Box,
@@ -68,6 +68,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function identifyTaxIdType(taxId) {
+  // SSN Regex: XXX-XX-XXXX
+  const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+  // EIN Regex: XX-XXXXXXX
+  const einRegex = /^\d{2}-\d{7}$/;
+
+  if (ssnRegex.test(taxId)) {
+      return 'SSN';
+  } else if (einRegex.test(taxId)) {
+      return 'EIN';
+  } else {
+      return 'Invalid format';
+  }
+}
+
 export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   console.log("In ManagerOnboardingForm  - profileData", profileData);
 
@@ -82,6 +97,24 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getProfileId } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
+  
+  const [ taxIDType, setTaxIDType ] = useState("SSN");  
+  useEffect(()=> {
+    console.log("ROHIT - ein - ", ein);
+    console.log("ROHIT - identifyTaxIdType(ein) - ", identifyTaxIdType(ein));
+    if(ein && identifyTaxIdType(ein) === "EIN") setTaxIDType("EIN");
+  }, [ein])
+
+  useEffect(()=> {
+    console.log("ROHIT - taxIDType - ", taxIDType);
+    if(taxIDType === "EIN"){
+      setEin(formatEIN(ein));
+    } else {
+      setEin(formatSSN(ein));
+    }
+    
+  }, [taxIDType])
+
   const [employeePhoto, setEmployeePhoto] = useState("");
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false, uid: "" },
@@ -193,10 +226,15 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     updateModifiedData({ key: "business_phone_number", value: formatPhoneNumber(event.target.value) });
   };
 
-  const handleEINChange = (event) => {
+  const handleTaxIDChange = (event) => {
     let value = event.target.value;
     if (value.length > 11) return;
-    setEin(value);
+
+    if(taxIDType === "EIN"){
+      setEin(formatEIN(value));
+    } else {
+      setEin(formatSSN(value));
+    }
 
     updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
   };
@@ -1170,7 +1208,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
               <Grid container item xs={12} columnSpacing={4}>
                 <Grid container item xs={6}>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <Typography
                       sx={{
                         color: theme.typography.common.blue,
@@ -1181,15 +1219,21 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       {"Tax ID (EIN or SSN)"}
                     </Typography>
                   </Grid>
+                  <Grid item xs={6}>
+                  <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
+                    <MenuItem value='SSN'>SSN</MenuItem>
+                    <MenuItem value='EIN'>EIN</MenuItem>
+                  </Select>
+                  </Grid>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
                       // value={mask}
                       value={ein}
                       // onChange={(e) => setSsn(e.target.value)}
-                      onChange={handleEINChange}
+                      onChange={handleTaxIDChange}
                       variant='filled'
-                      placeholder='SSN'
+                      placeholder='Enter numbers only'
                       className={classes.root}
                     ></TextField>
                   </Grid>
