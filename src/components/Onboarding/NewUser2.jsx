@@ -213,6 +213,11 @@ const NewUser = () => {
 
   const handleSignup = async () => {
     console.log("signup clicked");
+    //confirmPassword password
+    if(confirmPassword!=password){
+      alert("Passwords don't match. Please check and try again!");
+      return ;
+    }
     const userExists = await checkIfUserExists(email);
     const user = {
       email: email,
