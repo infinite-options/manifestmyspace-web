@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Typography,
@@ -50,6 +50,12 @@ import UtilitySelection from "../UtilitySelector";
 import { DragHandleOutlined } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
 import APIConfig from "../../utils/APIConfig";
 
 export default function AddListing(props) {
@@ -57,7 +63,7 @@ export default function AddListing(props) {
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  let { index, propertyList, page } = props;
+  let { index, propertyList, page, onBackClick } = props;
   const refreshProperties = props.refreshProperties;
   const showPropertyNavigator = props.showPropertyNavigator;
   // const propertyData = location.state.item;
@@ -156,6 +162,15 @@ export default function AddListing(props) {
   const [isListed, setListed] = useState(true);
   const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
 
+  const [imageState, setImageState] = useState([]);
+  const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
+	const [deletedIcons, setDeletedIcons] = useState(
+		new Array(JSON.parse(propertyData.property_images).length).fill(false)
+	);
+	const [favoriteIcons, setFavoriteIcons] = useState(
+    JSON.parse(propertyData.property_images).map(image => image === propertyData.property_favorite_image)
+  );
+
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
   }, [deletedImageList]);
@@ -240,7 +255,7 @@ export default function AddListing(props) {
       setMappedUtilitiesPaidBy(defaultUtilities);
       setIsDefaultUtilities(true);
     }
-    loadImages();
+    //loadImages();
     console.log("************************************************AddListing useEffect***********************************");
   }, []);
 
@@ -358,10 +373,12 @@ export default function AddListing(props) {
       if (confirmSave) {
         await saveChanges(true); 
       } else {
-        navigate("/propertiesPM", { state: { isBack: true } }); 
+        //navigate("/propertiesPM", { state: { isBack: true } }); 
+        onBackClick();
       }
     } else {
-      navigate("/propertiesPM", { state: { isBack: true } }); 
+      //navigate("/propertiesPM", { state: { isBack: true } }); 
+      onBackClick();
     }
   };
 
@@ -977,6 +994,66 @@ export default function AddListing(props) {
     });
   };
 
+
+  const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
+		}
+	};
+
+  const handleDelete = (index) => {
+		const updatedDeletedIcons = [...deletedIcons];
+		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
+		setDeletedIcons(updatedDeletedIcons);
+
+		const imageToDelete = JSON.parse(propertyData.property_images)[index];
+		setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
+
+		console.log('Delete image at index:', JSON.stringify(deletedIcons));
+	};
+
+	const handleFavorite = (index) => {
+    const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
+    updatedFavoriteIcons[index] = true;
+    setFavoriteIcons(updatedFavoriteIcons);
+  
+    const newFavImage = JSON.parse(propertyData.property_images)[index];
+    setFavImage(newFavImage);
+    setSelectedImageList(prevState =>
+      prevState.map((file, i) => ({
+        ...file,
+        coverPhoto: i === index
+      }))
+    );
+  
+    console.log(`Favorite image at index: ${index}`);
+  };
+
+  const handleUpdateFavoriteIcons = () => {
+    setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
+};
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -1022,49 +1099,123 @@ export default function AddListing(props) {
             </Box>
           </Stack>
 
-          <Stack direction='column' justifyContent='center' alignItems='center' padding='25px'>
             <Box component='form' onSubmit={handleSubmit} noValidate autoComplete='off' id='editPropertyForm'>
               <Grid container columnSpacing={12} rowSpacing={6}>
                 {/* Select Field for Property */}
                 <Grid item xs={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <Button size='small' onClick={handleBack} disabled={activeStep === 0}>
-                      {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                    </Button>
-                    <CardMedia
-                      component='img'
-                      image={selectedImageList[activeStep] ? selectedImageList[activeStep].image : defaultHouseImage}
-                      // image={coverImage}
-                      sx={{
-                        elevation: "0",
-                        boxShadow: "none",
-                        maxWidth: "150px",
-                        minWidth: "150px",
-                        maxHeight: "150px",
-                        minHeight: "150px",
-                        height: "150px",
-                        objectFit: "cover",
-                        center: "true",
-                        alignContent: "center",
-                        justifyContent: "center",
-                      }}
-                    />
-                    <Button size='small' onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                      {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                    </Button>
-                  </div>
-                </Grid>
+								<Box
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										padding: 2,
+									}}
+								>
+									<IconButton
+										onClick={() => handleScroll('left')}
+										disabled={scrollPosition === 0}
+									>
+										<ArrowBackIosIcon />
+									</IconButton>
+									<Box
+										sx={{
+											display: 'flex',
+											overflowX: 'auto',
+											scrollbarWidth: 'none',
+											msOverflowStyle: 'none',
+											'&::-webkit-scrollbar': {
+												display: 'none',
+											},
+										}}
+									>
+										<Box
+											sx={{
+												display: 'flex',
+												overflowX: 'auto',
+												scrollbarWidth: 'none',
+												msOverflowStyle: 'none',
+												'&::-webkit-scrollbar': {
+													display: 'none',
+												},
+											}}
+										>
+											<ImageList 
+											ref={scrollRef}
+											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+												{JSON.parse(propertyData.property_images)?.map((image, index) => (
+													<ImageListItem
+														key={index}
+														sx={{
+															width: 'auto',
+															flex: '0 0 auto',
+															border: '1px solid #ccc',
+															margin: '0 2px',
+															position: 'relative', // Added to position icons
+														}}
+													>
+														<img
+															src={image}
+															alt={`maintenance-${index}`}
+															style={{
+																height: '150px',
+																width: '150px',
+																objectFit: 'cover',
+															}}
+														/>
+														<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
+															<IconButton
+																onClick={() => handleDelete(index)}
+																sx={{
+																	color: deletedIcons[index] ? 'red' : 'black',
+																	backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																	'&:hover': {
+																		backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																	},
+																	margin: '2px',
+																}}
+															>
+																<DeleteIcon />
+															</IconButton>
+														</Box>
+														<Box sx={{ position: 'absolute', bottom: 0, left: 0 }}>
+															<IconButton
+																onClick={() => handleFavorite(index)}
+																sx={{
+																	color: favoriteIcons[index] ? 'red' : 'black',
+																	backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																	'&:hover': {
+																		backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																	},
+																	margin: '2px',
+																}}
+															>
+																{favoriteIcons[index] ? (
+																	<FavoriteIcon />
+																) : (
+																	<FavoriteBorderIcon />
+																)}
+															</IconButton>
+														</Box>
+													</ImageListItem>
+												))}
+											</ImageList>
+										</Box>
+									</Box>
+									<IconButton onClick={() => handleScroll('right')}>
+										<ArrowForwardIosIcon />
+									</IconButton>
+								</Box>
+							</Grid>
 
                 <Grid item xs={12}>
-                  <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} setDeletedImageList={setDeletedImageList} page={"Edit"} />
+                  <ImageUploader 
+									selectedImageList={imageState}
+									setSelectedImageList={setImageState}
+									setDeletedImageList={setDeletedImageList}
+									page={"Edit"}
+									setFavImage={setFavImage}
+									favImage={favImage}
+									updateFavoriteIcons={handleUpdateFavoriteIcons} />
                 </Grid>
 
                 {/* Text Field for Title */}
@@ -1266,7 +1417,7 @@ export default function AddListing(props) {
                 </Grid>
               </Grid>
             </Box>
-          </Stack>
+          
         </Paper>
 
         <Paper

@@ -575,7 +575,8 @@ function Properties() {
                 index={returnIndex}
                 page={page}
                 propertyId={propertyList[returnIndex]?.property_uid} 
-                setRHS={setRHS} 
+                onBackClick={handleBackClick}
+                setRHS={setRHS}     
                 refreshProperties={refreshProperties}  
                 showPropertyNavigator={updateNavPage}
               />
