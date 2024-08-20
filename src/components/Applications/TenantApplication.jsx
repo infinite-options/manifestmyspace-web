@@ -13,6 +13,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from "@mui/icons-material/Close";
 import APIConfig from "../../utils/APIConfig";
 import axios from "axios";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function TenantApplication(props) {
   console.log("In Tenant Application", props);
@@ -30,7 +32,7 @@ export default function TenantApplication(props) {
   // console.log("property", property);
 
   const [tenantProfile, setTenantProfile] = useState(null);
-
+  const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(null);
   const [adultOccupants, setAdultOccupants] = useState(null);
   const [petOccupants, setPetOccupants] = useState(null);
@@ -44,31 +46,65 @@ export default function TenantApplication(props) {
   // }, [tenantDocuments])
 
   useEffect(() => {
-    setProperty(props.data);
-    setStatus(props.status);
-    // setLease(props.lease);
-    const address = formatAddress();
-    setFormattedAddress(address);
+    const updateData = () => {
+        setShowSpinner(true);
+  
+        // First, set the property state
+        setProperty(props.data);
+  
+        // Then, set the status state
+        setStatus(props.status);
+  
+        // Once the address is formatted, update the address state
+        const address = formatAddress();
+        setFormattedAddress(address);
+  
+        // Finally, set the spinner to false after a 2-second delay
+        setTimeout(() => {
+          setShowSpinner(false);
+        }, 2000); // 2 seconds delay
+    };
+  
+    updateData();
   }, [props.data]);
-
+  
   useEffect(() => {
-    const getLeaseDetails = () => {
-      axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
-        .then((response) => {
-          const fetchData = response.data["Lease_Details"].result;
-          const lease = fetchData.filter((lease) => lease.lease_uid === props.lease.lease_uid)
-          console.log('lease data--', lease);
-          setLease(lease);
-        })
-        .catch((error) => {
-          if (error.response) {
-            console.log(error.response.data);
-          }
-        });
-    }
-
-    getLeaseDetails();
-  }, [props.data])
+    const fetchData = async () => {
+      try {
+        setShowSpinner(true); // Start the spinner before loading data
+  
+        // Fetch lease details asynchronously
+        const leaseResponse = await axios.get(
+          `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`
+        );
+        const fetchedLease = leaseResponse.data["Lease_Details"].result.filter(
+          (lease) => lease.lease_uid === props.lease.lease_uid
+        );
+        setLease(fetchedLease);
+  
+        // Fetch tenant profile information asynchronously
+        const profileResponse = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+        const profileData = await profileResponse.json();
+        setTenantProfile(profileData.profile.result[0]);
+  
+        // Set other properties after all data is fetched
+        setProperty(props.data);
+        setStatus(props.status);
+  
+        // Format and set address
+        const address = formatAddress();
+        setFormattedAddress(address);
+  
+      } catch (error) {
+        console.error("Error fetching data", error);
+      } finally {
+        setShowSpinner(false); // Stop the spinner after all data is loaded
+      }
+    };
+  
+    fetchData();
+  }, [props.data]);
+  
 
   const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
 
@@ -344,6 +380,11 @@ export default function TenantApplication(props) {
 
   return (
     <ThemeProvider theme={theme}>
+       {showSpinner ? (
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ) : (
       <Paper
         style={{
           margin: "5px",
@@ -1112,7 +1153,7 @@ export default function TenantApplication(props) {
             </Grid>
           </Paper>
         </Box>
-      </Paper>
+      </Paper>)}
     </ThemeProvider>
   );
 }

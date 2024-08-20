@@ -57,19 +57,11 @@ export default function OwnerDashboard() {
   const [leaseStatus, setLeaseStatus] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
   const [cashflowStatusData, setCashflowStatusData] = useState([]);
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true); // Initially set to true
   const [currentMonth, setCurrentMonth] = useState(date.getMonth() + 1);
 
   const [moveoutsInSixWeeks, setMoveoutsInSixWeeks] = useState(0);
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
-  const rentData = [
-    ["Properties", "Rent status"],
-    ["not paid", 18],
-    ["paid partially", 6],
-    ["paid late", 3],
-    ["vacant", 3],
-    ["paid on time", 36],
-  ];
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
@@ -79,8 +71,7 @@ export default function OwnerDashboard() {
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
   // console.log("getProfileId()", getProfileId());
   useEffect(() => {
-    const dataObject = {};
-    // console.log("getProfileI$", getProfileId());
+    setShowSpinner(true); // Show spinner when data fetching starts
     const fetchData = async () => {
       if (!getProfileId()) {
         return;
@@ -90,8 +81,7 @@ export default function OwnerDashboard() {
         let newRole = "OWNER";
         navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
       }
-      setShowSpinner(true);
-      // console.log("getProfileId()", getProfileId());
+      
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
       // console.log("Owner Dashboard jsonData", jsonData);
@@ -106,7 +96,7 @@ export default function OwnerDashboard() {
       setCashflowStatusData(jsonData.CashflowStatus);
       setRentStatus(jsonData.RentStatus.result);
       setLeaseStatus(jsonData.LeaseStatus.result);
-      setShowSpinner(false);
+      setShowSpinner(false); // Hide spinner when data is loaded
     };
     fetchData();
     const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
@@ -118,134 +108,136 @@ export default function OwnerDashboard() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color='inherit' />
-      </Backdrop>
-
-      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-        <Grid container spacing={6}>
-          {view === "dashboard" ? (
-            <>
-              <Grid item xs={12}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: isMobile ? "column" : "row",
-                    justifyContent: isMobile ? "center" : "left",
-                    paddingLeft: "10px",
-                    paddingRight: "10px",
-                    alignText: "center",
-                    alignContent: "center",
-                  }}
-                >
-                  <Typography
+      {showSpinner ? (
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ) : (
+        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+          <Grid container spacing={6}>
+            {view === "dashboard" ? (
+              <>
+                <Grid item xs={12}>
+                  <Box
                     sx={{
-                      fontSize: { xs: "22px", sm: "28px", md: "32px" },
-                      fontWeight: "600",
+                      display: "flex",
+                      flexDirection: isMobile ? "column" : "row",
+                      justifyContent: isMobile ? "center" : "left",
+                      paddingLeft: "10px",
+                      paddingRight: "10px",
+                      alignText: "center",
+                      alignContent: "center",
                     }}
                   >
-                    Welcome, {user.first_name}.
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <CashflowWidget data={cashflowStatusData} />
-              </Grid>
-              <Grid container item xs={12} md={8} columnSpacing={6}>
-                <Grid item xs={12} md={6} sx={{ marginBottom: isMobile ? "10px" : "1px" }}>
-                  <OwnerPropertyRentWidget rentData={rentStatus} />
-                </Grid>
-                <Grid item xs={12} md={6} sx={{ marginBottom: "1px" }}>
-                  <MaintenanceWidget maintenanceData={maintenanceStatusData} />
-                </Grid>
-                <Grid item xs={12}>
-                  <LeaseWidget leaseData={leaseStatus} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
-                    <Grid
-                      container
-                      direction='row'
+                    <Typography
                       sx={{
-                        paddingTop: "10px",
-                        paddingBottom: "10px",
+                        fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                        fontWeight: "600",
                       }}
                     >
-                      <Grid item xs={2}></Grid>
-                      <Grid item xs={8}>
-                        <Box
-                          sx={{
-                            flexGrow: 1,
-                            display: "flex",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              color: "#160449",
-                              fontSize: { xs: "18px", sm: "18px", md: "24px" },
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Announcements
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            zIndex: 1,
-                            flex: 1,
-                            height: "100%",
-                          }}
-                        >
+                      Welcome, {user.first_name}.
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <CashflowWidget data={cashflowStatusData} />
+                </Grid>
+                <Grid container item xs={12} md={8} columnSpacing={6}>
+                  <Grid item xs={12} md={6} sx={{ marginBottom: isMobile ? "10px" : "1px" }}>
+                    <OwnerPropertyRentWidget rentData={rentStatus} />
+                  </Grid>
+                  <Grid item xs={12} md={6} sx={{ marginBottom: "1px" }}>
+                    <MaintenanceWidget maintenanceData={maintenanceStatusData} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <LeaseWidget leaseData={leaseStatus} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
+                      <Grid
+                        container
+                        direction='row'
+                        sx={{
+                          paddingTop: "10px",
+                          paddingBottom: "10px",
+                        }}
+                      >
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={8}>
                           <Box
                             sx={{
-                              color: "#007AFF",
-                              fontSize: "15px",
-                              paddingRight: "25px",
-                              fontWeight: "bold",
+                              flexGrow: 1,
+                              display: "flex",
+                              justifyContent: "center",
                             }}
-                            onClick={() => setView("announcements")}
                           >
-                            {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
+                            <Typography
+                              sx={{
+                                color: "#160449",
+                                fontSize: { xs: "18px", sm: "18px", md: "24px" },
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Announcements
+                            </Typography>
                           </Box>
-                        </Box>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              zIndex: 1,
+                              flex: 1,
+                              height: "100%",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                color: "#007AFF",
+                                fontSize: "15px",
+                                paddingRight: "25px",
+                                fontWeight: "bold",
+                              }}
+                              onClick={() => setView("announcements")}
+                            >
+                              {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
+                            </Box>
+                          </Box>
+                        </Grid>
                       </Grid>
+                      {announcementsData.length > 0 ? (
+                        <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
+                      ) : (
+                        <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
+                          <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
+                        </Box>
+                      )}
                     </Grid>
-                    {announcementsData.length > 0 ? (
-                      <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
-                    ) : (
-                      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
-                        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
-                      </Box>
-                    )}
                   </Grid>
                 </Grid>
-              </Grid>
-            </>
-          ) : (
-            <>
-              <Grid item xs={12} md={4}>
-                <CashflowWidget data={cashflowStatusData} />
-              </Grid>
-              <Grid item xs={12} md={8}>
-                <Box sx={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
-                  <IconButton onClick={() => setView("dashboard")} sx={{ marginRight: "10px" }}>
-                    <ArrowBackIcon />
-                  </IconButton>
-                </Box>
-                <Box sx={{ paddingTop: "10px" }}>
-                  <Announcements />
-                </Box>
-              </Grid>
-            </>
-          )}
-        </Grid>
-      </Container>
+              </>
+            ) : (
+              <>
+                <Grid item xs={12} md={4}>
+                  <CashflowWidget data={cashflowStatusData} />
+                </Grid>
+                <Grid item xs={12} md={8}>
+                  <Box sx={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
+                    <IconButton onClick={() => setView("dashboard")} sx={{ marginRight: "10px" }}>
+                      <ArrowBackIcon />
+                    </IconButton>
+                  </Box>
+                  <Box sx={{ paddingTop: "10px" }}>
+                    <Announcements />
+                  </Box>
+                </Grid>
+              </>
+            )}
+          </Grid>
+        </Container>
+      )}
 
       <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
         <DialogContent>
@@ -257,7 +249,7 @@ export default function OwnerDashboard() {
               paddingTop: "10px",
             }}
           >
-            Hello, {user.first_name}!. Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need
+            Hello, {user.first_name}! Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need
             to add additional details such as your SSN and address. Thank you!
           </DialogContentText>
         </DialogContent>
