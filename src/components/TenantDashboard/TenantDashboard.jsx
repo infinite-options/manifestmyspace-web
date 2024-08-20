@@ -384,12 +384,13 @@ function TenantDashboard(props) {
 
   return (
     <ThemeProvider theme={theme}>
+       {showSpinner ? (
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ) : (
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container spacing={6}>
-          <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-            <CircularProgress color='inherit' />
-          </Backdrop>
-
           {/* <Grid item xs={12}> */}
           <Grid item xs={8} md={6} lg={6}>
             <Box
@@ -934,7 +935,7 @@ function TenantDashboard(props) {
             )} */}
           </>
         </Grid>
-      </Container>
+      </Container>)}
     </ThemeProvider>
   );
 }
