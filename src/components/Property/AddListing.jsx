@@ -882,6 +882,40 @@ export default function AddListing(props) {
       hasPropertyChanges = true;
     }
 
+    if (imagesTobeDeleted.length > 0) {
+  
+      let updatedImages = JSON.parse(propertyData.property_images);
+      updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
+      propertyData.property_images = JSON.stringify(updatedImages);
+      formData.append('delete_images', JSON.stringify(imagesTobeDeleted));
+      hasPropertyChanges = true;
+    }
+		//console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
+		formData.append('property_images', propertyData.property_images);
+    if (favImage !== propertyData.property_favorite_image) {
+      formData.append('property_favorite_image', favImage);
+      hasPropertyChanges = true;
+    }
+		// const files = imageState;
+		let i = 0;
+		for (const file of imageState) {
+			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+			let key = `img_${i++}`;
+			if (file.file !== null) {
+				// newProperty[key] = file.file;
+				formData.append(key, file.file);
+        hasPropertyChanges = true;
+			} else {
+				// newProperty[key] = file.image;
+				formData.append(key, file.image);
+        hasPropertyChanges = true;
+			 }
+			if (file.coverPhoto) {
+				formData.set('property_favorite_image', key);
+        hasPropertyChanges = true;
+			}
+		}
+
     const putUtilitiesData = async () => {
       if (hasUtilitiesChanges) {
         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
