@@ -80,10 +80,32 @@ function TenantDashboard(props) {
   const [tenantApplicationNavState, setTenantApplicationNavState] = useState(null);
   const [viewApprovedLeaseNavState, setViewApprovedLeaseNavState] = useState(null);
   const [reload, setReload] = useState(false);
+  const [propertyListingData, setPropertyListingData] = useState([]);
+  const [leaseListingData, setLeaseListingData] = useState([]);
 
   const open = Boolean(anchorEl);
 
   const { user } = useUser();
+
+  useEffect (() => {
+    async function fetchData() {
+      const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
+      const propertyData = await propertyResponse.json();
+
+      const listings = propertyData?.Available_Listings?.result;
+      const tenants = propertyData?.Tenant_Leases?.result;
+
+      const filteredListings = listings.filter(listing =>
+        tenants.some(tenant => 
+          tenant.lease_property_id === listing.property_uid
+        )
+      );
+
+      setPropertyListingData(filteredListings);
+      setLeaseListingData(tenants);
+    }
+    fetchData();
+  }, [getProfileId]);
 
   //  Main UseEffect
   useEffect(() => {
@@ -439,6 +461,8 @@ function TenantDashboard(props) {
               setPaymentState={setPaymentState}
               setRightPane={setRightPane}
               setTenantApplicationNavState={setTenantApplicationNavState}
+              property={propertyListingData}
+              lease={leaseListingData} 
               setViewApprovedLeaseNavState={setViewApprovedLeaseNavState}
 
             />
@@ -982,6 +1006,8 @@ const AccountBalanceWidget = ({
   setPaymentState,
   setRightPane,
   setTenantApplicationNavState,
+  property,
+  lease,
   setViewApprovedLeaseNavState,
 }) => {
   const navigate = useNavigate();

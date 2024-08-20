@@ -40,7 +40,7 @@ function TenantLeases(props) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [property, setProperty] = useState(props.property);
   const [status, setStatus] = useState("01-01-2024");
-  const [lease, setLease] = useState(props.lease);
+  const [lease, setLease] = useState(props?.lease);
   // const [pets, setPets] = useState(JSON.parse(lease.lease_pets));
   // const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
   // const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease.lease_adults));
@@ -51,6 +51,12 @@ function TenantLeases(props) {
   const [childrenOccupants, setChildrenOccupants] = useState([]);
   const [fees, setFees] = useState([]);
   const [signedLease, setSignedLease] = useState(null);
+
+  useEffect(() => {
+    console.log("Props passed to TenantLeases: ", props);
+    setProperty(props.property);
+    setLease(props.lease);
+  }, [props.property, props.lease]);
 
   useEffect(() => {
     setShowSpinner(true);
@@ -129,6 +135,7 @@ function TenantLeases(props) {
   }
 
   function displayPropertyAddress() {
+    console.log("leases", lease);
     if (lease.property_unit) {
       return (
         <>
