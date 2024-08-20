@@ -30,7 +30,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
   // console.log("ownerId", ownerId);
   // console.log("managerBusinessId", managerBusinessId);
   // console.log("managerData", managerData);
-  console.log("ROHIT - propertyData", propertyData);
+  console.log("propertyData", propertyData);
   // console.log("index", index);
 
   propertyData?.sort((a, b) => {

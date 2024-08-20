@@ -45,7 +45,7 @@ const RequestQuotes = (props) => {
   useEffect(() => {
     const propertyData = props.propertyData;
     const index = props.index;
-    // console.log("ROHIT - RequestQuotes - props.index - ", props.index);
+    // console.log("RequestQuotes - props.index - ", props.index);
     if (propertyData && index !== undefined) {
       setSelectedProperties([propertyData[index].property_uid]);
     }
