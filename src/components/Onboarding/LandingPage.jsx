@@ -359,7 +359,7 @@ export default function LandingPage() {
 
           <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
             <Paper
-              style={{
+              sx={{
                 margin: "25px",
                 padding: 20,
                 backgroundColor: theme.palette.primary.main,
@@ -389,7 +389,7 @@ export default function LandingPage() {
           </Grid>
           <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
             <Paper
-              style={{
+              sx={{
                 margin: "25px",
                 padding: 20,
                 backgroundColor: theme.palette.primary.main,
@@ -419,7 +419,7 @@ export default function LandingPage() {
           </Grid>
           <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
             <Paper
-              style={{
+              sx={{
                 margin: "25px",
                 padding: 20,
                 backgroundColor: theme.palette.primary.main,
@@ -450,7 +450,7 @@ export default function LandingPage() {
           </Grid>
           <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
             <Paper
-              style={{
+              sx={{
                 margin: "25px",
                 padding: 20,
                 backgroundColor: theme.palette.primary.main,
