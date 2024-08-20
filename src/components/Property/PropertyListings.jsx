@@ -350,12 +350,12 @@ const PropertyListings = ({ setRightPane }) => {
               padding: theme.spacing(2),
               backgroundColor: theme.palette.primary.main,
               width: "100%",
-              [theme.breakpoints.down("sm")]: {
-                width: "80%",
-              },
-              [theme.breakpoints.up("sm")]: {
-                width: "50%",
-              },
+              // [theme.breakpoints.down("sm")]: {
+              //   width: "80%",
+              // },
+              // [theme.breakpoints.up("sm")]: {
+              //   width: "50%",
+              // },
               // paddingTop: "10px",
             }}
           >
@@ -461,7 +461,8 @@ const PropertyListings = ({ setRightPane }) => {
 function PropertyCard({ data, status, leaseData, setRightPane }) {
   const navigate = useNavigate();
   const [lease, setLease] = useState(leaseData || {});
-  // console.log("In PropertyCard: ", data);
+  console.log("In PropertyCard: ", data);
+  console.log("In PropertyCard: ", leaseData);
   const property = data;
   const propertyImages = property?.property_images || "";
   const ppt_images = propertyImages.split(",");

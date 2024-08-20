@@ -78,11 +78,34 @@ function TenantDashboard(props) {
   const [viewLeaseState, setViewLeaseState] = useState(null);
   const [paymentState, setPaymentState] = useState(null);
   const [tenantApplicationNavState, setTenantApplicationNavState] = useState(null);
+  const [viewApprovedLeaseNavState, setViewApprovedLeaseNavState] = useState(null);
   const [reload, setReload] = useState(false);
+  const [propertyListingData, setPropertyListingData] = useState([]);
+  const [leaseListingData, setLeaseListingData] = useState([]);
 
   const open = Boolean(anchorEl);
 
   const { user } = useUser();
+
+  useEffect (() => {
+    async function fetchData() {
+      const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
+      const propertyData = await propertyResponse.json();
+
+      const listings = propertyData?.Available_Listings?.result;
+      const tenants = propertyData?.Tenant_Leases?.result;
+
+      const filteredListings = listings.filter(listing =>
+        tenants.some(tenant => 
+          tenant.lease_property_id === listing.property_uid
+        )
+      );
+
+      setPropertyListingData(filteredListings);
+      setLeaseListingData(tenants);
+    }
+    fetchData();
+  }, [getProfileId]);
 
   //  Main UseEffect
   useEffect(() => {
@@ -218,6 +241,13 @@ function TenantDashboard(props) {
       setRightPane({ type: "tenantApplication", state: tenantApplicationNavState });
     }
   }, [tenantApplicationNavState]);
+
+  useEffect(() => {
+    console.log("viewApprovedLeaseNavState", viewApprovedLeaseNavState);
+    if (viewApprovedLeaseNavState) {
+      setRightPane({ type: "tenantLeases", state: viewApprovedLeaseNavState });
+    }
+  }, [viewApprovedLeaseNavState]);
 
   useEffect(() => {
     const navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
@@ -431,6 +461,10 @@ function TenantDashboard(props) {
               setPaymentState={setPaymentState}
               setRightPane={setRightPane}
               setTenantApplicationNavState={setTenantApplicationNavState}
+              property={propertyListingData}
+              lease={leaseListingData} 
+              setViewApprovedLeaseNavState={setViewApprovedLeaseNavState}
+
             />
           </Grid>
 
@@ -972,6 +1006,9 @@ const AccountBalanceWidget = ({
   setPaymentState,
   setRightPane,
   setTenantApplicationNavState,
+  property,
+  lease,
+  setViewApprovedLeaseNavState,
 }) => {
   const navigate = useNavigate();
   console.log("---selectedProperty in acc---", selectedProperty);
@@ -1044,6 +1081,13 @@ const AccountBalanceWidget = ({
     setTenantApplicationNavState(state);
   }
 
+  function handleViewAprovedLeaseNavigate(property, lease) {
+    const state = {
+      property: property, lease: lease, from: 'accwidget'
+    }
+    setViewApprovedLeaseNavState(state);
+  }
+
   function handlePaymentNavigate() {
     /*navigate("/payments", 
     { state: { accountBalanceWidgetData: 
@@ -1081,6 +1125,14 @@ const AccountBalanceWidget = ({
       if (item.lease_status === 'REFUSED' || item.lease_status === 'WITHDRAWN' || item.lease_status === 'NEW' ||
         item.lease_status === 'PROCESSING' || item.lease_status === 'RESCIND' || item.lease_status === 'REJECTED') {
         handleViewApplicationNavigate(item, lease);
+      } else {
+        setRightPane("viewlease");
+        handleViewLeaseNavigate(item.lease_uid);
+      }
+    } else if (rightPane === "tenantLeases") {
+      if (item.lease_status === 'REFUSED' || item.lease_status === 'WITHDRAWN' || item.lease_status === 'NEW' ||
+        item.lease_status === 'PROCESSING' || item.lease_status === 'RESCIND' || item.lease_status === 'REJECTED') {
+        handleViewAprovedLeaseNavigate(item, lease);
       } else {
         setRightPane("viewlease");
         handleViewLeaseNavigate(item.lease_uid);
@@ -1143,25 +1195,25 @@ const AccountBalanceWidget = ({
           >
             <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Account Balance</Typography>
             <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginTop: '20px',
-                }}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: '20px',
+              }}
             >
               <Box sx={{ flexGrow: 1, maxWidth: 200 }}> {/* Adjusted size */}
-                    <CardMedia
-                        component="img"
-                        image={image}
-                        alt="property image"
-                        sx={{
-                            width: '100%',
-                            height: 'auto',
-                            maxHeight: '150px',
-                        }}
-                    />
-                </Box>
+                <CardMedia
+                  component="img"
+                  image={image}
+                  alt="property image"
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    maxHeight: '150px',
+                  }}
+                />
+              </Box>
             </Box>
             <Box
               sx={{
@@ -1412,6 +1464,28 @@ const AccountBalanceWidget = ({
             <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
             <u>View Full Lease</u>
           </Box>))}
+
+      {propertyData && propertyData.length > 0 &&
+        (selectedProperty?.lease_status === "PROCESSING" && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItem: "left",
+              justifyContent: "left",
+              margin: isMobile ? "0px" : "20px",
+              paddingBottom: isMobile ? "5px" : "10px",
+              cursor: "pointer",
+              color: "#3D5CAC",
+              fontSize: "20px",
+              fontWeight: 600,
+            }}
+            onClick={() => handleViewAprovedLeaseNavigate(selectedProperty, selectedLease)}
+          >
+            <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+            <u>View Approved Lease</u>
+          </Box>
+        ))}
     </DashboardTab>
   );
 };

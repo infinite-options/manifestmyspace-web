@@ -289,6 +289,7 @@ function Properties() {
       // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
       setAllContracts(contractsResponse.result);
   }
+  
   const refreshProperties = () => {
     fetchProperties();
   };
@@ -297,6 +298,38 @@ function Properties() {
     console.log("Refresh Contracts called");
     fetchContracts();
   };
+
+
+  // const updatePropertyData = async (propertyUID) => {
+  //   setShowSpinner(true);
+
+  //   // PROPERTIES ENDPOINT
+  //   const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyUID}`);
+  //   //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
+  //   if (!property_response.ok) {
+  //     // console.log("Error fetching Property Details data");
+  //   }
+  //   const propertyData = await property_response.json();
+  //   const updatedProperty = propertyData["Property"]?.result; 
+    
+  //   const newPropertyList = propertyList?.map( (property) => {
+  //     if (property.property_uid === propertyUID) {
+  //       return updatedProperty
+  //     } else{
+  //       return property
+  //     }
+  //   })
+    
+  //   setPropertyList([...newPropertyList]);
+  //   setDisplayedItems([...newPropertyList]);
+  //   // setPropertyIndex(0);
+
+  //   if (propertyData.Property.code === 200) {
+  //     // console.log("Endpoint Data is Ready");
+  //     setDataReady(true);
+  //   }
+  //   setShowSpinner(false);
+  // };
 
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
@@ -507,6 +540,7 @@ function Properties() {
                 index={returnIndex}
                 propertyData={propertyList}
                 contracts={allContracts}
+                refreshContracts={refreshContracts}                
                 handleBackClick={handleBackClick}
 
                 // pmQuoteRequestedState={pmQuoteRequestedState}

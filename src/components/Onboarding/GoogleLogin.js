@@ -123,7 +123,7 @@ function GoogleLogin(props) {
                             social_id: si,
                             access_expires_in: ax,
                           };
-                          navigate("/register", {
+                          navigate("/createProfile", {
                             state: {
                               user: user,
                             },

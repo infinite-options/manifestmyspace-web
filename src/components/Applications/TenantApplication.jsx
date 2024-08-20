@@ -994,7 +994,7 @@ export default function TenantApplication(props) {
                       sx={{
                         fontWeight: theme.typography.primary.fontWeight,
                         fontSize: "14px",
-                        color: "#160449",
+                        color: "#FFFFFF",
                         textTransform: "none",
                       }}
                     >
@@ -1017,7 +1017,7 @@ export default function TenantApplication(props) {
                     sx={{
                       fontWeight: theme.typography.primary.fontWeight,
                       fontSize: "14px",
-                      color: "#160449",
+                      color: "#FFFFFF",
                       textTransform: "none",
                     }}
                   >
