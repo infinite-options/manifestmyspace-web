@@ -175,9 +175,10 @@ function PMContractDetailsList(props) {
   }
   return (
     <ThemeProvider theme={theme}>
+      {showSpinner ? (
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color='inherit' />
-      </Backdrop>
+      </Backdrop> ) : (
       <Box
         sx={{
           backgroundColor: "#F2F2F2",
@@ -252,7 +253,7 @@ function PMContractDetailsList(props) {
           contractBusinessID={contractBusinessID}
           contractPropertyID={contractPropertyID}
         />
-      </Box>
+      </Box>)}
     </ThemeProvider>
   );
 }
