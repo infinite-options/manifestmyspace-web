@@ -463,8 +463,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
   const renderManagementFees = () => {
     return fees.map((row, index) => (
-      <>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
           <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
@@ -611,8 +610,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
               <CloseIcon />
             </IconButton>
           )}
-        </Grid>
-      </>
+      </Grid>
     ));
   };
 

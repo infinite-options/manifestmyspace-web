@@ -196,7 +196,7 @@ const PropertyInfo = (props) => {
         }}
       >
         <Paper
-          style={{
+          sx={{
             // margin: "15px 30px 30px",
             // padding: "15px",
             paddingTop: "0px",
@@ -484,7 +484,7 @@ const PropertyInfo = (props) => {
             <Typography sx={{ textAlign: "justify" }}>{property.property_description}</Typography>
             <Typography sx={{ color: theme.typography.common.blue }}>
               <svg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                <g clip-path='url(#clip0_1650_4326)'>
+                <g clipPath='url(#clip0_1650_4326)'>
                   <path
                     d='M3.5 13.5H1.5C1.23478 13.5 0.98043 13.3946 0.792893 13.2071C0.605357 13.0196 0.5 12.7652 0.5 12.5V1.5C0.5 1.23478 0.605357 0.98043 0.792893 0.792893C0.98043 0.605357 1.23478 0.5 1.5 0.5H12.5C12.7652 0.5 13.0196 0.605357 13.2071 0.792893C13.3946 0.98043 13.5 1.23478 13.5 1.5V12.5C13.5 12.7652 13.3946 13.0196 13.2071 13.2071C13.0196 13.3946 12.7652 13.5 12.5 13.5H10.5M0.5 3.5H13.5M7 13.5V7'
                     stroke='#3D5CAC'

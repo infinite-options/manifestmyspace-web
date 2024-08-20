@@ -85,9 +85,11 @@ function Header(props) {
     <ThemeProvider theme={theme}>
       <Box>
         {isLoggedIn ? (
+          // If user is already login
           <>
             <AppBar position='static' style={{ backgroundColor: "#160449", paddingTop: "10px", paddingBottom: "10px" }}>
               <Toolbar style={{ justifyContent: "space-between", padding: "0 20px" }}>
+                {/* logo of website */}
                 <div
                   onClick={() => navigate("/")}
                   style={{
@@ -101,6 +103,8 @@ function Header(props) {
                 >
                   <Logo />
                 </div>
+                
+                {/* nav menus for user if user already login*/}
                 {!isMobile && <UserNavBar isMobile={isMobile} />}
                 {isMobile && (
                   <IconButton size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2 }} onClick={handleMenuToggle}>
@@ -205,8 +209,8 @@ function Header(props) {
                       </Typography>
                     </Button>
                   </Box>
-                  <IconButton size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2, display: { xs: "flex", md: "none" } }} onClick={handleClick}>
-                    <MenuIcon onClick={handleMenuToggle} />
+                  <IconButton onClick={handleMenuToggle} size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2, display: { xs: "flex", md: "none" } }} onClick={handleClick}>
+                    <MenuIcon />
                   </IconButton>
                 </div>
               </Toolbar>
