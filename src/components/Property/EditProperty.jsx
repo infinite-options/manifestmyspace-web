@@ -722,10 +722,9 @@ function EditProperty(props) {
 					return property;
 				}
 			});			
-			//console.log('---index---', index);
-			console.log('updatedPropertyList - ', newPropertyList);
 			setPropertyData(newPropertyList[index]);
 			setPropertyList(newPropertyList) // props.setPropertyList - setting propertyList in parent
+			return newPropertyList[index];
 		};
 
 		putData();
@@ -737,9 +736,11 @@ function EditProperty(props) {
 
 		try {
 			await Promise.all(promises);
-			console.log('All Changes saved to the Database', promises);
-			await autoUpdate();
-
+			//console.log('All Changes saved to the Database', promises);
+			const updatedPropertyData = await autoUpdate();
+			setDeletedIcons(new Array(JSON.parse(updatedPropertyData.property_images).length).fill(false));
+			setFavoriteIcons(JSON.parse(updatedPropertyData.property_images).map(image => image === updatedPropertyData.property_favorite_image));
+			
 			if (stayOnPage) {
 				console.log('STAY ON PAGE', stayOnPage);
 				// setCookie("user_data", { ...cookiesData, index }, { path: "/" });
