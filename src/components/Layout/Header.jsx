@@ -206,7 +206,7 @@ function Header(props) {
                     </Button>
                   </Box>
                   <IconButton size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2, display: { xs: "flex", md: "none" } }} onClick={handleClick}>
-                    <MenuIcon onClick={handleMenuToggle} />
+                    <MenuIcon  />
                   </IconButton>
                 </div>
               </Toolbar>

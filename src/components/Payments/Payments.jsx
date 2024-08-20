@@ -325,17 +325,17 @@ export default function Payments(props) {
                 </Box>
 
                 <Paper
-                  style={{
+                  sx={{
                     margin: "25px",
                     padding: "20px",
                     backgroundColor: theme.palette.primary.main,
                     // height: "25%",
-                    [theme.breakpoints.down("sm")]: {
-                      width: "80%",
-                    },
-                    [theme.breakpoints.up("sm")]: {
-                      width: "50%",
-                    },
+                    // [theme.breakpoints.down("sm")]: {
+                    //   width: "80%",
+                    // },
+                    // [theme.breakpoints.up("sm")]: {
+                    //   width: "50%",
+                    // },
                   }}
                 >
                   <Stack direction='row' justifyContent='left' m={2}>
@@ -409,7 +409,7 @@ export default function Payments(props) {
                 {/* What is shown in Balance Details Depends on Role */}
                 {customer_role === "350" ? (
                   <Paper
-                    style={{
+                    sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
@@ -433,7 +433,7 @@ export default function Payments(props) {
                   </Paper>
                 ) : (
                   <Paper
-                    style={{
+                    sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
@@ -460,7 +460,7 @@ export default function Payments(props) {
                 {/* Conditional rendering for Money To Be Paid section */}
                 {customer_role !== "350" && (
                   <Paper
-                    style={{
+                    sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
@@ -486,7 +486,7 @@ export default function Payments(props) {
 
                 {/* All Roles show Money Paid */}
                 <Paper
-                  style={{
+                  sx={{
                     margin: "25px",
                     padding: 20,
                     backgroundColor: theme.palette.primary.main,
@@ -512,7 +512,7 @@ export default function Payments(props) {
                 {/* Conditional rendering for Money Received section */}
                 {paymentData.customer_uid.substring(0, 3) !== "350" && (
                   <Paper
-                    style={{
+                    sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
@@ -539,7 +539,7 @@ export default function Payments(props) {
                 {/* Conditional rendering for Money To Be Received section */}
                 {paymentData.customer_uid.substring(0, 3) !== "350" && (
                   <Paper
-                    style={{
+                    sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
