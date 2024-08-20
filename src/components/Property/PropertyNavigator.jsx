@@ -1196,15 +1196,26 @@ export default function PropertyNavigator({
   };
 
   const handleTenantClick = (tenantId) => {
-    if (tenant_detail === "No Tenant") {
-      console.log("There is no tenant");
-    } else {
-      navigate("/PMContacts", {
-        state: {
-          contactsTab: "Tenant",
-          tenantId: tenantId,
-        },
-      });
+    if (selectedRole === "MANAGER") {
+        if (tenant_detail === "No Tenant") {
+          console.log("There is no tenant");
+        } else {
+          navigate("/PMContacts", {
+            state: {
+              contactsTab: "Tenant",
+              tenantId: tenantId,
+            },
+          });
+        }
+      }
+    else if (selectedRole === "OWNER") {
+      if (tenant_detail === "No Tenant") {
+        console.log("There is no tenant");
+      }
+      else {
+        console.log("For owner");
+        navigate("/ownerContacts");
+      }
     }
   };
 

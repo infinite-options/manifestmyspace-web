@@ -155,6 +155,8 @@ export default function AddListing(props) {
   // const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
   const [isListed, setListed] = useState(true);
   const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
+  const [changedSaved, setChangedSaved] = useState(false);
+
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -328,6 +330,11 @@ export default function AddListing(props) {
   }, [propertyState]);
 
   const handleBackButton = async () => {
+    if (changedSaved) {
+      window.location.reload(); 
+      return;
+    }
+
     const hasPropertyChanges = propertyData.property_address !== address ||
       propertyData.property_unit !== unit ||
       propertyData.property_city !== city ||
@@ -356,12 +363,13 @@ export default function AddListing(props) {
       const confirmSave = window.confirm("You have unsaved changes. Do you want to save them before leaving?");
   
       if (confirmSave) {
-        await saveChanges(true); 
+        saveChanges(true); 
       } else {
         navigate("/propertiesPM", { state: { isBack: true } }); 
       }
     } else {
-      navigate("/propertiesPM", { state: { isBack: true } }); 
+      console.log("going back")
+      window.location.reload();
     }
   };
 
@@ -906,12 +914,14 @@ export default function AddListing(props) {
           refreshProperties();
           showPropertyNavigator();
         }
+        setChangedSaved(true);
       } catch (error) {
         setShowSpinner(false);
         console.error("Error saving changes:", error);
       }
     } else {
       console.log("No changes detected.");
+      setChangedSaved(true);
     }
   };
 
@@ -935,6 +945,7 @@ export default function AddListing(props) {
   const handleUpdateAndStay = async () => {
     console.log("handleUpdateAndStay");
     await saveChanges(false);
+    setChangedSaved(true);
   };
 
   const formatUtilityName = (utility) => {
