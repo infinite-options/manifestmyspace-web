@@ -49,6 +49,7 @@ export default function PMQuotesRequested(props) {
   const classes = useStyles();
   
   const [contracts, setContracts] = useState([]);
+  const refreshContracts = props.refreshContracts;  
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true); // New loading state
   const property = PMQuotesDetails.propertyData;
@@ -68,12 +69,20 @@ export default function PMQuotesRequested(props) {
   }
 
   useEffect(() => {
-    const validContracts = getActiveContracts();
+    const validContracts = getActiveContracts(contracts);
     setActiveContracts(validContracts);
   }, [contracts]);
 
-  function getActiveContracts() {
-    return contracts.filter((contract) => contract.contract_status === "ACTIVE");
+  useEffect(() => {    
+    
+    const contractsData = props.contracts?.filter(
+      (contract) => contract.property_id === propertyId
+    );
+    setContracts(contractsData);
+  }, [props.contracts]);
+
+  function getActiveContracts(contracts) {
+    return contracts?.filter((contract) => contract.contract_status === "ACTIVE");
   }
 
   useEffect(() => {
@@ -98,7 +107,7 @@ export default function PMQuotesRequested(props) {
   function displayPMQuotesRequested() {
     return (
       <div>
-        {contracts.length > 0 ? (
+        {contracts?.length > 0 ? (
           contracts.map((contract) => {
             if (contract.contract_status === "SENT") {
               return (
@@ -177,9 +186,9 @@ export default function PMQuotesRequested(props) {
                       }}
                       onClick={async () => {
                         await handleStatusChange(contract, "CANCELLED");
-                        setTimeout(() => {
-                          setRefresh(!refresh);
-                        }, 100);
+                        // setTimeout(() => {
+                        //   setRefresh(!refresh);
+                        // }, 100);
                       }}
                     >
                       Cancel
@@ -200,7 +209,7 @@ export default function PMQuotesRequested(props) {
   function displayActiveContracts() {
     return (
       <div>
-        {activeContracts.length > 0 ? (
+        {activeContracts?.length > 0 ? (
           activeContracts.map((contract, index) => (
             <div key={index}>
               <DocumentCard data={contract} />
@@ -253,6 +262,7 @@ export default function PMQuotesRequested(props) {
             throw new Error("Network response was not ok");
           } else {
             console.log("Data added successfully");
+            refreshContracts();            
           }
         })
         .catch((error) => {
@@ -261,8 +271,8 @@ export default function PMQuotesRequested(props) {
     } catch (error) {
       console.error(error);
     }
-    setRefresh(!refresh);
-    setTabStatus(1);
+    // setRefresh(!refresh);
+    setTabStatus(1);    
   }
 
   function handleDecline(obj) {
@@ -276,6 +286,7 @@ export default function PMQuotesRequested(props) {
         .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
         .then((response) => {
           console.log("PUT result", response);
+          refreshContracts();
         })
         .catch((error) => {
           console.error("There was a problem with the decline operation:", error);
@@ -283,6 +294,7 @@ export default function PMQuotesRequested(props) {
     } catch (error) {
       console.error(error);
     }
+    
   }
 
   const handleStatusChange = async (obj, status) => {
@@ -295,13 +307,14 @@ export default function PMQuotesRequested(props) {
         .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
         .then((response) => {
           console.log("PUT result", response);
+          refreshContracts();
         })
         .catch((error) => {
           console.error("There was a problem with the status change operation:", error);
         });
     } catch (error) {
       console.error(error);
-    }
+    }    
   };
 
   const viewAllProperties = () => {
@@ -635,7 +648,7 @@ export default function PMQuotesRequested(props) {
                 <Button fullWidth variant='contained'   onClick={() => {
                     handleDecline(newContract);
                     handleDialogClose(); // Optional: Close dialog after rejecting
-                    setRefresh(!refresh); // Optional: Refresh contracts list
+                    // setRefresh(!refresh); // Optional: Refresh contracts list
                   }} sx={{ mb: 2, backgroundColor: "#A52A2A" }}>
              <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Decline</Typography>
              </Button>
@@ -742,9 +755,9 @@ function DocumentCard(props) {
 
       {data !== null ? (
         data.contract_status === "NEW" ? (
-          fees.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
+          fees?.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
         ) : data.contract_fees !== null ? (
-          JSON.parse(data.contract_fees).map((fee, index) => (
+          JSON.parse(data.contract_fees)?.map((fee, index) => (
             <Typography sx={textStyle}>
               <FeesTextCard key={index} fee={fee} />
             </Typography>

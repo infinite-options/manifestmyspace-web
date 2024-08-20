@@ -327,10 +327,42 @@ export default function AddListing(props) {
     console.log("propertyState", propertyState);
   }, [propertyState]);
 
-  const handleBackButton = () => {
-    console.log("handleBackButton");
-    props.setRHS("PropertyNavigator");
-    navigate("/propertiesPM", { state: { isBack: true } });
+  const handleBackButton = async () => {
+    const hasPropertyChanges = propertyData.property_address !== address ||
+      propertyData.property_unit !== unit ||
+      propertyData.property_city !== city ||
+      propertyData.property_state !== propertyState ||
+      propertyData.property_zip !== zip ||
+      propertyData.property_type !== propertyType ||
+      propertyData.property_num_beds !== bedrooms ||
+      propertyData.property_num_baths !== bathrooms ||
+      propertyData.property_area !== squareFootage ||
+      propertyData.property_listed_rent !== rent ||
+      propertyData.property_deposit !== deposit ||
+      propertyData.property_pets_allowed !== (petsAllowed ? 1 : 0) ||
+      propertyData.property_deposit_for_rent !== (depositForRent ? 1 : 0) ||
+      propertyData.property_taxes !== taxes ||
+      propertyData.property_mortgages !== mortgages ||
+      propertyData.property_insurance !== insurance ||
+      propertyData.property_description !== description ||
+      propertyData.property_notes !== notes ||
+      propertyData.property_available_to_rent !== (isListed ? 1 : 0) ||
+      propertyData.property_amenities_community !== communityAmenities ||
+      propertyData.property_amenities_unit !== apartmentAmenities ||
+      propertyData.property_amenities_nearby !== nearbyAmenities ||
+      hasUtilitiesChanges;
+  
+    if (hasPropertyChanges) {
+      const confirmSave = window.confirm("You have unsaved changes. Do you want to save them before leaving?");
+  
+      if (confirmSave) {
+        await saveChanges(true); 
+      } else {
+        navigate("/propertiesPM", { state: { isBack: true } }); 
+      }
+    } else {
+      navigate("/propertiesPM", { state: { isBack: true } }); 
+    }
   };
 
   // const handleSubmit = async (event) => {
@@ -1621,13 +1653,13 @@ export default function AddListing(props) {
               <Grid item xs={12}>
                 {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
                 <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
-                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>
                 </Button>
 
                 <Button variant='outlined' onClick={handleUpdateAndStay} sx={{ width: "100%", backgroundColor: theme.typography.formButton.background, marginTop: "10px" }}>
-                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
                 </Button>
               </Grid>
             </Grid>
