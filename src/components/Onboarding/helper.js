@@ -56,6 +56,21 @@ const formatEIN = (value) => {
   return `${EIN.slice(0, 2)}-${EIN.slice(2,9)}`;
 };
 
+function identifyTaxIdType(taxId) {
+  // SSN Regex: XXX-XX-XXXX
+  const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+  // EIN Regex: XX-XXXXXXX
+  const einRegex = /^\d{2}-\d{7}$/;
+
+  if (ssnRegex.test(taxId)) {
+      return 'SSN';
+  } else if (einRegex.test(taxId)) {
+      return 'EIN';
+  } else {
+      return 'Invalid format';
+  }
+}
+
 const maskNumber = (value) => {
   const len = value.length;
   const mask = "***-**-****";
@@ -113,6 +128,7 @@ export {
   formatPhoneNumber,
   formatSSN,
   formatEIN,
+  identifyTaxIdType,
   headers,
   maskNumber,
   maskEin,

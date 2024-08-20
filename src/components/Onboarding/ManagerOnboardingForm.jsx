@@ -8,7 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, formatSSN, formatEIN, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
   Box,
@@ -71,20 +71,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function identifyTaxIdType(taxId) {
-  // SSN Regex: XXX-XX-XXXX
-  const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
-  // EIN Regex: XX-XXXXXXX
-  const einRegex = /^\d{2}-\d{7}$/;
 
-  if (ssnRegex.test(taxId)) {
-      return 'SSN';
-  } else if (einRegex.test(taxId)) {
-      return 'EIN';
-  } else {
-      return 'Invalid format';
-  }
-}
 
 export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   console.log("In ManagerOnboardingForm  - profileData", profileData);
