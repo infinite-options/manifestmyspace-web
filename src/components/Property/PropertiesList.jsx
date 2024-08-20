@@ -62,7 +62,7 @@ export default function PropertiesList(props) {
   }, [props.LHS, props.allRentStatus, props.index, props.propertyList]);
 
   useEffect(() => {
-    console.log("ROHIT - props.propertyList changed - ", props.propertyList);    
+    console.log("props.propertyList changed - ", props.propertyList);    
   }, [props.propertyList]);
 
   // useEffect(() => {
@@ -74,7 +74,7 @@ export default function PropertiesList(props) {
   // }, [LHS, allRentStatus, displayedItems, propertyIndex, propertyList]);
 
   useEffect(() => {
-    console.log("ROHIT - displayedItems changed - ", displayedItems);
+    console.log("displayedItems changed - ", displayedItems);
     if (LHS === "Rent") {
       onPropertyInRentWidgetClicked(initialPropInRent);
     }

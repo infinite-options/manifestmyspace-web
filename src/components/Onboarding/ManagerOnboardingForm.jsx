@@ -8,7 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, formatSSN, formatEIN, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
   Box,
@@ -57,6 +57,7 @@ import VehiclesOccupant from "../Leases/VehiclesOccupant";
 import Documents from "../Leases/Documents";
 import { add } from "date-fns";
 import { changeSectionValueFormat } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
+import { id } from "date-fns/locale";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,20 +71,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function identifyTaxIdType(taxId) {
-  // SSN Regex: XXX-XX-XXXX
-  const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
-  // EIN Regex: XX-XXXXXXX
-  const einRegex = /^\d{2}-\d{7}$/;
 
-  if (ssnRegex.test(taxId)) {
-      return 'SSN';
-  } else if (einRegex.test(taxId)) {
-      return 'EIN';
-  } else {
-      return 'Invalid format';
-  }
-}
 
 export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   console.log("In ManagerOnboardingForm  - profileData", profileData);
@@ -101,20 +89,12 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   
   const [ taxIDType, setTaxIDType ] = useState("SSN");  
-  useEffect(()=> {
-    console.log("ROHIT - ein - ", ein);
-    console.log("ROHIT - identifyTaxIdType(ein) - ", identifyTaxIdType(ein));
+  useEffect(()=> {    
     if(ein && identifyTaxIdType(ein) === "EIN") setTaxIDType("EIN");
   }, [ein])
 
-  useEffect(()=> {
-    console.log("ROHIT - taxIDType - ", taxIDType);
-    if(taxIDType === "EIN"){
-      setEin(formatEIN(ein));
-    } else {
-      setEin(formatSSN(ein));
-    }
-    
+  useEffect(()=> {        
+    handleTaxIDChange(ein);    
   }, [taxIDType])
 
   const [employeePhoto, setEmployeePhoto] = useState("");
@@ -175,15 +155,15 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   };
 
   useEffect(() => {
-    // console.log("ROHIT - paymentMethods - ", paymentMethods);
+    // console.log("paymentMethods - ", paymentMethods);
   }, [paymentMethods]);
 
   useEffect(() => {
-    // console.log("ROHIT - fees - ", fees);
+    // console.log("fees - ", fees);
   }, [fees]);
 
   useEffect(() => {
-    // console.log("ROHIT - modifiedData - ", modifiedData);
+    // console.log("modifiedData - ", modifiedData);
   }, [modifiedData]);
 
   const updateModifiedData = (updatedItem) => {
@@ -228,17 +208,20 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     updateModifiedData({ key: "business_phone_number", value: formatPhoneNumber(event.target.value) });
   };
 
-  const handleTaxIDChange = (event) => {
-    let value = event.target.value;
-    if (value.length > 11) return;
+  const handleTaxIDChange = (value) => {
+    // let value = event.target.value;
+    if (value?.length > 11) return;
 
+    let updatedTaxID = ""
     if(taxIDType === "EIN"){
-      setEin(formatEIN(value));
+      updatedTaxID = formatEIN(value)      
     } else {
-      setEin(formatSSN(value));
+      updatedTaxID = formatSSN(value)      
     }
-
-    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+    setEin(updatedTaxID);
+    
+    // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
   };
 
   const handleEmpFirstNameChange = (event) => {
@@ -281,7 +264,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const handleEmpSSNChange = (event) => {
     let value = event.target.value;
     if (value.length > 11) return;
-    setEmpSsn(value);
+    setEmpSsn(formatSSN(value));
     updateModifiedData({ key: "employee_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
   };
 
@@ -466,10 +449,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   //   //   )
   //   // );
   //   const list = [...fees];
-  //   console.log("ROHIT - list - ", list);
-  //   console.log("ROHIT - handleFeeChange - name - ", name);
+  //   console.log("list - ", list);
+  //   console.log("handleFeeChange - name - ", name);
   //   list[index][name] = value;
-  //   console.log("ROHIT - list - ", list);
+  //   console.log("list - ", list);
   //   setFees(list);
   // };
 
@@ -731,7 +714,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     const { name, checked } = e.target;
     const map = { ...paymentMethods };
     map[name].checked = checked;
-    console.log("ROHIT - handleChangeChecked - map[name]", map[name]);
+    console.log("handleChangeChecked - map[name]", map[name]);
     // if (name === "bank_account") {
     //   if (!checked) {
     //     map.bank_account.account_number = "";
@@ -837,6 +820,11 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
     if (!DataValidator.ssn_validate(empSsn)) {
       alert("Please enter a valid SSN");
+      return false;
+    }
+
+    if((taxIDType === "EIN" && !DataValidator.ein_validate(ein)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ein))){
+      alert("Please enter a valid Tax ID");
       return false;
     }
 
@@ -1260,7 +1248,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       // value={mask}
                       value={ein}
                       // onChange={(e) => setSsn(e.target.value)}
-                      onChange={handleTaxIDChange}
+                      onChange={(e) => handleTaxIDChange(e.target.value)}
                       variant='filled'
                       placeholder='Enter numbers only'
                       className={classes.root}
