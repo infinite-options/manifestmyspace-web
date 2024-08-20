@@ -141,10 +141,11 @@ export default function PropertiesList(props) {
     const imageArray = JSON.parse(property.property_images);
     if (property.property_favorite_image) {
       const index = imageArray.findIndex((image) => image === property.property_favorite_image);
-      console.log('---index---', index);
       if (index !== -1) {
         return property.property_favorite_image;
-      } else {
+      } else if (imageArray.length !== 0) {
+        return imageArray[0];
+      }else {
         return propertyImage;
       }
     } else if (imageArray.length !== 0) {
