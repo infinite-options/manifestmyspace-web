@@ -545,8 +545,7 @@ function EditProperty(props) {
 		console.log('handleSubmit');
 
 		const changedFields = getChangedFields();
-
-		if (Object.keys(changedFields).length === 0 && imageState.length === 0) {
+		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0) {
 			setHasChanges(false);
 			console.log('No changes detected.');
 			return;
