@@ -170,6 +170,7 @@ export default function AddListing(props) {
 	const [favoriteIcons, setFavoriteIcons] = useState(
     JSON.parse(propertyData.property_images).map(image => image === propertyData.property_favorite_image)
   );
+  const profileId = getProfileId();
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -373,11 +374,13 @@ export default function AddListing(props) {
       if (confirmSave) {
         await saveChanges(true); 
       } else {
-        //navigate("/propertiesPM", { state: { isBack: true } }); 
+        navigate("/propertiesPM", { state: { isBack: true } }); 
+
         onBackClick();
+        
       }
     } else {
-      //navigate("/propertiesPM", { state: { isBack: true } }); 
+      navigate("/propertiesPM", { state: { isBack: true } }); 
       onBackClick();
     }
   };
@@ -956,6 +959,7 @@ export default function AddListing(props) {
         if (navigateAfterSave) {
           refreshProperties();
           showPropertyNavigator();
+        } else {refreshProperties();
         }
       } catch (error) {
         setShowSpinner(false);
