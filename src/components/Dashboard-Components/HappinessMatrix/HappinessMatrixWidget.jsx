@@ -60,9 +60,9 @@ function HappinessMatrixWidget(props) {
 
   useEffect(() => {
     // console.log("In UseEffect: ", happinessData.matrix_data.result);
-    setData(happinessData.matrix_data.result);
+    setData(happinessData?.matrix_data?.result);
 
-    const matrixData = happinessData.matrix_data.result;
+    const matrixData = happinessData?.matrix_data?.result;
 
     const points = [];
     matrixData?.forEach((owner) => {

@@ -159,60 +159,54 @@ function ManagerDashboard() {
     fetchData();
   }, []);
 
-  if (showSpinner) {
-    return (
-      <>
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color='inherit' />
-        </Backdrop>
-        <ShimmerUI />
-      </>
-    );
-  }
+  
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: isMobile ? "column" : "row",
-                justifyContent: isMobile ? "center" : "left",
-                paddingLeft: "10px",
-                paddingRight: "10px",
-                alignText: "center",
-                alignContent: "center",
-              }}
-            >
-              <Typography
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+          <Grid container spacing={6}>
+            <Grid item xs={12}>
+              <Box
                 sx={{
-                  fontSize: { xs: "22px", sm: "28px", md: "32px" },
-                  fontWeight: "600",
+                  display: "flex",
+                  flexDirection: isMobile ? "column" : "row",
+                  justifyContent: isMobile ? "center" : "left",
+                  paddingLeft: "10px",
+                  paddingRight: "10px",
+                  alignText: "center",
+                  alignContent: "center",
                 }}
               >
-                Welcome, {user.first_name}!
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyData={propertyData} />
-          </Grid>
-          <Grid item xs={12} md={9}>
-            <RevenueWidget revenueData={revenueData} />
-            <LeaseWidget leaseData={leaseStatus} />
-            <Grid container item xs={12} spacing={6}>
-              <Grid item xs={12} md={6}>
-                <HappinessMatrixWidget happinessData={happinessData}  page={"ManagerDashBoard"}/>
-              </Grid>
-              <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
-                <MaintenanceWidget maintenanceData={maintenanceStatusData} />
+                <Typography
+                  sx={{
+                    fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                    fontWeight: "600",
+                  }}
+                >
+                  Welcome, {user.first_name}!
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyData={propertyData} />
+            </Grid>
+            <Grid item xs={12} md={9}>
+              <RevenueWidget revenueData={revenueData} />
+              <LeaseWidget leaseData={leaseStatus} />
+              <Grid container item xs={12} spacing={6}>
+                <Grid item xs={12} md={6}>
+                  <HappinessMatrixWidget happinessData={happinessData}  page={"ManagerDashBoard"}/>
+                </Grid>
+                <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
+                  <MaintenanceWidget maintenanceData={maintenanceStatusData} />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </Container>
+        </Container>      
     </ThemeProvider>
   );
 }

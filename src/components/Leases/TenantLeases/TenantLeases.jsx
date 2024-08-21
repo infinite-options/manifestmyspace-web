@@ -59,6 +59,7 @@ function TenantLeases(props) {
   }, [props.property, props.lease]);
 
   useEffect(() => {
+    setShowSpinner(true);
     // console.log("property", property);
     // console.log("status", status);
     console.log("lease", lease);
@@ -103,6 +104,7 @@ function TenantLeases(props) {
     }
 
     fetchData();
+    setShowSpinner(false);
   }, []);
 
   const CenteringBox = ({ children, flexDirection = "column", justifyContent = "flex-start" }) => (
@@ -185,7 +187,7 @@ function TenantLeases(props) {
 
       }
     };
-    
+
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
@@ -360,10 +362,6 @@ function TenantLeases(props) {
           padding: "10px",
         }}
       >
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-
         <Grid container>
           <Grid item xs={11}>
             <Box
@@ -387,7 +385,15 @@ function TenantLeases(props) {
           </Grid>
           <Grid item xs={1}>
             <Button
-              onClick={() => props.setRightPane({ type: "listings" })}
+              onClick={() => {
+                if (props.from && props.from === "accwidget") {
+                  props.setRightPane("");
+                } else {
+                  props.setRightPane({ type: "listings" });
+                }
+              }
+              }
+
               sx={{
                 textTransform: "none",
                 textDecoration: "underline",
@@ -763,7 +769,7 @@ function TenantLeases(props) {
                     width: "150px",
                     fontSize: "14px",
                     fontWeight: "700",
-                    color: "#160449",
+                    color: "#FFFFFF",
                     textTransform: "none",
                   }}
                   onClick={() => handleTenantRefuse()}
@@ -786,7 +792,7 @@ function TenantLeases(props) {
                     width: "150px",
                     fontSize: "14px",
                     fontWeight: "600",
-                    color: "#160449",
+                    color: "#FFFFFF",
                     textTransform: "none",
                   }}
                   onClick={() => handleTenantAccept()}

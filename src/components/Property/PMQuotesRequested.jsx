@@ -25,6 +25,8 @@ import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { makeStyles } from "@material-ui/core/styles";
+import Backdrop from "@mui/material/Backdrop";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -331,6 +333,10 @@ export default function PMQuotesRequested(props) {
 
   return (
     <ThemeProvider theme={theme}>
+      {loading ? (
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color='inherit' />
+        </Backdrop> ) :(
       <Box
         sx={{
           display: "flex",
@@ -491,7 +497,7 @@ export default function PMQuotesRequested(props) {
             </Box>
           </Stack>
         </Paper>
-      </Box>
+      </Box>)}
 
       <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
         <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", color: theme.typography.common.blue }}>

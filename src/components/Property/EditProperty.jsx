@@ -545,8 +545,7 @@ function EditProperty(props) {
 		console.log('handleSubmit');
 
 		const changedFields = getChangedFields();
-
-		if (Object.keys(changedFields).length === 0 && imageState.length === 0) {
+		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0) {
 			setHasChanges(false);
 			console.log('No changes detected.');
 			return;
@@ -722,10 +721,9 @@ function EditProperty(props) {
 					return property;
 				}
 			});			
-			//console.log('---index---', index);
-			console.log('updatedPropertyList - ', newPropertyList);
 			setPropertyData(newPropertyList[index]);
 			setPropertyList(newPropertyList) // props.setPropertyList - setting propertyList in parent
+			return newPropertyList[index];
 		};
 
 		putData();
@@ -737,9 +735,11 @@ function EditProperty(props) {
 
 		try {
 			await Promise.all(promises);
-			console.log('All Changes saved to the Database', promises);
-			await autoUpdate();
-
+			//console.log('All Changes saved to the Database', promises);
+			const updatedPropertyData = await autoUpdate();
+			setDeletedIcons(new Array(JSON.parse(updatedPropertyData.property_images).length).fill(false));
+			setFavoriteIcons(JSON.parse(updatedPropertyData.property_images).map(image => image === updatedPropertyData.property_favorite_image));
+			
 			if (stayOnPage) {
 				console.log('STAY ON PAGE', stayOnPage);
 				// setCookie("user_data", { ...cookiesData, index }, { path: "/" });
@@ -1351,7 +1351,7 @@ function EditProperty(props) {
 							>
 								<Typography
 									sx={{
-										color: 'black',
+										color: '#FFFFFF',
 										fontWeight: theme.typography.primary.fontWeight,
 										fontSize: theme.typography.mediumFont,
 									}}

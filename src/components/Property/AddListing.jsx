@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Typography,
@@ -50,6 +50,12 @@ import UtilitySelection from "../UtilitySelector";
 import { DragHandleOutlined } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+
 import APIConfig from "../../utils/APIConfig";
 
 export default function AddListing(props) {
@@ -57,7 +63,7 @@ export default function AddListing(props) {
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  let { index, propertyList, page } = props;
+  let { index, propertyList, page, onBackClick } = props;
   const refreshProperties = props.refreshProperties;
   const showPropertyNavigator = props.showPropertyNavigator;
   // const propertyData = location.state.item;
@@ -157,6 +163,11 @@ export default function AddListing(props) {
   const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
   const [changedSaved, setChangedSaved] = useState(false);
 
+  const [imageState, setImageState] = useState([]);
+  const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
+  const [deletedIcons, setDeletedIcons] = useState(new Array(JSON.parse(propertyData.property_images).length).fill(false));
+  const [favoriteIcons, setFavoriteIcons] = useState(JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image));
+  const profileId = getProfileId();
 
   useEffect(() => {
     console.log("deletedImageList - ", deletedImageList);
@@ -242,7 +253,7 @@ export default function AddListing(props) {
       setMappedUtilitiesPaidBy(defaultUtilities);
       setIsDefaultUtilities(true);
     }
-    loadImages();
+    //loadImages();
     console.log("************************************************AddListing useEffect***********************************");
   }, []);
 
@@ -331,11 +342,12 @@ export default function AddListing(props) {
 
   const handleBackButton = async () => {
     if (changedSaved) {
-      window.location.reload(); 
+      window.location.reload();
       return;
     }
 
-    const hasPropertyChanges = propertyData.property_address !== address ||
+    const hasPropertyChanges =
+      propertyData.property_address !== address ||
       propertyData.property_unit !== unit ||
       propertyData.property_city !== city ||
       propertyData.property_state !== propertyState ||
@@ -358,18 +370,20 @@ export default function AddListing(props) {
       propertyData.property_amenities_unit !== apartmentAmenities ||
       propertyData.property_amenities_nearby !== nearbyAmenities ||
       hasUtilitiesChanges;
-  
+
     if (hasPropertyChanges) {
       const confirmSave = window.confirm("You have unsaved changes. Do you want to save them before leaving?");
-  
+
       if (confirmSave) {
-        saveChanges(true); 
+        saveChanges(true);
       } else {
-        navigate("/propertiesPM", { state: { isBack: true } }); 
+        navigate("/propertiesPM", { state: { isBack: true } });
+
+        onBackClick();
       }
     } else {
-      console.log("going back")
-      window.location.reload();
+      navigate("/propertiesPM", { state: { isBack: true } });
+      onBackClick();
     }
   };
 
@@ -873,6 +887,39 @@ export default function AddListing(props) {
       hasPropertyChanges = true;
     }
 
+    if (imagesTobeDeleted.length > 0) {
+      let updatedImages = JSON.parse(propertyData.property_images);
+      updatedImages = updatedImages.filter((image) => !imagesTobeDeleted.includes(image));
+      propertyData.property_images = JSON.stringify(updatedImages);
+      formData.append("delete_images", JSON.stringify(imagesTobeDeleted));
+      hasPropertyChanges = true;
+    }
+    //console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
+    formData.append("property_images", propertyData.property_images);
+    if (favImage !== propertyData.property_favorite_image) {
+      formData.append("property_favorite_image", favImage);
+      hasPropertyChanges = true;
+    }
+    // const files = imageState;
+    let i = 0;
+    for (const file of imageState) {
+      // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+      let key = `img_${i++}`;
+      if (file.file !== null) {
+        // newProperty[key] = file.file;
+        formData.append(key, file.file);
+        hasPropertyChanges = true;
+      } else {
+        // newProperty[key] = file.image;
+        formData.append(key, file.image);
+        hasPropertyChanges = true;
+      }
+      if (file.coverPhoto) {
+        formData.set("property_favorite_image", key);
+        hasPropertyChanges = true;
+      }
+    }
+
     const putUtilitiesData = async () => {
       if (hasUtilitiesChanges) {
         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
@@ -913,6 +960,8 @@ export default function AddListing(props) {
         if (navigateAfterSave) {
           refreshProperties();
           showPropertyNavigator();
+        } else {
+          refreshProperties();
         }
         setChangedSaved(true);
       } catch (error) {
@@ -988,6 +1037,65 @@ export default function AddListing(props) {
     });
   };
 
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollPosition;
+    }
+  }, [scrollPosition]);
+
+  const handleScroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = 200;
+      setScrollPosition((prevScrollPosition) => {
+        const currentScrollPosition = scrollRef.current.scrollLeft;
+        let newScrollPosition;
+
+        if (direction === "left") {
+          newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+        } else {
+          newScrollPosition = currentScrollPosition + scrollAmount;
+        }
+
+        return newScrollPosition;
+      });
+    }
+  };
+
+  const handleDelete = (index) => {
+    const updatedDeletedIcons = [...deletedIcons];
+    updatedDeletedIcons[index] = !updatedDeletedIcons[index];
+    setDeletedIcons(updatedDeletedIcons);
+
+    const imageToDelete = JSON.parse(propertyData.property_images)[index];
+    setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
+
+    console.log("Delete image at index:", JSON.stringify(deletedIcons));
+  };
+
+  const handleFavorite = (index) => {
+    const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
+    updatedFavoriteIcons[index] = true;
+    setFavoriteIcons(updatedFavoriteIcons);
+
+    const newFavImage = JSON.parse(propertyData.property_images)[index];
+    setFavImage(newFavImage);
+    setSelectedImageList((prevState) =>
+      prevState.map((file, i) => ({
+        ...file,
+        coverPhoto: i === index,
+      }))
+    );
+
+    console.log(`Favorite image at index: ${index}`);
+  };
+
+  const handleUpdateFavoriteIcons = () => {
+    setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -1033,251 +1141,314 @@ export default function AddListing(props) {
             </Box>
           </Stack>
 
-          <Stack direction='column' justifyContent='center' alignItems='center' padding='25px'>
-            <Box component='form' onSubmit={handleSubmit} noValidate autoComplete='off' id='editPropertyForm'>
-              <Grid container columnSpacing={12} rowSpacing={6}>
-                {/* Select Field for Property */}
-                <Grid item xs={12}>
-                  <div
-                    style={{
+          <Box component='form' onSubmit={handleSubmit} noValidate autoComplete='off' id='editPropertyForm'>
+            <Grid container columnSpacing={12} rowSpacing={6}>
+              {/* Select Field for Property */}
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 2,
+                  }}
+                >
+                  <IconButton onClick={() => handleScroll("left")} disabled={scrollPosition === 0}>
+                    <ArrowBackIosIcon />
+                  </IconButton>
+                  <Box
+                    sx={{
                       display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
+                      overflowX: "auto",
+                      scrollbarWidth: "none",
+                      msOverflowStyle: "none",
+                      "&::-webkit-scrollbar": {
+                        display: "none",
+                      },
                     }}
                   >
-                    <Button size='small' onClick={handleBack} disabled={activeStep === 0}>
-                      {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                    </Button>
-                    <CardMedia
-                      component='img'
-                      image={selectedImageList[activeStep] ? selectedImageList[activeStep].image : defaultHouseImage}
-                      // image={coverImage}
+                    <Box
                       sx={{
-                        elevation: "0",
-                        boxShadow: "none",
-                        maxWidth: "150px",
-                        minWidth: "150px",
-                        maxHeight: "150px",
-                        minHeight: "150px",
-                        height: "150px",
-                        objectFit: "cover",
-                        center: "true",
-                        alignContent: "center",
-                        justifyContent: "center",
+                        display: "flex",
+                        overflowX: "auto",
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                        "&::-webkit-scrollbar": {
+                          display: "none",
+                        },
                       }}
-                    />
-                    <Button size='small' onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                      {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                    </Button>
-                  </div>
-                </Grid>
-
-                <Grid item xs={12}>
-                  <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} setDeletedImageList={setDeletedImageList} page={"Edit"} />
-                </Grid>
-
-                {/* Text Field for Title */}
-                <Grid item xs={12}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                    Address
-                  </Typography>
-                  <TextField
-                    onChange={(e) => setAddress(e.target.value)}
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    placeholder={address}
-                    value={address}
-                    size='small'
-                    fullWidth
-                  />
-                </Grid>
-
-                {/* Select Field for Issue and Cost Estimate */}
-                <Grid item xs={6}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Unit</Typography>
-                  <TextField
-                    onChange={(e) => setUnit(e.target.value)}
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    placeholder={unit}
-                    value={unit}
-                    size='small'
-                    fullWidth
-                  />
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>City</Typography>
-                  <TextField
-                    onChange={(e) => setCity(e.target.value)}
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    fullWidth
-                    placeholder={propertyData.property_city}
-                    value={city}
-                  />
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                    State
-                  </Typography>
-                  <Select
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    fullWidth
-                    onChange={(e) => setPropertyState(e.target.value)}
-                    value={propertyState}
-                    renderValue={(value) => (value ? `${value}` : "")}
-                  >
-                    {/* <StateMenuItems /> */}
-                    {statesList.map((item) => {
-                      return (
-                        <MenuItem value={item}>
-                          <li>{item}</li>
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                    Zip Code
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    onChange={(e) => setZip(e.target.value)}
-                    value={zip}
-                  />
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Type</Typography>
-                  <Select
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    fullWidth
-                    onChange={(e) => setPropertyType(e.target.value)}
-                    value={propertyType}
-                  >
-                    <MenuItem value={"Single Family"}>Single Family</MenuItem>
-                    <MenuItem value={"Multi Family"}>Multi Family</MenuItem>
-                    <MenuItem value={"Condo"}>Condo</MenuItem>
-                    <MenuItem value={"Apartment"}>Apartment</MenuItem>
-                    <MenuItem value={"Tiny Home"}>Tiny Home</MenuItem>
-                  </Select>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                    Square Footage
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    placeholder={squareFootage}
-                    onChange={(e) => setSquareFootage(e.target.value)}
-                    value={squareFootage}
-                  />
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                    Bedrooms
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    placeholder={bedrooms}
-                    onChange={(e) => setBedrooms(e.target.value)}
-                    value={bedrooms}
-                  />
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                    Bathrooms
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    placeholder={bathrooms}
-                    onChange={(e) => setBathrooms(e.target.value)}
-                    value={bathrooms}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                    Owner Notes
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    multiline={true}
-                    placeholder={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    value={notes}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  {selectedRole === "MANAGER" || selectedRole === "OWNER" ? (
-                    <Stack direction='column' justifyContent='left' padding='15px' width='85%'>
-                      <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label='Available to rent' />
-                    </Stack>
-                  ) : (
-                    <div></div>
-                  )}
-                </Grid>
+                    >
+                      <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
+                        {JSON.parse(propertyData.property_images)?.map((image, index) => (
+                          <ImageListItem
+                            key={index}
+                            sx={{
+                              width: "auto",
+                              flex: "0 0 auto",
+                              border: "1px solid #ccc",
+                              margin: "0 2px",
+                              position: "relative", // Added to position icons
+                            }}
+                          >
+                            <img
+                              src={image}
+                              alt={`maintenance-${index}`}
+                              style={{
+                                height: "150px",
+                                width: "150px",
+                                objectFit: "cover",
+                              }}
+                            />
+                            <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                              <IconButton
+                                onClick={() => handleDelete(index)}
+                                sx={{
+                                  color: deletedIcons[index] ? "red" : "black",
+                                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                  "&:hover": {
+                                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                  },
+                                  margin: "2px",
+                                }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                            <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
+                              <IconButton
+                                onClick={() => handleFavorite(index)}
+                                sx={{
+                                  color: favoriteIcons[index] ? "red" : "black",
+                                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                  "&:hover": {
+                                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                  },
+                                  margin: "2px",
+                                }}
+                              >
+                                {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                              </IconButton>
+                            </Box>
+                          </ImageListItem>
+                        ))}
+                      </ImageList>
+                    </Box>
+                  </Box>
+                  <IconButton onClick={() => handleScroll("right")}>
+                    <ArrowForwardIosIcon />
+                  </IconButton>
+                </Box>
               </Grid>
-            </Box>
-          </Stack>
+
+              <Grid item xs={12}>
+                <ImageUploader
+                  selectedImageList={imageState}
+                  setSelectedImageList={setImageState}
+                  setDeletedImageList={setDeletedImageList}
+                  page={"Edit"}
+                  setFavImage={setFavImage}
+                  favImage={favImage}
+                  updateFavoriteIcons={handleUpdateFavoriteIcons}
+                />
+              </Grid>
+
+              {/* Text Field for Title */}
+              <Grid item xs={12}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  Address
+                </Typography>
+                <TextField
+                  onChange={(e) => setAddress(e.target.value)}
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  placeholder={address}
+                  value={address}
+                  size='small'
+                  fullWidth
+                />
+              </Grid>
+
+              {/* Select Field for Issue and Cost Estimate */}
+              <Grid item xs={6}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Unit</Typography>
+                <TextField
+                  onChange={(e) => setUnit(e.target.value)}
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  placeholder={unit}
+                  value={unit}
+                  size='small'
+                  fullWidth
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>City</Typography>
+                <TextField
+                  onChange={(e) => setCity(e.target.value)}
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  size='small'
+                  fullWidth
+                  placeholder={propertyData.property_city}
+                  value={city}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>State</Typography>
+                <Select
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  size='small'
+                  fullWidth
+                  onChange={(e) => setPropertyState(e.target.value)}
+                  value={propertyState}
+                  renderValue={(value) => (value ? `${value}` : "")}
+                >
+                  {/* <StateMenuItems /> */}
+                  {statesList.map((item) => {
+                    return (
+                      <MenuItem value={item}>
+                        <li>{item}</li>
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  Zip Code
+                </Typography>
+                <TextField
+                  fullWidth
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  size='small'
+                  onChange={(e) => setZip(e.target.value)}
+                  value={zip}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Type</Typography>
+                <Select
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  size='small'
+                  fullWidth
+                  onChange={(e) => setPropertyType(e.target.value)}
+                  value={propertyType}
+                >
+                  <MenuItem value={"Single Family"}>Single Family</MenuItem>
+                  <MenuItem value={"Multi Family"}>Multi Family</MenuItem>
+                  <MenuItem value={"Condo"}>Condo</MenuItem>
+                  <MenuItem value={"Apartment"}>Apartment</MenuItem>
+                  <MenuItem value={"Tiny Home"}>Tiny Home</MenuItem>
+                </Select>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  Square Footage
+                </Typography>
+                <TextField
+                  fullWidth
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  size='small'
+                  placeholder={squareFootage}
+                  onChange={(e) => setSquareFootage(e.target.value)}
+                  value={squareFootage}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  Bedrooms
+                </Typography>
+                <TextField
+                  fullWidth
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  size='small'
+                  placeholder={bedrooms}
+                  onChange={(e) => setBedrooms(e.target.value)}
+                  value={bedrooms}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  Bathrooms
+                </Typography>
+                <TextField
+                  fullWidth
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  size='small'
+                  placeholder={bathrooms}
+                  onChange={(e) => setBathrooms(e.target.value)}
+                  value={bathrooms}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  Owner Notes
+                </Typography>
+                <TextField
+                  fullWidth
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "black",
+                    borderRadius: "7px",
+                  }}
+                  size='small'
+                  multiline={true}
+                  placeholder={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  value={notes}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                {selectedRole === "MANAGER" || selectedRole === "OWNER" ? (
+                  <Stack direction='column' justifyContent='left' padding='15px' width='85%'>
+                    <FormControlLabel control={<Checkbox checked={isListed} onChange={handleListedChange} />} label='Available to rent' />
+                  </Stack>
+                ) : (
+                  <div></div>
+                )}
+              </Grid>
+            </Grid>
+          </Box>
         </Paper>
 
         <Paper
@@ -1664,13 +1835,13 @@ export default function AddListing(props) {
               <Grid item xs={12}>
                 {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
                 <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
-                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>
                 </Button>
 
                 <Button variant='outlined' onClick={handleUpdateAndStay} sx={{ width: "100%", backgroundColor: theme.typography.formButton.background, marginTop: "10px" }}>
-                  <Typography sx={{ color: "black", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
                 </Button>
               </Grid>
             </Grid>

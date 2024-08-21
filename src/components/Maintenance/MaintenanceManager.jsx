@@ -69,14 +69,18 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
     const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
     // const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000003`);
     const maintenanceRequestsData = await maintenanceRequests.json();
-
-    let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items;
-    let array2 = dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items);
-    let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"].maintenance_items;
-    let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items;
-    let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items;
-    console.log("----inside manager---", array5);
-    let array6 = maintenanceRequestsData.result["PAID"].maintenance_items;
+    //console.log('---maintenanceRequestsData before dedupQuotes---', maintenanceRequestsData);
+    let array1 = maintenanceRequestsData.result["NEW REQUEST"]?.maintenance_items;
+    let array2 = 
+  Array.isArray(maintenanceRequestsData.result["QUOTES REQUESTED"]?.maintenance_items) &&
+  maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items.length > 0
+    ? dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items)
+    : [];
+    let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"]?.maintenance_items || [];
+let array4 = maintenanceRequestsData.result["SCHEDULED"]?.maintenance_items;
+    let array5 = maintenanceRequestsData.result["COMPLETED"]?.maintenance_items;
+    //console.log("----inside manager---", array5);
+    let array6 = maintenanceRequestsData.result["PAID"]?.maintenance_items || [];
 
     dataObject["NEW REQUEST"] = [];
     dataObject["QUOTES REQUESTED"] = [];

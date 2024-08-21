@@ -188,16 +188,16 @@ function UserLogin() {
         </Box>
 
         <Paper
-          style={{
+          sx={{
             padding: theme.spacing(2),
             backgroundColor: theme.palette.primary.main,
             width: "85%", // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
+            // [theme.breakpoints.down("sm")]: {
+            //   width: "80%",
+            // },
+            // [theme.breakpoints.up("sm")]: {
+            //   width: "50%",
+            // },
           }}
         >
           <Box component="span" display="flex" justifyContent="center" position="relative" flexDirection="column">

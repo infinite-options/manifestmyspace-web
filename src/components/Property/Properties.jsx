@@ -69,15 +69,18 @@ function Properties() {
   const [ currentProperty, setCurrentProperty ] = useState(location?.state?.currentProperty? location?.state?.currentProperty : null);
 
   useEffect(() => {
+    setShowSpinner(true);
     console.log("ROHIT - currentProperty - ", currentProperty);
     if(currentProperty){
       setPropertyTo(currentProperty);
     }
+    setShowSpinner(false)
   }, [currentProperty, propertyList]);
   
 
 
   useEffect(() => {
+    setShowSpinner(true)
     console.log("ROHIT - returnIndex - ", returnIndex);
     
     const properties = rawPropertyData?.Property?.result;
@@ -94,6 +97,7 @@ function Properties() {
       console.log("---inside prop nav state---", state);
       setManagerDetailsState(state);
     }
+    setShowSpinner(false)
   }, [returnIndex]);
 
   // For propertyRentWidget to show filtered vacant properties
@@ -139,6 +143,7 @@ function Properties() {
     // console.log("Properties - managersList - ", managersList);
   }, [managersList]);
 
+ 
   // LHS , RHS
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
@@ -170,9 +175,10 @@ function Properties() {
 
   // ENDPOINT CALLS IN PROPERTIES
   useEffect(() => {
+    setShowSpinner(true);
     // console.log("In Properties Endpoint Call");
     const fetchData = async () => {
-      setShowSpinner(true);
+     
 
       // PROPERTIES ENDPOINT
       const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
@@ -222,9 +228,11 @@ function Properties() {
       navigate(location.pathname, { replace: true, state: {} });
     };
     fetchData();
-    setShowSpinner(false);
+    
     setReloadPropertyList(false)
-
+    setTimeout(() => {
+      setShowSpinner(false);
+    }, 2000); 
   }, [reloadPropertyList]);
 
   function setPropertyTo(newPropertyUid){
@@ -448,6 +456,11 @@ function Properties() {
 
   return (
     <ThemeProvider theme={theme}>
+       {showSpinner ? (
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ) : (
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
@@ -575,7 +588,8 @@ function Properties() {
                 index={returnIndex}
                 page={page}
                 propertyId={propertyList[returnIndex]?.property_uid} 
-                setRHS={setRHS} 
+                onBackClick={handleBackClick}
+                setRHS={setRHS}     
                 refreshProperties={refreshProperties}  
                 showPropertyNavigator={updateNavPage}
               />
@@ -594,7 +608,7 @@ function Properties() {
             )}
           </Grid>
         </Grid>
-      </Container>
+      </Container> )}
     </ThemeProvider>
   );
 }
