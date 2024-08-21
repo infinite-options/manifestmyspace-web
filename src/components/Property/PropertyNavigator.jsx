@@ -1200,7 +1200,7 @@ export default function PropertyNavigator({
         if (tenant_detail === "No Tenant") {
           console.log("There is no tenant");
         } else {
-          navigate("/PMContacts", {
+          navigate("/ContactsPM", {
             state: {
               contactsTab: "Tenant",
               tenantId: tenantId,
@@ -1214,7 +1214,7 @@ export default function PropertyNavigator({
       }
       else {
         console.log("For owner");
-        navigate("/ownerContacts");
+        navigate("/ContactsPM");
       }
     }
   };
