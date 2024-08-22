@@ -195,18 +195,18 @@ const AddRevenue = (props) => {
           }}
         >
           <Paper
-            style={{
+            sx={{
               // margin: "30px",
               padding: 20,
               // backgroundColor: theme.palette.primary.main,
               backgroundColor: theme.palette.custom.yellow,
               width: "85%", // Occupy full width with 25px margins on each side
-              [theme.breakpoints.down("sm")]: {
-                width: "80%",
-              },
-              [theme.breakpoints.up("sm")]: {
-                width: "50%",
-              },
+              // [theme.breakpoints.down("sm")]: {
+              //   width: "80%",
+              // },
+              // [theme.breakpoints.up("sm")]: {
+              //   width: "50%",
+              // },
             }}
           >
             <IconButton

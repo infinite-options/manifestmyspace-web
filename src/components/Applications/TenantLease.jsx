@@ -1025,7 +1025,7 @@ const TenantLease = () => {
                     {(row.frequency === "Monthly" || row.frequency === "One-time" || row.frequency === "Annually") && (
                       <TextField
                         name='available_topay'
-                        value={row.available_topay}
+                        value={row.available_topay !== null ? row.available_topay : ""}
                         variant='filled'
                         fullWidth
                         className={classes.root}

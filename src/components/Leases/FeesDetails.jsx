@@ -738,7 +738,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                         />
                                     </Grid>
 
-                                    <Grid md={6} />
+                                    <Grid item md={6} />
 
                                     <Grid item md={2} sx={{ display: 'flex', alignItems: 'center', }}>
                                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>

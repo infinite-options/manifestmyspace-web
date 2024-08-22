@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newStartDate, newEndDate }) => {
     const color = theme.palette.form.main;
     //image slider
-    const [image, setImage] = useState([]);
+    const [image, setImage] = useState("");
     const [open, setOpen] = useState(false);
     const [startDate, setStartDate] = useState(newStartDate);
     const [endDate, setEndDate] = useState(newEndDate);

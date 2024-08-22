@@ -229,6 +229,7 @@ export default function Cashflow() {
           <Grid container item xs={12} md={8} columnSpacing={6}>
             {currentWindow === "CASHFLOW_DETAILS" && (
               <CashflowDetails
+                uid={revenueByType ? revenueByType : expenseByType}
                 month={month}
                 setMonth={setMonth}
                 year={year}
@@ -259,6 +260,7 @@ export default function Cashflow() {
 }
 
 const CashflowDetails = ({
+  uid,
   month,
   setMonth,
   year,
@@ -301,7 +303,7 @@ const CashflowDetails = ({
         }}
       >
         <Paper
-          style={{
+          sx={{
             // marginTop: "30px",
             padding: theme.spacing(2),
             backgroundColor: activeButton === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
@@ -513,6 +515,7 @@ const CashflowDetails = ({
             <AccordionDetails>
               {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
               <StatementTable
+                uid={uid}
                 categoryTotalMapping={revenueByType}
                 allItems={revenueList}
                 activeView={"ExpectedCashflow"}
@@ -523,6 +526,8 @@ const CashflowDetails = ({
               />
             </AccordionDetails>
           </Accordion>
+
+          {/* For expense */}
           <Accordion
             sx={{
               backgroundColor: theme.palette.primary.main,
@@ -599,7 +604,7 @@ const CashflowDetails = ({
         </Paper>
 
         <Paper
-          style={{
+          sx={{
             margin: "2px",
             padding: theme.spacing(2),
             boxShadow: "none",
@@ -719,7 +724,7 @@ function SelectMonthComponentTest(props) {
 
 // This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
-  console.log("In Statement Table: ", props);
+  console.log(props)
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -755,6 +760,7 @@ function StatementTable(props) {
     let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
 
+
     // console.log("getCategoryItems", items)
     var key = "total_paid";
     if (activeView === "Cashflow") {
@@ -762,6 +768,7 @@ function StatementTable(props) {
     } else {
       key = "pur_amount_due";
     }
+
     return (
       <>
         {items.map((item, index) => {
@@ -792,82 +799,7 @@ function StatementTable(props) {
               </TableCell> */}
             </TableRow>
           ) : (
-            //   <>
-            //   <Accordion
-            //       sx={{
-            //         backgroundColor: theme.palette.custom.pink,
-            //         boxShadow: "none",
-            //       }}
-            //       key={category}
-            //     >
-            //       <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-            //         <TableRow key={index}>
-            //           <TableCell>{item.purchase_uid}</TableCell>
-            //           <TableCell>{item.pur_property_id}</TableCell>
-            //           <TableCell>{item.pur_payer}</TableCell>
-            //           <TableCell>
-            //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //               {" "}
-            //               {item.property_address} {item.property_unit}{" "}
-            //             </Typography>
-            //           </TableCell>
-            //           <TableCell>{item.pur_notes}</TableCell>
-            //           <TableCell>{item.pur_description}</TableCell>
-            //           <TableCell>
-            //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //               ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
-            //             </Typography>
-            //           </TableCell>
-            //           <TableCell>
-            //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //               ${item["total_paid"] ? item["total_paid"] : 0}
-            //             </Typography>
-            //           </TableCell>
-            //           {/* <TableCell align="right">
-            //             <EditIcon />
-            //           </TableCell> */}
-            //         </TableRow>
-            //       </AccordionSummary>
-            //       <AccordionDetails>
-            //           {
-            //             item?.property?.map( property => {
-            //               return (
-            //                 <TableRow>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       {property.property_uid}
-            //                     </Typography>
-            //                   </TableCell>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       {property.property_address}
-            //                     </Typography>
-            //                   </TableCell>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       {property.property_unit}
-            //                     </Typography>
-            //                   </TableCell>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       ${property.individual_purchase[0]?.pur_amount_due? property.individual_purchase[0]?.pur_amount_due : 0}
-            //                     </Typography>
-            //                   </TableCell>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       ${property.individual_purchase[0]?.total_paid? property.individual_purchase[0]?.total_paid : 0}
-            //                     </Typography>
-            //                   </TableCell>
-
-            //                 </TableRow>
-            //               );
-            //             })
-            //           }
-            //       </AccordionDetails>
-            //     </Accordion>
-
-            // </>
-            <>
+            <React.Fragment key={index}>
               <TableRow>
                 <TableCell>
                   <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: "25px" }}>Property UID</Typography>
@@ -886,9 +818,9 @@ function StatementTable(props) {
                 </TableCell>
               </TableRow>
 
-              {item?.property?.map((property) => {
+              {item?.property?.map((property, index) => {
                 return (
-                  <TableRow sx={{}}>
+                  <TableRow key={property.property_uid} sx={{}}>
                     <TableCell>
                       <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{property.property_uid}</Typography>
                     </TableCell>
@@ -911,7 +843,7 @@ function StatementTable(props) {
                   </TableRow>
                 );
               })}
-            </>
+            </React.Fragment>
           );
         })}
       </>

@@ -2602,7 +2602,7 @@ export default function PropertyNavigator({
                             }}
                           >
                             <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
-                              {currentApplRow.appliance_images?.map((image, index) => (
+                              {currentApplRow.appliance_images ? currentApplRow.appliance_images.map((image, index) => (
                                 <ImageListItem
                                   key={index}
                                   sx={{
@@ -2653,7 +2653,10 @@ export default function PropertyNavigator({
                                     </IconButton>
                                   </Box>
                                 </ImageListItem>
-                              ))}
+                              )) : (
+                                <>
+                                </>
+                              )}
                             </ImageList>
                           </Box>
                         </Box>
