@@ -116,8 +116,8 @@ const ViewManagementContract = (props) => {
   useEffect(() => {
     const index = props.index;
     setIndex(index);
-    // console.log("ROHIT - propertyList - ", propertyList);
-    // console.log("ROHIT - index - ", index);
+    // console.log("propertyList - ", propertyList);
+    // console.log("index - ", index);
 
     const contractFees = propertyList[index]?.contract_fees ? JSON.parse(propertyList[index]?.contract_fees) : [];
     setContractFees(contractFees);

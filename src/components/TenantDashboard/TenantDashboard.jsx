@@ -333,6 +333,7 @@ function TenantDashboard(props) {
 
   const renderRightPane = () => {
     console.log("---rightPane.type---", rightPane.type);
+    console.log("336 - rightPane.state - ", rightPane.state);
     switch (rightPane.type) {
       case "listings":
         return <PropertyListings setRightPane={setRightPane} />;
@@ -1111,7 +1112,7 @@ const AccountBalanceWidget = ({
     setPropertyId(item.property_uid);
     setTotal(item.balance);
     setSelectedProperty(item);
-    const lease = propertyData.find((lease) => lease.lease_uid === item.lease_uid);
+    const lease = propertyData.find((lease) => lease.lease_uid === item.lease_uid);    
     setSelectedLease(lease);
     if (rightPane == "viewlease") {
       if (item.lease_status === 'REFUSED' || item.lease_status === 'WITHDRAWN' || item.lease_status === 'NEW' ||

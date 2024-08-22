@@ -26,7 +26,8 @@ function formattedPhoneNumber(phoneNumber) {
 
     if (phoneNumber.length !== 10) {
         console.error('Invalid Phone Number Length');
-        return '<PHONE_NUMBER> - invalid length';
+        // return '<PHONE_NUMBER> - invalid length';
+        return phoneNumber;
     }
 
     return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
