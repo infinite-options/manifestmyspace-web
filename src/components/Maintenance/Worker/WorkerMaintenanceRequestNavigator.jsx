@@ -24,7 +24,7 @@ async function getInitialImages(requestData, currentIndex) {
 }
 
 export default function WorkerMaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
-  console.log('----inside WorkerMaintenanceRequestNavigator----');
+  //console.log('----inside WorkerMaintenanceRequestNavigator----');
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
@@ -201,7 +201,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
               >
                 <CardMedia
                   component="img"
-                  image={images[activeStep]}
+                  image={[...images, ...JSON.parse(data.quote_maintenance_images)][activeStep]}
                   sx={{
                     elevation: "0",
                     boxShadow: "none",
@@ -218,7 +218,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 />
               </div>
               <MobileStepper
-                steps={maxSteps}
+                steps={maxSteps + JSON.parse(data.quote_maintenance_images).length}
                 position="static"
                 activeStep={activeStep}
                 variant="text"
@@ -233,7 +233,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                   boxShadow: "none",
                 }}
                 nextButton={
-                  <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1} 
+                  <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps + JSON.parse(data.quote_maintenance_images).length - 1} 
                     sx={{color: "white"}}
                   > 
                     <KeyboardArrowRight sx={{color: "white"}} />

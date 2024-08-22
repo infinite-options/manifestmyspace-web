@@ -154,14 +154,10 @@ export default function QuoteRequestForm() {
 			for (let i = 0; i < selectedImageList.length; i++) {
 				try {
 					let key = i === 0 ? 'img_cover' : `img_${i - 1}`;
-					console.log('uploading images, image key: ', key);
-					if (selectedImageList[i]?.image?.startsWith('data:image')) {
-						const imageBlob = dataURItoBlob(selectedImageList[i]);
-						formData.append(key, imageBlob);
-					} else {
-						formData.append(key, selectedImageList[i]);
+					//console.log('uploading images, image key: ', key, selectedImageList[i]);
+						formData.append(key, selectedImageList[i].file);
 					}
-				} catch (error) {
+				catch (error) {
 					console.log('Error uploading images', error);
 				}
 			}
