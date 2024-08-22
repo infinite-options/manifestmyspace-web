@@ -3,12 +3,15 @@ import { Card, CardContent, Typography, Grid, Button, Box, IconButton } from '@m
 import { ArrowBack, ArrowForward, Description as DescriptionIcon } from '@mui/icons-material';
 import Carousel from 'react-material-ui-carousel';
 import dayjs from 'dayjs';
+import APIConfig from "../../../utils/APIConfig";
 
 const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem }) => {
-    console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
+    //console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[currentIndex];
+    //console.log('currentItem=----', currentItem);
+    const [showSpinner, setShowSpinner] = useState(false);
 
     const handlePrev = () => {
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? maintenanceQuotesForItem.length - 1 : prevIndex - 1));
@@ -69,6 +72,64 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
         }
         return null;
     };
+
+    const handleSubmit = (quoteStatusParam) => {
+        console.log("handleSubmit", quoteStatusParam);
+    
+        const changeMaintenanceQuoteStatus = async (quoteStatusParam) => {
+          setShowSpinner(true);
+          var formData = new FormData();
+    
+          formData.append("maintenance_quote_uid", currentItem?.maintenance_quote_uid);
+          formData.append("quote_status", quoteStatusParam);
+    
+          try {
+            const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
+              method: "PUT",
+              body: formData,
+            });
+            let responseData = await response.json();
+            console.log(responseData);
+            if (response.status === 200) {
+              console.log("success");
+              assignMaintenanceRequest(currentItem?.quote_business_id, maintenanceItem.maintenance_request_uid);
+            }
+          } catch (error) {
+            console.log("error", error);
+          }
+          setShowSpinner(false);
+        };
+    
+        const assignMaintenanceRequest = async (assigned_business, request_uid) => {
+          setShowSpinner(true);
+          var formData = new FormData();
+          formData.append("maintenance_assigned_business", assigned_business);
+          formData.append("maintenance_request_uid", request_uid);
+          formData.append("maintenance_request_status", "PROCESSING");
+    
+          try {
+            console.log("trying to put maintenance assigned business", formData);
+            const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+              method: "PUT",
+              body: formData,
+            });
+            let responseData = await response.json();
+            console.log(responseData);
+            if (response.status === 200) {
+              console.log("success");
+                //handleBackButton();
+              
+            } else {
+              console.log("error changing maintenance assigned business");
+            }
+          } catch (error) {
+            console.log("error", error);
+          }
+          setShowSpinner(false);
+        };
+    
+        changeMaintenanceQuoteStatus(quoteStatusParam);
+      };
 
     return (
         <Card
@@ -233,6 +294,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                                 fontWeight: 'bold',
                                 textTransform: 'none',
                             }}
+                            onClick={() => handleSubmit("WITHDRAWN")}
                         >
                             Withdraw
                         </Button>
@@ -249,6 +311,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                                     fontWeight: 'bold',
                                     textTransform: 'none',
                                 }}
+                                onClick={() => handleSubmit("ACCEPTED")}
                             >
                                 Accept
                             </Button>
@@ -263,6 +326,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                                     fontWeight: 'bold',
                                     textTransform: 'none',
                                 }}
+                                onClick={() => handleSubmit("REJECTED")}
                             >
                                 Decline
                             </Button>
@@ -279,6 +343,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                                 fontWeight: 'bold',
                                 textTransform: 'none',
                             }}
+                            onClick={() => handleSubmit("REJECTED")}
                         >
                             Reject
                         </Button>

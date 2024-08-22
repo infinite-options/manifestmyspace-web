@@ -238,7 +238,7 @@ export default function MaintenanceRequestNavigatorNew({
 		}
 	}
 	const data = requestData[currentIndex];
-	console.log('---editmaintenance data---', data);
+	//console.log('---editmaintenance data---', data);
 
 	let propertyAddress = ' ';
 	propertyAddress = propertyAddress.concat(
