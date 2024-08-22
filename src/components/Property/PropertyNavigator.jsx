@@ -600,33 +600,47 @@ export default function PropertyNavigator({
   //   }
   // }
 
+  // const handleManagerChange = (index) => {
+  //   if (property && property.business_uid) {
+  //     /* navigate('/managerDetails', {
+  //       state: {
+  //         ownerId: property.owner_uid,
+  //         managerBusinessId: property.business_uid,
+  //         managerData: property,
+  //         propertyData: propertyData,
+  //         index: currentIndex,
+  //         isDesktop: isDesktop,
+  //       },
+  //     }); */
+  //     const state = {
+  //       ownerId: property.owner_uid,
+  //       managerBusinessId: property.business_uid,
+  //       managerData: property,
+  //       propertyData: propertyData,
+  //       index: currentIndex,
+  //       isDesktop: isDesktop,
+  //     };
+  //     //console.log("---inside prop nav state---", state);
+  //     setManagerDetailsState(state);
+  //     handleViewManagerDetailsClick();
+  //   } else {
+  //     // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
+  //     const state = { index: currentIndex, propertyData, isDesktop };
+  //     //console.log('inside prop nav----', state);
+  //     onShowSearchManager(state);
+  //   }
+  // };
+
   const handleManagerChange = (index) => {
     if (property && property.business_uid) {
-      /* navigate('/managerDetails', {
+      navigate("/ContactsPM", {
         state: {
-          ownerId: property.owner_uid,
-          managerBusinessId: property.business_uid,
-          managerData: property,
-          propertyData: propertyData,
-          index: currentIndex,
-          isDesktop: isDesktop,
+          contactsTab: "Manager", 
+          managerId: property.business_uid,
         },
-      }); */
-      const state = {
-        ownerId: property.owner_uid,
-        managerBusinessId: property.business_uid,
-        managerData: property,
-        propertyData: propertyData,
-        index: currentIndex,
-        isDesktop: isDesktop,
-      };
-      //console.log("---inside prop nav state---", state);
-      setManagerDetailsState(state);
-      handleViewManagerDetailsClick();
+      });
     } else {
-      // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
       const state = { index: currentIndex, propertyData, isDesktop };
-      //console.log('inside prop nav----', state);
       onShowSearchManager(state);
     }
   };
@@ -1196,10 +1210,11 @@ export default function PropertyNavigator({
   };
 
   const handleTenantClick = (tenantId) => {
-    if (selectedRole === "MANAGER") {
+    if (selectedRole === "MANAGER" || selectedRole === "OWNER") {
         if (tenant_detail === "No Tenant") {
           console.log("There is no tenant");
         } else {
+          console.log("Else statement for if there is a tenant");
           navigate("/ContactsPM", {
             state: {
               contactsTab: "Tenant",
@@ -1208,15 +1223,6 @@ export default function PropertyNavigator({
           });
         }
       }
-    else if (selectedRole === "OWNER") {
-      if (tenant_detail === "No Tenant") {
-        console.log("There is no tenant");
-      }
-      else {
-        console.log("For owner");
-        navigate("/ContactsPM");
-      }
-    }
   };
 
   return (

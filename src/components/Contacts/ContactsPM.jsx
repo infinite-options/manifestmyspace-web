@@ -17,6 +17,7 @@ const ContactsPM = () => {
   const [contactsTab, setContactsTab] = useState(location.state?.contactsTab);
   const [contactsData, setContactsData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [managerId, setManagerId] = useState(null);
 
   const fetchData = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
@@ -54,6 +55,22 @@ const ContactsPM = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (location.state) {
+        const { contactsTab, managerId } = location.state;
+        setContactsTab(contactsTab);
+
+        if (managerId && contactsTab === "Manager") {
+            const managerIndex = contactsData?.managers?.findIndex(
+                (manager) => manager.business_uid === managerId
+            );
+            if (managerIndex >= 0) {
+                setCurrentIndex(managerIndex);
+                }
+            }
+        }
+    }, [location.state, contactsData]);
 
   useEffect(() => {
     if (location?.state) {
