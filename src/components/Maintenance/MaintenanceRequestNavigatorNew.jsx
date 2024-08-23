@@ -220,7 +220,7 @@ export default function MaintenanceRequestNavigatorNew({
 
 	function displayScheduledDate(data) {
 
-		console.log('displayScheduledDate from this one:', data);
+		//console.log('displayScheduledDate from this one:', data);
 		if (data.maintenance_request_closed_date) {
 			return data.maintenance_request_closed_date !== 'null'
 				? `Closed: ${data.maintenance_request_closed_date}`

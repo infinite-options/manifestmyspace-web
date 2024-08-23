@@ -195,7 +195,7 @@ export default function MaintenanceRequestNavigator({
 	};
 
 	function displayScheduledDate(data) {
-		console.log('displayScheduledDate from this one:', data);
+		//console.log('displayScheduledDate from this one:', data);
 		// console.log("display quote info", JSON.parse(data.quote_info))
 		if (data.maintenance_request_closed_date) {
 			return data.maintenance_request_closed_date !== 'null'
