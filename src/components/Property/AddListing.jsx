@@ -796,7 +796,7 @@ export default function AddListing(props) {
     const formData = new FormData();
     formData.append("property_uid", propertyData.property_uid);
     let hasPropertyChanges = false;
-
+  
     // Check for property changes and append to formData
     if (propertyData.property_address !== address) {
       formData.append("property_address", address);
@@ -886,7 +886,7 @@ export default function AddListing(props) {
       formData.append("property_amenities_nearby", nearbyAmenities);
       hasPropertyChanges = true;
     }
-
+  
     if (imagesTobeDeleted.length > 0) {
       let updatedImages = JSON.parse(propertyData.property_images);
       updatedImages = updatedImages.filter((image) => !imagesTobeDeleted.includes(image));
@@ -919,27 +919,27 @@ export default function AddListing(props) {
         hasPropertyChanges = true;
       }
     }
-
+  
     const putUtilitiesData = async () => {
       if (hasUtilitiesChanges) {
         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
         const utilitiesFormData = new FormData();
         utilitiesFormData.append("property_uid", propertyData.property_uid);
         utilitiesFormData.append("property_utility", utilitiesJSONString);
-
+  
         setShowSpinner(true);
         await fetch(`${APIConfig.baseURL.dev}/utilities`, {
           method: "PUT",
           body: utilitiesFormData,
         });
         setShowSpinner(false);
-
+  
         console.log("Utilities changes saved.");
       } else {
         console.log("No changes for utilities.");
       }
     };
-
+  
     if (hasPropertyChanges || hasUtilitiesChanges) {
       try {
         setShowSpinner(true);
@@ -949,14 +949,14 @@ export default function AddListing(props) {
             body: formData,
           });
         }
-
+  
         if (hasUtilitiesChanges) {
           await putUtilitiesData();
         }
-
+  
         setShowSpinner(false);
         console.log("Changes saved successfully.");
-
+  
         if (navigateAfterSave) {
           refreshProperties();
           showPropertyNavigator();
@@ -964,6 +964,8 @@ export default function AddListing(props) {
           refreshProperties();
         }
         setChangedSaved(true);
+        hasPropertyChanges = false;
+        hasUtilitiesChanges = false;
       } catch (error) {
         setShowSpinner(false);
         console.error("Error saving changes:", error);
@@ -971,23 +973,26 @@ export default function AddListing(props) {
     } else {
       console.log("No changes detected.");
       setChangedSaved(true);
+      if (navigateAfterSave) {
+        navigate("/propertiesPM", { state: { isBack: true } });
+      }
     }
   };
-
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("handleSubmit");
-
+  
     if (!deposit) {
       alert("Deposit cannot be empty!");
       return;
     }
-
+  
     if (!rent) {
       alert("Rent cannot be empty!");
       return;
     }
-
+  
     await saveChanges(true);
   };
 
@@ -1839,10 +1844,11 @@ export default function AddListing(props) {
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>
                 </Button>
-
-                <Button variant='outlined' onClick={handleUpdateAndStay} sx={{ width: "100%", backgroundColor: theme.typography.formButton.background, marginTop: "10px" }}>
-                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
-                </Button>
+                {propertyData.property_available_to_rent === 1 && (
+                  <Button variant='outlined' onClick={handleUpdateAndStay} sx={{ width: "100%", backgroundColor: theme.typography.formButton.background, marginTop: "10px" }}>
+                    <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </Box>

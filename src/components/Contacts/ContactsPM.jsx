@@ -31,7 +31,7 @@ const ContactsPM = () => {
         break;
       case "OWNER":
         data = response.data["owner_contacts"];
-        setContactsTab("Manager");
+        setContactsTab("Tenant");
         break;
       case "TENANT":
         data = response.data["tenant_contacts"];
@@ -39,11 +39,8 @@ const ContactsPM = () => {
         break;
       case "MAINTENANCE":
         data = response.data["maintenance_contacts"];
-        setContactsTab("Manager")
+        setContactsTab("Manager");
         break;
-    // Needs to be added - Abhinav
-    //   case "PM_EMPLOYEE":
-    //     data = response.data[""]
       default:
         data = [];
         console.error("Unexpected role or no contacts found for this role");
@@ -57,39 +54,37 @@ const ContactsPM = () => {
   }, []);
 
   useEffect(() => {
-    if (location.state) {
-        const { contactsTab, managerId } = location.state;
-        setContactsTab(contactsTab);
-
-        if (managerId && contactsTab === "Manager") {
-            const managerIndex = contactsData?.managers?.findIndex(
-                (manager) => manager.business_uid === managerId
-            );
-            if (managerIndex >= 0) {
-                setCurrentIndex(managerIndex);
-                }
-            }
-        }
-    }, [location.state, contactsData]);
-
-  useEffect(() => {
-    if (location?.state) {
-      const { contactsTab, tenantId } = location.state;
-
-      if (contactsTab) {
-        setContactsTab(contactsTab);
-      }
-
-      if (tenantId && contactsTab === "Tenant" && selectedRole !== "TENANT") {
+    if (location.state && contactsData.length > 0) {
+      const { contactsTab, managerId, tenantId } = location.state;
+  
+      let newTab = contactsTab;
+      let newIndex = 0;
+  
+      if (newTab === "Manager" && managerId) {
+        const managerIndex = contactsData?.managers?.findIndex(
+          (manager) => manager.business_uid === managerId
+        );
+        newIndex = managerIndex >= 0 ? managerIndex : 0;
+      } else if (newTab === "Tenant" && tenantId && selectedRole !== "TENANT") {
         const tenantIndex = contactsData?.tenants?.findIndex(
           (tenant) => tenant.tenant_uid === tenantId
         );
-        if (tenantIndex >= 0) {
-          setCurrentIndex(tenantIndex);
-        }
+        newIndex = tenantIndex >= 0 ? tenantIndex : 0; 
       }
+  
+      setContactsTab(newTab);
+      setCurrentIndex(newIndex);
     }
-  }, [location.state, contactsData]);
+  }, [location.state, contactsData, selectedRole]);
+  
+  useEffect(() => {
+    if (contactsTab) {
+      setCurrentIndex(0); // Reset to the first item whenever the tab changes
+    }
+  }, [contactsTab]);
+  
+
+
 
   const renderContactDetail = () => {
     switch (contactsTab) {
@@ -127,11 +122,11 @@ const ContactsPM = () => {
         );
       case "Manager":
         return (
-         <ManagerContactDetail
+          <ManagerContactDetail
             data={contactsData?.managers}
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
-        />
+          />
         );
       default:
         return null;
@@ -139,7 +134,7 @@ const ContactsPM = () => {
   };
 
   return (
-    <Container disableGutters maxWidth='lg'>
+    <Container disableGutters maxWidth="lg">
       <Grid container>
         <Grid container item xs={12} md={4}>
           <Grid item xs={12} sx={{ padding: "5px", height: "100%" }}>
