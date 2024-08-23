@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 export default function MakePayment({ selectedPayment, refreshCashflowData, setCurrentWindow }) {
   //   const location = useLocation();
   const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole } = useUser();
-  // console.log("ROHIT - MakePayment -  props - ", selectedPayment);
+  // console.log("MakePayment -  props - ", selectedPayment);
   //   console.log("--DEBUG-- location.state", location.state);
 
   const classes = useStyles();
@@ -119,9 +119,9 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
       });
   }, []);
 
-  useEffect(() => {
-    // console.log("ROHIT - activePaymentMethods - ", activePaymentMethods);
-  }, [activePaymentMethods]);
+  // useEffect(() => {
+  //   console.log("activePaymentMethods - ", activePaymentMethods);
+  // }, [activePaymentMethods]);
 
   useEffect(() => {
     // Check if selectedMethod is not empty and confirmationNumber is not empty for Zelle and method for payment is selected

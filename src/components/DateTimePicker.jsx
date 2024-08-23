@@ -32,7 +32,6 @@ const style = {
 };
 
 function DateTimePickerModal(props) {
-    console.log('---inside DateTimePickerModal---', props);
   const [availabilityDate, setAvailabilityDate] = useState(props.date || "");
   const [availabilityTime, setAvailabilityTime] = useState(props.time || "");
   const [showDatePicker, setShowDatePicker] = useState(false);

@@ -26,7 +26,7 @@ import EditMaintenanceItem from "./EditMaintenanceItem";
 import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 
 export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId) {
-  console.log("----inside maintenanceManagerDataCollectAndProcess--", setMaintenanceData);
+  
   const dataObject = {};
 
   function dedupeQuotes(array) {
@@ -187,7 +187,7 @@ export default function MaintenanceManager() {
   }
 
   useEffect(() => {
-    console.log("----inside useEffect---", maintenanceData);
+    //console.log("----inside useEffect---", maintenanceData);
     if (maintenanceData) {
       const propertyList = [];
       const addedAddresses = [];
@@ -218,7 +218,7 @@ export default function MaintenanceManager() {
       if (selectedProperty === null || selectedProperty === undefined) {
         setFilterPropertyList(propertyList);
       } else {
-        console.log("in else---propertyList---", propertyList);
+        //console.log("in else---propertyList---", propertyList);
         for (const property of propertyList) {
           if (property.property_uid !== selectedProperty.property_uid) {
             property.checked = false;

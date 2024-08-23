@@ -70,7 +70,7 @@ function Properties() {
 
   useEffect(() => {
     setShowSpinner(true);
-    console.log("ROHIT - currentProperty - ", currentProperty);
+    // console.log("currentProperty - ", currentProperty);
     if(currentProperty){
       setPropertyTo(currentProperty);
     }
@@ -81,10 +81,10 @@ function Properties() {
 
   useEffect(() => {
     setShowSpinner(true)
-    console.log("ROHIT - returnIndex - ", returnIndex);
+    // console.log("returnIndex - ", returnIndex);
     
     const properties = rawPropertyData?.Property?.result;
-    console.log("returnIndex useEffect - properties - ", properties);
+    // console.log("returnIndex useEffect - properties - ", properties);
     if(properties != null){
       const state = {
         ownerId: properties[returnIndex]?.owner_uid,
@@ -189,8 +189,7 @@ function Properties() {
       const propertyData = await property_response.json();
       const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
       // console.log("In Properties > Property Endpoint: ", propertyList);
-      setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
-      console.log("ROHIT - setting property list");
+      setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function      
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
       setPropertyIndex(0);
@@ -236,7 +235,7 @@ function Properties() {
   }, [reloadPropertyList]);
 
   function setPropertyTo(newPropertyUid){
-    console.log("ROHIT - setPropertyTo - newPropertyUid - ", newPropertyUid);
+    console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
     setShowSpinner(true);
 
     if(newPropertyUid!=""){
@@ -441,7 +440,7 @@ function Properties() {
     setRHS("RequestQuotes");
   };
   const handleSorting = (propertyList) => {
-    console.log("ROHIT - handleSorting called ");
+    // console.log("handleSorting called ");
     setPropertyList(propertyList);
   };
 

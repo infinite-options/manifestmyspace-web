@@ -68,7 +68,7 @@ function formatDate(date) {
 }
 
 const ViewLease = (props) => {
-  console.log("---props in viewlease---", props);
+  // console.log("---props in viewlease---", props);
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -201,7 +201,7 @@ const ViewLease = (props) => {
 
     const leaseID = propertyList[index]?.lease_uid || props.lease_id;
 
-    // console.log("ROHIT - index useEffect -  const leaseID - ", leaseID);
+    // console.log("index useEffect -  const leaseID - ", leaseID);
 
     if (leaseID != null) {
       allLeases?.forEach((lease) => {
@@ -213,11 +213,11 @@ const ViewLease = (props) => {
           setLeaseDocuments(JSON.parse(lease.lease_documents));
           const utilities = JSON.parse(lease.property_utilities);
 
-          const utils = utilities.map((utility) => utility.utility_desc).join(", ");
+          const utils = utilities?.map((utility) => utility.utility_desc).join(", ");
           // console.log(utils)
           setUtilityString(utils);
 
-          // console.log("ROHIT - index useEffect -  lease - ", lease);
+          // console.log("index useEffect -  lease - ", lease);
           setLeaseData(lease);
           setTenantsData(lease.tenants ? JSON.parse(lease?.tenants) : []);
           setAdultsData(lease.tenants ? JSON.parse(lease?.lease_adults) : []);
@@ -225,8 +225,8 @@ const ViewLease = (props) => {
           setVehiclesData(lease.tenants ? JSON.parse(lease?.lease_vehicles) : []);
           setPetsData(lease.tenants ? JSON.parse(lease?.lease_pets) : []);
 
-          console.log("Lease data", lease);
-          console.log("lease fees", lease.leaseFees);
+          // console.log("Lease data", lease);
+          // console.log("lease fees", lease.leaseFees);
           // setDocument(lease.lease_documents);
         }
       });
@@ -242,7 +242,7 @@ const ViewLease = (props) => {
 
     const leaseID = propertyList[index]?.lease_uid;
 
-    // console.log("ROHIT - main useEffect -  const leaseID - ", leaseID);
+    // console.log("main useEffect -  const leaseID - ", leaseID);
 
     if (leaseID != null) {
       allLeases?.forEach((lease) => {
@@ -258,7 +258,7 @@ const ViewLease = (props) => {
           // console.log(utils)
           setUtilityString(utils);
 
-          // console.log("ROHIT - main useEffect -  lease - ", lease);
+          // console.log("main useEffect -  lease - ", lease);
 
           setLeaseData(lease);
           setTenantsData(lease.tenants ? JSON.parse(lease?.tenants) : []);

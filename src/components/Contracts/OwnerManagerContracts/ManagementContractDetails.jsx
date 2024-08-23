@@ -79,7 +79,7 @@ function ManagementContractDetails(props) {
     // console.log(property_endpoint_resp["NewPMRequests"].result);
     // console.log(property_endpoint_resp["NewPMRequests"]["result"]);
 
-    // console.log("ROHIT - property_endpoint_resp - ", property_endpoint_resp);
+    // console.log("property_endpoint_resp - ", property_endpoint_resp);
 
     // const properties = property_endpoint_resp["NewPMRequests"]["result"] ? property_endpoint_resp["NewPMRequests"]["result"] : [];
     const properties = property_endpoint_resp ? property_endpoint_resp : [];

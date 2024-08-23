@@ -62,6 +62,7 @@ export default function MaintenanceRequestNavigatorNew({
 	status,
 	tabs,
 	navigateParams,
+	fetchAndUpdateQuotes,
 }) {
 	//console.log('----inside maintainance navigator---', maintenanceQuotes);
 	const [currentIndex, setCurrentIndex] = useState(requestIndex);
@@ -219,7 +220,7 @@ export default function MaintenanceRequestNavigatorNew({
 
 	function displayScheduledDate(data) {
 
-		console.log('displayScheduledDate from this one:', data);
+		//console.log('displayScheduledDate from this one:', data);
 		if (data.maintenance_request_closed_date) {
 			return data.maintenance_request_closed_date !== 'null'
 				? `Closed: ${data.maintenance_request_closed_date}`
@@ -238,7 +239,7 @@ export default function MaintenanceRequestNavigatorNew({
 		}
 	}
 	const data = requestData[currentIndex];
-	console.log('---editmaintenance data---', data);
+	//console.log('---editmaintenance data---', data);
 
 	let propertyAddress = ' ';
 	propertyAddress = propertyAddress.concat(
@@ -351,6 +352,7 @@ export default function MaintenanceRequestNavigatorNew({
 			>
 				<Stack direction="column" justifyContent="center" alignItems="center" spacing={2}>
 					<Typography
+					 component="div" 
 						sx={{
 							color: '#160449',
 							fontWeight: theme.typography.secondary.fontWeight,
@@ -371,6 +373,7 @@ export default function MaintenanceRequestNavigatorNew({
 						</Button>
 						<Stack direction="column" justifyContent="center" alignItems="center" spacing={2} width="100px">
 							<Typography
+							 component="div" 
 								sx={{
 									color: '#160449',
 									fontWeight: theme.typography.secondary.fontWeight,
@@ -506,13 +509,14 @@ export default function MaintenanceRequestNavigatorNew({
 										color: '#2D2F48',
 									}}
 								>
-									<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+									<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
 										<strong style={{ minWidth: '150px' }}>Issue:</strong> {data?.maintenance_title}
 									</Typography>
-									<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+									<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
 										<strong style={{ minWidth: '150px' }}>Description:</strong> {data?.maintenance_desc}
 									</Typography>
 									<Typography
+									component="div"
 										variant="body1"
 										sx={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}
 									>
@@ -562,28 +566,28 @@ export default function MaintenanceRequestNavigatorNew({
 									</Typography>
 									<Grid container spacing={2} sx={{ marginTop: 1 }}>
 										<Grid item xs={6}>
-											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
 												<strong style={{ minWidth: '150px' }}>Reported By:</strong> {data?.maintenance_request_created_by}
 											</Typography>
-											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
 												<strong style={{ minWidth: '150px' }}>Tenant:</strong> {tenantName}
 											</Typography>
-											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 1 }}>
+											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 1 }}>
 												<strong style={{ minWidth: '150px' }}>Owner:</strong>{' '}
 												{data?.owner_first_name + ' ' + data?.owner_last_name}
 											</Typography>
 										</Grid>
 										<Grid item xs={6}>
-											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
 												<strong style={{ minWidth: '150px' }}>Reported On:</strong>{' '}
 												{dayjs(data?.maintenance_request_created_date).format('MM-DD-YYYY')}
 											</Typography>
-											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
 												<strong style={{ minWidth: '150px' }}>Days Open:</strong>{' '}
 												{dayjs().diff(dayjs(data?.maintenance_request_created_date), 'day')}{' '}
 												days
 											</Typography>
-											<Typography variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 1 }}>
+											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 1 }}>
 												<strong style={{ minWidth: '150px' }}>Maintenance ID:</strong> {data?.maintenance_request_uid}
 											</Typography>
 										</Grid>
@@ -602,6 +606,7 @@ export default function MaintenanceRequestNavigatorNew({
     maintenanceItem={data}
     navigateParams={navigateParams}
     maintenanceQuotesForItem={maintenanceQuotes}
+	fetchAndUpdateQuotes={fetchAndUpdateQuotes}
   />
 ) : null}
 									</Grid>

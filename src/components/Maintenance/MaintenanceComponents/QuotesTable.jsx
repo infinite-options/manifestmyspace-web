@@ -19,8 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 export default function QuotesTable({ maintenanceItem, navigateParams, maintenanceQuotesForItem }) {
-	console.log('In QuotesTable');
-	console.log('maintenanceQuotesForItem: ', maintenanceQuotesForItem);
+	//console.log('In QuotesTable');
+	//console.log('maintenanceQuotesForItem: ', maintenanceQuotesForItem);
 	// maintenanceQuotes is a state variable that is set in the grandparent component
 	// maintenanceItem is a prop that is passed from the parent component
 	let navigate = useNavigate();

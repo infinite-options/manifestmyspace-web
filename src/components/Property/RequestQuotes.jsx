@@ -97,21 +97,24 @@ const RequestQuotes = (props) => {
     const currentDate = new Date();
     const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 
+    let annProperties = JSON.stringify({[managerData.business_uid] : selectedProperties})
+
     let announcement_data = JSON.stringify({
       announcement_title: announcementTitle,
       announcement_msg: announcementMsg,
       announcement_sender: ownerId,
       announcement_date: formattedDate,
-      announcement_properties: selectedProperties,
+      announcement_properties: annProperties,
       announcement_mode: "CONTRACT",
       announcement_receiver: [managerData.business_uid],
-      announcement_type: ["App"],
+      announcement_type: ["App", "Text", "Email"],
     });
 
     let config = {
       method: "post",
       maxBodyLength: Infinity,
       url: `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${ownerId}`,
+      // url: `http://localhost:4000/announcements/${ownerId}`,
       headers: {
         "Content-Type": "application/json",
       },

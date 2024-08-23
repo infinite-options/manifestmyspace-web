@@ -52,10 +52,11 @@ export default function Payments(props) {
   const { user, getProfileId, roleName, selectedRole } = useUser();
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
-  const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  // console.log("ROHIT - managerCashflowWidgetData - ", managerCashflowWidgetData);
+  // const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
+  const accountBalanceWidgetData = props?.accountBalanceWidgetData;
+  // console.log("managerCashflowWidgetData - ", managerCashflowWidgetData);
 
-  // console.log("ROHIT - selectedRole - ", selectedRole);
+  // console.log("selectedRole - ", selectedRole);
 
   const [moneyPaid, setMoneyPaid] = useState([]);
   const [moneyReceived, setMoneyReceived] = useState([]);
@@ -362,8 +363,10 @@ export default function Payments(props) {
                           onClick={() => {
                             // paymentData.business_code = paymentNotes;
                             const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
-                            console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
-                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
+                            // console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
+                            // console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
+
+                            // console.log("navigating to SelectPayment.jsx - accountBalanceWidgetData -  ", accountBalanceWidgetData);
                             navigate("/selectPayment", {
                               state: {
                                 paymentData: updatedPaymentData,
