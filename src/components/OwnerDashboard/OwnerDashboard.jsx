@@ -84,7 +84,6 @@ export default function OwnerDashboard() {
       
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
-      // console.log("Owner Dashboard jsonData", jsonData);
 
       const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
       const announcementsResponseData = await announcementsResponse.json();
@@ -140,7 +139,7 @@ export default function OwnerDashboard() {
                   </Box>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <CashflowWidget data={cashflowStatusData} />
+                  <CashflowWidget data={cashflowStatusData} page={"OwnerDashboard"}/>
                 </Grid>
                 <Grid container item xs={12} md={8} columnSpacing={6}>
                   <Grid item xs={12} md={6} sx={{ marginBottom: isMobile ? "10px" : "1px" }}>

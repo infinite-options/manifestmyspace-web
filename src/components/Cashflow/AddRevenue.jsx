@@ -123,12 +123,15 @@ const AddRevenue = (props) => {
   };
   const handleAddRevenue = async () => {
     console.log("amount ", selectedProperty);
+    const [year, month, day] = date.split('-');
+    const formattedDate = `${month}-${day}-${year}`;
+ 
     let data = {
       pur_property_id: selectedProperty.property_uid,
       purchase_type: category,
       pur_cf_type: "revenue",
-      purchase_date: date,
-      pur_due_date: date,
+      purchase_date: formattedDate,
+      pur_due_date: formattedDate,
       pur_amount_due: Number(amount),
       purchase_status: determinePurchaseStatus(),
       pur_notes: "This is just a note",
