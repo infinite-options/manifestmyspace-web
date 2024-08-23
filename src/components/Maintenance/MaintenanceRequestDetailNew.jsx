@@ -198,14 +198,15 @@ export default function MaintenanceRequestDetailNew({
     setFilteredQuotes(uniqueQuotes);
   }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
 
+  const fetchAndUpdateQuotes = async () => {
+    const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
+    const data = await response.json();
+    const quotes = data.maintenanceQuotes.result;
+    setMaintenanceQuotes(quotes);
+  };
+
   useEffect(() => {
-    const getMaintenanceItemQuotes = async () => {
-      const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
-      const data = await response.json();
-      const quotes = data.maintenanceQuotes.result;
-      setMaintenanceQuotes(quotes);
-    };
-    getMaintenanceItemQuotes();
+    fetchAndUpdateQuotes();
   }, []);
 
   useEffect(() => {
@@ -435,6 +436,7 @@ export default function MaintenanceRequestDetailNew({
                           currentTabValue={value}
                           tabs={tabs}
                           navigateParams={navParams}
+                          fetchAndUpdateQuotes={fetchAndUpdateQuotes}
                         />
                       ) : null}
                     </Grid>

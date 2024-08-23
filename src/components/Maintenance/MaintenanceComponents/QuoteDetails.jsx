@@ -5,7 +5,7 @@ import Carousel from 'react-material-ui-carousel';
 import dayjs from 'dayjs';
 import APIConfig from "../../../utils/APIConfig";
 
-const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem }) => {
+const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
     //console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -118,6 +118,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
             if (response.status === 200) {
               console.log("success");
                 //handleBackButton();
+                fetchAndUpdateQuotes();
               
             } else {
               console.log("error changing maintenance assigned business");

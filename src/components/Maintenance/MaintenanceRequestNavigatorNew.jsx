@@ -62,6 +62,7 @@ export default function MaintenanceRequestNavigatorNew({
 	status,
 	tabs,
 	navigateParams,
+	fetchAndUpdateQuotes,
 }) {
 	//console.log('----inside maintainance navigator---', maintenanceQuotes);
 	const [currentIndex, setCurrentIndex] = useState(requestIndex);
@@ -605,6 +606,7 @@ export default function MaintenanceRequestNavigatorNew({
     maintenanceItem={data}
     navigateParams={navigateParams}
     maintenanceQuotesForItem={maintenanceQuotes}
+	fetchAndUpdateQuotes={fetchAndUpdateQuotes}
   />
 ) : null}
 									</Grid>
