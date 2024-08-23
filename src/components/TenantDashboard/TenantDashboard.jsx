@@ -34,7 +34,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 
 function TenantDashboard(props) {
-  console.log("In Tenant Dashboard");
+  // console.log("In Tenant Dashboard");
   const navigate = useNavigate();
   const location = useLocation();
   const [showSpinner, setShowSpinner] = useState(false);
@@ -87,6 +87,10 @@ function TenantDashboard(props) {
 
   const { user } = useUser();
 
+  useEffect(() => {
+    console.log("ROHIT - paymentState - ", paymentState);
+  }, [paymentState]);
+
   useEffect (() => {
     async function fetchData() {
       const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
@@ -109,15 +113,15 @@ function TenantDashboard(props) {
 
   //  Main UseEffect
   useEffect(() => {
-    console.log("In Tenant Dashboard UseEffect");
-    console.log("Tenant ID: ", tenantId, "   Property ID: ", propertyId ? propertyId : "Not Selected");
+    // console.log("In Tenant Dashboard UseEffect");
+    // console.log("Tenant ID: ", tenantId, "   Property ID: ", propertyId ? propertyId : "Not Selected");
 
     // Reset addMaintenance to false
     setAddMaintenance(false);
 
     // Check if the profile ID is available
     if (!getProfileId()) {
-      console.log("profile id is ***", getProfileId());
+      // console.log("profile id is ***", getProfileId());
       let newRole = "TENANT";
       navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
       return;
@@ -130,7 +134,7 @@ function TenantDashboard(props) {
       setShowSpinner(true);
 
       try {
-        console.log("Call endpoints");
+        // console.log("Call endpoints");
 
         // Fetch data from multiple endpoints
         const tenantRequests = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
@@ -150,11 +154,11 @@ function TenantDashboard(props) {
         let paymentsReceivedData = paymentsResponseData?.MoneyPaid?.result || [];
         let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result || [];
 
-        console.log("[DEBUG] announcementsReceivedData", announcementsReceivedData);
+        // console.log("[DEBUG] announcementsReceivedData", announcementsReceivedData);
 
         // Check if all leases are not active
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
-        console.log("Non Active Leases: ", allNonActiveLease);
+        // console.log("Non Active Leases: ", allNonActiveLease);
 
         // Sort propertyData by lease_status so that active lease is first
         propertyData.sort((a, b) => (a.lease_status === "ACTIVE" ? -1 : b.lease_status === "ACTIVE" ? 1 : 0));
@@ -178,14 +182,14 @@ function TenantDashboard(props) {
 
         // Set the selected property based on the location state
         if (location.state?.propertyId) {
-          console.log("Property ID exists: ", propertyId);
+          // console.log("Property ID exists: ", propertyId);
           let navPropertyData = propertyData.find((item) => item.property_uid === location.state.propertyId);
-          console.log("navProperty Data set to: ", navPropertyData);
+          // console.log("navProperty Data set to: ", navPropertyData);
           setSelectedProperty(navPropertyData);
           setPropertyAddr(navPropertyData.property_address + " " + navPropertyData.property_unit);
         } else {
-          console.log("Property ID does NOT exist: ", propertyData);
-          console.log("Setting selectedProperty to : ", propertyData[0]);
+          // console.log("Property ID does NOT exist: ", propertyData);
+          // console.log("Setting selectedProperty to : ", propertyData[0]);
           setSelectedProperty(propertyData[0] || null);
         }
       } catch (error) {
@@ -236,14 +240,14 @@ function TenantDashboard(props) {
   }, [viewLeaseState]);
 
   useEffect(() => {
-    console.log("tenantApplicationNavState", tenantApplicationNavState);
+    // console.log("tenantApplicationNavState", tenantApplicationNavState);
     if (tenantApplicationNavState) {
       setRightPane({ type: "tenantApplication", state: tenantApplicationNavState });
     }
   }, [tenantApplicationNavState]);
 
   useEffect(() => {
-    console.log("viewApprovedLeaseNavState", viewApprovedLeaseNavState);
+    // console.log("viewApprovedLeaseNavState", viewApprovedLeaseNavState);
     if (viewApprovedLeaseNavState) {
       setRightPane({ type: "tenantLeases", state: viewApprovedLeaseNavState });
     }
@@ -251,10 +255,10 @@ function TenantDashboard(props) {
 
   useEffect(() => {
     const navPropertyData = propertyData.find((item) => item.property_uid === location.state?.propertyId);
-    console.log("Nav Property Data that will be used to setSelectedProperty: ", navPropertyData);
+    // console.log("Nav Property Data that will be used to setSelectedProperty: ", navPropertyData);
 
     if (navPropertyData) {
-      console.log("Inside IF, navPropertyData set: ", navPropertyData);
+      // console.log("Inside IF, navPropertyData set: ", navPropertyData);
       setSelectedProperty(navPropertyData);
     }
   }, [location.state?.propertyId, propertyData]);
@@ -282,14 +286,14 @@ function TenantDashboard(props) {
       });
 
       filteredAnnouncements.sort((a, b) => b.announcement_uid.localeCompare(a.announcement_uid));
-      console.log("filteredAnnouncements", filteredAnnouncements);
+      // console.log("filteredAnnouncements", filteredAnnouncements);
       setAnnouncementsData(filteredAnnouncements);
     }
     if (paymentHistory && paymentExpected) {
-      console.log("Payments exist: ", paymentHistory, paymentExpected);
-      console.log("---selectedProperty.property_uid---", selectedProperty);
+      // console.log("Payments exist: ", paymentHistory, paymentExpected);
+      // console.log("---selectedProperty.property_uid---", selectedProperty);
       let filteredPaymentHistory = paymentHistory.filter((payment) => payment.pur_property_id === selectedProperty.property_uid);
-      console.log("---filteredPaymentHistory---", filteredPaymentHistory);
+      // console.log("---filteredPaymentHistory---", filteredPaymentHistory);
       let filteredPaymentExpected = paymentExpected.filter((payment) => payment.pur_property_id === selectedProperty.property_uid);
       var rentFeeSum = 0;
       var utilityFeeSum = 0;
@@ -302,14 +306,14 @@ function TenantDashboard(props) {
           utilityFeeSum += parseInt(payment.pur_amount_due);
         }
         if (payment.purchase_type === "Late Fee") {
-          console.log("I found something that says Late Fees", payment);
+          // console.log("I found something that says Late Fees", payment);
           lateFeeSum += parseInt(payment.pur_amount_due);
         }
       });
       setRentFees(rentFeeSum);
       setUtilityFees(utilityFeeSum);
       setLateFees(lateFeeSum);
-      console.log("ALL SUMMED FEES", rentFeeSum, utilityFeeSum, lateFeeSum);
+      // console.log("ALL SUMMED FEES", rentFeeSum, utilityFeeSum, lateFeeSum);
       setFilteredPaymentHistory(filteredPaymentHistory);
     }
     if (allMaintenanceRequests) {
@@ -332,8 +336,8 @@ function TenantDashboard(props) {
   }
 
   const renderRightPane = () => {
-    console.log("---rightPane.type---", rightPane.type);
-    console.log("336 - rightPane.state - ", rightPane.state);
+    // console.log("---rightPane.type---", rightPane.type);
+    // console.log("336 - rightPane.state - ", rightPane.state);
     switch (rightPane.type) {
       case "listings":
         return <PropertyListings setRightPane={setRightPane} />;
@@ -366,7 +370,7 @@ function TenantDashboard(props) {
   function handleTenantMaintenanceNavigate() {
     let navPropertyData = propertyData.find((item) => item.property_address === selectedProperty.property_address);
     const propertyLeaseData = leaseDetails.find((item) => item.lease_property_id === selectedProperty.lease_property_id);
-    console.log("Navigating to /addTenantMaintenanceItem - propertyLeaseData - ", propertyLeaseData);
+    // console.log("Navigating to /addTenantMaintenanceItem - propertyLeaseData - ", propertyLeaseData);
     /* navigate("/addTenantMaintenanceItem", {
       state: { propertyData: navPropertyData, leaseData: propertyLeaseData },
     }); */
@@ -381,7 +385,7 @@ function TenantDashboard(props) {
     return <PropertyCard data={property} status={leaseStatus} leaseData={lease} />;
   }
 
-  console.log("Selected Property before return: ", selectedProperty);
+  // console.log("Selected Property before return: ", selectedProperty);
 
   return (
     <ThemeProvider theme={theme}>
@@ -1013,9 +1017,9 @@ const AccountBalanceWidget = ({
   setViewApprovedLeaseNavState,
 }) => {
   const navigate = useNavigate();
-  console.log("---selectedProperty in acc---", selectedProperty);
-  console.log("---selectedLease in acc---", selectedLease);
-  console.log("---propertyData in acc---", propertyData);
+  // console.log("---selectedProperty in acc---", selectedProperty);
+  // console.log("---selectedLease in acc---", selectedLease);
+  // console.log("---propertyData in acc---", propertyData);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
@@ -1072,7 +1076,7 @@ const AccountBalanceWidget = ({
       property_uid: selectedProperty.property_uid,
       isDesktop: true,
     };
-    console.log('---state to be passed---', state);
+    // console.log('---state to be passed---', state);
     setViewLeaseState(state);
   }
 
@@ -1103,7 +1107,7 @@ const AccountBalanceWidget = ({
       propertyAddr, propertyData, total,
       rentFees, lateFees, utilityFees
     }
-    console.log('---state to be passed in handlePaymentNavigate---', state);
+    // console.log('---state to be passed in handlePaymentNavigate---', state);
     setPaymentState(state);
   }
 
@@ -1493,7 +1497,7 @@ const AccountBalanceWidget = ({
 };
 
 function TenantPaymentHistoryTable(props) {
-  console.log("In Tenant Payment History Table from Stack");
+  // console.log("In Tenant Payment History Table from Stack");
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;
 
@@ -1606,7 +1610,7 @@ function TenantPaymentHistoryTable(props) {
   };
 
   if (props.data && props.data.length > 0) {
-    console.log("In Tenant Payment History Table from Stack - Displaying Info");
+    // console.log("In Tenant Payment History Table from Stack - Displaying Info");
     return (
       <DataGrid
         rows={props.data}
@@ -1632,11 +1636,11 @@ function TenantPaymentHistoryTable(props) {
 }
 
 function TenantMaintenanceRequestsTable(props) {
-  console.log("In Maintenance Request Table from Stack");
+  // console.log("In Maintenance Request Table from Stack");
   const data = props.data;
   const isMobile = props.isMobile;
   const isMedium = props.isMedium;
-  console.log("TenantMaintenanceRequestTable is Mobile", isMobile);
+  // console.log("TenantMaintenanceRequestTable is Mobile", isMobile);
   const location = useLocation();
   let navigate = useNavigate();
 
@@ -1660,7 +1664,7 @@ function TenantMaintenanceRequestsTable(props) {
     }
     return date;
   }
-  console.log('----data in dashboard----', data);
+  // console.log('----data in dashboard----', data);
   // data.forEach((item) => {
   //   let favoriteImage = "";
   //   const maintenanceImagesList = JSON.parse(item.maintenance_images);

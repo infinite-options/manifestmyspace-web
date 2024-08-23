@@ -53,9 +53,9 @@ export default function PaymentsManager(props) {
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  // console.log("ROHIT - managerCashflowWidgetData - ", managerCashflowWidgetData);
+  // console.log("managerCashflowWidgetData - ", managerCashflowWidgetData);
 
-  // console.log("ROHIT - selectedRole - ", selectedRole);
+  // console.log("selectedRole - ", selectedRole);
 
   const [moneyPaid, setMoneyPaid] = useState([]);
   const [moneyReceived, setMoneyReceived] = useState([]);
