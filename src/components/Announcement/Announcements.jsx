@@ -308,7 +308,7 @@ export default function Announcements() {
           <div className='announcement-readall'>
             <div className='announcement-readall-text'>Read All</div>
             <div className='announcement-readall-checkbox'>
-              <input type='checkbox' onClick={handleReadAll} checked={readAll} />
+              <input type='checkbox' onChange={handleReadAll} checked={readAll} />
             </div>
           </div>
         </div>

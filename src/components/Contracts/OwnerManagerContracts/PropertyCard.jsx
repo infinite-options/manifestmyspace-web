@@ -921,69 +921,7 @@ const PropertyCard = (props) => {
   const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
   const [propertyOwnerName, setPropertyOwnerName] = useState("");
 
-  const fetchData = async () => {
-    const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
-    const data = await result.json();
-    // console.log("--debug--", data);
-
-    // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
-    // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-    // console.log("props.contractUID:", props.contractUID);
-    setContractUID(props.contractUID);
-    if (data !== "No records for this Uid") {
-      const contractData = data["result"].find((contract) => contract.contract_uid === props.contractUID);
-      // console.log("CONTRACT - ", contractData);
-      // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
-      setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
-      setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
-      setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
-      setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
-      setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
-      setContractFees(contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : []);
-      const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
-      setPreviouslyUploadedDocs(oldDocs);
-      const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
-      if (contractDoc) {
-        setContractDocument(contractDoc);
-      }
-      setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
-    }
-
-    // get default contract fees for manager
-    // const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${contractBusinessID}`);
-    const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
-    const data2 = await businessProfileResult.json();
-    const businessProfileData = data2["result"][0];
-    // console.log("Business Services Fees", businessProfileData["business_services_fees"]);
-    setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
-  };
-
-  // const setData = () => {
-  //   if(allContracts !== null && allContracts !== undefined ) {
-  //     const contractData = allContracts?.find((contract) => contract.contract_uid === props.contractUID);
-  //     console.log("setData - CONTRACT - ", contractData);
-  //     // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
-  //     setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
-  //     setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
-  //     setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
-  //     setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
-  //     setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
-  //     setContractFees(contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : []);
-  //     const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
-  //     setPreviouslyUploadedDocs(oldDocs);
-  //     const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
-  //     if (contractDoc) {
-  //       setContractDocument(contractDoc);
-  //     }
-  //     setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
-  //   }
-  //   if( businessProfile !== null && businessProfile !== undefined) {
-  //     console.log("Business Services Fees", businessProfile["business_services_fees"]);
-  //     setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
-  //   }
-
-  // }
-
+    
   const setBusinessProfileDetails = () => {
     if (businessProfile !== null && businessProfile !== undefined) {
       // console.log("Business Services Fees", businessProfile["business_services_fees"]);
@@ -1023,7 +961,13 @@ const PropertyCard = (props) => {
           setContractAssignedContacts(defaultContacts);
         }
 
-        setContractFees(contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : []);
+		const fees = contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : [];
+		if(fees.length > 0){
+			setContractFees(fees);
+		} else {
+			setContractFees(defaultContractFees);
+		}
+        
         const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
         setPreviouslyUploadedDocs(oldDocs);
         const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
@@ -1039,8 +983,8 @@ const PropertyCard = (props) => {
     setContractDetails();
   }, [contractUID]);
 
-  const fetchDataNew = async () => {
-    // console.log("props.contractUID:", props.contractUID);
+  const fetchData = async () => {
+    console.log("props.contractUID:", props.contractUID);
     setContractUID(props.contractUID);
     if (allContracts === null) {
       const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
@@ -1059,7 +1003,7 @@ const PropertyCard = (props) => {
       const data2 = await businessProfileResult.json();
       const businessProfileData = data2["result"];
       const businessProf = businessProfileData?.find((item) => item.business_uid === getProfileId());
-      // console.log("businessProf - ", businessProf);
+      console.log("businessProf - ", businessProf);
       setBusinessProfile(businessProf);
     }
   };
@@ -1073,8 +1017,8 @@ const PropertyCard = (props) => {
   }, [props.contractPropertyID]);
 
   useEffect(() => {
-    // fetchData();
-    fetchDataNew();
+    fetchData();
+    
     // if (allContracts !== null && businessProfile !== null) {
     //   setData();
     // }
@@ -1112,11 +1056,13 @@ const PropertyCard = (props) => {
     // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
     // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
-
+	
+	// console.log("contractFees.length - ", contractFees.length);
+	// console.log("contractFees - ", contractFees);
     if (!contractFees.length) {
       setContractFees([...defaultContractFees]);
     }
-  }, [defaultContractFees]);
+  }, [defaultContractFees, props.contractUID]);
 
   useEffect(() => {
     // console.log("CONTRACT FEES - ", contractFees);
@@ -1127,7 +1073,7 @@ const PropertyCard = (props) => {
   useEffect(() => {
     // console.log("CONTRACT FILE TYPES - ", contractFileTypes);
     // let JSONstring = JSON.stringify(contractFileTypes);
-    // console.log("CONTRACT FILE TYPES JSON string- ", JSONstring);
+    // console.log("CONTRACT FILE TYPES JSON string- ", JSONstring);	
   }, [contractFileTypes]);
 
   useEffect(() => {
@@ -1226,7 +1172,7 @@ const PropertyCard = (props) => {
   // }
 
   const handleAddContact = (newContact) => {
-    // console.log("ROHIT - newContact - ", newContact);
+    // console.log("newContact - ", newContact);
     setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
   };
 
@@ -1399,9 +1345,7 @@ const PropertyCard = (props) => {
     // console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
 
     //get contracts
-    // fetchData();
-
-    fetchDataNew();
+    fetchData();    
   }, []);
 
   const getFormattedFeeFrequency = (frequency) => {
@@ -2095,15 +2039,17 @@ if (scrollRef.current) {
 					borderRadius: '5px',
 				}}
 			>
-				{contractFees.length === 0 ? (
-					// <p>No fees to display</p>
+				{contractFees.length === 0 ? (					
 					<Box
 						sx={{
 							height: '13px',
 						}}
-					></Box>
+						
+					>
+						<p>No fees to display</p>
+					</Box>
 				) : (
-					contractFees.map((fee, index) => (
+					contractFees?.map((fee, index) => (
 						<Box
 							key={index}
 							// FeeIndex={index}
@@ -2800,7 +2746,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 }
 
 function EditContactDialog({ open, handleClose, onEditContact, contactIndex, contacts }) {
-	// console.log("ROHIT - contactIndex - ", contactIndex);
+	// console.log("contactIndex - ", contactIndex);
 	const [contactFirstName, setContactFirstName] = useState(contacts[contactIndex].contact_first_name);
 	const [contactLastName, setContactLastName] = useState(contacts[contactIndex].contact_last_name);
 	const [contactEmail, setContactEmail] = useState(contacts[contactIndex].contact_email);

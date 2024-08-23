@@ -153,17 +153,17 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     }
   };
 
-  useEffect(() => {
-    // console.log("ROHIT - adults - ", adults);
-  }, [adults]);
+  // useEffect(() => {
+  //   console.log("adults - ", adults);
+  // }, [adults]);
 
-  useEffect(() => {
-    // console.log("ROHIT - paymentMethods - ", paymentMethods);
-  }, [paymentMethods]);
+  // useEffect(() => {
+  //   console.log("paymentMethods - ", paymentMethods);
+  // }, [paymentMethods]);
 
-  useEffect(() => {
-    // console.log("ROHIT - modifiedData - ", modifiedData);
-  }, [modifiedData]);
+  // useEffect(() => {
+  //   console.log("modifiedData - ", modifiedData);
+  // }, [modifiedData]);
 
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {
@@ -302,7 +302,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
       setVehicles(JSON.parse(profileData.tenant_vehicle_info) || []);
 
       const parsedDocs = JSON.parse(profileData.tenant_documents);
-      // console.log("ROHIT - parsedDocs - ", parsedDocs);
+      // console.log("parsedDocs - ", parsedDocs);
       const docs = parsedDocs
         ? parsedDocs.map((doc, index) => ({
             ...doc,
@@ -466,7 +466,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     const { name, checked } = e.target;
     const map = { ...paymentMethods };
     map[name].checked = checked;
-    console.log("ROHIT - handleChangeChecked - map[name]", map[name]);
+    // console.log("handleChangeChecked - map[name]", map[name]);
     // if (name === "bank_account") {
     //   if (!checked) {
     //     map.bank_account.account_number = "";

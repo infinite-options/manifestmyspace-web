@@ -411,7 +411,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                                     sx={{ backgroundColor: '#D6D5DA' }}
                                 >
                                     {relationships && relationships.map((reln) => {
-                                        if (reln.list_uid == "050-000053" || reln.list_uid == "050-000054" || reln.list_uid == "050-000055") {
+                                        if (reln.list_item == "son" || reln.list_item == "daughter") {
                                             return (<MenuItem key={reln.list_uid} value={reln.list_item}>
                                                 {reln.list_item}
                                             </MenuItem>)

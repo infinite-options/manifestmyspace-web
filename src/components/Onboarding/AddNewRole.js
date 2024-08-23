@@ -153,7 +153,7 @@ const AddNewRole = () => {
       alert("User with this email already exists");
       return;
     }
-    // console.log("ROHIT - newRole - ", newRole);
+    // console.log("newRole - ", newRole);
     const payload = getPayload(newRole, user_uid);
     const form = encodeForm(payload);
     const data = await createProfile(form, newRole);

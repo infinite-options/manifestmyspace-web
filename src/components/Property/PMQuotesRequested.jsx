@@ -15,6 +15,7 @@ import {
   TextField,
   CircularProgress,
 } from "@mui/material";
+import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
@@ -757,11 +758,17 @@ function DocumentCard(props) {
         data.contract_status === "NEW" ? (
           fees?.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
         ) : data.contract_fees !== null ? (
-          JSON.parse(data.contract_fees)?.map((fee, index) => (
-            <Typography sx={textStyle}>
-              <FeesTextCard key={index} fee={fee} />
-            </Typography>
-          ))
+          <>
+          {/* <Box sx={{marginLeft: '10px', }}>
+            {
+              JSON.parse(data.contract_fees)?.map((fee, index) => (
+                <Typography sx={textStyle}>
+                  <FeesTextCard key={index} fee={fee} />
+                </Typography>
+              ))}
+          </Box> */}
+          <FeesDataGrid data={JSON.parse(data?.contract_fees)} />
+          </>
         ) : (
           <Typography sx={textStyle}>
             <b>No fees</b>
@@ -774,6 +781,77 @@ function DocumentCard(props) {
   );
 }
 
+const FeesDataGrid = ({ data }) => {
+  const columns = [
+    { field: "frequency",
+      headerName: "Frequency",
+      width: 120,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "fee_name",
+      headerName: "Name",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    {
+      field: "charge",
+      headerName: "Charge",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const charge = params.value;
+
+        return (
+          <Typography>
+            {feeType === "PERCENT" ? `${charge}%` : feeType === "FLAT-RATE" ? `$${charge}` : charge}
+          </Typography>
+        );
+      },
+    },    
+    {
+      field: "of",
+      headerName: "Of",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {        
+        const of = params.value;
+
+        return (
+          <Typography>
+            {(of === null || of === undefined) ? `-` : `${of}`}
+          </Typography>
+        );
+      },
+    },
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(fee) => fee.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
+  );
+};
+
 function FeesTextCard(props) {
   const textStyle = {
     textTransform: "none",
@@ -785,17 +863,16 @@ function FeesTextCard(props) {
   let fee = props.fee;
 
   function displayFee() {
-    if (fee.fee_type === "%") {
+    if (fee.fee_type === "%" || fee.fee_type === "PERCENT") {
       return (
         <Typography sx={textStyle}>
-          {fee.fee_name}: {fee.charge}
-          {fee.fee_type} of {fee.of} <b>{fee.frequency}</b>
+          <b>{fee.frequency}</b> - {fee.fee_name}: {fee.charge} % of {fee.of}           
         </Typography>
       );
     } else if (fee.fee_type === "$") {
       return (
         <Typography sx={textStyle}>
-          {fee.fee_name}: {fee.fee_type}
+          {fee.fee_name} : {fee.fee_type}
           {fee.charge} of {fee.of} <b>{fee.frequency}</b>
         </Typography>
       );
@@ -803,8 +880,7 @@ function FeesTextCard(props) {
       const type = "$";
       return (
         <Typography sx={textStyle}>
-          {fee.fee_name}: {type}
-          {fee.charge} <b>{fee.frequency}</b>
+          <b>{fee.frequency}</b> - {fee.fee_name} : {type} {fee.charge}           
         </Typography>
       );
     } else {

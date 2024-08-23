@@ -271,18 +271,18 @@ function EditProperty(props) {
 			changes.property_amenities_nearby = nearbyAmenities;		
 		if (favImage !== initialData.property_favorite_image) changes.property_favorite_image = favImage;
 		
-		console.log("ROHIT - changes - ", changes);
+		console.log("changes - ", changes);
 
 		return changes;
 	};
 
-	useEffect(() => {
-		// console.log("deletedImageList - ", deletedImageList);
-	}, [deletedImageList]);
+	// useEffect(() => {
+	// 	console.log("deletedImageList - ", deletedImageList);
+	// }, [deletedImageList]);
 
-	useEffect(() => {
-		console.log("ROHIT - imageState - ", imageState);
-	}, [imageState]);
+	// useEffect(() => {
+	// 	console.log("imageState - ", imageState);
+	// }, [imageState]);
 
 
 	
@@ -413,7 +413,7 @@ function EditProperty(props) {
 		let utilitiesInUIDForm = {};
 		let mappedUtilities2 = {};
 
-		// console.log("ROHIT - utilities - ", utilities);
+		// console.log("utilities - ", utilities);
 		try {
 			if (utilities && utilities.length > 0) {
 				utilitiesObject = JSON.parse(utilities);
@@ -713,7 +713,7 @@ function EditProperty(props) {
 			const updatedJson = await updateResponse.json();
 			//console.log('---updatedJson---', updatedJson);
 			const updatedProperty = updatedJson.Property.result[0];
-			console.log('ROHIT - updatedProperty---', updatedProperty);
+			console.log('updatedProperty---', updatedProperty);
 			const newPropertyList = propertyList.map((property) => {
 				if (property.property_uid === updatedProperty.property_uid) {
 					return { ...property, ...updatedProperty }

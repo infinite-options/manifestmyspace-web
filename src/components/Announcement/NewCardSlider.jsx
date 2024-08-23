@@ -52,7 +52,7 @@ export default function NewCardSlider(props) {
     <Box maxWidth='100%' sx={{ maxHeight: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Button
         onClick={handlePrev}
-        disable={currentIndex === 0 ? true : false}
+        disabled={currentIndex === 0 ? true : false}
         sx={{
           padding: "0px",
           color: "#007AFF",
@@ -86,7 +86,7 @@ export default function NewCardSlider(props) {
       </Box>
       <Button
         onClick={handleNext}
-        disable={currentIndex === announcementList.length - 1 ? true : false}
+        disabled={currentIndex === announcementList.length - 1 ? true : false}
         sx={{
           padding: "0px",
           color: "#007AFF",

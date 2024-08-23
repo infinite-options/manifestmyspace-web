@@ -78,9 +78,9 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
     bath: "",
   });
 
-  useEffect(() => {
-    console.log(selectedFilters);
-  }, [selectedFilters]);
+  // useEffect(() => {
+  //   console.log(selectedFilters);
+  // }, [selectedFilters]);
 
   const areAnyFiltersSet = Object.values(selectedFilters).some((value) => value !== "");
 
@@ -302,8 +302,8 @@ const PropertyListings = ({ setRightPane }) => {
   }
 
   function sortProperties(leaseData, propertyData) {
-    console.log("Lease Data in PropertyListings.jsx: ", leaseData);
-    console.log("Property Data in PropertyListings.jsx: ", propertyData);
+    // console.log("Lease Data in PropertyListings.jsx: ", leaseData);
+    // console.log("Property Data in PropertyListings.jsx: ", propertyData);
     if (JSON.stringify(leaseData) !== "{}") {
       var activePropertyArray = [];
       const leases = leaseData;
@@ -461,8 +461,8 @@ const PropertyListings = ({ setRightPane }) => {
 function PropertyCard({ data, status, leaseData, setRightPane }) {
   const navigate = useNavigate();
   const [lease, setLease] = useState(leaseData || {});
-  console.log("In PropertyCard: ", data);
-  console.log("In PropertyCard: ", leaseData);
+  // console.log("In PropertyCard: ", data);
+  // console.log("In PropertyCard: ", leaseData);
   const property = data;
   const propertyImages = property?.property_images || "";
   const ppt_images = propertyImages.split(",");

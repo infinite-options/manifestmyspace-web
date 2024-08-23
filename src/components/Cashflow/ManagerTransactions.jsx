@@ -98,7 +98,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
   const [transactions, setTransactions] = useState([]);
 
-  const [transactionsNew, setTransactionsNew] = useState([]); // rohit - change to transactions
+  const [transactionsNew, setTransactionsNew] = useState([]);
 
   async function fetchCashflow(userProfileId, month, year) {
     try {
@@ -136,26 +136,26 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   //     console.log("payouts - ", payouts);
   //   }, [payouts]);
 
-  useEffect(() => {
-    // console.log("ROHIT - transactions - ", transactions);
-  }, [transactions]);
+  // useEffect(() => {
+  //   console.log("transactions - ", transactions);
+  // }, [transactions]);
 
-  useEffect(() => {
-    // console.log("ROHIT - transactionsNew - ", transactionsNew);
-  }, [transactionsNew]);
+  // useEffect(() => {
+  //   console.log("transactionsNew - ", transactionsNew);
+  // }, [transactionsNew]);
 
   useEffect(() => {
     //TRANSACTIONS
     const allTransactionsData = transactionsData?.result;
-    // console.log("ROHIT - allTransactionsData - ", allTransactionsData);
-    // console.log("ROHIT - allTransactionsData - selectedProperty", selectedProperty);
+    // console.log("allTransactionsData - ", allTransactionsData);
+    // console.log("allTransactionsData - selectedProperty", selectedProperty);
     let filteredTransactionsData = [];
     if (selectedProperty === "ALL") {
       filteredTransactionsData = allTransactionsData;
-      // console.log("ROHIT - filteredTransactionsData - ", filteredTransactionsData);
+      // console.log("filteredTransactionsData - ", filteredTransactionsData);
     } else {
       filteredTransactionsData = allTransactionsData?.filter((item) => item.property_id === selectedProperty);
-      // console.log("ROHIT - filteredTransactionsData - ", filteredTransactionsData);
+      // console.log("filteredTransactionsData - ", filteredTransactionsData);
     }
     const transactionsCurrentMonth = filteredTransactionsData?.filter((item) => item.cf_month === month && item.cf_year === year);
 
@@ -247,7 +247,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       });
     }
 
-    // console.log("ROHIT - transactionsByProperty - ", transactionsByProperty);
+    // console.log("transactionsByProperty - ", transactionsByProperty);
 
     setTransactionsNew(transactionsByProperty);
   }, [month, year, transactionsData, selectedProperty]);
@@ -598,7 +598,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 }
 
 function SelectMonthComponentTest(props) {
-  // console.log("ROHIT - SelectMonthComponentTest - props - ",  props);
+  // console.log("SelectMonthComponentTest - props - ",  props);
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   const lastYear = new Date().getFullYear() - 1;
