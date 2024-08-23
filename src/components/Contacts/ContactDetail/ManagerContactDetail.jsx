@@ -51,8 +51,13 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
     const [ contactDetails, setContactDetails ] = useState([]);
   
     useEffect(() => {
-      setContactDetails(data)
+      setContactDetails(data);
     }, [data]);
+
+    useEffect(() => {
+      console.log("Manager Contact Details:", contactDetails);
+      console.log("Current Index:", currentIndex);
+    }, [contactDetails, currentIndex]);
   
     return (
       <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px', }}>                

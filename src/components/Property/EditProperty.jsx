@@ -271,18 +271,18 @@ function EditProperty(props) {
 			changes.property_amenities_nearby = nearbyAmenities;		
 		if (favImage !== initialData.property_favorite_image) changes.property_favorite_image = favImage;
 		
-		console.log("ROHIT - changes - ", changes);
+		console.log("changes - ", changes);
 
 		return changes;
 	};
 
-	useEffect(() => {
-		// console.log("deletedImageList - ", deletedImageList);
-	}, [deletedImageList]);
+	// useEffect(() => {
+	// 	console.log("deletedImageList - ", deletedImageList);
+	// }, [deletedImageList]);
 
-	useEffect(() => {
-		console.log("ROHIT - imageState - ", imageState);
-	}, [imageState]);
+	// useEffect(() => {
+	// 	console.log("imageState - ", imageState);
+	// }, [imageState]);
 
 
 	
@@ -413,7 +413,7 @@ function EditProperty(props) {
 		let utilitiesInUIDForm = {};
 		let mappedUtilities2 = {};
 
-		// console.log("ROHIT - utilities - ", utilities);
+		// console.log("utilities - ", utilities);
 		try {
 			if (utilities && utilities.length > 0) {
 				utilitiesObject = JSON.parse(utilities);
@@ -545,8 +545,7 @@ function EditProperty(props) {
 		console.log('handleSubmit');
 
 		const changedFields = getChangedFields();
-
-		if (Object.keys(changedFields).length === 0 && imageState.length === 0) {
+		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0) {
 			setHasChanges(false);
 			console.log('No changes detected.');
 			return;
@@ -714,7 +713,7 @@ function EditProperty(props) {
 			const updatedJson = await updateResponse.json();
 			//console.log('---updatedJson---', updatedJson);
 			const updatedProperty = updatedJson.Property.result[0];
-			console.log('ROHIT - updatedProperty---', updatedProperty);
+			console.log('updatedProperty---', updatedProperty);
 			const newPropertyList = propertyList.map((property) => {
 				if (property.property_uid === updatedProperty.property_uid) {
 					return { ...property, ...updatedProperty }
@@ -722,10 +721,9 @@ function EditProperty(props) {
 					return property;
 				}
 			});			
-			//console.log('---index---', index);
-			console.log('updatedPropertyList - ', newPropertyList);
 			setPropertyData(newPropertyList[index]);
 			setPropertyList(newPropertyList) // props.setPropertyList - setting propertyList in parent
+			return newPropertyList[index];
 		};
 
 		putData();
@@ -737,9 +735,11 @@ function EditProperty(props) {
 
 		try {
 			await Promise.all(promises);
-			console.log('All Changes saved to the Database', promises);
-			await autoUpdate();
-
+			//console.log('All Changes saved to the Database', promises);
+			const updatedPropertyData = await autoUpdate();
+			setDeletedIcons(new Array(JSON.parse(updatedPropertyData.property_images).length).fill(false));
+			setFavoriteIcons(JSON.parse(updatedPropertyData.property_images).map(image => image === updatedPropertyData.property_favorite_image));
+			
 			if (stayOnPage) {
 				console.log('STAY ON PAGE', stayOnPage);
 				// setCookie("user_data", { ...cookiesData, index }, { path: "/" });

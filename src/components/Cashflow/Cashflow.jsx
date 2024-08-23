@@ -199,13 +199,13 @@ export default function Cashflow() {
     }
   }, [month, year, cashflowData2]);
 
-  useEffect(() => {
-    // console.log("ROHIT - propertyList - ", propertyList);
-  }, [propertyList]);
+  // useEffect(() => {
+  //   console.log("propertyList - ", propertyList);
+  // }, [propertyList]);
 
-  useEffect(() => {
-    // console.log("ROHIT - cashflowData2 - ", cashflowData2);
-  }, [cashflowData2]);
+  // useEffect(() => {
+  //   console.log("cashflowData2 - ", cashflowData2);
+  // }, [cashflowData2]);
 
   return (
     <ThemeProvider theme={theme}>

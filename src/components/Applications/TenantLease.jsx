@@ -26,6 +26,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InputAdornment from "@mui/material/InputAdornment";
 import defaultHouseImage from "../Property/defaultHouseImage.png";
 import { isValidDate } from "../../utils/dates";
+import { DataGrid } from '@mui/x-data-grid';
+import { maskSSN, maskEIN, formattedPhoneNumber } from "../utils/privacyMasking";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -106,14 +108,19 @@ const TenantLease = () => {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
-  // console.log("Application: ", application);
+  console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(application.lease_start ? dayjs(application.lease_start) : dayjs());
   const [endDate, setEndDate] = useState(application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day"));
   const [moveInDate, setMoveInDate] = useState(dayjs()); // fix me
 
-  const [noOfOccupants, setNoOfOccupants] = useState(0);
-  const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 0);
+  const [noOfOccupants, setNoOfOccupants] = useState(1);
+  const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 30);
+
+  const [leaseAdults, setLeaseAdults ] = useState([]);
+  const [leaseChildren, setLeaseChildren ] = useState([]);
+  const [leasePets, setLeasePets ] = useState([]);
+  const [leaseVehicles, setLeaseVehicles ] = useState([]);
 
   // console.log("# of Occupants", noOfOccupants);
 
@@ -137,6 +144,14 @@ const TenantLease = () => {
   }
 
   useEffect(() => {
+    console.log("leaseAdults - ", leaseAdults)
+    console.log("leaseChildren - ", leaseChildren)
+    console.log("leasePets - ", leasePets)
+    console.log("leaseVehicles - ", leaseVehicles)
+
+  }, [leaseAdults, leaseChildren, leasePets, leaseVehicles]);
+
+  useEffect(() => {
     const getLeaseFees = () => {
       let feesList = [];
       if (application?.lease_status === "PROCESSING") {
@@ -154,7 +169,45 @@ const TenantLease = () => {
 
       setFees(feesList);
     };
+
+    const getOccupants = () => {
+      let numOccupants = 0;
+      try {            
+        const adults = application.lease_adults ? JSON.parse(application?.lease_adults) : [];
+        setLeaseAdults(adults);
+        numOccupants += adults?.length;
+      } catch (error) {
+        console.log("Error parsing application.lease_adults:", error);
+      }
+
+      try {            
+        const children = application.lease_children ? JSON.parse(application?.lease_children) : [];
+        setLeaseChildren(children);
+        numOccupants += children?.length;
+      } catch (error) {
+        console.log("Error parsing application.lease_children:", error);
+      }
+
+      try {            
+        const pets = application.lease_pets ? JSON.parse(application?.lease_pets) : [];
+        setLeasePets(pets);
+      } catch (error) {
+        console.log("Error parsing application.lease_pets:", error);
+      }
+
+      try {            
+        const vehicles = application.lease_vehicles ? JSON.parse(application?.lease_vehicles) : [];
+        setLeaseVehicles(vehicles);
+      } catch (error) {
+        console.log("Error parsing application.lease_adults:", error);
+      }
+
+      setNoOfOccupants(numOccupants);
+    };
+
+
     getLeaseFees();
+    getOccupants();
   }, []);
 
   const addFeeRow = () => {
@@ -823,7 +876,7 @@ const TenantLease = () => {
             </Stack>
           </Grid>
           <Grid item xs={6} md={6}>
-            <Stack spacing={-2} m={2}>
+            
               <Typography
                 sx={{
                   color: theme.typography.propertyPage.color,
@@ -846,13 +899,61 @@ const TenantLease = () => {
                     backgroundColor: "#D6D5DA",
                     borderRadius: 10,
                     height: 40,
-                    paddingBottom: "15px",
+                    // paddingBottom: "15px",
                   },
                 }}
                 className={classes.root}
               />
-            </Stack>
+            
           </Grid>
+          {
+            leaseAdults && leaseAdults?.length > 0 && (
+              <Grid container direction="column" item xs={12}>
+                <Typography sx={{ fontWeight: 'bold', color: '#160449'}}>
+                  Adult Occupants:
+                </Typography>
+                
+                <OccupantsDataGrid data={leaseAdults} />
+              </Grid>
+            )
+          }
+          {
+            leaseChildren && leaseChildren?.length > 0 && (
+              <Grid container direction="column" item xs={12}>
+                <Typography sx={{ fontWeight: 'bold', color: '#160449'}}>
+                  Children Occupants:
+                </Typography>
+                
+                <OccupantsDataGrid data={leaseChildren} />
+              </Grid>
+            )
+          }
+          {
+            leasePets && leasePets?.length > 0 && (
+              <Grid container direction="column" item xs={12}>
+                <Typography sx={{ fontWeight: 'bold', color: '#160449'}}>
+                  Pets:
+                </Typography>
+                
+                <PetsDataGrid data={leasePets} />                
+              </Grid>
+            )
+          }
+          {
+            leaseVehicles && leaseVehicles?.length > 0 && (
+              <Grid container direction="column" item xs={12}>
+                <Typography sx={{ fontWeight: 'bold', color: '#160449'}}>
+                  Vehicles:
+                </Typography>
+                
+                <VehiclesDataGrid data={leaseVehicles} />
+                
+              </Grid>
+            )
+          }
+          
+          
+          
 
           <Grid item xs={12}>
             <hr />
@@ -1396,6 +1497,246 @@ const TenantLease = () => {
         </Grid>
       </Box>
     </ThemeProvider>
+  );
+};
+
+const OccupantsDataGrid = ({ data }) => {
+  const columns = [
+    { 
+      field: "name",
+      headerName: "First Name",
+      width: 120,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "last_name",
+      headerName: "Last Name",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "dob",
+      headerName: "Date of Birth",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },    
+    { 
+      field: "email",
+      headerName: "Email",
+      width: 120,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { 
+      field: "phone_number",
+      headerName: "Phone Number",
+      width: 130,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {        
+        const phone = params.value;
+
+        return (
+          <Typography>
+            {phone ? formattedPhoneNumber(phone) : '-'}
+          </Typography>
+        );
+      },
+    },    
+    { 
+      field: "tenant_ssn",
+      headerName: "SSN",
+      width: 120,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {        
+        const SSN = params.value;
+
+        return (
+          <Typography>
+            {SSN ? maskSSN(SSN) : '-'}
+          </Typography>
+        );
+      },
+    },
+    { 
+      field: "relationship",
+      headerName: "Relationship",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+  const dataWithIds = data.map((row, index) => ({ ...row, id: index }));
+
+  return (
+    <>
+      <DataGrid
+        rows={dataWithIds}
+        getRowId={(row) => row.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          // marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
+  );
+};
+
+const PetsDataGrid = ({ data }) => {
+  const columns = [
+    { field: "name",
+      headerName: "First Name",
+      width: 120,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "last_name",
+      headerName: "Last Name",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "type",
+      headerName: "Type",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "breed",
+      headerName: "Breed",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { 
+      field: "weight",
+      headerName: "Weight",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {        
+        const weight = params.value;
+
+        return (
+          <Typography>
+            {weight} lbs
+          </Typography>
+        );
+      },
+    },
+    { 
+      field: "owner",
+      headerName: "Owner",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    
+    
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+  const dataWithIds = data.map((row, index) => ({ ...row, id: index }));
+
+  return (
+    <>
+      <DataGrid
+        rows={dataWithIds}
+        getRowId={(row) => row.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          // marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
+  );
+};
+
+const VehiclesDataGrid = ({ data }) => {
+  const columns = [
+    { field: "year",
+      headerName: "Year",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "make",
+      headerName: "Make",
+      width: 120,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "model",
+      headerName: "Model",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "owner",
+      headerName: "Owner",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "license",
+      headerName: "License",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { 
+      field: "state",
+      headerName: "State",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),      
+    },            
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+  const dataWithIds = data.map((row, index) => ({ ...row, id: index }));
+
+  return (
+    <>
+      <DataGrid
+        rows={dataWithIds}
+        getRowId={(row) => row.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          // marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
   );
 };
 

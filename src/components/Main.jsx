@@ -67,6 +67,7 @@ import PropertyInfo from "./Property/PropertyInfo";
 import MaintenanceWidget from "./Dashboard-Components/Maintenance/MaintenanceWidget";
 
 import Contacts from "./Contacts/Contacts";
+import ContactsPM from "./Contacts/ContactsPM";
 import OwnerContacts from "./Contacts/OwnerContacts/OwnerContacts";
 import PMContacts from "./Contacts/PMContacts/PMContacts";
 import TenantContacts from "./Contacts/TenantContacts/TenantContacts";
@@ -312,6 +313,7 @@ function Main() {
 
             <Route path='propertyInfo' element={<PropertyInfo />} />
             <Route path='contacts' element={<Contacts />} />
+            <Route path ='contactsPM' element={<ContactsPM/>}/>
             <Route path='ownerContacts' element={<OwnerContacts />} />
             <Route path='PMContacts' element={<PMContacts />} />
             <Route path='tenantContacts' element={<TenantContacts />} />

@@ -8,7 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
   Box,
@@ -33,6 +33,8 @@ import {
   Snackbar,
   Alert,
   AlertTitle,
+  RadioGroup,
+  Radio,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { makeStyles } from "@material-ui/core/styles";
@@ -81,6 +83,17 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getProfileId } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
+
+  const [ taxIDType, setTaxIDType ] = useState("SSN");  
+  useEffect(()=> {    
+    if(ein && identifyTaxIdType(ein) === "EIN") setTaxIDType("EIN");
+  }, [ein])
+
+  useEffect(()=> {        
+    handleTaxIDChange(ein);    
+  }, [taxIDType])
+
+
   const [employeePhoto, setEmployeePhoto] = useState("");
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false, uid: "" },
@@ -138,21 +151,21 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     }
   };
 
-  useEffect(() => {
-    // console.log("ROHIT - paymentMethods - ", paymentMethods);
-  }, [paymentMethods]);
+  // useEffect(() => {
+  //   console.log("paymentMethods - ", paymentMethods);
+  // }, [paymentMethods]);
 
-  useEffect(() => {
-    // console.log("ROHIT - fees - ", fees);
-  }, [fees]);
+  // useEffect(() => {
+  //   console.log("fees - ", fees);
+  // }, [fees]);
 
-  useEffect(() => {
-    // console.log("ROHIT - modifiedData - ", modifiedData);
-  }, [modifiedData]);
+  // useEffect(() => {
+  //   console.log("modifiedData - ", modifiedData);
+  // }, [modifiedData]);
 
-  useEffect(() => {
-    // console.log("ROHIT - documents - ", documents);
-  }, [documents]);
+  // useEffect(() => {
+  //   console.log("documents - ", documents);
+  // }, [documents]);
 
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {
@@ -196,12 +209,28 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     updateModifiedData({ key: "business_phone_number", value: formatPhoneNumber(event.target.value) });
   };
 
-  const handleEINChange = (event) => {
-    let value = event.target.value;
-    if (value.length > 11) return;
-    setEin(value);
+  // const handleEINChange = (event) => {
+  //   let value = event.target.value;
+  //   if (value.length > 11) return;
+  //   setEin(value);
 
-    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+  //   updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+  // };
+
+  const handleTaxIDChange = (value) => {
+    // let value = event.target.value;
+    if (value?.length > 11) return;
+
+    let updatedTaxID = ""
+    if(taxIDType === "EIN"){
+      updatedTaxID = formatEIN(value)      
+    } else {
+      updatedTaxID = formatSSN(value)      
+    }
+    setEin(updatedTaxID);
+    
+    // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
   };
 
   const handleEmpFirstNameChange = (event) => {
@@ -244,7 +273,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const handleEmpSSNChange = (event) => {
     let value = event.target.value;
     if (value.length > 11) return;
-    setEmpSsn(value);
+    setEmpSsn(formatSSN(value));
     updateModifiedData({ key: "employee_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
   };
 
@@ -278,7 +307,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       }
 
       const parsedDocs = JSON.parse(profileData.business_documents);
-      // console.log("ROHIT - parsedDocs - ", parsedDocs);
+      // console.log("parsedDocs - ", parsedDocs);
       const docs = parsedDocs
         ? parsedDocs.map((doc, index) => ({
             ...doc,
@@ -647,7 +676,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     const { name, checked } = e.target;
     const map = { ...paymentMethods };
     map[name].checked = checked;
-    // console.log("ROHIT - handleChangeChecked - map[name]", map[name])
+    // console.log("handleChangeChecked - map[name]", map[name])
     // if (name === "bank_account") {
     //   if (!checked) {
     //     map.bank_account.account_number = "";
@@ -753,6 +782,11 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
     if (!DataValidator.ssn_validate(empSsn)) {
       alert("Please enter a valid SSN");
+      return false;
+    }
+
+    if((taxIDType === "EIN" && !DataValidator.ein_validate(ein)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ein))){
+      alert("Please enter a valid Tax ID");
       return false;
     }
 
@@ -897,7 +931,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
         });
         profileFormData.append("business_uid", profileData.business_uid);
 
-        // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
+        // console.log("editOrUpdateProfile - profileFormData - ");
         for (var pair of profileFormData.entries()) {
           console.log(pair[0] + ", " + pair[1]);
         }
@@ -1128,7 +1162,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
               <Grid container item xs={12} columnSpacing={4}>
                 <Grid container item xs={6}>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <Typography
                       sx={{
                         color: theme.typography.common.blue,
@@ -1139,13 +1173,49 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       {"Tax ID (EIN or SSN)"}
                     </Typography>
                   </Grid>
+                  <Grid item xs={6}>
+                  {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
+                    <MenuItem value='SSN'>SSN</MenuItem>
+                    <MenuItem value='EIN'>EIN</MenuItem>
+                  </Select> */}
+
+                  <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
+                    <FormControlLabel 
+                      value='SSN'
+                      control={
+                        <Radio
+                          sx={{
+                            color: 'defaultColor', 
+                            '&.Mui-checked': {
+                              color: '#3D5CAC',
+                            },
+                          }}
+                        />
+                      }
+                      label='SSN' />
+                    <FormControlLabel
+                      value='EIN'
+                      control={
+                        <Radio
+                          sx={{
+                            color: 'defaultColor', 
+                            '&.Mui-checked': {
+                              color: '#3D5CAC', 
+                            },
+                          }}
+                        />
+                      }
+                      label='EIN' />                    
+                  </RadioGroup>
+                  </Grid>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
                       // value={mask}
                       value={ein}
                       // onChange={(e) => setSsn(e.target.value)}
-                      onChange={handleEINChange}
+                      // onChange={handleEINChange}
+                      onChange={(e) => handleTaxIDChange(e.target.value)}
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}

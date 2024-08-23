@@ -44,6 +44,7 @@ export default function TenantApplication(props) {
   // useEffect(() => {
   //     console.log("tenantDocuments - ", tenantDocuments);
   // }, [tenantDocuments])
+  
 
   useEffect(() => {
     const updateData = () => {
@@ -331,6 +332,7 @@ export default function TenantApplication(props) {
       });
 
       const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+        // const annoucementsResponse = await fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1018,7 +1020,7 @@ export default function TenantApplication(props) {
                   width: "100%",
                 }}
               >
-                {(status === "" || status === "REJECTED" || status === "RESCIND") &&
+                {(status == null || status === "" || status === "REJECTED" || status === "RESCIND") &&
                   <Button
                     variant='contained'
                     sx={{

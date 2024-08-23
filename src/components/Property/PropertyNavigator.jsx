@@ -170,15 +170,15 @@ export default function PropertyNavigator({
   }, []);
 
   useEffect(() => {
-    //console.log("ROHIT - appliances - ", appliances);
+    //console.log("appliances - ", appliances);
   }, [appliances]);
 
   useEffect(() => {
-    // console.log("ROHIT - currentApplRow - ", currentApplRow);
+    // console.log("currentApplRow - ", currentApplRow);
   }, [currentApplRow]);
 
   useEffect(() => {
-    // console.log("ROHIT - modifiedApplRow - ", modifiedApplRow);
+    // console.log("modifiedApplRow - ", modifiedApplRow);
   }, [modifiedApplRow]);
 
   useEffect(() => {
@@ -331,7 +331,7 @@ export default function PropertyNavigator({
           count++;
         }
       });
-      // console.log("ROHIT - PropertyNavigator - contract count - ", count);
+      // console.log("PropertyNavigator - contract count - ", count);
       setContractsNewSent(count);
       setContractsData(contracts);
       setActiveContracts(active);
@@ -600,33 +600,47 @@ export default function PropertyNavigator({
   //   }
   // }
 
+  // const handleManagerChange = (index) => {
+  //   if (property && property.business_uid) {
+  //     /* navigate('/managerDetails', {
+  //       state: {
+  //         ownerId: property.owner_uid,
+  //         managerBusinessId: property.business_uid,
+  //         managerData: property,
+  //         propertyData: propertyData,
+  //         index: currentIndex,
+  //         isDesktop: isDesktop,
+  //       },
+  //     }); */
+  //     const state = {
+  //       ownerId: property.owner_uid,
+  //       managerBusinessId: property.business_uid,
+  //       managerData: property,
+  //       propertyData: propertyData,
+  //       index: currentIndex,
+  //       isDesktop: isDesktop,
+  //     };
+  //     //console.log("---inside prop nav state---", state);
+  //     setManagerDetailsState(state);
+  //     handleViewManagerDetailsClick();
+  //   } else {
+  //     // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
+  //     const state = { index: currentIndex, propertyData, isDesktop };
+  //     //console.log('inside prop nav----', state);
+  //     onShowSearchManager(state);
+  //   }
+  // };
+
   const handleManagerChange = (index) => {
     if (property && property.business_uid) {
-      /* navigate('/managerDetails', {
+      navigate("/ContactsPM", {
         state: {
-          ownerId: property.owner_uid,
-          managerBusinessId: property.business_uid,
-          managerData: property,
-          propertyData: propertyData,
-          index: currentIndex,
-          isDesktop: isDesktop,
+          contactsTab: "Manager", 
+          managerId: property.business_uid,
         },
-      }); */
-      const state = {
-        ownerId: property.owner_uid,
-        managerBusinessId: property.business_uid,
-        managerData: property,
-        propertyData: propertyData,
-        index: currentIndex,
-        isDesktop: isDesktop,
-      };
-      //console.log("---inside prop nav state---", state);
-      setManagerDetailsState(state);
-      handleViewManagerDetailsClick();
+      });
     } else {
-      // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
       const state = { index: currentIndex, propertyData, isDesktop };
-      //console.log('inside prop nav----', state);
       onShowSearchManager(state);
     }
   };
@@ -781,7 +795,7 @@ export default function PropertyNavigator({
   ];
 
   const handleEditClick = async (row) => {
-    // console.log("ROHIT - handleEditClick - row - ", row);
+    // console.log("handleEditClick - row - ", row);
     await setInitialApplData(row);
     await setcurrentApplRow(row);
     await setModifiedApplRow({ appliance_uid: row.appliance_uid });
@@ -824,7 +838,7 @@ export default function PropertyNavigator({
       });
       // applianceFormData.append('appiliance_uid', appliance.uid);
 
-      // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
+      // console.log(" editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
@@ -919,7 +933,7 @@ export default function PropertyNavigator({
       // });
       // applianceFormData.append('appiliance_uid', appliance.uid);
 
-      // console.log("ROHIT _ editOrUpdateProfile - profileFormData - ");
+      // console.log(" editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
@@ -1034,19 +1048,19 @@ export default function PropertyNavigator({
       }
       const responseJson = await response.json();
       const applnCategories = responseJson.result.filter((res) => res.list_category === "appliances" && res.list_item.trim() !== "");
-      // console.log("ROHIT - appliance categories - ", applnCategories);
+      // console.log("appliance categories - ", applnCategories);
       setApplianceCategories(applnCategories);
       const listItemToUidMapping = applnCategories.reduce((acc, item) => {
         acc[item.list_item] = item.list_uid;
         return acc;
       }, {});
-      // console.log("ROHIT - appliance categories to UIDs- ", listItemToUidMapping);
+      // console.log("appliance categories to UIDs- ", listItemToUidMapping);
       setApplianceCategoryToUIDMap(listItemToUidMapping);
       const listUidToItemMapping = applnCategories.reduce((acc, item) => {
         acc[item.list_uid] = item.list_item;
         return acc;
       }, {});
-      // console.log("ROHIT - appliance UIDs to categories- ", listUidToItemMapping);
+      // console.log("appliance UIDs to categories- ", listUidToItemMapping);
       setApplianceUIDToCategoryMap(listUidToItemMapping);
     } catch (error) {
       console.log(error);
@@ -1196,16 +1210,19 @@ export default function PropertyNavigator({
   };
 
   const handleTenantClick = (tenantId) => {
-    if (tenant_detail === "No Tenant") {
-      console.log("There is no tenant");
-    } else {
-      navigate("/PMContacts", {
-        state: {
-          contactsTab: "Tenant",
-          tenantId: tenantId,
-        },
-      });
-    }
+    if (selectedRole === "MANAGER" || selectedRole === "OWNER") {
+        if (tenant_detail === "No Tenant") {
+          console.log("There is no tenant");
+        } else {
+          console.log("Else statement for if there is a tenant");
+          navigate("/ContactsPM", {
+            state: {
+              contactsTab: "Tenant",
+              tenantId: tenantId,
+            },
+          });
+        }
+      }
   };
 
   return (
@@ -2545,13 +2562,13 @@ export default function PropertyNavigator({
                             //   ...modifiedApplRow,
                             //   appliance_type: applianceCategoryToUIDMap[e.target.value],
                             // })
-                            // console.log("ROHIT - setting appliance type to - ", e.target.value);
+                            // console.log("setting appliance type to - ", e.target.value);
                             setcurrentApplRow({
                               ...currentApplRow,
                               appliance_type: applianceCategoryToUIDMap[e.target.value],
                             });
                           } else {
-                            // console.log("ROHIT - setting appliance type to - ", applianceCategoryToUIDMap[e.target.value]);
+                            // console.log("setting appliance type to - ", applianceCategoryToUIDMap[e.target.value]);
                             setcurrentApplRow({
                               ...currentApplRow,
                               appliance_type: applianceCategoryToUIDMap[e.target.value],

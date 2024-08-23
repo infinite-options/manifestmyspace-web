@@ -52,11 +52,21 @@ function TenantLeases(props) {
   const [fees, setFees] = useState([]);
   const [signedLease, setSignedLease] = useState(null);
 
+  const [managerID, setManagerID ] = useState("");
+
   useEffect(() => {
     console.log("Props passed to TenantLeases: ", props);
     setProperty(props.property);
     setLease(props.lease);
   }, [props.property, props.lease]);
+
+  useEffect(() => {    
+    console.log("62 - lease - ", lease);
+  }, [lease]);
+
+  useEffect(() => {    
+    console.log("68 - managerID - ", managerID);
+  }, [managerID]);
 
   useEffect(() => {
     setShowSpinner(true);
@@ -100,6 +110,7 @@ function TenantLeases(props) {
         const leaseDoc = parsedDocs.find(doc => doc.type && doc.type === "Lease Agreement");
         console.log('leaselink', leaseDoc);
         setSignedLease(leaseDoc);
+        setManagerID(detailed_property.contract_business_id);
       }
     }
 
@@ -150,6 +161,7 @@ function TenantLeases(props) {
       );
     }
   }
+  
 
   async function handleTenantRefuse() {
     const leaseApplicationFormData = new FormData();
@@ -160,7 +172,7 @@ function TenantLeases(props) {
     const sendAnnouncement = async () => {
       try {
         const receiverPropertyMapping = {
-          [property.contract_business_id]: [property.property_uid],
+          [managerID]: [property.property_uid],
         };
 
         await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -177,7 +189,7 @@ function TenantLeases(props) {
             // announcement_properties: property.property_uid,
             announcement_properties: JSON.stringify(receiverPropertyMapping),
             announcement_mode: "LEASE",
-            announcement_receiver: [property.contract_business_id],
+            announcement_receiver: [managerID],
             announcement_type: ["Text", "Email"],
           }),
         });
@@ -218,12 +230,15 @@ function TenantLeases(props) {
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
     console.log("Lease Application Data2: ", leaseApplicationFormData);
 
+    console.log("221 - property: ", property);
+    console.log("221 - lease: ", lease);
+
     const sendAnnouncement = async () => {
       try {
         console.log("Announcements ID: ", property);
         console.log("Announcements ID: ", property.contract_business_id);
         const receiverPropertyMapping = {
-          [property.contract_business_id]: [property.property_uid],
+          [managerID]: [property.property_uid],
         };
 
         await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -240,7 +255,7 @@ function TenantLeases(props) {
             // announcement_properties: property.property_uid,
             announcement_properties: JSON.stringify(receiverPropertyMapping),
             announcement_mode: "LEASE",
-            announcement_receiver: [property.contract_business_id],
+            announcement_receiver: [managerID],
             announcement_type: ["Text", "Email"],
           }),
         });

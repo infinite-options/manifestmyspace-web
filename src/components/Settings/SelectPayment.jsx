@@ -60,8 +60,8 @@ export default function SelectPayment(props) {
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  // console.log("ROHIT - SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
-  // console.log("ROHIT - selectedRole - ", selectedRole);
+  // console.log("SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
+  // console.log("selectedRole - ", selectedRole);
 
   const classes = useStyles();
   const navigate = useNavigate();

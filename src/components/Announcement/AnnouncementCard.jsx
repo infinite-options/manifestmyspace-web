@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 
 function AnnouncementCard(props) {
-  console.log("In Announcements", props);
+  // console.log("In Announcements", props);
   const { selectedRole } = useUser();
   const { data, pageToNavigate, navigationParams, sent_or_received } = props;
   const navigate = useNavigate();
@@ -65,7 +65,10 @@ function AnnouncementCard(props) {
       </div>
       <div className='announcement-list-card-text-container'>
         <div className='announcement-list-card-text-from'>
-          {sent_or_received === "Sent" ? "To: " + (data?.receiver_first_name + data?.receiver_last_name) : "From: " + (data?.sender_first_name + data?.sender_last_name)}
+        {sent_or_received === "Sent" 
+          ? `To: ${data?.receiver_first_name || ""}${data?.receiver_last_name ? " " + data.receiver_last_name : ""}`
+          : `From: ${data?.sender_first_name || ""}${data?.sender_last_name ? " " + data.sender_last_name : ""}`
+        }
         </div>
         <div className='announcement-list-card-text-from'>{sent_or_received === "Sent" ? "To: " + data.announcement_receiver : "From: " + data.announcement_sender}</div>
         <div className='announcement-list-card-text-from'>{sent_or_received === "Sent" ? "Role: " + data?.receiver_role : "Role: " + data?.sender_role}</div>

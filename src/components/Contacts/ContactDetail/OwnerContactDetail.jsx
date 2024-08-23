@@ -238,4 +238,4 @@ const OwnerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
 
 
 
-export default OwnerContactDetail
+export default OwnerContactDetail;
