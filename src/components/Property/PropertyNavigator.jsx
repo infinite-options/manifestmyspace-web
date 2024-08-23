@@ -1161,7 +1161,7 @@ export default function PropertyNavigator({
 
   const [deletedImageList, setDeletedImageList] = useState([]);
   const [deletedIcons, setDeletedIcons] = useState(currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []);
-  console.log("---currentApplRow before fav---", currentApplRow);
+  //console.log("---currentApplRow before fav---", currentApplRow);
   const [favoriteIcons, setFavoriteIcons] = useState([]);
 
   useEffect(() => {
