@@ -154,7 +154,7 @@ export default function MaintenanceRequestDetailNew({
     });
     colorStatus.find((item, index) => {
       if (item.status === currentStatus) {
-        setValue(index);
+        setValue(index >= 0 ? index : 0);
       }
     });
     colorStatus.map((item, index) => {
@@ -447,7 +447,6 @@ export default function MaintenanceRequestDetailNew({
                   paddingTop: "0px",
                 }}
               >
-                {console.log("---colorStatus---", colorStatus, value, colorStatus[value], maintenanceRequestIndex, maintenanceItemsForStatus)}
                 {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ? (
                   <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} />
                 ) : null}

@@ -26,7 +26,7 @@ import EditMaintenanceItem from "./EditMaintenanceItem";
 import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 
 export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId) {
-  console.log("----inside maintenanceManagerDataCollectAndProcess--", setMaintenanceData);
+  
   const dataObject = {};
 
   function dedupeQuotes(array) {
