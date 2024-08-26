@@ -123,12 +123,15 @@ const AddRevenue = (props) => {
   };
   const handleAddRevenue = async () => {
     console.log("amount ", selectedProperty);
+    const [year, month, day] = date.split('-');
+    const formattedDate = `${month}-${day}-${year}`;
+ 
     let data = {
       pur_property_id: selectedProperty.property_uid,
       purchase_type: category,
       pur_cf_type: "revenue",
-      purchase_date: date,
-      pur_due_date: date,
+      purchase_date: formattedDate,
+      pur_due_date: formattedDate,
       pur_amount_due: Number(amount),
       purchase_status: determinePurchaseStatus(),
       pur_notes: "This is just a note",
@@ -195,18 +198,18 @@ const AddRevenue = (props) => {
           }}
         >
           <Paper
-            style={{
+            sx={{
               // margin: "30px",
               padding: 20,
               // backgroundColor: theme.palette.primary.main,
               backgroundColor: theme.palette.custom.yellow,
               width: "85%", // Occupy full width with 25px margins on each side
-              [theme.breakpoints.down("sm")]: {
-                width: "80%",
-              },
-              [theme.breakpoints.up("sm")]: {
-                width: "50%",
-              },
+              // [theme.breakpoints.down("sm")]: {
+              //   width: "80%",
+              // },
+              // [theme.breakpoints.up("sm")]: {
+              //   width: "50%",
+              // },
             }}
           >
             <IconButton

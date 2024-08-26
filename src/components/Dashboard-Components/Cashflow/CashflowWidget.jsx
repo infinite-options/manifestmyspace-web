@@ -45,11 +45,7 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
 
   let date = new Date();
   let currentMonth = date.toLocaleString("default", { month: "long" });
-  // let currentMonthNumber = date.getMonth() + 1;
   let currentYear = date.getFullYear().toString();
-  // console.log("Cashflow Widget Current Month: ", currentMonth);
-  // console.log("Cashflow Widget Current Month Number: ", currentMonthNumber);
-  // console.log("Cashflow Widget Current Year: ", currentYear);
 
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
@@ -64,11 +60,10 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
   const profileId = getProfileId();
   const [cashflowData, setCashflowData] = useState(null);
 
+  // console.log("From Cashflowwidget ", data)
   const expenseCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
   const revenueCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
 
-  // console.log("expenseCurrentMonth - ", expenseCurrentMonth);
-  // console.log("revenueCurrentMonth - ", revenueCurrentMonth);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -169,13 +164,16 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
             cursor: "pointer",
           }}
         >
+
+          {/* Table and all button component */}
           <Grid container item xs={12} rowSpacing={0} sx={{ marginTop: "15px" }}>
             <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "0px" }}>
-              {/* <Typography sx={{ color: theme.typography.primary.black, fontWeight: "800", fontSize: "24px", }}> */}
               <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
                 {month} {year} Cashflow
               </Typography>
             </Stack>
+
+            {/* Last 30 days and select property component */}
             <Grid item container xs={12}>
               <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "flex-start" }}>
                 <Button
@@ -243,6 +241,8 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                 </Menu>
               </Grid>
             </Grid>
+
+            {/* All property button */}
             <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-start" }}>
               <Button
                 variant='outlined'
@@ -265,6 +265,8 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                 All Properties
               </Button>
             </Grid>
+
+            {/* Add revenue and add expense button */}
             <Grid item container xs={12} sx={{ marginBottom: "10px" }}>
               <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <Button
@@ -326,6 +328,8 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                 </Button>
               </Grid>
             </Grid>
+
+            {/* Header Row Actual and Expected */}
             <Grid container direction='row' item xs={12} columnSpacing={3}>
               <Grid item xs={5}></Grid>
               <Grid item xs={3} sx={{ backgroundColor: "#FFE3AD", borderRadius: "5px", padding: "5px", display: "flex", justifyContent: "center" }}>
@@ -333,7 +337,6 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
               </Grid>
               <Grid item xs={1}></Grid>
               <Grid
-                container
                 item
                 xs={3}
                 justifyContent='center'
@@ -342,6 +345,8 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                 Actual
               </Grid>
             </Grid>
+
+            {/* Total cashflow Row */}
             <Grid container direction='row' item xs={12} columnSpacing={3}>
               <Grid item xs={5}>
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{`Cashflow`}</Typography>
@@ -365,6 +370,8 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                 </Typography>
               </Grid>
             </Grid>
+
+            {/* Revenue row */}
             <Grid container direction='row' item xs={12} columnSpacing={3}>
               <Grid item xs={5}>
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{`Revenue`}</Typography>{" "}
@@ -382,6 +389,8 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                 </Typography>
               </Grid>
             </Grid>
+
+            {/* Expense Row */}
             <Grid container direction='row' item xs={12} columnSpacing={3}>
               <Grid item xs={5}>
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{`Expense`}</Typography>
@@ -399,7 +408,9 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                 </Typography>
               </Grid>
             </Grid>
+
           </Grid>
+          
           {/* <Grid item xs={12} sx={{ marginBottom: "20px" }}>
             <Box
               component="span"
@@ -420,19 +431,22 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
               </Typography>
             </Box>
           </Grid> */}
-          <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+
+          {/* Graph Header */}
+          <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", marginTop:"10px"}}>
             {/* <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: "24px" }}> */}
             <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
               Cashflow (Act vs. Est)
             </Typography>
           </Grid>
-
+          
+          {/* Graph Component */}
           <Grid item xs={12} sx={{ height: "350px" }}>
             <DashboardChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
           </Grid>
+
         </Grid>
       </Container>
-      {/* </div> */}
     </ThemeProvider>
   );
 }

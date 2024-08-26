@@ -130,9 +130,11 @@ const AddExpense = (props) => {
   const handleNotesChange = (event) => {
     setNotes(event.target.value);
   };
+
   const handleDateChange = (event) => {
     setDate(event.target.value);
   };
+
   const handlePayableChange = (event) => {
     setPayable(event.target.name);
   };
@@ -146,16 +148,19 @@ const AddExpense = (props) => {
     }
   }
   const handleExpenseChange = async () => {
-    console.log("amount ", amount);
-    if (edit && itemToEdit){
-      console.log("itemToEdit", itemToEdit)
-    }
+    const [year, month, day] = date.split('-');
+    const formattedDate = `${month}-${day}-${year}`;
+
+    // if (edit && itemToEdit){
+    //   console.log("itemToEdit", itemToEdit)
+    // }
+
     let data = {
       "pur_property_id": selectedProperty.property_uid,
       "purchase_type": category,
       "pur_cf_type": "expense",
-      "purchase_date": date,
-      "pur_due_date": date,
+      "purchase_date": formattedDate,
+      "pur_due_date": formattedDate,
       "pur_amount_due": Number(amount),
       "purchase_status": determinePurchaseStatus(), // TODO: default to UNPAID, unless then already completed button is checked
       "pur_notes": notes,
@@ -182,11 +187,11 @@ const AddExpense = (props) => {
     setShowSpinner(true);
     axios.request(config)
     .then((response) => {
-      console.log(JSON.stringify(response.data));
+      // console.log(JSON.stringify(response.data));
       setShowSpinner(false);
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       setShowSpinner(false);
     });
 
@@ -202,6 +207,7 @@ const AddExpense = (props) => {
       setCurrentWindow("PROFITABILITY");
     }
   };
+  
   return (
     
       <ThemeProvider theme={theme}>
@@ -222,18 +228,12 @@ const AddExpense = (props) => {
           }}
         >
           <Paper
-            style={{
+            sx={{
               // margin: "30px",
               padding: 20,
               // backgroundColor: theme.palette.primary.main,
               backgroundColor: theme.palette.primary.pink,
               width: "85%", // Occupy full width with 25px margins on each side
-              [theme.breakpoints.down("sm")]: {
-                width: "80%",
-              },
-              [theme.breakpoints.up("sm")]: {
-                width: "50%",
-              },
             }}
           >
             <IconButton

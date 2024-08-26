@@ -196,7 +196,7 @@ function getTotalRevenueByType(data, month, year, expected) {
     key = "total_paid";
   }
 
-  let revenueItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year);
+  let revenueItems = data?.result?.filter((item) => item.pur_cf_type === "revenue" && item.cf_month === month && item.cf_year === year);
   let totalRent = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
       // console.log("revenue", revenue[key])
@@ -264,7 +264,7 @@ function getTotalExpenseByType(data, month, year, expected) {
     key = "total_paid";
   }
 
-  let expenseItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year);
+  let expenseItems = data?.result?.filter((item) => item.pur_cf_type === "expense" && item.cf_month === month && item.cf_year === year);
 
   let totalMaintenance = expenseItems?.reduce((acc, expense) => {
     if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MAINTENANCE") {
