@@ -239,7 +239,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
 
   return (
     <div>
-      <Accordion sx={{ backgroundColor: color }}>
+      <Accordion sx={{ backgroundColor: color }} expanded={true}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
           <Grid container>
             <Grid item md={11.2}>

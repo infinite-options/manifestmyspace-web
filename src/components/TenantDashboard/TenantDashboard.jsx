@@ -87,9 +87,9 @@ function TenantDashboard(props) {
 
   const { user } = useUser();
 
-  useEffect(() => {
-    console.log("ROHIT - paymentState - ", paymentState);
-  }, [paymentState]);
+  // useEffect(() => {
+  //   console.log("paymentState - ", paymentState);
+  // }, [paymentState]);
 
   useEffect (() => {
     async function fetchData() {

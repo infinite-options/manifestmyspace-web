@@ -67,6 +67,12 @@ const useStyles = makeStyles((theme) => ({
       paddingBottom: "15px",
     },
   },
+  errorBorder: {
+    border: '1px solid red',
+  },
+  error: {
+    color: 'red',
+  },
 }));
 
 export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
@@ -136,6 +142,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const [ errors, setErrors ] = useState({})
 
   const getListDetails = async () => {
     try {
@@ -756,14 +764,27 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   };
 
   const handleNextStep = async () => {
-    if (firstName === "") {
-      alert("Please enter first name");
+    const newErrors = {};
+    if (!businessName) newErrors.businessName = 'Business name is required';    
+    if (!email) newErrors.email = 'Email is required';
+    if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
+    if (!ein) newErrors.ein = 'SSN is required';
+
+    if (!empFirstName) newErrors.empFirstName = 'First name is required';
+    if (!empLastName) newErrors.empLastName = 'Last name is required';
+    if (!empEmail) newErrors.empEmail = 'Email is required';
+    if (!empPhoneNumber) newErrors.empPhoneNumber = 'Email is required';
+    if (!empSsn) newErrors.empSsn = 'SSN is required';
+    
+    
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors); // Show errors if any field is empty
       return;
     }
-    if (lastName === "") {
-      alert("Please enter last name");
-      return;
-    }
+
+    setErrors({}); // Clear any previous errors
+
 
     if (!DataValidator.email_validate(email)) {
       alert("Please enter a valid email");
@@ -1030,6 +1051,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     fullWidth
                     placeholder='Business name'
                     className={classes.root}
+                    InputProps={{
+                      className: errors.businessName ? classes.errorBorder : '',
+                    }}
+                    required
                   />
                 </Grid>
               </Grid>
@@ -1132,7 +1157,18 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={email} onChange={handleBusinessEmailChange} variant='filled' placeholder='Business Email' className={classes.root}></TextField>
+                    <TextField
+                      fullWidth
+                      value={email}
+                      onChange={handleBusinessEmailChange}
+                      variant='filled'
+                      placeholder='Business Email'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.email ? classes.errorBorder : '',
+                      }}
+                      required
+                    ></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={6}>
@@ -1155,6 +1191,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='Business Phone Number'
                       className={classes.root}
+                      InputProps={{
+                        className: errors.phoneNumber ? classes.errorBorder : '',
+                      }}
+                      required
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -1219,6 +1259,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
+                      InputProps={{
+                        className: errors.ein ? classes.errorBorder : '',
+                      }}
+                      required
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -1342,6 +1386,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   fullWidth
                   placeholder='First name'
                   className={classes.root}
+                  InputProps={{
+                    className: errors.empFirstName ? classes.errorBorder : '',
+                  }}
+                  required
                 />
               </Grid>
               <Grid item xs={6}>
@@ -1353,6 +1401,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   fullWidth
                   placeholder='Last name'
                   className={classes.root}
+                  InputProps={{
+                    className: errors.empLastName ? classes.errorBorder : '',
+                  }}
+                  required
                 />
               </Grid>
             </Grid>
@@ -1455,7 +1507,18 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth value={empEmail} onChange={handleEmpEmailChange} variant='filled' placeholder='Email' className={classes.root}></TextField>
+                  <TextField
+                    fullWidth
+                    value={empEmail}
+                    onChange={handleEmpEmailChange}
+                    variant='filled'
+                    placeholder='Email'
+                    className={classes.root}
+                    InputProps={{
+                      className: errors.empEmail ? classes.errorBorder : '',
+                    }}
+                    required
+                  ></TextField>
                 </Grid>
               </Grid>
               <Grid container item xs={6}>
@@ -1478,6 +1541,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     variant='filled'
                     placeholder='Phone Number'
                     className={classes.root}
+                    InputProps={{
+                      className: errors.empPhoneNumber ? classes.errorBorder : '',
+                    }}
+                    required
                   ></TextField>
                 </Grid>
               </Grid>
@@ -1506,6 +1573,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     variant='filled'
                     placeholder='SSN'
                     className={classes.root}
+                    InputProps={{
+                      className: errors.empSsn ? classes.errorBorder : '',
+                    }}
+                    required
                   ></TextField>
                 </Grid>
               </Grid>
