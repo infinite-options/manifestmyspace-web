@@ -8,6 +8,7 @@ import { months } from "moment";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
 // import {
 //   fetchCashflow,
 //   // getTotalRevenueByMonthYear,
@@ -26,6 +27,8 @@ import {
   getTotalExpectedRevenueByMonthYear,
   getTotalExpectedExpenseByMonthYear,
   getPast12MonthsExpectedCashflow,
+  fetchCashflow2,
+  getDataByProperty,
   // getPast12MonthsCashflow,
   // getNext12MonthsCashflow,
   // getRevenueList,
@@ -38,7 +41,7 @@ import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 
 // "../../images/AddRevenueIcon.png"
 
-function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedProperty, setSelectedProperty }) {
+function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, setData, selectedProperty }) {
   // console.log("In Cashflow Widget ");
   // console.log("Cashflow Widget - data - ", data);
   const navigate = useNavigate();
@@ -58,11 +61,14 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
   const [revenueCashflowByMonth, setRevenueCashflowByMonth] = useState([]);
   const [last12Months, setLast12Months] = useState([]);
   const profileId = getProfileId();
-  const [cashflowData, setCashflowData] = useState(null);
+  const [cashflowData, setCashflowData] = useState(data?data:null);
+  const [originalCashFlowData, setOriginalCashFlowData] = useState(null);
+  const [propertyList, setPropertyList] = useState([]);
+  const[widgetselectedProperty, setWidgetSelectedProperty] = useState(selectedProperty ? selectedProperty : "All Properties");
 
   // console.log("From Cashflowwidget ", data)
-  const expenseCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
-  const revenueCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
+  // const expenseCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
+  // const revenueCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
 
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -93,29 +99,97 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
   //     });
   // }, []);
 
+  async function fetchProperties(userProfileId, month, year) {
+    try {
+      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
+      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
+      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
+      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
+      const properties = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${userProfileId}`);
+
+      // console.log("Owner Properties: ", properties.data);
+      return properties.data;
+    } catch (error) {
+      console.error("Error fetching properties data:", error);
+    }
+  }
+
   useEffect(() => {
-    setCashflowData(data);
-    let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
-    let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
+    if(cashflowData != null){
+      let currentMonthYearRevenue = getTotalRevenueByMonthYear(cashflowData, currentMonth, currentYear);
+      let currentMonthYearExpense = getTotalExpenseByMonthYear(cashflowData, currentMonth, currentYear);
 
-    let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear);
-    let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear);
+      let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(cashflowData, currentMonth, currentYear);
+      let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(cashflowData, currentMonth, currentYear);
 
-    // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
-    let last12months = getPast12MonthsExpectedCashflow(data, currentMonth, currentYear);
+      // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
+      let last12months = getPast12MonthsExpectedCashflow(cashflowData, currentMonth, currentYear);
 
-    setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
-    setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
-    setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
-    setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
-    setLast12Months(last12months);
+      setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
+      setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
+      setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
+      setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
+      setLast12Months(last12months);
+    }
+    
     // setTotalRevenueByMonth(50);  // This works.  Problem:  currentMonthYearRevenue is returning 0
-  }, [data]);
+  }, [cashflowData]);
 
+  // When cashflow data change it will call cashflowdatawidget with new data
+  useEffect(()=>{
+    if(data != null || data !== undefined){
+      setCashflowData(data)
+    }
+
+  },[data])
+
+  useEffect(()=>{
+    fetchCashflow2(profileId)
+      .then((data) => {
+        if(cashflowData == null || cashflowData == undefined){
+          setCashflowData(data);
+        }
+        setOriginalCashFlowData(data);
+        // let currentMonthYearRevenueExpected = get
+      })
+      .catch((error) => {
+        console.error("Error fetching cashflow data:", error);
+      });
+
+    fetchProperties(profileId)
+      .then((data) => {
+        setPropertyList(data?.Property?.result);
+      })
+      .catch((error) => {
+        console.error("Error fetching PropertyList:", error);
+      });
+
+  }, [])
+  
   const handlePropertyChange = (propertyUID) => {
-    // console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
-    setSelectedProperty(propertyUID);
+    if(propertyUID === "All Properties"){
+      setCashflowData(originalCashFlowData);
+      if(setData != undefined){
+        setData(originalCashFlowData);
+      }
+
+    }else{
+      const dataByProperty = getDataByProperty(originalCashFlowData, propertyUID);
+      setCashflowData(dataByProperty);
+      if(setData != undefined){
+        setData(dataByProperty);
+      }
+    }
+
+    setWidgetSelectedProperty(propertyUID);
+    // console.log("from cashflowwidget - ", widgetselectedProperty);
+
+    if(setSelectedProperty != undefined || setSelectedProperty != null){
+      setSelectedProperty(propertyUID);
+    }
+
     setAnchorEl(null);
+  
   };
 
   const handleSelectAllProperties = () => {
@@ -123,12 +197,26 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
   };
 
   const viewProperties = async (event) => {
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const getPropertyName = (propertyUID) => {
+    if (propertyUID === "All Properties") {
+      return "All Properties";
+    } else {
+      const property = propertyList.find(p => p.property_uid === propertyUID);
+      if (property) {
+        return property.property_address;
+      } else {
+        return "Property not found"; // Return a fallback message if no match is found
+      }
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -156,7 +244,9 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
               state: {
                 month,
                 year,
-                cashflowWidgetData: data,
+                cashFlowData: cashflowData,
+                propertyList : propertyList,
+                selectedProperty : widgetselectedProperty
               },
             })
           }
@@ -174,7 +264,7 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
             </Stack>
 
             {/* Last 30 days and select property component */}
-            <Grid item container xs={12}>
+            <Grid item container xs={12} sx={{marginY: "20px", marginRight:"10px"}}>
               <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "flex-start" }}>
                 <Button
                   variant='outlined'
@@ -213,8 +303,10 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                   }}
                   onClick={viewProperties}
                 >
-                  <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "4px" }} />
-                  Select Property
+                  <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "5px" }} />
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {getPropertyName(widgetselectedProperty)}
+                  </span>
                 </Button>
                 <Menu
                   anchorEl={anchorEl}
@@ -228,7 +320,8 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                       <MenuItem
                         key={property.property_uid}
                         value={property}
-                        onClick={() => {
+                        onClick={(event) => {
+                          event.stopPropagation();
                           handlePropertyChange(property.property_uid);
                         }}
                       >
@@ -237,13 +330,23 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                       </MenuItem>
                     );
                   })}
+                  <MenuItem
+                    key={0}
+                    value={"All Properties"}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handlePropertyChange("All Properties");
+                    }}
+                  >
+                    All Properties
+                  </MenuItem>
                   {/* </Select> */}
                 </Menu>
               </Grid>
             </Grid>
 
             {/* All property button */}
-            <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-start" }}>
+            {/* <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-start" }}>
               <Button
                 variant='outlined'
                 id='all_properties'
@@ -260,74 +363,11 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
                 onClick={() => {
                   handleSelectAllProperties();
                 }}
-              >
+              > */}
                 {/* <CalendarIcon stroke="#3D5CAC" width="20" height="20" style={{ marginRight: "4px" }} /> */}
-                All Properties
+                {/* All Properties
               </Button>
-            </Grid>
-
-            {/* Add revenue and add expense button */}
-            <Grid item container xs={12} sx={{ marginBottom: "10px" }}>
-              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-                <Button
-                  variant='outlined'
-                  id='revenue'
-                  // className={classes.button}
-                  style={{
-                    // height: "100%",
-                    // width: '80%',
-                    backgroundColor: "#D0D0D0",
-                    color: "#160449",
-                    fontSize: "13px",
-                    marginBottom: "10px",
-                    borderRadius: "5px",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
-                    if (page === "OwnerCashflow") {
-                      setCurrentWindow("ADD_REVENUE");
-                    } else if (page === "OwnerDashboard") {
-                      navigate("/cashflow", { state: { currentWindow: "ADD_REVENUE", month, year, cashflowWidgetData: data } });
-                    }
-                  }}
-                >
-                  {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
-                  <img src={AddRevenueIcon}></img>
-                  Revenue
-                </Button>
-              </Grid>
-
-              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-                <Button
-                  variant='outlined'
-                  id='revenue'
-                  // className={classes.button}
-                  style={{
-                    // height: "100%",
-                    // width: '80%',
-                    backgroundColor: "#D0D0D0",
-                    color: "#160449",
-                    fontSize: "13px",
-                    marginBottom: "10px",
-                    borderRadius: "5px",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
-                    if (page === "OwnerCashflow") {
-                      setCurrentWindow("ADD_EXPENSE");
-                    } else if (page === "OwnerDashboard") {
-                      navigate("/cashflow", { state: { currentWindow: "ADD_EXPENSE", month, year, cashflowWidgetData: data } });
-                    }
-                  }}
-                >
-                  {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
-                  <img src={AddRevenueIcon}></img>
-                  Expense
-                </Button>
-              </Grid>
-            </Grid>
+            </Grid> */}
 
             {/* Header Row Actual and Expected */}
             <Grid container direction='row' item xs={12} columnSpacing={3}>
@@ -354,19 +394,27 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
               <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                 {/* {revenueCurrentMonth.pur_amount_due? revenueCurrentMonth.pur_amount_due : 0} */}
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  $
+                  {/* $
                   {expenseCurrentMonth?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null
                     ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2)
-                    : 0}
+                    : 0} */}
+                    $
+                  {expectedRevenueByMonth !== null && expectedRevenueByMonth !== undefined && expectedExpenseByMonth !== null && expectedExpenseByMonth !== undefined
+                    ? (expectedRevenueByMonth - expectedExpenseByMonth).toFixed(2)
+                    : "0.00"}
                 </Typography>
               </Grid>
               <Grid item xs={1}></Grid>
               <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  $
+                  {/* $
                   {expenseCurrentMonth?.total_paid != null && revenueCurrentMonth?.total_paid != null
                     ? (parseFloat(revenueCurrentMonth.total_paid) - parseFloat(expenseCurrentMonth.total_paid)).toFixed(2)
-                    : 0}
+                    : 0} */}
+                    $
+                  {totalRevenueByMonth !== null && totalRevenueByMonth !== undefined && totalExpenseByMonth !== null && totalExpenseByMonth !== undefined
+                    ? (totalRevenueByMonth - totalExpenseByMonth).toFixed(2)
+                    : "0.00"}
                 </Typography>
               </Grid>
             </Grid>
@@ -379,13 +427,17 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
               <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                 {/* {revenueCurrentMonth.pur_amount_due? revenueCurrentMonth.pur_amount_due : 0} */}
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${revenueCurrentMonth?.pur_amount_due != null ? revenueCurrentMonth.pur_amount_due : 0}
+                  {/* ${revenueCurrentMonth?.pur_amount_due != null ? revenueCurrentMonth.pur_amount_due : 0} */}
+                  ${" "}
+                  {expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
                 </Typography>
               </Grid>
               <Grid item xs={1}></Grid>
               <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${revenueCurrentMonth?.total_paid != null ? revenueCurrentMonth.total_paid : 0}
+                  {/* ${revenueCurrentMonth?.total_paid != null ? revenueCurrentMonth.total_paid : 0} */}
+                  ${" "}
+                  {totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00"}
                 </Typography>
               </Grid>
             </Grid>
@@ -398,13 +450,21 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
               <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                 {/* {revenueCurrentMonth.pur_amount_due? revenueCurrentMonth.pur_amount_due : 0} */}
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${expenseCurrentMonth?.pur_amount_due != null ? expenseCurrentMonth.pur_amount_due : 0}
+                  {/* ${expenseCurrentMonth?.pur_amount_due != null ? expenseCurrentMonth.pur_amount_due : 0} */}
+                  ${" "}
+                  {expectedExpenseByMonth
+                    ? expectedExpenseByMonth.toFixed(2)
+                    : "0.00"}
                 </Typography>
               </Grid>
               <Grid item xs={1}></Grid>
               <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                 <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${expenseCurrentMonth?.total_paid != null ? expenseCurrentMonth.total_paid : 0}
+                  {/* ${expenseCurrentMonth?.total_paid != null ? expenseCurrentMonth.total_paid : 0} */}
+                  ${" "}
+                  {totalExpenseByMonth
+                      ? totalExpenseByMonth.toFixed(2)
+                      : "0.00"}
                 </Typography>
               </Grid>
             </Grid>
@@ -443,6 +503,77 @@ function CashflowWidget({ data, setCurrentWindow, page, propertyList, selectedPr
           {/* Graph Component */}
           <Grid item xs={12} sx={{ height: "350px" }}>
             <DashboardChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
+          </Grid>
+
+          {/* Add revenue and add expense button */}
+          <Grid item container xs={12} sx={{ marginBottom: "10px", marginTop:"30px"}}>
+
+              {/* Add Revenue Button */}
+              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                <Button
+                  variant='outlined'
+                  id='revenue'
+                  // className={classes.button}
+                  style={{
+                    // height: "100%",
+                    // width: '80%',
+                    backgroundColor: "#D0D0D0",
+                    color: "#160449",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                    if (page === "OwnerCashflow") {
+                      setCurrentWindow("ADD_REVENUE");
+                    } else if (page === "OwnerDashboard") {
+                      navigate("/cashflow", { state: { currentWindow: "ADD_REVENUE", month, year, cashFlowData: cashflowData,
+                        propertyList : propertyList,
+                        selectedProperty : widgetselectedProperty } });
+                    }
+                  }}
+                >
+                  {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
+                  <img src={AddRevenueIcon}></img>
+                  Revenue
+                </Button>
+              </Grid>
+
+              {/* Add Expense Button */}
+              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                <Button
+                  variant='outlined'
+                  id='revenue'
+                  // className={classes.button}
+                  style={{
+                    // height: "100%",
+                    // width: '80%',
+                    backgroundColor: "#D0D0D0",
+                    color: "#160449",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
+                    if (page === "OwnerCashflow") {
+                      setCurrentWindow("ADD_EXPENSE");
+                    } else if (page === "OwnerDashboard") {
+                      navigate("/cashflow", { state: { currentWindow: "ADD_EXPENSE", month, year, cashFlowData: cashflowData,
+                        propertyList : propertyList,
+                        selectedProperty : widgetselectedProperty } });
+                    }
+                  }}
+                >
+                  {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
+                  <img src={AddRevenueIcon}></img>
+                  Expense
+                </Button>
+              </Grid>
+
           </Grid>
 
         </Grid>

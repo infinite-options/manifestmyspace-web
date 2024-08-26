@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddRevenue = (props) => {
-  console.log("In Add Revenue");
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
@@ -57,7 +56,7 @@ const AddRevenue = (props) => {
   }, [props.propertyList]);
 
   const handleCheckboxChange = (option) => {
-    console.log(option);
+    // console.log(option);
     if (option === "already_paid") {
       setIsCheckedOne(!isCheckedOne);
       setIsCheckedTwo(false);
@@ -71,13 +70,13 @@ const AddRevenue = (props) => {
 
   useEffect(() => {
     if (payable === "Property Manager") {
-      console.log("Set purPayerId to", selectedProperty.business_uid);
+      // console.log("Set purPayerId to", selectedProperty.business_uid);
       setPurPayerId(selectedProperty.business_uid);
     } else if (payable === "Tenant") {
-      console.log("Set purPayerId to", selectedProperty.tenant_uid);
+      // console.log("Set purPayerId to", selectedProperty.tenant_uid);
       setPurPayerId(selectedProperty.tenant_uid);
     } else if (payable === "Owner") {
-      console.log("Set purPayerId to", selectedProperty.owner_uid);
+      // console.log("Set purPayerId to", selectedProperty.owner_uid);
       setPurPayerId(selectedProperty.owner_uid);
     }
   }, [payable, selectedProperty]);
@@ -122,7 +121,7 @@ const AddRevenue = (props) => {
     }
   };
   const handleAddRevenue = async () => {
-    console.log("amount ", selectedProperty);
+    // console.log("amount ", selectedProperty);
     const [year, month, day] = date.split('-');
     const formattedDate = `${month}-${day}-${year}`;
  
@@ -159,7 +158,6 @@ const AddRevenue = (props) => {
     axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
         setShowSpinner(false);
       })
       .catch((error) => {
@@ -167,20 +165,31 @@ const AddRevenue = (props) => {
         setShowSpinner(false);
       });
 
-    let currentDate = new Date();
-    let currentMonth = currentDate.toLocaleString("default", { month: "long" });
-    let currentYear = currentDate.getFullYear().toString();
-
-    // navigate("/cashflow", { state: { month: currentMonth, year: currentYear } });
+    // let currentDate = new Date();
+    // let currentMonth = currentDate.toLocaleString("default", { month: "long" });
+    // let currentYear = currentDate.getFullYear().toString();
 
     if (selectedRole === "OWNER") {
       // navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
       setCurrentWindow("CASHFLOW_DETAILS");
+
     } else if (selectedRole === "MANAGER") {
       // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
       setCurrentWindow("PROFITABILITY");
     }
   };
+
+  const handleClosePopup = (event) => {
+    if(selectedRole === "OWNER"){
+      // navigate("/", {state: { month: currentMonth, year: currentYear, currentWindow: "CASHFLOW_DETAILS"}});
+      setCurrentWindow("CASHFLOW_DETAILS");
+      
+    } else if (selectedRole === "MANAGER"){
+      // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+      setCurrentWindow("PROFITABILITY");
+    }
+  };
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -214,7 +223,7 @@ const AddRevenue = (props) => {
           >
             <IconButton
               aria-label='close'
-              onClick={() => navigate(-1)}
+              onClick={handleClosePopup}
               sx={{
                 position: "sticky",
                 left: "90vw",

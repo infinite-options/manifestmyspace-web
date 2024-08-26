@@ -54,7 +54,7 @@ const AddExpense = (props) => {
   }, [props.propertyList]);
 
   const handleCheckboxChange = (option) => {
-    console.log(option)
+    // console.log(option)
     if (option === "already_paid") {
       setIsCheckedOne(!isCheckedOne);
       setIsCheckedTwo(false);
@@ -74,7 +74,7 @@ const AddExpense = (props) => {
 
   useEffect(() => {
     if (edit && itemToEdit){
-      console.log("itemToEdit", itemToEdit)
+      // console.log("itemToEdit", itemToEdit)
       // setSelectedProperty(itemToEdit.property_uid)
       setCategory(itemToEdit.purchase_type)
       if(!itemToEdit.pur_frequency){
@@ -86,7 +86,7 @@ const AddExpense = (props) => {
       setPayable(itemToEdit.pur_payer)
       // setDate(itemToEdit.purchase_date.replace("-", "/"))
       propertyList.find((property) => {
-        console.log(property)
+        // console.log(property)
         if (property.property_address === itemToEdit.property_address && property.property_unit === itemToEdit.property_unit){
           setSelectedProperty(property)
         }
@@ -96,15 +96,14 @@ const AddExpense = (props) => {
   }, [edit, itemToEdit]);
 
   useEffect(() => {
-    console.log("this is changing the payer id")
     if (payable === "Property Manager") {
-      console.log("Set purPayerId to", selectedProperty.business_uid)
+      // console.log("Set purPayerId to", selectedProperty.business_uid)
       setPurPayerId(selectedProperty.business_uid)
     } else if (payable === "Tenant") {
-      console.log("Set purPayerId to", selectedProperty.tenant_uid)
+      // console.log("Set purPayerId to", selectedProperty.tenant_uid)
       setPurPayerId(selectedProperty.tenant_uid)
     } else if (payable === "Owner") {
-      console.log("Set purPayerId to", selectedProperty.owner_uid)
+      // console.log("Set purPayerId to", selectedProperty.owner_uid)
       setPurPayerId(selectedProperty.owner_uid)
     }
   }, [payable, selectedProperty]);
@@ -191,22 +190,33 @@ const AddExpense = (props) => {
       setShowSpinner(false);
     })
     .catch((error) => {
-      // console.log(error);
       setShowSpinner(false);
     });
 
-    let currentDate = new Date();
-    let currentMonth = currentDate.toLocaleString("default", { month: "long" });
-    let currentYear = currentDate.getFullYear().toString();
+    // let currentDate = new Date();
+    // let currentMonth = currentDate.toLocaleString("default", { month: "long" });
+    // let currentYear = currentDate.getFullYear().toString();
     
     if(selectedRole === "OWNER"){
-      // navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
+      // navigate("/", {state: { month: currentMonth, year: currentYear, currentWindow: "CASHFLOW_DETAILS"}});
       setCurrentWindow("CASHFLOW_DETAILS");
+      
     } else if (selectedRole === "MANAGER"){
       // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
       setCurrentWindow("PROFITABILITY");
     }
   };
+
+  const handleClosePopup = (event) => {
+    if(selectedRole === "OWNER"){
+      // navigate("/", {state: { month: currentMonth, year: currentYear, currentWindow: "CASHFLOW_DETAILS"}});
+      setCurrentWindow("CASHFLOW_DETAILS");
+      
+    } else if (selectedRole === "MANAGER"){
+      // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+      setCurrentWindow("PROFITABILITY");
+    }
+  }
   
   return (
     
@@ -238,7 +248,7 @@ const AddExpense = (props) => {
           >
             <IconButton
               aria-label="close"
-              onClick={() => navigate(-1)}
+              onClick={handleClosePopup}
               sx={{
                 position: "sticky",
                 left: "90vw",
@@ -283,7 +293,7 @@ const AddExpense = (props) => {
                   <MenuItem value="Mortgage">Mortgage</MenuItem>
                   <MenuItem value="Repairs">Repairs</MenuItem>
                   <MenuItem value="Taxes">Taxes</MenuItem>
-                  <MenuItem value="Utility">Utilities</MenuItem>
+                  <MenuItem value="Utilities">Utilities</MenuItem>
                   <MenuItem value="BILL POSTING">BILL POSTING</MenuItem>
                 </Select>
               </FormControl>
