@@ -67,6 +67,12 @@ const useStyles = makeStyles((theme) => ({
       paddingBottom: "15px",
     },
   },
+  errorBorder: {
+    border: '1px solid red',
+  },
+  error: {
+    color: 'red',
+  },
 }));
 
 export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
@@ -113,7 +119,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
-  const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
+  // const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
+  const [locations, setLocations] = useState([]);
   const [ein_mask, setEinMask] = useState("");
 
   // Personal info state variables
@@ -136,6 +143,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const [ errors, setErrors ] = useState({})
 
   const getListDetails = async () => {
     try {
@@ -303,7 +312,12 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
         setServices(servicesWithId);
       }
       if (profileData.business_locations) {
-        setLocations(JSON.parse(profileData.business_locations));
+        const parsedLocations = JSON.parse(profileData.business_locations);
+        const locationsWithId = parsedLocations?.map((loc, index) => ({
+          ...loc,
+          id: index,
+        }));        
+        setLocations(locationsWithId);
       }
 
       const parsedDocs = JSON.parse(profileData.business_documents);
@@ -599,6 +613,185 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     ));
   };
 
+  const handleServiceLocationChange = (event, id) => {
+    const { name, value } = event.target;
+
+    const updatedLocations = locations?.map((loc) => {
+      if (loc.id === id) {
+        const updatedLoc = { ...loc, [name]: value };
+        return updatedLoc;
+      }
+      return loc;
+    });
+
+    // Update the state with the modified fees array
+    setLocations(updatedLocations);
+
+    updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
+  }
+
+  const addServiceLocationRow = () => {
+    const updatedLocations = [...locations, { id: locations.length + 1, address: "", city: "", state: "", miles: "" }];    
+
+    setLocations(updatedLocations);
+
+    updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
+  };
+
+  const removeServiceLocationRow = (id) => {
+    const updatedLocations = locations?.filter((loc) => loc.id !== id);
+    setLocations(updatedLocations);
+
+    updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
+  };
+  
+  const handleServiceLocationAddressSelect = (id, address) => {      
+    const updatedLocations = locations?.map((loc) => {
+      if (loc.id === id) {
+        const updatedLoc = { 
+          ...loc,
+          ['address']: address.street ? address.street : "",
+          ['city']: address.city ? address.city : "",
+          ['state']: address.state ? address.state : ""
+        };
+        return updatedLoc;
+      }
+      return loc;
+    });
+
+    // Update the state with the modified fees array
+    setLocations(updatedLocations);
+
+    updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
+
+
+  };
+
+  const renderServiceLocations = () => {
+    return locations?.map((row, index) => (
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+          <Grid item xs={3}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"Address"}
+              </Typography>
+              {/* <TextField
+                name='address'
+                value={row.address}
+                variant='filled'
+                fullWidth
+                placeholder='Address'
+                className={classes.root}
+                // onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+              /> */}
+              <Grid item xs={12} sx={{ paddingTop: '10px',}}>
+                <AddressAutocompleteInput onAddressSelect={handleServiceLocationAddressSelect} gray={true} defaultValue={row.address} rowID={row.id}/>
+              </Grid>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={3}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"City"}
+              </Typography>
+              <TextField
+                disabled
+                name='city'
+                value={row.city}
+                variant='filled'
+                fullWidth
+                placeholder='City'
+                className={classes.root}
+                // onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+              />
+            </Stack>
+          </Grid>
+
+          <Grid item xs={2}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"State"}
+              </Typography>
+              <TextField
+                disabled
+                name='state'
+                value={row.state}
+                variant='filled'
+                fullWidth
+                placeholder='State'
+                className={classes.root}
+                // onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+              />
+            </Stack>
+          </Grid>
+
+          <Grid item xs={3}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"Miles"}
+              </Typography>
+              <TextField
+                name='miles'
+                value={row.miles}
+                variant='filled'
+                fullWidth
+                placeholder='Miles'
+                className={classes.root}
+                // onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+              />
+            </Stack>
+          </Grid>
+                            
+          <Grid container justifyContent='center' alignContent='center' item xs={1}>
+            <Button
+              aria-label='delete'
+              sx={{
+                color: "#000000",
+                fontWeight: "bold",
+                "&:hover": {
+                  color: "#FFFFFF",
+                },
+              }}
+              onClick={() => removeServiceLocationRow(row.id)}
+            >
+              <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
+            </Button>
+          </Grid>
+
+          {index !== 0 && (
+            <IconButton aria-label='delete' sx={{ position: "absolute", top: 0, right: 0 }} onClick={() => removeServiceLocationRow(row.id)}>
+              <CloseIcon />
+            </IconButton>
+          )}
+        </Grid>
+    ));
+  };
+
   const paymentMethodsArray = [
     { name: "PayPal", icon: PayPal, state: paymentMethods.paypal },
     { name: "Apple Pay", icon: ApplePay, state: paymentMethods.apple_pay },
@@ -756,14 +949,27 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   };
 
   const handleNextStep = async () => {
-    if (firstName === "") {
-      alert("Please enter first name");
+    const newErrors = {};
+    if (!businessName) newErrors.businessName = 'Business name is required';    
+    if (!email) newErrors.email = 'Email is required';
+    if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
+    if (!ein) newErrors.ein = 'SSN is required';
+
+    if (!empFirstName) newErrors.empFirstName = 'First name is required';
+    if (!empLastName) newErrors.empLastName = 'Last name is required';
+    if (!empEmail) newErrors.empEmail = 'Email is required';
+    if (!empPhoneNumber) newErrors.empPhoneNumber = 'Email is required';
+    if (!empSsn) newErrors.empSsn = 'SSN is required';
+    
+    
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors); // Show errors if any field is empty
       return;
     }
-    if (lastName === "") {
-      alert("Please enter last name");
-      return;
-    }
+
+    setErrors({}); // Clear any previous errors
+
 
     if (!DataValidator.email_validate(email)) {
       alert("Please enter a valid email");
@@ -1030,6 +1236,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     fullWidth
                     placeholder='Business name'
                     className={classes.root}
+                    InputProps={{
+                      className: errors.businessName ? classes.errorBorder : '',
+                    }}
+                    required
                   />
                 </Grid>
               </Grid>
@@ -1132,7 +1342,18 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={email} onChange={handleBusinessEmailChange} variant='filled' placeholder='Business Email' className={classes.root}></TextField>
+                    <TextField
+                      fullWidth
+                      value={email}
+                      onChange={handleBusinessEmailChange}
+                      variant='filled'
+                      placeholder='Business Email'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.email ? classes.errorBorder : '',
+                      }}
+                      required
+                    ></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={6}>
@@ -1155,6 +1376,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='Business Phone Number'
                       className={classes.root}
+                      InputProps={{
+                        className: errors.phoneNumber ? classes.errorBorder : '',
+                      }}
+                      required
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -1219,6 +1444,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
+                      InputProps={{
+                        className: errors.ein ? classes.errorBorder : '',
+                      }}
+                      required
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -1253,6 +1482,34 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
         </Grid>
         <Grid container item xs={12}>
           {renderMaintenanceServices()}
+        </Grid>
+      </Grid>
+
+      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+        <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
+          <Grid item xs={1}></Grid>
+
+          <Grid container justifyContent='center' alignItems='center' item xs={10}>
+            <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+              Service Locations
+            </Typography>
+          </Grid>
+          <Grid container justifyContent='center' alignItems='center' item xs={1}>
+            <Button
+              onClick={() => addServiceLocationRow()}
+              sx={{
+                color: "#1f1f1f",
+                "&:hover": {
+                  color: "#FFFFFF",
+                },
+              }}
+            >
+              <Typography sx={{ fontWeight: "bold" }}>+</Typography>
+            </Button>
+          </Grid>
+        </Grid>
+        <Grid container item xs={12}>
+          {renderServiceLocations()}
         </Grid>
       </Grid>
 
@@ -1342,6 +1599,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   fullWidth
                   placeholder='First name'
                   className={classes.root}
+                  InputProps={{
+                    className: errors.empFirstName ? classes.errorBorder : '',
+                  }}
+                  required
                 />
               </Grid>
               <Grid item xs={6}>
@@ -1353,6 +1614,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   fullWidth
                   placeholder='Last name'
                   className={classes.root}
+                  InputProps={{
+                    className: errors.empLastName ? classes.errorBorder : '',
+                  }}
+                  required
                 />
               </Grid>
             </Grid>
@@ -1455,7 +1720,18 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth value={empEmail} onChange={handleEmpEmailChange} variant='filled' placeholder='Email' className={classes.root}></TextField>
+                  <TextField
+                    fullWidth
+                    value={empEmail}
+                    onChange={handleEmpEmailChange}
+                    variant='filled'
+                    placeholder='Email'
+                    className={classes.root}
+                    InputProps={{
+                      className: errors.empEmail ? classes.errorBorder : '',
+                    }}
+                    required
+                  ></TextField>
                 </Grid>
               </Grid>
               <Grid container item xs={6}>
@@ -1478,6 +1754,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     variant='filled'
                     placeholder='Phone Number'
                     className={classes.root}
+                    InputProps={{
+                      className: errors.empPhoneNumber ? classes.errorBorder : '',
+                    }}
+                    required
                   ></TextField>
                 </Grid>
               </Grid>
@@ -1506,6 +1786,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     variant='filled'
                     placeholder='SSN'
                     className={classes.root}
+                    InputProps={{
+                      className: errors.empSsn ? classes.errorBorder : '',
+                    }}
+                    required
                   ></TextField>
                 </Grid>
               </Grid>

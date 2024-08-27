@@ -15,6 +15,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { DataGrid } from '@mui/x-data-grid';
 
 // Styles
 const useStyles = makeStyles((theme) => ({
@@ -367,9 +368,16 @@ function DocumentCard(props) {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {feesArray && feesArray.map((fee) =>{
+                    {/* {feesArray && feesArray?.map((fee) =>{
                         return( <FeesTextCard key={fee.fee_name} fee={fee}/>)
-                    })}
+                    })} */}
+                    {
+                      feesArray && (
+                        <>
+                          <FeesDataGrid data={feesArray} />
+                        </>
+                      )
+                    }
                 </AccordionDetails>
             </Accordion>
         </Box>
@@ -385,5 +393,76 @@ function FeesTextCard(props) {
         </Typography>
     )
 }
+
+const FeesDataGrid = ({ data }) => {
+  const columns = [
+    { field: "frequency",
+      headerName: "Frequency",
+      width: 120,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "fee_name",
+      headerName: "Name",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    {
+      field: "charge",
+      headerName: "Charge",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const charge = params.value;
+
+        return (
+          <Typography>
+            {feeType === "PERCENT" ? `${charge}%` : feeType === "FLAT-RATE" ? `$${charge}` : charge}
+          </Typography>
+        );
+      },
+    },    
+    {
+      field: "of",
+      headerName: "Of",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {        
+        const of = params.value;
+
+        return (
+          <Typography>
+            {(of === null || of === undefined) ? `-` : `${of}`}
+          </Typography>
+        );
+      },
+    },
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(fee) => fee.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
+  );
+};
 
 export default SearchManager;

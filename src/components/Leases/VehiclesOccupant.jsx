@@ -74,8 +74,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData, dataKey }) => {
-    console.log('Inside vehicles occupants', leaseVehicles);
+const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData, dataKey, ownerOptions }) => {
+    // console.log('Inside vehicles occupants', leaseVehicles);
+    // console.log('VehiclesOccupant - ownerOptions', ownerOptions);
     const [vehicles, setVehicles] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -272,6 +273,8 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 <DatePicker
                                     label="Year"
                                     value={currentRow?.year ? dayjs(currentRow.year) : null}
+                                    views={['year']}
+                                    format="YYYY"
                                     onChange={(e) => {
                                         const formattedDate = e ? e.format("MM-DD-YYYY") : null;
                                         setCurrentRow({ ...currentRow, year: formattedDate })
@@ -365,7 +368,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                             </FormControl>
                         </Grid>
                         <Grid item md={6}>
-                            <TextField
+                            {/* <TextField
                                 className={classes.textField}
                                 margin="dense"
                                 label="Owner"
@@ -380,7 +383,52 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
-                            />
+                            /> */}
+                            <Select
+                                name='owner'
+                                value={currentRow?.owner}
+                                onChange={(e) => setCurrentRow({ ...currentRow, owner: e.target.value })}
+                                variant='filled'
+                                fullWidth                                
+                                className={classes.root}
+                                sx={{
+                                    marginTop: '10px',
+                                    backgroundColor: '#D6D5DA',
+                                    height: "55px",
+                                    borderRadius: "5px",
+                                    border: '1px solid grey',
+                                    ".MuiFilledInput-root": {
+                                        padding: "0 12px",
+                                    },
+                                    ".MuiSelect-filled.MuiSelect-filled": {
+                                        height: "30px",
+                                        borderRadius: "8px",
+                                    },
+                                    "&:hover": {
+                                        backgroundColor: '#D6D5DA',
+                                    }
+                                }}
+                                displayEmpty
+                                renderValue={(value) => {
+                                    if (!value) {
+                                        return <Typography color="gray">Owner</Typography>;
+                                    }
+                                    return value;
+                                }}
+                            >
+                                { 
+                                    ownerOptions?.map( option => (
+                                        <MenuItem value={`${option?.name} ${option?.last_name}`}>{`${option?.name} ${option?.last_name}`}</MenuItem>        
+                                    ))
+                                }
+                                {/* <MenuItem value='Bi-weekly'>Bi-weekly</MenuItem>
+                                <MenuItem value='Semi-monthly'>Semi-monthly</MenuItem>
+                                <MenuItem value='Hourly'>Hourly</MenuItem>
+                                <MenuItem value='Daily'>Daily</MenuItem>
+                                <MenuItem value='Weekly'>Weekly</MenuItem>
+                                <MenuItem value='Monthly'>Monthly</MenuItem>
+                                <MenuItem value='Yearly'>Yearly</MenuItem> */}
+                            </Select>
                         </Grid>
                     </Grid>
                 </DialogContent>

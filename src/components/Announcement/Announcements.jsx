@@ -142,6 +142,12 @@ export default function Announcements() {
       await setShowAnnouncement(true);
       await markAnnouncementAsRead([announcement.announcement_uid]);
     }
+    else if (announcement.announcement_mode == "MAINTENANCE") {
+      // console.log(announcement.announcement_title);
+      setAnnData(announcement);
+      await setShowAnnouncement(true);
+      await markAnnouncementAsRead([announcement.announcement_uid]);
+    }
   };
 
   const markAnnouncementAsRead = (announcementList) => {

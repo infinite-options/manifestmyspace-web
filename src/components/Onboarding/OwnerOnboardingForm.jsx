@@ -64,6 +64,12 @@ const useStyles = makeStyles((theme) => ({
       paddingBottom: "15px",
     },
   },
+  errorBorder: {
+    border: '1px solid red',
+  },
+  error: {
+    color: 'red',
+  },
 }));
 
 export default function OwnerOnboardingForm({ profileData, setIsSave }) {
@@ -133,6 +139,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const [ errors, setErrors ] = useState({})
 
   const getListDetails = async () => {
     try {
@@ -482,15 +490,22 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     setCookie("default_form_vals", { ...cookiesData, paymentMethods });
   };
 
-  const handleNextStep = async () => {
-    if (firstName === "") {
-      alert("Please enter first name");
+  const handleNextStep = async () => {    
+
+    const newErrors = {};
+    if (!firstName) newErrors.firstName = 'First name is required';    
+    if (!lastName) newErrors.lastName = 'Last name is required';    
+    if (!email) newErrors.email = 'Email is required';
+    if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
+    if (!ssn) newErrors.ssn = 'SSN is required';    
+  
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors); // Show errors if any field is empty
       return;
     }
-    if (lastName === "") {
-      alert("Please enter last name");
-      return;
-    }
+
+    setErrors({}); // Clear any previous errors
+
 
     if (!DataValidator.email_validate(email)) {
       alert("Please enter a valid email");
@@ -724,10 +739,26 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     fullWidth
                     placeholder='First name'
                     className={classes.root}
+                    InputProps={{
+                      className: errors.firstName ? classes.errorBorder : '',
+                    }}
+                    required
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name='lastName' value={lastName} variant='filled' onChange={handleLastNameChange} fullWidth placeholder='Last name' className={classes.root} />
+                  <TextField 
+                    name='lastName'
+                    value={lastName}
+                    variant='filled'
+                    onChange={handleLastNameChange}
+                    fullWidth
+                    placeholder='Last name'
+                    className={classes.root}
+                    InputProps={{
+                      className: errors.lastName ? classes.errorBorder : '',
+                    }}
+                    required
+                  />
                 </Grid>
               </Grid>
               <Grid container item xs={12} columnSpacing={4}>
@@ -829,7 +860,18 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={email} onChange={handleEmailChange} variant='filled' placeholder='Email' className={classes.root}></TextField>
+                    <TextField
+                      fullWidth
+                      value={email}
+                      onChange={handleEmailChange}
+                      variant='filled'
+                      placeholder='Email'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.email ? classes.errorBorder : '',
+                      }}
+                      required
+                    ></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={6}>
@@ -845,7 +887,18 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={phoneNumber} onChange={handlePhoneNumberChange} variant='filled' placeholder='Phone Number' className={classes.root}></TextField>
+                    <TextField
+                      fullWidth
+                      value={phoneNumber}
+                      onChange={handlePhoneNumberChange}
+                      variant='filled'
+                      placeholder='Phone Number'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.phoneNumber ? classes.errorBorder : '',
+                      }}
+                      required
+                    ></TextField>
                   </Grid>
                 </Grid>
               </Grid>
@@ -909,6 +962,10 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
+                      InputProps={{
+                        className: errors.ssn ? classes.errorBorder : '',
+                      }}
+                      required
                     ></TextField>
                   </Grid>
                 </Grid>
