@@ -341,11 +341,6 @@ export default function AddListing(props) {
   }, [propertyState]);
 
   const handleBackButton = async () => {
-    if (changedSaved) {
-      window.location.reload();
-      return;
-    }
-
     const hasPropertyChanges =
       propertyData.property_address !== address ||
       propertyData.property_unit !== unit ||
@@ -371,6 +366,33 @@ export default function AddListing(props) {
       propertyData.property_amenities_nearby !== nearbyAmenities ||
       hasUtilitiesChanges;
 
+    console.log("hasPropertyChanges:", hasPropertyChanges);
+    console.log("Property Data:", propertyData);
+    console.log("State Values:", {
+        address,
+        unit,
+        city,
+        propertyState,
+        zip,
+        propertyType,
+        bedrooms,
+        bathrooms,
+        squareFootage,
+        rent,
+        deposit,
+        petsAllowed,
+        depositForRent,
+        taxes,
+        mortgages,
+        insurance,
+        description,
+        notes,
+        isListed,
+        communityAmenities,
+        apartmentAmenities,
+        nearbyAmenities
+    });
+
     if (hasPropertyChanges) {
       const confirmSave = window.confirm("You have unsaved changes. Do you want to save them before leaving?");
 
@@ -378,7 +400,6 @@ export default function AddListing(props) {
         saveChanges(true);
       } else {
         navigate("/propertiesPM", { state: { isBack: true } });
-
         onBackClick();
       }
     } else {
@@ -386,6 +407,7 @@ export default function AddListing(props) {
       onBackClick();
     }
   };
+
 
   // const handleSubmit = async (event) => {
   //   event.preventDefault();
@@ -943,26 +965,30 @@ export default function AddListing(props) {
     if (hasPropertyChanges || hasUtilitiesChanges) {
       try {
         setShowSpinner(true);
+    
+        // Only send the request if there are property changes
         if (hasPropertyChanges) {
           await fetch(`${APIConfig.baseURL.dev}/properties`, {
             method: "PUT",
             body: formData,
           });
         }
-  
+    
+        // Only send the request if there are utility changes
         if (hasUtilitiesChanges) {
           await putUtilitiesData();
         }
-  
+    
         setShowSpinner(false);
         console.log("Changes saved successfully.");
-  
+    
         if (navigateAfterSave) {
           refreshProperties();
           showPropertyNavigator();
         } else {
           refreshProperties();
         }
+    
         setChangedSaved(true);
         hasPropertyChanges = false;
         hasUtilitiesChanges = false;
@@ -1844,11 +1870,11 @@ export default function AddListing(props) {
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>
                 </Button>
-                {propertyData.property_available_to_rent === 1 && (
+                {/* {propertyData.property_available_to_rent === 1 && (
                   <Button variant='outlined' onClick={handleUpdateAndStay} sx={{ width: "100%", backgroundColor: theme.typography.formButton.background, marginTop: "10px" }}>
                     <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
                   </Button>
-                )}
+                )} */}
               </Grid>
             </Grid>
           </Box>

@@ -783,27 +783,23 @@ function DocumentCard(props) {
 
 const FeesDataGrid = ({ data }) => {
   const columns = [
-    { field: "frequency",
+    {
+      field: "frequency",
       headerName: "Frequency",
       width: 120,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
-    { field: "fee_name",
+    {
+      field: "fee_name",
       headerName: "Name",
       width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "charge",
       headerName: "Charge",
       width: 100,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
         const charge = params.value;
@@ -814,43 +810,39 @@ const FeesDataGrid = ({ data }) => {
           </Typography>
         );
       },
-    },    
+    },
     {
       field: "of",
       headerName: "Of",
       width: 100,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-      renderCell: (params) => {        
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
         const of = params.value;
 
-        return (
-          <Typography>
-            {(of === null || of === undefined) ? `-` : `${of}`}
-          </Typography>
-        );
+        return <Typography>{of === null || of === undefined ? `-` : `${of}`}</Typography>;
       },
     },
   ];
 
-  // console.log("FeesDataGrid - props.data - ", data);
+  // Adding a unique id to each row using map if the data doesn't have an id field
+  const rowsWithId = data.map((row, index) => ({
+    id: `${index}`,
+    ...row,
+  }));
 
   return (
-    <>
-      <DataGrid
-        rows={data}
-        getRowId={(fee) => fee.id}
-        columns={columns}
-        sx={{
-          // border: "0px",
-          marginTop: '10px',
-        }}
-        hideFooter={true}
-      />
-    </>
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{
+        marginTop: "10px",
+      }}
+      hideFooter={true}
+    />
   );
 };
+
+
 
 function FeesTextCard(props) {
   const textStyle = {

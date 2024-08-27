@@ -31,7 +31,7 @@ const ContactsPM = () => {
         break;
       case "OWNER":
         data = response.data["owner_contacts"];
-        setContactsTab("Tenant");
+        setContactsTab("Manager");
         break;
       case "TENANT":
         data = response.data["tenant_contacts"];
