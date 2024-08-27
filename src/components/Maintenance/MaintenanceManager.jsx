@@ -25,7 +25,7 @@ import AddMaintenanceItem from "./AddMaintenanceItem";
 import EditMaintenanceItem from "./EditMaintenanceItem";
 import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 
-export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId) {
+export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus) {
   
   const dataObject = {};
 
@@ -67,46 +67,25 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
     setShowSpinner(true);
 
     const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
-    // const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000003`);
     const maintenanceRequestsData = await maintenanceRequests.json();
-    //console.log('---maintenanceRequestsData before dedupQuotes---', maintenanceRequestsData);
+
     let array1 = maintenanceRequestsData.result["NEW REQUEST"]?.maintenance_items;
     let array2 = 
-  Array.isArray(maintenanceRequestsData.result["QUOTES REQUESTED"]?.maintenance_items) &&
-  maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items.length > 0
-    ? dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items)
-    : [];
+      Array.isArray(maintenanceRequestsData.result["QUOTES REQUESTED"]?.maintenance_items) &&
+      maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items.length > 0
+        ? dedupeQuotes(maintenanceRequestsData.result["QUOTES REQUESTED"].maintenance_items)
+        : [];
     let array3 = maintenanceRequestsData.result["QUOTES ACCEPTED"]?.maintenance_items || [];
-let array4 = maintenanceRequestsData.result["SCHEDULED"]?.maintenance_items;
+    let array4 = maintenanceRequestsData.result["SCHEDULED"]?.maintenance_items;
     let array5 = maintenanceRequestsData.result["COMPLETED"]?.maintenance_items;
-    //console.log("----inside manager---", array5);
     let array6 = maintenanceRequestsData.result["PAID"]?.maintenance_items || [];
 
-    dataObject["NEW REQUEST"] = [];
-    dataObject["QUOTES REQUESTED"] = [];
-    dataObject["QUOTES ACCEPTED"] = [];
-    dataObject["SCHEDULED"] = [];
-    dataObject["COMPLETED"] = [];
-    dataObject["PAID"] = [];
-
-    for (const item of array1) {
-      dataObject["NEW REQUEST"].push(item);
-    }
-    for (const item of array2) {
-      dataObject["QUOTES REQUESTED"].push(item);
-    }
-    for (const item of array3) {
-      dataObject["QUOTES ACCEPTED"].push(item);
-    }
-    for (const item of array4) {
-      dataObject["SCHEDULED"].push(item);
-    }
-    for (const item of array5) {
-      dataObject["COMPLETED"].push(item);
-    }
-    for (const item of array6) {
-      dataObject["PAID"].push(item);
-    }
+    dataObject["NEW REQUEST"] = array1 || [];
+    dataObject["QUOTES REQUESTED"] = array2 || [];
+    dataObject["QUOTES ACCEPTED"] = array3 || [];
+    dataObject["SCHEDULED"] = array4 || [];
+    dataObject["COMPLETED"] = array5 || [];
+    dataObject["PAID"] = array6 || [];
 
     setMaintenanceData((prevData) => ({
       ...prevData,
@@ -116,9 +95,34 @@ let array4 = maintenanceRequestsData.result["SCHEDULED"]?.maintenance_items;
       ...prevData,
       ...dataObject,
     }));
+
+    // Determine the initial status based on the arrays
+    const initialStatus = determineInitialStatus(array1, array2, array3, array4, array5, array6);
+    setSelectedStatus(initialStatus);
+
     setShowSpinner(false);
   };
+
   getMaintenanceData();
+}
+
+// Function to determine the initial status based on non-empty arrays
+function determineInitialStatus(array1, array2, array3, array4, array5, array6) {
+  if (array1 && array1.length > 0) {
+    return "NEW REQUEST";
+  } else if (array2 && array2.length > 0) {
+    return "QUOTES REQUESTED";
+  } else if (array3 && array3.length > 0) {
+    return "QUOTES ACCEPTED";
+  } else if (array4 && array4.length > 0) {
+    return "SCHEDULED";
+  } else if (array5 && array5.length > 0) {
+    return "COMPLETED";
+  } else if (array6 && array6.length > 0) {
+    return "PAID";
+  } else {
+    return "NEW REQUEST"; // Default to "NEW REQUEST" if all arrays are empty
+  }
 }
 
 export default function MaintenanceManager() {
@@ -133,7 +137,6 @@ export default function MaintenanceManager() {
 
   const propertyIdFromPropertyDetail = location.state?.propertyId || null;
   const selectedProperty = location.state?.selectedProperty || null;
-  // console.log("MaintenanceManager - selectedProperty - ", selectedProperty);
 
   const newDataObject = {};
   newDataObject["NEW REQUEST"] = [];
@@ -150,10 +153,6 @@ export default function MaintenanceManager() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [filterPropertyList, setFilterPropertyList] = useState([]);
   const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
-
-  // useEffect(() => {
-  // 	console.log("filterPropertyList - ", filterPropertyList);
-  // }, [filterPropertyList]);
 
   const businessId = user.businesses.MAINTENANCE.business_uid;
 
@@ -187,13 +186,11 @@ export default function MaintenanceManager() {
   }
 
   useEffect(() => {
-    //console.log("----inside useEffect---", maintenanceData);
     if (maintenanceData) {
       const propertyList = [];
       const addedAddresses = [];
       for (const key in maintenanceData) {
         for (const item of maintenanceData[key]) {
-          // console.log("maintenanceData item - ", item);
           if (!addedAddresses.includes(item.property_address)) {
             addedAddresses.push(item.property_address);
             if (!propertyList.includes(item.property_address)) {
@@ -206,7 +203,6 @@ export default function MaintenanceManager() {
           }
         }
       }
-      // console.log("MaintenanceManager - propertyList - ", propertyList);
       if (propertyIdFromPropertyDetail) {
         for (const property of propertyList) {
           if (property.property_uid !== propertyIdFromPropertyDetail) {
@@ -218,7 +214,6 @@ export default function MaintenanceManager() {
       if (selectedProperty === null || selectedProperty === undefined) {
         setFilterPropertyList(propertyList);
       } else {
-        //console.log("in else---propertyList---", propertyList);
         for (const property of propertyList) {
           if (property.property_uid !== selectedProperty.property_uid) {
             property.checked = false;
@@ -304,16 +299,14 @@ export default function MaintenanceManager() {
 
   useEffect(() => {
     let profileId = getProfileId();
-    maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId);
+    maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus);
     setRefresh(false);
   }, [refresh]);
 
   useEffect(() => {
     const handleMaintenanceUpdate = () => {
       let profileId = getProfileId();
-      // Using a closure to capture the current profileId when the effect runs
-      const currentProfileId = profileId;
-      maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, currentProfileId);
+      maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus);
     };
 
     window.addEventListener("maintenanceUpdate", handleMaintenanceUpdate);
@@ -347,15 +340,16 @@ export default function MaintenanceManager() {
       window.dispatchEvent(new Event("maintenanceRequestSelected"));
     }
   };
+  
   const handleBackButton = () => {
     if (location.state && location.state.fromProperty === true) {
       const { fromProperty, index } = location.state;
-      // navigate('/properties', { state: { index } }); - PM Changed
       navigate("/propertiesPM", { state: { index } });
     } else {
-      navigate(-1); // Fallback to default behavior if onBack is not provided
+      navigate(-1);
     }
   };
+  
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
