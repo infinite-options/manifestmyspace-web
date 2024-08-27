@@ -920,6 +920,7 @@ const PropertyCard = (props) => {
   const [contractFileTypes, setContractFileTypes] = useState([]);
   const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
   const [propertyOwnerName, setPropertyOwnerName] = useState("");
+  const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
 
     
   const setBusinessProfileDetails = () => {
@@ -1239,7 +1240,8 @@ const PropertyCard = (props) => {
     });
   };
 
-  const handleDeletePrevUploadedFile = (index) => {
+  const handleDeletePrevUploadedFile = (doc_url, index) => {
+	setDeletedDocsUrl(prevList => [...prevList, doc_url])
     setPreviouslyUploadedDocs((prevFiles) => {
       const filesArray = Array.from(prevFiles);
       filesArray.splice(index, 1);
@@ -1301,6 +1303,9 @@ const PropertyCard = (props) => {
     // };
 
 	// formData.append("contract_property_ids", contractPropertyID);
+	formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+	// setDeletedDocsUrl([]);
+
     formData.append("contract_uid", contractUID);
     formData.append("contract_name", contractName);
     formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
@@ -1323,19 +1328,19 @@ const PropertyCard = (props) => {
     }
 
     if (contractFiles.length) {
-      const documentsDetails = [];
+    //   const documentsDetails = [];
       [...contractFiles].forEach((file, i) => {
 		
 		// console.log(file, " name of file - ", file.name);
         formData.append(`file_${i}`, file, file.name);
-        const fileType = contractFileTypes[i] || "";
-        const documentObject = {
-          // file: file,
-          fileIndex: i, //may not need fileIndex - will files be appended in the same order?
-          fileName: file.name, //may not need filename
-          fileType: fileType,
-        };
-        documentsDetails.push(documentObject);
+        // const fileType = contractFileTypes[i] || "";
+        // const documentObject = {
+        //   // file: file,
+        //   fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+        //   fileName: file.name, //may not need filename
+        //   fileType: fileType,
+        // };
+        // documentsDetails.push(documentObject);
       });
     //   formData.append("contract_documents_details", JSON.stringify(documentsDetails));
     }
@@ -2205,7 +2210,7 @@ return (
 									<Button
 										variant="text"
 										onClick={(event) => {
-											handleDeletePrevUploadedFile(i);
+											handleDeletePrevUploadedFile(doc.link, i);
 										}}
 										sx={{
 											width: '10%',
