@@ -22,6 +22,7 @@ import {
 	ImageList,
 	ImageListItem,
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { useUser } from '../../../contexts/UserContext';
 import theme from '../../../theme/theme';
 
@@ -1163,7 +1164,15 @@ const PropertyCard = (props) => {
   };
 
   const handleEndDateChange = (v) => {
-    setContractEndDate(v);
+	// if (v.isBefore(contractStartDate)) {
+	// 	setShowInvalidEndDatePrompt(true);
+	// 	setContractEndDate(contractStartDate); //not sure about this yet -- Abhinav
+	// }
+	// else {
+	// 	setShowInvalidEndDatePrompt(false);
+	// 	setContractEndDate(v);
+	// }
+	setContractEndDate(v);
   };
 
   // const handleContractFeesChange = (feesList) => {
@@ -1294,6 +1303,8 @@ const PropertyCard = (props) => {
     //     "contract_fees": contractFeesJSONString,
     //     "contract_status": "SENT"
     // };
+
+	//Check here -- Abhinav
 
     formData.append("contract_uid", contractUID);
     formData.append("contract_name", contractName);
@@ -1720,8 +1731,8 @@ if (scrollRef.current) {
 						}}
 					>
 						{'$'}
-						{propertyData.property_value ? propertyData.property_value : '<$$$>'}{' '}
-						{propertyData.property_value_year ? `(${propertyData.property_value_year})` : '(<YEAR>)'}
+						{propertyData.property_value ? propertyData.property_value : 'No Property Value'}{' '}
+						{propertyData.property_value_year ? `(${propertyData.property_value_year})` : ''}
 					</Box>
 				</Box>
 				<Box
@@ -1753,7 +1764,7 @@ if (scrollRef.current) {
 						{'$'}
 						{propertyData.property_value && propertyData.property_area
 							? (propertyData.property_value / propertyData.property_area).toFixed(2)
-							: '<$$$>'}
+							: 'No SqFt available'}
 					</Box>
 				</Box>
 			</Box>
@@ -2025,9 +2036,9 @@ if (scrollRef.current) {
 					color: '#3D5CAC',
 				}}
 			>
-				<Box>Management Fees *</Box>
+				<Box>Management Fees 1*</Box>
 				<Box onClick={handleOpenAddFee}>
-					<EditIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
 			</Box>
 			<Box
