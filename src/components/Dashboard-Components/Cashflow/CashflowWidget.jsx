@@ -65,7 +65,8 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
   const [originalCashFlowData, setOriginalCashFlowData] = useState(null);
   const [propertyList, setPropertyList] = useState([]);
   const[widgetselectedProperty, setWidgetSelectedProperty] = useState(selectedProperty ? selectedProperty : "All Properties");
-
+  const [propertyButtonName, setPropertyButtonName ] = useState("Select Property")
+  const [cfPeriodButtonName, setCfPeriodButtonName ] = useState("Last 12 Months")
   // console.log("From Cashflowwidget ", data)
   // const expenseCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
   // const revenueCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
@@ -182,6 +183,7 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
     }
 
     setWidgetSelectedProperty(propertyUID);
+    setPropertyButtonName('View all Properties');
     // console.log("from cashflowwidget - ", widgetselectedProperty);
 
     if(setSelectedProperty != undefined || setSelectedProperty != null){
@@ -198,7 +200,13 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
 
   const viewProperties = async (event) => {
     event.stopPropagation();
-    setAnchorEl(event.currentTarget);
+    if(propertyButtonName === 'View all Properties'){
+      // setSelectedProperty("ALL");
+      setPropertyButtonName('Select Property');
+      setAnchorEl(event.currentTarget);
+    } else if(propertyButtonName === 'Select Property') {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   const handleClose = () => {
@@ -305,7 +313,7 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
                 >
                   <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "5px" }} />
                   <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {getPropertyName(widgetselectedProperty)}
+                    {propertyButtonName}
                   </span>
                 </Button>
                 <Menu
@@ -342,6 +350,31 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
                   </MenuItem>
                   {/* </Select> */}
                 </Menu>
+              </Grid>
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "flex-start" }}>
+                {/* <Button
+                  variant='outlined'
+                  id='all_properties'
+                  // className={classes.button}
+                  style={{
+                    // height: "100%",
+                    // width: '80%',
+                    // backgroundColor: '#160449',
+                    color: "#3D5CAC",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                  }}
+                  onClick={() => {
+                    handleSelectAllProperties();
+                  }}
+                >                  
+                  All Properties
+                </Button> */}
+                <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase', fontSize:"15px"}}>
+                  {propertyButtonName === 'Select Property'?  `All Properties, ${cfPeriodButtonName === 'Last 12 Months'? 'Current Month' : 'Last 12 Months'}` : ''}
+                  {propertyButtonName === 'View all Properties'?  `Property: ${getPropertyName(widgetselectedProperty)}, ${cfPeriodButtonName === 'Last 12 Months'? 'Current Month' : 'Last 12 Months'}` : ''}
+                </Typography>
               </Grid>
             </Grid>
 

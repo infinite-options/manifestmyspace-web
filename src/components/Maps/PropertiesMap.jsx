@@ -41,12 +41,14 @@ const mapStyles = [
   },
 ];
 
+const libraries = ['places'];
+
 const PropertiesMap = ({ properties }) => {
   const [selectedProperty, setSelectedProperty] = React.useState(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_API_KEY,
-    libraries: ['places'],
+    libraries,
   });
 
   if (loadError) {

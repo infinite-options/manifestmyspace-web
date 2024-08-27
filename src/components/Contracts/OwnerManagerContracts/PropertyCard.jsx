@@ -1204,8 +1204,13 @@ const PropertyCard = (props) => {
     const url = `${APIConfig.baseURL.dev}/contracts`;
     // const url = `http://localhost:4000/contracts`;
 
+	console.log(data)
     fetch(url, {
       method: "PUT",
+	//   headers: {
+	// 	"Content-Type": "application/json", // Ensure the server expects JSON
+	//   },
+	//   body: JSON.stringify(data),
       body: data,
     })
       .then((response) => {
@@ -1295,6 +1300,7 @@ const PropertyCard = (props) => {
     //     "contract_status": "SENT"
     // };
 
+	// formData.append("contract_property_ids", contractPropertyID);
     formData.append("contract_uid", contractUID);
     formData.append("contract_name", contractName);
     formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
@@ -1319,7 +1325,9 @@ const PropertyCard = (props) => {
     if (contractFiles.length) {
       const documentsDetails = [];
       [...contractFiles].forEach((file, i) => {
-        formData.append(`file-${i}`, file, file.name);
+		
+		// console.log(file, " name of file - ", file.name);
+        formData.append(`file_${i}`, file, file.name);
         const fileType = contractFileTypes[i] || "";
         const documentObject = {
           // file: file,
@@ -1329,15 +1337,37 @@ const PropertyCard = (props) => {
         };
         documentsDetails.push(documentObject);
       });
-      formData.append("contract_documents_details", JSON.stringify(documentsDetails));
+    //   formData.append("contract_documents_details", JSON.stringify(documentsDetails));
     }
 
     // console.log("Quote sent. Data sent - ");
-    for (const pair of formData.entries()) {
-      // console.log(`${pair[0]}, ${pair[1]}`);
-    }
+    // for (const pair of formData.entries()) {
+    //   console.log(`${pair[0]}, ${pair[1]}`);
+    // }
 
-    sendPutRequest(formData);
+    // sendPutRequest(formData);
+	const url = `${APIConfig.baseURL.dev}/contracts`;
+    // const url = `http://localhost:4000/contracts`;
+
+    fetch(url, {
+      method: "PUT",
+	//   headers: {
+	// 	"Content-Type": "application/json", // Ensure the server expects JSON
+	//   },
+	//   body: JSON.stringify(data),
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        } else {
+          // console.log("Data updated successfully");
+          navigate("/managerDashboard");
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
   };
 
   useEffect(() => {
@@ -1419,7 +1449,8 @@ if (scrollRef.current) {
 	}
 }
 };
-  return (
+
+return (
     <>
       {/* Time since Inquiry was created */}
       <Box
@@ -1433,7 +1464,8 @@ if (scrollRef.current) {
           // color: '#3D5CAC',
         }}
       >
-		  <Grid item xs={12}>
+		{/* For image list */}
+		<Grid item xs={12}>
 		  <Box
 					sx={{
 						display: 'flex',
@@ -1505,7 +1537,7 @@ if (scrollRef.current) {
         >
           {timeDiff}
         </Box> */}
-		  </Grid>
+		</Grid>
         
       </Box>
       {/* Property Address */}
@@ -1551,6 +1583,7 @@ if (scrollRef.current) {
 					)}
 				</Box>
 			</Box>
+
 			{/* Property Owner and Status */}
 			<Box
 				sx={{
@@ -1685,6 +1718,7 @@ if (scrollRef.current) {
 					</Box>
 				</Box>
 			</Box>
+
 			{/* Property Value*/}
 			<Box
 				sx={{
@@ -1757,6 +1791,7 @@ if (scrollRef.current) {
 					</Box>
 				</Box>
 			</Box>
+
 			{/* Property Type */}
 			<Box
 				sx={{
@@ -1882,7 +1917,8 @@ if (scrollRef.current) {
 					</Box>
 				</Box>
 			</Box>
-
+			
+			{/* Management agreement name */}
 			<Box
 				sx={{
 					fontSize: '15px',
@@ -2014,6 +2050,8 @@ if (scrollRef.current) {
 					Please enter a valid end date in "MM-DD-YYYY" format.
 				</Box>
 			)}
+
+			{/* For management Fees */}
 			<Box
 				sx={{
 					display: 'flex',
@@ -2101,6 +2139,8 @@ if (scrollRef.current) {
 					))
 				)}
 			</Box>
+
+			{/* previously Uploaded docs */}
 			{previouslyUploadedDocs.length ? (
 				<Box
 					sx={{

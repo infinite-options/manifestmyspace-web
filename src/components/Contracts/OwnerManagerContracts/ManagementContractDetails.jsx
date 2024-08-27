@@ -167,6 +167,7 @@ function ManagementContractDetails(props) {
               fontFamily: "Source Sans Pro",
             }}
           >
+            {/* Back button and management contract */}
             <Stack
               flexDirection='row'
               justifyContent='flex-start'
@@ -198,6 +199,8 @@ function ManagementContractDetails(props) {
                 Management Contract
               </Box>
             </Stack>
+
+            {/* Contract Uid display */}
             <Box
               sx={{
                 display: "flex",
@@ -213,6 +216,7 @@ function ManagementContractDetails(props) {
                 {/* {contactsTab} */}
               </Typography>
             </Box>
+            {/* For navigate different request */}
             <Box
               flexDirection='row'
               alignItems='center'
@@ -259,6 +263,7 @@ function ManagementContractDetails(props) {
                 </svg>
               </Box>
             </Box>
+            
             <PropertyCard
               data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []}
               timeDifference={timeDiff}
