@@ -58,6 +58,8 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isUpdated, setIsUpdated] = useState(false);
 
+  const [ expanded, setExpanded ] = useState(true);
+
   useEffect(() => {
     console.log("inside documents mod", modifiedData);
     if (modifiedData && modifiedData?.length > 0) {
@@ -239,7 +241,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
 
   return (
     <div>
-      <Accordion sx={{ backgroundColor: color }} expanded={true}>
+      <Accordion sx={{ backgroundColor: color }} expanded={expanded} onChange={() => setExpanded(prevState => !prevState)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
           <Grid container>
             <Grid item md={11.2}>

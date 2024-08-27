@@ -1377,7 +1377,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
               )}
               {vehicles && (
                 <VehiclesOccupant
-                  leaseVehicles={vehicles}
+                  leaseVehicles={vehicles}                  
                   setLeaseVehicles={setVehicles}
                   states={states}
                   editOrUpdateLease={editOrUpdateTenant}
@@ -1385,6 +1385,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                   modifiedData={modifiedData}
                   setModifiedData={setModifiedData}
                   dataKey={"tenant_vehicle_info"}
+                  ownerOptions={[...adults, ...children]}
                 />
               )}
             </AccordionDetails>

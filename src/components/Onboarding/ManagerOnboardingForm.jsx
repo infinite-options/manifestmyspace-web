@@ -122,7 +122,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
-  const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
+  // const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
+  const [locations, setLocations] = useState([]);
   const [ein_mask, setEinMask] = useState("");
 
   // Personal info state variables
@@ -302,7 +303,12 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
         setFees(feesWithId);
       }
       if (profileData.business_locations) {
-        setLocations(JSON.parse(profileData.business_locations));
+        const parsedLocations = JSON.parse(profileData.business_locations);
+        const locationsWithId = parsedLocations?.map((loc, index) => ({
+          ...loc,
+          id: index,
+        }));        
+        setLocations(locationsWithId);
       }
 
       const paymentMethodsData = JSON.parse(profileData.paymentMethods);
@@ -638,6 +644,185 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
           {index !== 0 && (
             <IconButton aria-label='delete' sx={{ position: "absolute", top: 0, right: 0 }} onClick={() => removeFeeRow(row.id)}>
+              <CloseIcon />
+            </IconButton>
+          )}
+        </Grid>
+    ));
+  };
+
+  const handleServiceLocationChange = (event, id) => {
+    const { name, value } = event.target;
+
+    const updatedLocations = locations?.map((loc) => {
+      if (loc.id === id) {
+        const updatedLoc = { ...loc, [name]: value };
+        return updatedLoc;
+      }
+      return loc;
+    });
+
+    // Update the state with the modified fees array
+    setLocations(updatedLocations);
+
+    updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
+  }
+
+  const addServiceLocationRow = () => {
+    const updatedLocations = [...locations, { id: locations.length + 1, address: "", city: "", state: "", miles: "" }];    
+
+    setLocations(updatedLocations);
+
+    updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
+  };
+
+  const removeServiceLocationRow = (id) => {
+    const updatedLocations = locations?.filter((loc) => loc.id !== id);
+    setLocations(updatedLocations);
+
+    updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
+  };
+  
+  const handleServiceLocationAddressSelect = (id, address) => {      
+    const updatedLocations = locations?.map((loc) => {
+      if (loc.id === id) {
+        const updatedLoc = { 
+          ...loc,
+          ['address']: address.street ? address.street : "",
+          ['city']: address.city ? address.city : "",
+          ['state']: address.state ? address.state : ""
+        };
+        return updatedLoc;
+      }
+      return loc;
+    });
+
+    // Update the state with the modified fees array
+    setLocations(updatedLocations);
+
+    updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
+
+
+  };
+
+  const renderServiceLocations = () => {
+    return locations?.map((row, index) => (
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+          <Grid item xs={3}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"Address"}
+              </Typography>
+              {/* <TextField
+                name='address'
+                value={row.address}
+                variant='filled'
+                fullWidth
+                placeholder='Address'
+                className={classes.root}
+                // onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+              /> */}
+              <Grid item xs={12} sx={{ paddingTop: '10px',}}>
+                <AddressAutocompleteInput onAddressSelect={handleServiceLocationAddressSelect} gray={true} defaultValue={row.address} rowID={row.id}/>
+              </Grid>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={3}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"City"}
+              </Typography>
+              <TextField
+                disabled
+                name='city'
+                value={row.city}
+                variant='filled'
+                fullWidth
+                placeholder='City'
+                className={classes.root}
+                // onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+              />
+            </Stack>
+          </Grid>
+
+          <Grid item xs={2}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"State"}
+              </Typography>
+              <TextField
+                disabled
+                name='state'
+                value={row.state}
+                variant='filled'
+                fullWidth
+                placeholder='State'
+                className={classes.root}
+                // onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+              />
+            </Stack>
+          </Grid>
+
+          <Grid item xs={3}>
+            <Stack spacing={-2} m={2}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                {"Miles"}
+              </Typography>
+              <TextField
+                name='miles'
+                value={row.miles}
+                variant='filled'
+                fullWidth
+                placeholder='Miles'
+                className={classes.root}
+                // onChange={(e) => handleFeeChange(e, row.id)}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+              />
+            </Stack>
+          </Grid>
+                            
+          <Grid container justifyContent='center' alignContent='center' item xs={1}>
+            <Button
+              aria-label='delete'
+              sx={{
+                color: "#000000",
+                fontWeight: "bold",
+                "&:hover": {
+                  color: "#FFFFFF",
+                },
+              }}
+              onClick={() => removeServiceLocationRow(row.id)}
+            >
+              <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
+            </Button>
+          </Grid>
+
+          {index !== 0 && (
+            <IconButton aria-label='delete' sx={{ position: "absolute", top: 0, right: 0 }} onClick={() => removeServiceLocationRow(row.id)}>
               <CloseIcon />
             </IconButton>
           )}
@@ -1322,12 +1507,37 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                 },
               }}
             >
-              <Typography sx={{ fontWeight: "bold" }}>+</Typography>
+              <Typography sx={{ fontSize: '24px', fontWeight: "bold" }}>+</Typography>
             </Button>
           </Grid>
         </Grid>
         <Grid container item xs={12}>
           {renderManagementFees()}
+        </Grid>
+      </Grid>
+
+      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+        <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
+          <Grid item xs={1}></Grid>
+          <Grid container justifyContent='center' alignItems='center' item xs={10}>
+            <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Service Locations</Typography>
+          </Grid>
+          <Grid container justifyContent='center' alignItems='center' item xs={1}>
+            <Button
+              onClick={() => addServiceLocationRow()}
+              sx={{
+                color: "#1f1f1f",
+                "&:hover": {
+                  color: "#FFFFFF",
+                },
+              }}
+            >
+              <Typography sx={{  fontSize: '24px', fontWeight: "bold" }}>+</Typography>
+            </Button>
+          </Grid>
+        </Grid>
+        <Grid container item xs={12}>
+          {renderServiceLocations()}
         </Grid>
       </Grid>
 
