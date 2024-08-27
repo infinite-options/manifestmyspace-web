@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, Typography, Grid, Button, Box, IconButton } from '@mui/material';
 import { ArrowBack, ArrowForward, Description as DescriptionIcon } from '@mui/icons-material';
 import Carousel from 'react-material-ui-carousel';
 import dayjs from 'dayjs';
 import APIConfig from "../../../utils/APIConfig";
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
     //console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
@@ -131,6 +136,33 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
     
         changeMaintenanceQuoteStatus(quoteStatusParam);
       };
+
+      const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
+		}
+	};
 
     return (
         <Card
@@ -268,6 +300,79 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                                                 </Grid>
                                             </>
                                         ) : null}
+                                        <Grid item xs={12}>
+								<Box
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										padding: 2,
+									}}
+								>
+									<IconButton
+										onClick={() => handleScroll('left')}
+										disabled={scrollPosition === 0}
+									>
+										<ArrowBackIosIcon />
+									</IconButton>
+									<Box
+										sx={{
+											display: 'flex',
+											overflowX: 'auto',
+											scrollbarWidth: 'none',
+											msOverflowStyle: 'none',
+											'&::-webkit-scrollbar': {
+												display: 'none',
+											},
+										}}
+									>
+										<Box
+											sx={{
+												display: 'flex',
+												overflowX: 'auto',
+												scrollbarWidth: 'none',
+												msOverflowStyle: 'none',
+												'&::-webkit-scrollbar': {
+													display: 'none',
+												},
+											}}
+										>
+											<ImageList 
+											ref={scrollRef}
+											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+												{JSON.parse(item.quote_maintenance_images)?.map((image, index) => (
+													<ImageListItem
+														key={index}
+														sx={{
+															width: 'auto',
+															flex: '0 0 auto',
+															border: '1px solid #ccc',
+															margin: '0 2px',
+															position: 'relative', // Added to position icons
+														}}
+													>
+														<img
+															src={image}
+															alt={`maintenance-${index}`}
+															style={{
+																height: '150px',
+																width: '150px',
+																objectFit: 'cover',
+															}}
+														/>
+													</ImageListItem>
+												))}
+											</ImageList>
+										</Box>
+									</Box>
+									<IconButton onClick={() => handleScroll('right')}>
+										<ArrowForwardIosIcon />
+									</IconButton>
+								</Box>
+							
+									
+
+								</Grid>
                                     </Grid>
                                 </Box>
                             ))}
