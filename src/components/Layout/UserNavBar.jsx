@@ -80,22 +80,42 @@ const getCommentButtonNav = () => {
 const getPhoneButtonNav = () => {
   switch (selectedRole) {
     case 'OWNER':
-      return '/ownerContacts';
+      return {
+        pathname: '/contactsPM',
+        state: { contactsTab: 'Manager' },
+      };
     case 'MANAGER':
-      return '/PMContacts';
+      return {
+        pathname: '/contactsPM',
+        state: { contactsTab: 'Owner' },
+      };
     case 'TENANT':
-      return '/tenantContacts';
+      return {
+        pathname: '/contactsPM',
+        state: { contactsTab: 'Manager' },
+      };
     case 'MAINTENANCE':
-      return '/maintenanceContacts';
+      console.log("here");
+      return {
+        pathname: '/contactsPM',
+        state: { contactsTab: 'Manager' },
+      };
     case 'PM_EMPLOYEE':
-      return '/PMContacts';
+      return {
+        pathname: '/contactsPM',
+        state: { contactsTab: 'Tenant' },
+      };
     case 'MAINT_EMPLOYEE':
-      return '/maintenanceContacts';
+      return {
+        pathname: '/contactsPM',
+        state: { contactsTab: 'Maintenance' },
+      };
     default:
-      return '/';
+      return {
+        pathname: '/',
+      };
   }
 };
-
   return (
     <Grid
       container
@@ -167,7 +187,10 @@ const getPhoneButtonNav = () => {
         (
           <Grid item xs={3}>
             <Box 
-              onClick={()=>{navigate(getPhoneButtonNav())}}
+              onClick={() => {
+                const { pathname, state } = getPhoneButtonNav();
+                navigate(pathname, { state });
+              }}
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <img

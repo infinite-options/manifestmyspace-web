@@ -45,6 +45,8 @@ const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
     const [ propertiesData, setPropertiesData ] = useState([]);
     const [ contractsData, setContractsData ] = useState([]);
     const [ contactDetails, setContactDetails ] = useState([]);
+
+    console.log("DATA EMPLOYESS", data);
   
     useEffect(() => {
       setContactDetails(data)
@@ -83,12 +85,12 @@ const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
               </Grid>
               <Grid container direction='row' item xs={10} >
                   <Grid item xs={12} container justifyContent="center">
-                    <Typography sx={{fontSize: '25px', fontWeight: 'bold', color: '#F2F2F2' }}>
-                    {`
-                      ${(contactDetails && contactDetails[currentIndex]?.employee_first_name) ? contactDetails[currentIndex]?.employee_first_name : ""}
-                      ${(contactDetails && contactDetails[currentIndex]?.employee_last_name) ? contactDetails[currentIndex]?.employee_last_name : ""}
-                    `}
-                    </Typography>
+                  <Typography sx={{fontSize: '25px', fontWeight: 'bold', color: '#F2F2F2' }}>
+                    {contactDetails && contactDetails[currentIndex] 
+                      ? `${contactDetails[currentIndex].employee_first_name} ${contactDetails[currentIndex].employee_last_name}`
+                      : ""}
+                  </Typography>
+
                   </Grid>
                   <Grid item xs={12} container justifyContent="center">
                     <Box

@@ -194,22 +194,22 @@ export default function AddMaintenanceItem({onBack}) {
 		formData.append('maintenance_request_closed_date', null);
 		formData.append('maintenance_request_adjustment_date', null);
 
-		for (let i = 0; i < selectedImageList.length; i++) {
-			try {
-				let key = i === 0 ? 'img_cover' : `img_${i - 1}`;
-
-				console.log('key and image', key, selectedImageList[i]);
-				if (selectedImageList[i]?.image?.startsWith('data:image')) {
-					const imageBlob = dataURItoBlob(selectedImageList[i].image);
-					formData.append(key, imageBlob);
-				} else {
-					formData.append(key, selectedImageList[i]);
-				}
-				
-			} catch (error) {
-				console.log('Error uploading images', error);
-			}
-		}
+		const files = selectedImageList;
+    let i = 0;
+    for (const file of selectedImageList) {
+      // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+      let key = `img_${i++}`;
+      if (file.file !== null) {
+        // newProperty[key] = file.file;
+        formData.append(key, file.file);
+      } else {
+        // newProperty[key] = file.image;
+        formData.append(key, file.image);
+      }
+      if (file.coverPhoto) {
+        formData.append("img_favorite", key);
+      }
+    }
 
 		for (let [key, value] of formData.entries()) {
 			console.log(key, value);

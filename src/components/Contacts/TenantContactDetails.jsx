@@ -16,6 +16,7 @@ import { formattedPhoneNumber } from '../utils/privacyMasking';
 const TenantContactDetails = (props) => {
     const navigate = useNavigate();
     const location = useLocation();
+    console.log("location state", props);
     const contactDetails = location.state.dataDetails;
     const contactsTab = location.state.tab;
     const selectedData = location.state.selectedData;
