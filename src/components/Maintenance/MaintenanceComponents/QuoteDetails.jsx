@@ -11,11 +11,11 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
-    //console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
+    console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[currentIndex];
-    //console.log('currentItem=----', currentItem);
+    console.log('currentItem=----', currentItem);
     const [showSpinner, setShowSpinner] = useState(false);
 
     const handlePrev = () => {
@@ -163,6 +163,9 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
 			});
 		}
 	};
+
+    const isAnyQuoteAccepted = maintenanceQuotesForItem.some(item => item.quote_status === 'ACCEPTED');
+
 
     return (
         <Card
@@ -406,37 +409,39 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                         </Button>
                     ) : currentItem.quote_status === 'SENT' ? (
                         <>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    backgroundColor: '#9EAED6',
-                                    '&:hover': {
-                                        backgroundColor: '#9EAED6',
-                                    },
-                                    color: '#160449',
-                                    fontWeight: 'bold',
-                                    textTransform: 'none',
-                                }}
-                                onClick={() => handleSubmit("ACCEPTED")}
-                            >
-                                Accept
-                            </Button>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    backgroundColor: '#FFC614',
-                                    '&:hover': {
-                                        backgroundColor: '#FFC614',
-                                    },
-                                    color: '#160449',
-                                    fontWeight: 'bold',
-                                    textTransform: 'none',
-                                }}
-                                onClick={() => handleSubmit("REJECTED")}
-                            >
-                                Decline
-                            </Button>
-                        </>
+                           {!isAnyQuoteAccepted && (
+            <Button
+                variant="contained"
+                sx={{
+                    backgroundColor: '#9EAED6',
+                    '&:hover': {
+                        backgroundColor: '#9EAED6',
+                    },
+                    color: '#160449',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                }}
+                onClick={() => handleSubmit("ACCEPTED")}
+            >
+                Accept
+            </Button>
+        )}
+        <Button
+            variant="contained"
+            sx={{
+                backgroundColor: '#FFC614',
+                '&:hover': {
+                    backgroundColor: '#FFC614',
+                },
+                color: '#160449',
+                fontWeight: 'bold',
+                textTransform: 'none',
+            }}
+            onClick={() => handleSubmit("REJECTED")}
+        >
+            Decline
+        </Button>
+    </>
                     ) : currentItem.quote_status === 'ACCEPTED' ? (
                         <Button
                             variant="contained"
