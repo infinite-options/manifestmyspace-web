@@ -131,7 +131,7 @@ setRightPane({ type: "editmaintenance" });
             </Typography>
           </Button>
         </Box>
-        {item?.maintenance_request_status === "NEW" && (
+        {(item?.maintenance_request_status === "NEW" || item?.maintenance_request_status === "PROCESSING"|| item?.maintenance_request_status === "INFO") && (
           <IconButton
             aria-label="edit"
             sx={{

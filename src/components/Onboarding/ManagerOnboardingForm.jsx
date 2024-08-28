@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
 import CryptoJS from "crypto-js";
@@ -8,35 +8,27 @@ import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
-  Box,
   Button,
   TextField,
-  Typography,
-  Avatar,
+  Typography,  
   Stack,
   Checkbox,
   FormControlLabel,
-  Grid,
-  CircularProgress,
-  Backdrop,
-  Paper,
+  Grid,  
   IconButton,
   MenuItem,
   Select,
   InputAdornment,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Snackbar,
   Alert,
   AlertTitle,
   RadioGroup,
   Radio,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { makeStyles } from "@material-ui/core/styles";
 import PayPal from "../../images/PayPal.png";
 import ZelleIcon from "../../images/Zelle.png";
@@ -50,14 +42,14 @@ import { useCookies } from "react-cookie";
 // import DashboardTab from "../TenantDashboard/NewDashboardTab";
 import APIConfig from "../../utils/APIConfig";
 
-import AdultOccupant from "../Leases/AdultOccupant";
-import ChildrenOccupant from "../Leases/ChildrenOccupant";
-import PetsOccupant from "../Leases/PetsOccupant";
-import VehiclesOccupant from "../Leases/VehiclesOccupant";
-import Documents from "../Leases/Documents";
-import { add } from "date-fns";
-import { changeSectionValueFormat } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
-import { id } from "date-fns/locale";
+// import AdultOccupant from "../Leases/AdultOccupant";
+// import ChildrenOccupant from "../Leases/ChildrenOccupant";
+// import PetsOccupant from "../Leases/PetsOccupant";
+// import VehiclesOccupant from "../Leases/VehiclesOccupant";
+// import Documents from "../Leases/Documents";
+// import { add } from "date-fns";
+// import { changeSectionValueFormat } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
+// import { id } from "date-fns/locale";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,7 +68,6 @@ const useStyles = makeStyles((theme) => ({
     color: 'red',
   },
 }));
-
 
 
 export default function ManagerOnboardingForm({ profileData, setIsSave }) {
@@ -120,7 +111,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
   const [states, setStates] = useState([]);
 
-  const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
+  const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "", fee_type: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
   // const [locations, setLocations] = useState([{ id: 1, address: "", city: "", state: "", miles: "" }]);
   const [locations, setLocations] = useState([]);
@@ -163,17 +154,17 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     }
   };
 
-  useEffect(() => {
-    // console.log("paymentMethods - ", paymentMethods);
-  }, [paymentMethods]);
+  // useEffect(() => {
+  //   console.log("paymentMethods - ", paymentMethods);
+  // }, [paymentMethods]);
 
-  useEffect(() => {
-    // console.log("fees - ", fees);
-  }, [fees]);
+  // useEffect(() => {
+  //   console.log("fees - ", fees);
+  // }, [fees]);
 
-  useEffect(() => {
-    // console.log("modifiedData - ", modifiedData);
-  }, [modifiedData]);
+  // useEffect(() => {
+  //   console.log("modifiedData - ", modifiedData);
+  // }, [modifiedData]);
 
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {
@@ -244,6 +235,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   };
 
   const handlePersonalAddressSelect = (address) => {
+    // console.log("handlePersonalAddressSelect - address - ", address);
     setEmpAddress(address.street ? address.street : "");
 
     updateModifiedData({ key: "employee_address", value: address.street ? address.street : "" });
@@ -499,7 +491,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   };
 
   const renderManagementFees = () => {
-    return fees.map((row, index) => (
+    return fees?.map((row, index) => (
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
           <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
@@ -533,7 +525,15 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
               >
                 {"Fee Type"}
               </Typography>
-              <Select name='fee_type' value={row.fee_type} size='small' fullWidth onChange={(e) => handleFeeChange(e, row.id)} placeholder='Select Type' className={classes.select}>
+              <Select 
+                name='fee_type'
+                value={row.fee_type}
+                size='small'
+                fullWidth
+                onChange={(e) => handleFeeChange(e, row.id)}
+                placeholder='Select Type'
+                className={classes.select}                
+              >
                 <MenuItem value='PERCENT'>Percentage</MenuItem>
                 <MenuItem value='FLAT-RATE'>Flat-Rate</MenuItem>
               </Select>
@@ -1205,18 +1205,365 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
   return (
     <>
-      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
-        <Grid item xs={12}>
+      
+        <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
+          <Grid item xs={12}>
+            <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+              Property Manager Profile Information
+            </Typography>
+            <Grid container item xs={12}>
+              <Grid container alignContent='center' item xs={3}>
+                <Grid container justifyContent='center' item xs={12}>
+                  {photo && photo.image ? (
+                    <img
+                      key={Date.now()}
+                      src={photo.image}
+                      style={{
+                        width: "121px",
+                        height: "121px",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                      }}
+                      alt='profile'
+                    />
+                  ) : (
+                    <img src={DefaultProfileImg} alt='default' style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                  )}
+                </Grid>
+                <Grid container justifyContent='center' item xs={12}>
+                  <Button
+                    component='label'
+                    variant='contained'
+                    sx={{
+                      backgroundColor: "#3D5CAC",
+                      width: "193px",
+                      height: "35px",
+                      color: "#FFFFFF",
+                      fontWeight: "bold",
+                      textTransform: "none",
+                      marginTop: "10px",
+                    }}
+                  >
+                    {" "}
+                    Add Profile Pic
+                    <input type='file' hidden accept='image/*' onChange={handlePhotoChange} />
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid item xs={9}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      width: "100%",
+                    }}
+                  >
+                    {"Business Name"}
+                  </Typography>
+                </Grid>
+                <Grid container item xs={12} columnSpacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      name='businessName'
+                      value={businessName}
+                      onChange={(e) => handleBusinessNameChange(e)}
+                      variant='filled'
+                      fullWidth
+                      placeholder='Business name'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.businessName ? classes.errorBorder : '',
+                      }}
+                      required
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container item xs={12} columnSpacing={4}>
+                  <Grid container item xs={3}>
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"Business Address"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <AddressAutocompleteInput onAddressSelect={handleBusinessAddressSelect} gray={true} defaultValue={address} />
+                    </Grid>
+                  </Grid>
+                  <Grid container item xs={2}>
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"Unit"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField value={unit} onChange={handleBusinessUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
+                    </Grid>
+                  </Grid>
+                  <Grid container item xs={2}>
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"City"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
+                    </Grid>
+                  </Grid>
+
+                  <Grid container item xs={2}>
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"State"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
+                    </Grid>
+                  </Grid>
+
+                  <Grid container item xs={3}>
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"Zip Code"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid container item xs={12} columnSpacing={4}>
+                  <Grid container item xs={6}>
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"Business Email"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField 
+                        fullWidth
+                        value={email}
+                        onChange={handleBusinessEmailChange}
+                        variant='filled'
+                        placeholder='Business Email'
+                        className={classes.root}
+                        InputProps={{
+                          className: errors.email ? classes.errorBorder : '',
+                        }}
+                        required
+                      ></TextField>
+                    </Grid>
+                  </Grid>
+                  <Grid container item xs={6}>
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"Business Phone Number"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        value={phoneNumber}
+                        onChange={handleBusinessPhoneNumberChange}
+                        variant='filled'
+                        placeholder='Business Phone Number'
+                        className={classes.root}
+                        InputProps={{
+                          className: errors.phoneNumber ? classes.errorBorder : '',
+                        }}
+                        required
+                      ></TextField>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid container item xs={12} columnSpacing={4}>
+                  <Grid container item xs={6}>
+                    <Grid item xs={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"Tax ID (EIN or SSN)"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                    {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
+                      <MenuItem value='SSN'>SSN</MenuItem>
+                      <MenuItem value='EIN'>EIN</MenuItem>
+                    </Select> */}
+
+                    <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
+                      <FormControlLabel 
+                        value='SSN'
+                        control={
+                          <Radio
+                            sx={{
+                              color: 'defaultColor', 
+                              '&.Mui-checked': {
+                                color: '#3D5CAC',
+                              },
+                            }}
+                          />
+                        }
+                        label='SSN' />
+                      <FormControlLabel
+                        value='EIN'
+                        control={
+                          <Radio
+                            sx={{
+                              color: 'defaultColor', 
+                              '&.Mui-checked': {
+                                color: '#3D5CAC', 
+                              },
+                            }}
+                          />
+                        }
+                        label='EIN' />                    
+                    </RadioGroup>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        // value={mask}
+                        value={ein}
+                        // onChange={(e) => setSsn(e.target.value)}
+                        onChange={(e) => handleTaxIDChange(e.target.value)}
+                        variant='filled'
+                        placeholder='Enter numbers only'
+                        className={classes.root}
+                        InputProps={{
+                          className: errors.ein ? classes.errorBorder : '',
+                        }}
+                        required
+                      ></TextField>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+          <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
+            <Grid item xs={1}></Grid>
+            <Grid container justifyContent='center' alignItems='center' item xs={10}>
+              <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Management Fees</Typography>
+            </Grid>
+            <Grid container justifyContent='center' alignItems='center' item xs={1}>
+              <Button
+                onClick={() => addFeeRow()}
+                sx={{
+                  color: "#1f1f1f",
+                  "&:hover": {
+                    color: "#FFFFFF",
+                  },
+                }}
+              >
+                <Typography sx={{ fontSize: '24px', fontWeight: "bold" }}>+</Typography>
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container item xs={12}>
+            {renderManagementFees()}
+          </Grid>
+        </Grid>
+
+        <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+          <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
+            <Grid item xs={1}></Grid>
+            <Grid container justifyContent='center' alignItems='center' item xs={10}>
+              <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Service Locations</Typography>
+            </Grid>
+            <Grid container justifyContent='center' alignItems='center' item xs={1}>
+              <Button
+                onClick={() => addServiceLocationRow()}
+                sx={{
+                  color: "#1f1f1f",
+                  "&:hover": {
+                    color: "#FFFFFF",
+                  },
+                }}
+              >
+                <Typography sx={{  fontSize: '24px', fontWeight: "bold" }}>+</Typography>
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container item xs={12}>
+            {renderServiceLocations()}
+          </Grid>
+        </Grid>
+
+        <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+          <Grid item xs={12}>
+            <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+              Business Payment Methods
+            </Typography>
+          </Grid>
+          <Grid container item xs={12}>
+            {renderPaymentMethods()}
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
           <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-            Property Manager Profile Information
+            Property Manager Personal Information
           </Typography>
           <Grid container item xs={12}>
             <Grid container alignContent='center' item xs={3}>
               <Grid container justifyContent='center' item xs={12}>
-                {photo && photo.image ? (
+                {employeePhoto && employeePhoto.image ? (
                   <img
                     key={Date.now()}
-                    src={photo.image}
+                    src={employeePhoto.image}
                     style={{
                       width: "121px",
                       height: "121px",
@@ -1245,7 +1592,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                 >
                   {" "}
                   Add Profile Pic
-                  <input type='file' hidden accept='image/*' onChange={handlePhotoChange} />
+                  <input type='file' hidden accept='image/*' onChange={handleEmpPhotoChange} />
                 </Button>
               </Grid>
             </Grid>
@@ -1258,22 +1605,38 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     width: "100%",
                   }}
                 >
-                  {"Business Name"}
+                  {"Display Name"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} columnSpacing={2}>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                   <TextField
-                    name='businessName'
-                    value={businessName}
-                    onChange={(e) => handleBusinessNameChange(e)}
+                    name='emp_first_name'
+                    value={empFirstName}
+                    onChange={(e) => handleEmpFirstNameChange(e)}
                     variant='filled'
                     fullWidth
-                    placeholder='Business name'
+                    placeholder='First name'
+                    className={classes.root}
+                    // className={`${classes.root} ${errors.empFirstName ? classes.requiredField : ''}`}
+                    InputProps={{
+                      className: errors.empFirstName ? classes.errorBorder : '',
+                    }}
+                    required
+                  />                
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    name='emp_last_name'
+                    value={empLastName}
+                    variant='filled'
+                    onChange={handleEmpLastNameChange}
+                    fullWidth
+                    placeholder='Last name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.businessName ? classes.errorBorder : '',
-                    }}
+                      className: errors.empLastName ? classes.errorBorder : '',
+                    }}                  
                     required
                   />
                 </Grid>
@@ -1288,11 +1651,11 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         width: "100%",
                       }}
                     >
-                      {"Business Address"}
+                      {"Personal Address"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <AddressAutocompleteInput onAddressSelect={handleBusinessAddressSelect} gray={true} defaultValue={address} />
+                    <AddressAutocompleteInput onAddressSelect={handlePersonalAddressSelect} gray={true} defaultValue={empAddress} />
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
@@ -1308,7 +1671,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField value={unit} onChange={handleBusinessUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
+                    <TextField value={empUnit} onChange={handleEmpUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
@@ -1324,7 +1687,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
+                    <TextField disabled name='City' value={empCity} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
                   </Grid>
                 </Grid>
 
@@ -1341,7 +1704,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
+                    <TextField disabled name='State' value={empState} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
                   </Grid>
                 </Grid>
 
@@ -1358,7 +1721,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
+                    <TextField disabled name='Zip' value={empZip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
                   </Grid>
                 </Grid>
               </Grid>
@@ -1373,19 +1736,19 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         width: "100%",
                       }}
                     >
-                      {"Business Email"}
+                      {"Personal Email"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField 
                       fullWidth
-                      value={email}
-                      onChange={handleBusinessEmailChange}
+                      value={empEmail}
+                      onChange={handleEmpEmailChange}
                       variant='filled'
-                      placeholder='Business Email'
+                      placeholder='Email'
                       className={classes.root}
                       InputProps={{
-                        className: errors.email ? classes.errorBorder : '',
+                        className: errors.empEmail ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1400,19 +1763,19 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         width: "100%",
                       }}
                     >
-                      {"Business Phone Number"}
+                      {"Personal Phone Number"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      value={phoneNumber}
-                      onChange={handleBusinessPhoneNumberChange}
+                      value={empPhoneNumber}
+                      onChange={handleEmpPhoneNumberChange}
                       variant='filled'
-                      placeholder='Business Phone Number'
+                      placeholder='Phone Number'
                       className={classes.root}
                       InputProps={{
-                        className: errors.phoneNumber ? classes.errorBorder : '',
+                        className: errors.empPhoneNumber ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1422,7 +1785,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
               <Grid container item xs={12} columnSpacing={4}>
                 <Grid container item xs={6}>
-                  <Grid item xs={6}>
+                  <Grid item xs={12}>
                     <Typography
                       sx={{
                         color: theme.typography.common.blue,
@@ -1430,56 +1793,21 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         width: "100%",
                       }}
                     >
-                      {"Tax ID (EIN or SSN)"}
+                      {"SSN"}
                     </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                  {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
-                    <MenuItem value='SSN'>SSN</MenuItem>
-                    <MenuItem value='EIN'>EIN</MenuItem>
-                  </Select> */}
-
-                  <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
-                    <FormControlLabel 
-                      value='SSN'
-                      control={
-                        <Radio
-                          sx={{
-                            color: 'defaultColor', 
-                            '&.Mui-checked': {
-                              color: '#3D5CAC',
-                            },
-                          }}
-                        />
-                      }
-                      label='SSN' />
-                    <FormControlLabel
-                      value='EIN'
-                      control={
-                        <Radio
-                          sx={{
-                            color: 'defaultColor', 
-                            '&.Mui-checked': {
-                              color: '#3D5CAC', 
-                            },
-                          }}
-                        />
-                      }
-                      label='EIN' />                    
-                  </RadioGroup>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={ein}
+                      value={empSsn}
                       // onChange={(e) => setSsn(e.target.value)}
-                      onChange={(e) => handleTaxIDChange(e.target.value)}
+                      onChange={handleEmpSSNChange}
                       variant='filled'
-                      placeholder='Enter numbers only'
+                      placeholder='SSN'
                       className={classes.root}
                       InputProps={{
-                        className: errors.ein ? classes.errorBorder : '',
+                        className: errors.empSsn ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1489,346 +1817,20 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
 
-      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-        <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
-          <Grid item xs={1}></Grid>
-          <Grid container justifyContent='center' alignItems='center' item xs={10}>
-            <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Management Fees</Typography>
-          </Grid>
-          <Grid container justifyContent='center' alignItems='center' item xs={1}>
-            <Button
-              onClick={() => addFeeRow()}
-              sx={{
-                color: "#1f1f1f",
-                "&:hover": {
-                  color: "#FFFFFF",
-                },
-              }}
-            >
-              <Typography sx={{ fontSize: '24px', fontWeight: "bold" }}>+</Typography>
-            </Button>
-          </Grid>
+        <Grid container justifyContent='center' item xs={12}>
+          <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+            <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
+          </Button>
         </Grid>
-        <Grid container item xs={12}>
-          {renderManagementFees()}
-        </Grid>
-      </Grid>
 
-      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-        <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
-          <Grid item xs={1}></Grid>
-          <Grid container justifyContent='center' alignItems='center' item xs={10}>
-            <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Service Locations</Typography>
-          </Grid>
-          <Grid container justifyContent='center' alignItems='center' item xs={1}>
-            <Button
-              onClick={() => addServiceLocationRow()}
-              sx={{
-                color: "#1f1f1f",
-                "&:hover": {
-                  color: "#FFFFFF",
-                },
-              }}
-            >
-              <Typography sx={{  fontSize: '24px', fontWeight: "bold" }}>+</Typography>
-            </Button>
-          </Grid>
-        </Grid>
-        <Grid container item xs={12}>
-          {renderServiceLocations()}
-        </Grid>
-      </Grid>
-
-      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-        <Grid item xs={12}>
-          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-            Business Payment Methods
-          </Typography>
-        </Grid>
-        <Grid container item xs={12}>
-          {renderPaymentMethods()}
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-        <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-          Property Manager Personal Information
-        </Typography>
-        <Grid container item xs={12}>
-          <Grid container alignContent='center' item xs={3}>
-            <Grid container justifyContent='center' item xs={12}>
-              {employeePhoto && employeePhoto.image ? (
-                <img
-                  key={Date.now()}
-                  src={employeePhoto.image}
-                  style={{
-                    width: "121px",
-                    height: "121px",
-                    objectFit: "cover",
-                    borderRadius: "50%",
-                  }}
-                  alt='profile'
-                />
-              ) : (
-                <img src={DefaultProfileImg} alt='default' style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
-              )}
-            </Grid>
-            <Grid container justifyContent='center' item xs={12}>
-              <Button
-                component='label'
-                variant='contained'
-                sx={{
-                  backgroundColor: "#3D5CAC",
-                  width: "193px",
-                  height: "35px",
-                  color: "#FFFFFF",
-                  fontWeight: "bold",
-                  textTransform: "none",
-                  marginTop: "10px",
-                }}
-              >
-                {" "}
-                Add Profile Pic
-                <input type='file' hidden accept='image/*' onChange={handleEmpPhotoChange} />
-              </Button>
-            </Grid>
-          </Grid>
-          <Grid item xs={9}>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  width: "100%",
-                }}
-              >
-                {"Display Name"}
-              </Typography>
-            </Grid>
-            <Grid container item xs={12} columnSpacing={2}>
-              <Grid item xs={6}>
-                <TextField
-                  name='emp_first_name'
-                  value={empFirstName}
-                  onChange={(e) => handleEmpFirstNameChange(e)}
-                  variant='filled'
-                  fullWidth
-                  placeholder='First name'
-                  className={classes.root}
-                  // className={`${classes.root} ${errors.empFirstName ? classes.requiredField : ''}`}
-                  InputProps={{
-                    className: errors.empFirstName ? classes.errorBorder : '',
-                  }}
-                  required
-                />                
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  name='emp_last_name'
-                  value={empLastName}
-                  variant='filled'
-                  onChange={handleEmpLastNameChange}
-                  fullWidth
-                  placeholder='Last name'
-                  className={classes.root}
-                  InputProps={{
-                    className: errors.empLastName ? classes.errorBorder : '',
-                  }}                  
-                  required
-                />
-              </Grid>
-            </Grid>
-            <Grid container item xs={12} columnSpacing={4}>
-              <Grid container item xs={3}>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      width: "100%",
-                    }}
-                  >
-                    {"Personal Address"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <AddressAutocompleteInput onAddressSelect={handlePersonalAddressSelect} gray={true} defaultValue={address} />
-                </Grid>
-              </Grid>
-              <Grid container item xs={2}>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      width: "100%",
-                    }}
-                  >
-                    {"Unit"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField value={unit} onChange={handleEmpUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
-                </Grid>
-              </Grid>
-              <Grid container item xs={2}>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      width: "100%",
-                    }}
-                  >
-                    {"City"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
-                </Grid>
-              </Grid>
-
-              <Grid container item xs={2}>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      width: "100%",
-                    }}
-                  >
-                    {"State"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
-                </Grid>
-              </Grid>
-
-              <Grid container item xs={3}>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      width: "100%",
-                    }}
-                  >
-                    {"Zip Code"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} columnSpacing={4}>
-              <Grid container item xs={6}>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      width: "100%",
-                    }}
-                  >
-                    {"Personal Email"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField 
-                    fullWidth
-                    value={empEmail}
-                    onChange={handleEmpEmailChange}
-                    variant='filled'
-                    placeholder='Email'
-                    className={classes.root}
-                    InputProps={{
-                      className: errors.empEmail ? classes.errorBorder : '',
-                    }}
-                    required
-                  ></TextField>
-                </Grid>
-              </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      width: "100%",
-                    }}
-                  >
-                    {"Personal Phone Number"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    value={empPhoneNumber}
-                    onChange={handleEmpPhoneNumberChange}
-                    variant='filled'
-                    placeholder='Phone Number'
-                    className={classes.root}
-                    InputProps={{
-                      className: errors.empPhoneNumber ? classes.errorBorder : '',
-                    }}
-                    required
-                  ></TextField>
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} columnSpacing={4}>
-              <Grid container item xs={6}>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      width: "100%",
-                    }}
-                  >
-                    {"SSN"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    // value={mask}
-                    value={empSsn}
-                    // onChange={(e) => setSsn(e.target.value)}
-                    onChange={handleEmpSSNChange}
-                    variant='filled'
-                    placeholder='SSN'
-                    className={classes.root}
-                    InputProps={{
-                      className: errors.empSsn ? classes.errorBorder : '',
-                    }}
-                    required
-                  ></TextField>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid container justifyContent='center' item xs={12}>
-        <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
-        </Button>
-      </Grid>
-
-      <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%", height: "100%" }}>
-          <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+        <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+          <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%", height: "100%" }}>
+            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      
     </>
   );
 }
