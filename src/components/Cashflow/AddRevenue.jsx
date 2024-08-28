@@ -159,6 +159,14 @@ const AddRevenue = (props) => {
       .request(config)
       .then((response) => {
         setShowSpinner(false);
+        if (selectedRole === "OWNER") {
+          // navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
+          setCurrentWindow("CASHFLOW_DETAILS");
+    
+        } else if (selectedRole === "MANAGER") {
+          // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+          setCurrentWindow("PROFITABILITY");
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -169,14 +177,14 @@ const AddRevenue = (props) => {
     // let currentMonth = currentDate.toLocaleString("default", { month: "long" });
     // let currentYear = currentDate.getFullYear().toString();
 
-    if (selectedRole === "OWNER") {
-      // navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
-      setCurrentWindow("CASHFLOW_DETAILS");
+    // if (selectedRole === "OWNER") {
+    //   // navigate("/cashflow", {state: { month: currentMonth, year: currentYear }});
+    //   setCurrentWindow("CASHFLOW_DETAILS");
 
-    } else if (selectedRole === "MANAGER") {
-      // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
-      setCurrentWindow("PROFITABILITY");
-    }
+    // } else if (selectedRole === "MANAGER") {
+    //   // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+    //   setCurrentWindow("PROFITABILITY");
+    // }
   };
 
   const handleClosePopup = (event) => {

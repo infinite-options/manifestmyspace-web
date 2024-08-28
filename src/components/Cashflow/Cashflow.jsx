@@ -149,7 +149,7 @@ export default function Cashflow() {
     if(currentWindow === "CASHFLOW_DETAILS"){
       fetchCashflow2(profileId)
       .then((data) => {
-        
+        // console.log("yes window is change")
         if(selectedProperty === "All Properties"){
           setCashflowData2(data);
     
@@ -699,7 +699,9 @@ function StatementTable(props) {
     let count = 0
 
     items.map((i) => {
-      count += i.property.length;
+      i.property.map(p => {
+        count += p.individual_purchase.length;
+      })
     })
 
     return "(" + count + ")";
@@ -708,8 +710,8 @@ function StatementTable(props) {
   function getCategoryItems(category, type) {
     let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
-    let total_amount_due = 0
-    let total_amount_paid = 0
+    // let total_amount_due = 0
+    // let total_amount_paid = 0
 
     // console.log("getCategoryItems for - ", category, "ietms are ", items)
     // var key = "total_paid";
@@ -763,36 +765,42 @@ function StatementTable(props) {
               </TableRow>
 
               {item?.property?.map((property, index) => {
-                total_amount_due = 0
-                total_amount_paid = 0
+                // total_amount_due = 0
+                // total_amount_paid = 0
                 return (
-                  <TableRow key={property.property_uid ? property.property_uid : index} sx={{}}>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{property.property_uid ? property.property_uid : ""}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_address? property.property_address : ""}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_unit ? property.property_unit : ""}</Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      {property.individual_purchase.map((p) => {
-                          total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
-                      })}
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>
-                        ${total_amount_due}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      {property.individual_purchase.map((p) => {
-                          total_amount_paid += (p.total_paid ? p.total_paid : 0)
-                      })}
-                      <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
-                        ${total_amount_paid}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
+                  <React.Fragment key={index}>
+                    {property.individual_purchase.map((p, i) => {
+                    return (
+                      <TableRow key={`${property.property_uid}-${i}`} sx={{}}>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{property.property_uid ? property.property_uid : ""}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_address? property.property_address : ""}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_unit ? property.property_unit : ""}</Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          {/* {property.individual_purchase.map((p) => {
+                              total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
+                          })} */}
+                          <Typography sx={{ fontSize: theme.typography.smallFont }}>
+                            ${p.pur_amount_due ? p.pur_amount_due : 0}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          {/* {property.individual_purchase.map((p) => {
+                              total_amount_paid += (p.total_paid ? p.total_paid : 0)
+                          })} */}
+                          <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
+                            ${p.total_paid?p.total_paid:0}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    );
+                    })}
+                  </React.Fragment>
                 );
               })}
             </React.Fragment>

@@ -188,6 +188,14 @@ const AddExpense = (props) => {
     .then((response) => {
       // console.log(JSON.stringify(response.data));
       setShowSpinner(false);
+      if(selectedRole === "OWNER"){
+        // navigate("/", {state: { month: currentMonth, year: currentYear, currentWindow: "CASHFLOW_DETAILS"}});
+        setCurrentWindow("CASHFLOW_DETAILS");
+        
+      } else if (selectedRole === "MANAGER"){
+        // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+        setCurrentWindow("PROFITABILITY");
+      }
     })
     .catch((error) => {
       setShowSpinner(false);
@@ -197,14 +205,14 @@ const AddExpense = (props) => {
     // let currentMonth = currentDate.toLocaleString("default", { month: "long" });
     // let currentYear = currentDate.getFullYear().toString();
     
-    if(selectedRole === "OWNER"){
-      // navigate("/", {state: { month: currentMonth, year: currentYear, currentWindow: "CASHFLOW_DETAILS"}});
-      setCurrentWindow("CASHFLOW_DETAILS");
+    // if(selectedRole === "OWNER"){
+    //   // navigate("/", {state: { month: currentMonth, year: currentYear, currentWindow: "CASHFLOW_DETAILS"}});
+    //   setCurrentWindow("CASHFLOW_DETAILS");
       
-    } else if (selectedRole === "MANAGER"){
-      // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
-      setCurrentWindow("PROFITABILITY");
-    }
+    // } else if (selectedRole === "MANAGER"){
+    //   // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+    //   setCurrentWindow("PROFITABILITY");
+    // }
   };
 
   const handleClosePopup = (event) => {

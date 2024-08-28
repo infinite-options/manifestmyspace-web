@@ -2195,7 +2195,7 @@ return (
 							}}
 						>
 							<Box>filename</Box>
-							<Box>type</Box>
+							<Box>ContentType</Box>
 							<Box> </Box>
 						</Box>
 						{[...previouslyUploadedDocs].map((doc, i) => (

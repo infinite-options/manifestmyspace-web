@@ -65,7 +65,7 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
   const [originalCashFlowData, setOriginalCashFlowData] = useState(null);
   const [propertyList, setPropertyList] = useState([]);
   const[widgetselectedProperty, setWidgetSelectedProperty] = useState(selectedProperty ? selectedProperty : "All Properties");
-  const [propertyButtonName, setPropertyButtonName ] = useState("Select Property")
+  const [propertyButtonName, setPropertyButtonName ] = useState(selectedProperty? (selectedProperty !== "All Properties"? "View all Properties" : "Select Property") : "Select Property")
   const [cfPeriodButtonName, setCfPeriodButtonName ] = useState("Last 12 Months")
   // console.log("From Cashflowwidget ", data)
   // const expenseCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
@@ -142,6 +142,15 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
       setCashflowData(data)
     }
 
+    fetchCashflow2(profileId)
+      .then((data) => {
+        setOriginalCashFlowData(data);
+        // let currentMonthYearRevenueExpected = get
+      })
+      .catch((error) => {
+        console.error("Error fetching cashflow data:", error);
+      });
+
   },[data])
 
   useEffect(()=>{
@@ -168,18 +177,10 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
   }, [])
   
   const handlePropertyChange = (propertyUID) => {
-    if(propertyUID === "All Properties"){
-      setCashflowData(originalCashFlowData);
-      if(setData != undefined){
-        setData(originalCashFlowData);
-      }
-
-    }else{
-      const dataByProperty = getDataByProperty(originalCashFlowData, propertyUID);
-      setCashflowData(dataByProperty);
-      if(setData != undefined){
-        setData(dataByProperty);
-      }
+    const dataByProperty = getDataByProperty(originalCashFlowData, propertyUID);
+    setCashflowData(dataByProperty);
+    if(setData != undefined){
+      setData(dataByProperty);
     }
 
     setWidgetSelectedProperty(propertyUID);
@@ -202,8 +203,16 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
     event.stopPropagation();
     if(propertyButtonName === 'View all Properties'){
       // setSelectedProperty("ALL");
+      setCashflowData(originalCashFlowData);
+      if(setData != undefined){
+        setData(originalCashFlowData);
+      }
       setPropertyButtonName('Select Property');
-      setAnchorEl(event.currentTarget);
+      setWidgetSelectedProperty("All Properties");
+      if(setSelectedProperty != undefined || setSelectedProperty != null){
+        setSelectedProperty("All Properties");
+      }
+      // setAnchorEl(event.currentTarget);
     } else if(propertyButtonName === 'Select Property') {
       setAnchorEl(event.currentTarget);
     }
@@ -338,16 +347,6 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
                       </MenuItem>
                     );
                   })}
-                  <MenuItem
-                    key={0}
-                    value={"All Properties"}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handlePropertyChange("All Properties");
-                    }}
-                  >
-                    All Properties
-                  </MenuItem>
                   {/* </Select> */}
                 </Menu>
               </Grid>
@@ -371,7 +370,7 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
                 >                  
                   All Properties
                 </Button> */}
-                <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase', fontSize:"15px"}}>
+                <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase', fontSize:"15px", textAlign:"center"}}>
                   {propertyButtonName === 'Select Property'?  `All Properties, ${cfPeriodButtonName === 'Last 12 Months'? 'Current Month' : 'Last 12 Months'}` : ''}
                   {propertyButtonName === 'View all Properties'?  `Property: ${getPropertyName(widgetselectedProperty)}, ${cfPeriodButtonName === 'Last 12 Months'? 'Current Month' : 'Last 12 Months'}` : ''}
                 </Typography>
