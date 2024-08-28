@@ -47,13 +47,13 @@ const useStyles = makeStyles({
 export default function ApplicationSettings({ handleChangePasswordClick, setRHS }) {
   console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getProfileId, user, logout } = useUser(); // Ensure user is destructured from useUser
+  const { getProfileId, user, logout, updateAppSettings } = useUser(); // Ensure user is destructured from useUser
   const [cookies, setCookie] = useCookies(["user"]);
   const classes = useStyles();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState(user.notifications === "true");
   const [darkMode, setDarkMode] = useState(user.dark_mode === "true");
-  const [allowCookies, setAllowCookies] = useState(user.allowCookies === "true");
+  const [allowCookies, setAllowCookies] = useState(user.cookies === "true");
   const [settingsChanged, setSettingsChanged] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [newRole, setNewRole] = useState("");
@@ -87,6 +87,14 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
       setSettingsChanged(false);
     }
   }, [settingsChanged]);
+
+  // useEffect(() => {
+    
+  //   setNotifications(user.notifications === "true");
+  //   setDarkMode(user.dark_mode === "true");
+  //   setAllowCookies(user.cookies === "true");
+    
+  // }, [user]);
 
   const handleAddRoleLinkClick = () => {
     // setShowRoleDropdown(!showRoleDropdown);
@@ -160,6 +168,45 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
     }
   };
 
+  const handleChangeSettings = (event) => {
+    // console.log("handleChangeSettings - event.target - ",event.target.name,  event.target.checked)
+    const { name, checked } = event.target
+
+    const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo'; // Replace with your API endpoint
+    const userInfoPayload = {
+      [name]: checked.toString(),      
+      "user_uid": user?.user_uid,
+    }
+
+    const options = {
+      method: 'PUT', 
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+      body: JSON.stringify(userInfoPayload), 
+    };
+
+    // console.log("handleChangeSettings - userInfoPayload - ", userInfoPayload);
+
+    fetch(url, options)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json(); 
+      })
+      .then(data => {
+        console.log('Success:', data);
+        updateAppSettings({[name]: checked.toString()})
+      })
+      .catch(error => {
+        console.error('Error:', error); 
+    });
+    
+  }
+
+  
+
   return (
     <Grid container alignContent='flex-start' item xs={12} sx={{padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "10px", height: '100%', }}>
       <Typography sx={{ fontSize: '24px', fontWeight: 'bold', }}>Application Settings</Typography>
@@ -170,8 +217,10 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
           </Grid>
           
           <CustomSwitch
+            name="notifications"
             checked={notifications}
             onChange={(e) => {
+              handleChangeSettings(e);
               setNotifications(e.target.checked);
               setSettingsChanged(true);
             }}
@@ -182,8 +231,10 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
             <Typography>Dark mode</Typography>
           </Grid>
           <CustomSwitch
+            name="dark_mode"
             checked={darkMode}
             onChange={(e) => {
+              handleChangeSettings(e);
               setDarkMode(e.target.checked);
               setSettingsChanged(true);
             }}
@@ -194,8 +245,10 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
             <Typography>Allow Cookies</Typography>
           </Grid>
           <CustomSwitch
+            name="cookies"
             checked={allowCookies}
             onChange={(e) => {
+              handleChangeSettings(e);
               setAllowCookies(e.target.checked);
               setSettingsChanged(true);
             }}

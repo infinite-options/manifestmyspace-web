@@ -283,6 +283,7 @@ function DocumentCard(props) {
   }  
   let distance = location1[0]!==undefined ? location1[0]?.distance : "";
   let feesArray = JSON.parse(obj.business_services_fees);
+  let locationsArray = JSON.parse(obj.business_locations);
 
   const handleRequestQuotes = async (obj) => {
     console.log('---handle request quotes---', propertyData, index);
@@ -316,12 +317,7 @@ function DocumentCard(props) {
                     }}
                 >
                     <Typography>{obj.business_name}</Typography>
-                </Box>
-                <Box>
-                    <Typography>
-                        Area of service: {city} +-{" "}{distance} miles
-                    </Typography>
-                </Box>
+                </Box>                
             </Grid>
             <Grid item xs={4}>
                 <Box
@@ -356,6 +352,28 @@ function DocumentCard(props) {
                 </Box>
             </Grid>
         </Grid>
+        <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
+          <Accordion>
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+            >
+                <Typography>
+                    Service Locations
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>                        
+                {
+                  locationsArray && (
+                    <>
+                      <LocationsDataGrid data={locationsArray} />
+                    </>
+                  )
+                }
+            </AccordionDetails>
+          </Accordion>
+        </Box>
         <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
             <Accordion>
                 <AccordionSummary
@@ -444,6 +462,64 @@ const FeesDataGrid = ({ data }) => {
           </Typography>
         );
       },
+    },
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(fee) => fee.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
+  );
+};
+
+const LocationsDataGrid = ({ data }) => {
+  const columns = [
+    { 
+      field: "address",
+      headerName: "Address",
+      width: 200,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "city",
+      headerName: "City",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    {
+      field: "state",
+      headerName: "State",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),      
+    },    
+    {
+      field: "miles",
+      headerName: "Area of Service",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),      
+      renderCell: (params) => (
+        <Typography>
+          +- {params.row.miles} miles
+        </Typography>
+      ),      
     },
   ];
 

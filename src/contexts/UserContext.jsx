@@ -28,7 +28,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
 
   useEffect(() => {
     // console.log("$user set to", user);
-    // console.log("cookies set to", cookies);
+    // console.log("cookies set to", cookies);    
   }, [user]);
 
   const selectRole = (role) => {
@@ -82,6 +82,17 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
       setUser((prev) => ({ ...prev, ...profileUidObj }));
     }
   };
+
+  const updateAppSettings = (settingsObj) => {    
+    // console.log("updateAppSettings - settingsObj - ", settingsObj);    
+    setUser((prevUser) => {
+      const newUserData = { ...prevUser, ...settingsObj };
+
+      setCookie("user", newUserData);            
+      return newUserData;
+    });
+  };
+
   const updateUser = (prevUser, profileUidObj) => {
     let newBusinesses;
     if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
@@ -238,6 +249,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         leaseRoutingBasedOnSelectedRole,
         propertyRoutingBasedOnSelectedRole,
         dashboardRoutingBasedOnSelectedRole,
+        updateAppSettings,
       }}
     >
       {children}
