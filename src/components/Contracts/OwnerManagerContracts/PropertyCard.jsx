@@ -1323,6 +1323,8 @@ const PropertyCard = (props) => {
 
 	//Check here -- Abhinav
 
+	formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+
     formData.append("contract_uid", contractUID);
     formData.append("contract_name", contractName);
     formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
