@@ -36,22 +36,36 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
             "Access-Control-Allow-Credentials":"*"
         };
 
-        const input = {
-            maintenance_request_uid:maintenanceItem.maintenance_request_uid,
-            maintenance_pm_notes:pmNotes,
-            maintenance_request_status:"INFO"
-        };
+        const formData = new FormData();
+        formData.append("maintenance_request_uid", maintenanceItem.maintenance_request_uid);
+        formData.append("maintenance_pm_notes", pmNotes);
+        formData.append("maintenance_request_status", "INFO");
 
-        console.log(input.maintenance_request_uid);
-        console.log(input.maintenance_pm_notes);
-        console.log(input.maintenance_request_status);
+        // console.log('formData>>>>>> in request more info');
+		// for (let [key, value] of formData.entries()) {
+		// 	console.log(key, value);
+		// }
+        
+
+        // const input = {
+        //     maintenance_request_uid:maintenanceItem.maintenance_request_uid,
+        //     maintenance_pm_notes:pmNotes,
+        //     maintenance_request_status:"INFO"
+        // };
+
+        // console.log(input.maintenance_request_uid);
+        // console.log(input.maintenance_pm_notes);
+        // console.log(input.maintenance_request_status);
         setShowSpinner(true);
         axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests",
-        input,
+        formData,
         headers)
         .then(response => {
             console.log("PUT result", response);
             setShowSpinner(false);
+            setShowRequestMoreInfo(false);
+        setPmNotes("");
+
         }).catch(function (error) {
             console.log(error);
             setShowSpinner(false);

@@ -10,6 +10,8 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
+import NoImageAvailable from '../../../images/NoImageAvailable.png';
+
 const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
     console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
 
@@ -340,32 +342,56 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
 												},
 											}}
 										>
-											<ImageList 
-											ref={scrollRef}
-											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-												{JSON.parse(item.quote_maintenance_images)?.map((image, index) => (
-													<ImageListItem
-														key={index}
-														sx={{
-															width: 'auto',
-															flex: '0 0 auto',
-															border: '1px solid #ccc',
-															margin: '0 2px',
-															position: 'relative', // Added to position icons
-														}}
-													>
-														<img
-															src={image}
-															alt={`maintenance-${index}`}
-															style={{
-																height: '150px',
-																width: '150px',
-																objectFit: 'cover',
-															}}
-														/>
-													</ImageListItem>
-												))}
-											</ImageList>
+										<ImageList 
+    ref={scrollRef}
+    sx={{ display: 'flex', flexWrap: 'nowrap' }} 
+    cols={5}
+>
+    {JSON.parse(item.quote_maintenance_images)?.length > 0 ? (
+        JSON.parse(item.quote_maintenance_images).map((image, index) => (
+            <ImageListItem
+                key={index}
+                sx={{
+                    width: 'auto',
+                    flex: '0 0 auto',
+                    border: '1px solid #ccc',
+                    margin: '0 2px',
+                    position: 'relative', // Added to position icons
+                }}
+            >
+                <img
+                    src={image}
+                    alt={`maintenance-${index}`}
+                    style={{
+                        height: '150px',
+                        width: '150px',
+                        objectFit: 'cover',
+                    }}
+                />
+            </ImageListItem>
+        ))
+    ) : (
+        <ImageListItem
+            sx={{
+                width: 'auto',
+                flex: '0 0 auto',
+                border: '1px solid #ccc',
+                margin: '0 2px',
+                position: 'relative',
+            }}
+        >
+            <img
+                src={NoImageAvailable}
+                alt="No images available"
+                style={{
+                    height: '150px',
+                    width: '150px',
+                    objectFit: 'cover',
+                }}
+            />
+        </ImageListItem>
+    )}
+</ImageList>
 										</Box>
 									</Box>
 									<IconButton onClick={() => handleScroll('right')}>

@@ -478,7 +478,7 @@ export default function MaintenanceRequestNavigatorNew({
 										sx={{
 											color: '#160449',
 											marginLeft: 'auto',
-											fontSize: '18px',
+											fontSize: '28px',
 											padding: '15px',
 										}}
 										onClick={() =>
