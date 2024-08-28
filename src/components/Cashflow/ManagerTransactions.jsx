@@ -25,55 +25,42 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import HomeWorkIcon from "@mui/icons-material/HomeWork";
+// import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
-import RevenueTable from "./RevenueTable";
-import ExpectedRevenueTable from "./ExpectedRevenueTable";
-import SelectMonthComponent from "../SelectMonthComponent";
-import ExpenseTable from "./ExpenseTable";
-import ExpectedExpenseTable from "./ExpectedExpenseTable";
-import MixedChart from "../Graphs/OwnerCashflowGraph";
-import SelectProperty from "../Leases/SelectProperty";
-import AddRevenueIcon from "../../images/AddRevenueIcon.png";
+// import RevenueTable from "./RevenueTable";
+// import ExpectedRevenueTable from "./ExpectedRevenueTable";
+// import SelectMonthComponent from "../SelectMonthComponent";
+// import ExpenseTable from "./ExpenseTable";
+// import ExpectedExpenseTable from "./ExpectedExpenseTable";
+// import MixedChart from "../Graphs/OwnerCashflowGraph";
+// import SelectProperty from "../Leases/SelectProperty";
+// import AddRevenueIcon from "../../images/AddRevenueIcon.png";
 import AllOwnerIcon from "../Rent/RentComponents/AllOwnerIcon.png";
 import { useUser } from "../../contexts/UserContext"; // Import the UserContext
 import Backdrop from "@mui/material/Backdrop";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+// import DeleteIcon from "@mui/icons-material/Delete";
+// import EditIcon from "@mui/icons-material/Edit";
 import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
 
-import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
+// import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
 
 import axios from "axios";
 
-import // getTotalRevenueByType,
-// getTotalExpenseByType,
-//   fetchCashflow,
-// getTotalExpenseByMonthYear,
-// getTotalRevenueByMonthYear,
-// getTotalExpectedRevenueByMonthYear,
-// getTotalExpectedExpenseByMonthYear,
-// getPast12MonthsCashflow,
-// getNext12MonthsCashflow,
-// getRevenueList,
-// getExpenseList,
-"../Cashflow/CashflowFetchData";
-
-import {
-  getTotalRevenueByType,
-  getTotalExpenseByType,
-  fetchCashflow2,
-  getTotalExpenseByMonthYear,
-  getTotalRevenueByMonthYear,
-  getTotalExpectedRevenueByMonthYear,
-  getTotalExpectedExpenseByMonthYear,
-  getPast12MonthsCashflow,
-  getNext12MonthsCashflow,
-  getRevenueList,
-  getExpenseList,
-} from "../Cashflow/CashflowFetchData2";
+// import {
+//   getTotalRevenueByType,
+//   getTotalExpenseByType,
+//   fetchCashflow2,
+//   getTotalExpenseByMonthYear,
+//   getTotalRevenueByMonthYear,
+//   getTotalExpectedRevenueByMonthYear,
+//   getTotalExpectedExpenseByMonthYear,
+//   getPast12MonthsCashflow,
+//   getNext12MonthsCashflow,
+//   getRevenueList,
+//   getExpenseList,
+// } from "../Cashflow/CashflowFetchData2";
 
 export default function ManagerTransactions({ propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setCurrentWindow, selectedProperty }) {
   const location = useLocation();
