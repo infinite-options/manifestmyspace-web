@@ -5,7 +5,7 @@ import {
     DialogTitle,
     DialogContent,
     Box,
-    Divider
+    // Divider
 } from '@mui/material';
 import { Message} from '@mui/icons-material';
 import theme from '../../theme/theme';
