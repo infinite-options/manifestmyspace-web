@@ -65,6 +65,12 @@ const useStyles = makeStyles((theme) => ({
       paddingBottom: "15px",
     },
   },
+  errorBorder: {
+    border: '1px solid red',
+  },
+  error: {
+    color: 'red',
+  },
 }));
 
 export default function TenantOnBoardingForm({ profileData, setIsSave }) {
@@ -136,6 +142,8 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const [ errors, setErrors ] = useState({})
 
   const getListDetails = async () => {
     try {
@@ -633,14 +641,19 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   };
 
   const handleNextStep = async () => {
-    if (firstName === "") {
-      alert("Please enter first name");
+    const newErrors = {};
+    if (!firstName) newErrors.firstName = 'First name is required';    
+    if (!lastName) newErrors.lastName = 'Last name is required';    
+    if (!email) newErrors.email = 'Email is required';
+    if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
+    if (!ssn) newErrors.ssn = 'SSN is required';    
+  
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors); // Show errors if any field is empty
       return;
     }
-    if (lastName === "") {
-      alert("Please enter last name");
-      return;
-    }
+
+    setErrors({}); // Clear any previous errors
 
     if (!DataValidator.email_validate(email)) {
       alert("Please enter a valid email");
@@ -884,10 +897,26 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     fullWidth
                     placeholder='First name'
                     className={classes.root}
+                    InputProps={{
+                      className: errors.firstName ? classes.errorBorder : '',
+                    }}
+                    required
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name='lastName' value={lastName} variant='filled' onChange={handleLastNameChange} fullWidth placeholder='Last name' className={classes.root} />
+                  <TextField
+                    name='lastName'
+                    value={lastName}
+                    variant='filled'
+                    onChange={handleLastNameChange}
+                    fullWidth
+                    placeholder='Last name'
+                    className={classes.root} 
+                    InputProps={{
+                      className: errors.lastName ? classes.errorBorder : '',
+                    }}
+                    required
+                  />
                 </Grid>
               </Grid>
               <Grid container item xs={12} columnSpacing={4}>
@@ -989,7 +1018,18 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={email} onChange={handleEmailChange} variant='filled' placeholder='Email' className={classes.root}></TextField>
+                    <TextField
+                      fullWidth
+                      value={email}
+                      onChange={handleEmailChange}
+                      variant='filled'
+                      placeholder='Email'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.email ? classes.errorBorder : '',
+                      }}
+                      required
+                    ></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={6}>
@@ -1005,7 +1045,18 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth value={phoneNumber} onChange={handlePhoneNumberChange} variant='filled' placeholder='Phone Number' className={classes.root}></TextField>
+                    <TextField
+                      fullWidth
+                      value={phoneNumber}
+                      onChange={handlePhoneNumberChange}
+                      variant='filled'
+                      placeholder='Phone Number'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.phoneNumber ? classes.errorBorder : '',
+                      }}
+                      required
+                    ></TextField>
                   </Grid>
                 </Grid>
               </Grid>
@@ -1120,6 +1171,10 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
+                      InputProps={{
+                        className: errors.ssn ? classes.errorBorder : '',
+                      }}
+                      required
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -1260,7 +1315,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
         <Grid item xs={12}>
-          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }}>
+          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={true}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
               <Grid container>
                 <Grid item md={11.2}>
@@ -1322,7 +1377,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
               )}
               {vehicles && (
                 <VehiclesOccupant
-                  leaseVehicles={vehicles}
+                  leaseVehicles={vehicles}                  
                   setLeaseVehicles={setVehicles}
                   states={states}
                   editOrUpdateLease={editOrUpdateTenant}
@@ -1330,6 +1385,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                   modifiedData={modifiedData}
                   setModifiedData={setModifiedData}
                   dataKey={"tenant_vehicle_info"}
+                  ownerOptions={[...adults, ...children]}
                 />
               )}
             </AccordionDetails>

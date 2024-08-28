@@ -25,23 +25,23 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import HomeWorkIcon from "@mui/icons-material/HomeWork";
+// import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
-import RevenueTable from "./RevenueTable";
-import ExpectedRevenueTable from "./ExpectedRevenueTable";
-import SelectMonthComponent from "../SelectMonthComponent";
-import ExpenseTable from "./ExpenseTable";
-import ExpectedExpenseTable from "./ExpectedExpenseTable";
-import MixedChart from "../Graphs/OwnerCashflowGraph";
-import SelectProperty from "../Leases/SelectProperty";
-import AddRevenueIcon from "../../images/AddRevenueIcon.png";
+// import RevenueTable from "./RevenueTable";
+// import ExpectedRevenueTable from "./ExpectedRevenueTable";
+// import SelectMonthComponent from "../SelectMonthComponent";
+// import ExpenseTable from "./ExpenseTable";
+// import ExpectedExpenseTable from "./ExpectedExpenseTable";
+// import MixedChart from "../Graphs/OwnerCashflowGraph";
+// import SelectProperty from "../Leases/SelectProperty";
+// import AddRevenueIcon from "../../images/AddRevenueIcon.png";
 import AllOwnerIcon from "../Rent/RentComponents/AllOwnerIcon.png";
 import { useUser } from "../../contexts/UserContext"; // Import the UserContext
-import Backdrop from "@mui/material/Backdrop";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import CircularProgress from "@mui/material/CircularProgress";
+// import Backdrop from "@mui/material/Backdrop";
+// import DeleteIcon from "@mui/icons-material/Delete";
+// import EditIcon from "@mui/icons-material/Edit";
+// import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
 
 

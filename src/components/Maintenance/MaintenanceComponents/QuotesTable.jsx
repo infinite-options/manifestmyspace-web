@@ -18,7 +18,7 @@ import theme from '../../../theme/theme';
 import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-export default function QuotesTable({ maintenanceItem, navigateParams, maintenanceQuotesForItem }) {
+export default function QuotesTable({ maintenanceItem, onQuoteSelect, navigateParams, maintenanceQuotesForItem }) {
 	//console.log('In QuotesTable');
 	//console.log('maintenanceQuotesForItem: ', maintenanceQuotesForItem);
 	// maintenanceQuotes is a state variable that is set in the grandparent component
@@ -47,7 +47,7 @@ export default function QuotesTable({ maintenanceItem, navigateParams, maintenan
 		{ field: 'quote_created_date', headerName: 'Quote Date', flex: 1 },
 	];
 
-	const handleViewQuotesNavigate = (quote_id) => {
+	const handleViewQuotesNavigate = (quote_id, params) => {
 		console.log('In handleViewQuotesNavigate');
 		console.log('quotes: ', maintenanceQuotesForItem);
 		console.log(
@@ -64,32 +64,11 @@ export default function QuotesTable({ maintenanceItem, navigateParams, maintenan
 				},
 			});
 		} else {
-      console.log('inside else Quotes table---');
-      if (maintenanceItem && navigateParams) {
-				try {
-					const maintenanceItemStr = JSON.stringify(maintenanceItem);
-					const navigateParamsStr = JSON.stringify(navigateParams);
-					const quotesStr = JSON.stringify(maintenanceQuotesForItem);
-					console.log('Storing data in sessionStorage: ', quotesStr);
-
-					// Save data to sessionStorage
-					sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
-					sessionStorage.setItem('navigateParams', navigateParamsStr);
-					sessionStorage.setItem('quotes', quotesStr);
-					sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
-					sessionStorage.setItem('selectedStatus', navigateParams.status);
-					sessionStorage.setItem('quoteAcceptView', 'true');
-					window.dispatchEvent(new Event('storage'));
-					setTimeout(() => {
-						window.dispatchEvent(new Event('maintenanceRequestSelected'));
-					}, 0);
-				} catch (error) {
-					console.error('Error setting sessionStorage: ', error);
-				}
-			} else {
-				console.error('maintenanceItem or navigateParams is undefined');
-			}
-    }
+      console.log('inside else Quotes table---', onQuoteSelect);
+		const selectedIndex = maintenanceQuotesForItem.findIndex(item => item.maintenance_quote_uid === params.row.maintenance_quote_uid);
+        onQuoteSelect(selectedIndex);
+    
+}
 	};
 
 	if (request_status !== 'NEW') {
@@ -126,7 +105,7 @@ export default function QuotesTable({ maintenanceItem, navigateParams, maintenan
 								display: 'none', // Remove vertical borders in the header
 							},
 						}}
-						onRowClick={(params) => handleViewQuotesNavigate(params.row.maintenance_quote_uid)}
+						onRowClick={(params) => handleViewQuotesNavigate(params.row.maintenance_quote_uid, params)}
 					/>
 				) : null}
 			</Grid>

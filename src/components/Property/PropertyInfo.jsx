@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import theme from "../../theme/theme";
 import { ThemeProvider, Box, Paper, Stack, Typography, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
-import { CheckCircle, ExpandMore, LocationOn, TurnedInNot } from "@mui/icons-material";
+import { CheckCircle, ExpandMore, LocationOn, SettingsBackupRestore, TurnedInNot } from "@mui/icons-material";
 import { DateCalendar, DigitalClock, LocalizationProvider } from "@mui/x-date-pickers";
 import Scheduler from "../utils/Scheduler";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,6 +18,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 
+import PropertiesMap from "../Maps/PropertiesMap";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -31,7 +33,8 @@ const PropertyInfo = (props) => {
   const property = props.data;
   const status = props.status;
   const lease = props.lease;
-  const ppt_images = property.property_images.split(",");
+  // const ppt_images = property.property_images.split(",");
+  const ppt_images = property.property_images? JSON.parse(property.property_images) : [];
   const [showScheduler, setShowScheduler] = useState(false);
   const [schedulerDate, setSchedulerDate] = useState();
   const [buttonColor, setButtonColor] = useState("#3D5CAC");
@@ -39,6 +42,8 @@ const PropertyInfo = (props) => {
   console.log("Status: ", status);
 
   const [showRejectApplicationDialog, setshowRejectApplicationDialog] = useState(false);
+
+  const [ tab, setTab ] = useState("photos")
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -78,15 +83,17 @@ const PropertyInfo = (props) => {
     return imageString;
   }
 
-  const images = ppt_images.map((data) => {
-    try {
-      const url = parseImageData(data);
-      return { original: url };
-    } catch (e) {
-      console.error(e);
-      return { original: "" };
-    }
-  });
+  // const images = ppt_images.map((data) => {
+  //   try {
+  //     const url = parseImageData(data);
+  //     return { original: url };
+  //   } catch (e) {
+  //     console.error(e);
+  //     return { original: "" };
+  //   }
+  // });
+
+  const images = ppt_images;
 
   function displayListingDate(date) {
     if (date === null) {
@@ -157,6 +164,11 @@ const PropertyInfo = (props) => {
     }
     return property.property_address;
   }
+
+  const imageStyle = {
+    height: '400px', // Set the desired height
+    objectFit: 'cover', // Ensures the image covers the container without stretching
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -256,13 +268,91 @@ const PropertyInfo = (props) => {
               }}
             >
               <ButtonGroup variant='outlined'>
-                <Button sx={{ color: theme.typography.common.blue }}>Photos</Button>
-                <Button sx={{ color: theme.typography.common.blue }}>Video</Button>
-                <Button sx={{ color: theme.typography.common.blue }}>Map</Button>
+                <Button
+                  sx={{ 
+                    color: tab === "photos" ? '#F2F2F2' : theme.typography.common.blue,
+                    fontWeight: 'bold',
+                    backgroundColor: tab === "photos" ? '#160449' : '#97A7CF'
+                  }}
+                  onClick={() => setTab("photos")}                  
+                >
+                  Photos
+                </Button>
+                <Button
+                  sx={{ 
+                    color: theme.typography.common.blue,
+                    fontWeight: 'bold',
+                    backgroundColor: "#A9A9A9",
+                    "&:hover": {
+                      backgroundColor: "#A9A9A9",
+                    }
+                  }}
+                  // onClick={() => setTab("video")}
+                  disableRipple
+                >
+                  Video
+                </Button>
+                <Button
+                  sx={{ 
+                    color: tab === "map" ? '#F2F2F2' : theme.typography.common.blue,
+                    fontWeight: 'bold',
+                    backgroundColor: tab === "map" ? '#160449' : '#97A7CF'
+                  }}
+                  onClick={() => setTab("map")}
+                >
+                  Map
+                </Button>
               </ButtonGroup>
             </Box>
           </Stack>
-          <ReactImageGallery items={images} showFullscreenButton={false} showPlayButton={false} showThumbnails={false} />
+          {
+            tab === "photos" && (
+              // <ReactImageGallery 
+              //   items={images}
+              //   showFullscreenButton={false}
+              //   showPlayButton={false}
+              //   showThumbnails={false} 
+              //   renderItem={(item) => (
+              //     <div style={{ height: '400px' }}>
+              //       <img src={item.original} style={imageStyle} alt="" />
+              //     </div>
+              //   )}
+              // />              
+              images.length > 0 ? (
+                <ReactImageGallery 
+                  items={images}
+                  showFullscreenButton={false}
+                  showPlayButton={false}
+                  showThumbnails={false} 
+                  renderItem={(item) => (
+                    <div style={{ height: '400px' }}>
+                      <img src={item.original? item.original : item} style={imageStyle} alt="" />
+                    </div>
+                  )}
+                />
+              ) : (
+                <div style={{ height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <p>No images available</p>
+                </div>
+              )
+            )
+          }
+          {
+            tab === "video" && (
+              <Box sx={{height: '400px', }}>
+
+              </Box>
+            )
+          }                    
+          {            
+            tab === "map" && (              
+              <Box sx={{height: '400px', }}>
+                <Stack sx={{ padding: 5 }}>
+                  <PropertiesMap properties={[property]} />
+                </Stack>
+              </Box>
+            )
+          }                    
           <Stack
             direction='row'
             justifyContent='space-between'
@@ -481,26 +571,7 @@ const PropertyInfo = (props) => {
             >
               Description
             </Typography>
-            <Typography sx={{ textAlign: "justify" }}>{property.property_description}</Typography>
-            <Typography sx={{ color: theme.typography.common.blue }}>
-              <svg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                <g clipPath='url(#clip0_1650_4326)'>
-                  <path
-                    d='M3.5 13.5H1.5C1.23478 13.5 0.98043 13.3946 0.792893 13.2071C0.605357 13.0196 0.5 12.7652 0.5 12.5V1.5C0.5 1.23478 0.605357 0.98043 0.792893 0.792893C0.98043 0.605357 1.23478 0.5 1.5 0.5H12.5C12.7652 0.5 13.0196 0.605357 13.2071 0.792893C13.3946 0.98043 13.5 1.23478 13.5 1.5V12.5C13.5 12.7652 13.3946 13.0196 13.2071 13.2071C13.0196 13.3946 12.7652 13.5 12.5 13.5H10.5M0.5 3.5H13.5M7 13.5V7'
-                    stroke='#3D5CAC'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                  />
-                  <path d='M4.5 9.5L7 7L9.5 9.5' stroke='#3D5CAC' strokeLinecap='round' strokeLinejoin='round' />
-                </g>
-                <defs>
-                  <clipPath id='clip0_1650_4326'>
-                    <rect width='14' height='14' fill='white' />
-                  </clipPath>
-                </defs>
-              </svg>
-              &nbsp; Visit Property Website
-            </Typography>
+            <Typography sx={{ textAlign: "justify" }}>{property.property_description}</Typography>                                    
           </Stack>
           <Stack>
             <Box paddingBottom={"50px"}>

@@ -335,13 +335,17 @@ const PropertyListings = ({ setRightPane }) => {
           <CircularProgress color='inherit' />
         </Backdrop>
         <Box
-          style={{
+          style={{            
+            borderRadius: "10px",
             display: "flex",
             fontFamily: "Source Sans Pro",
             justifyContent: "center",
             width: "100%",
-            minHeight: "90vh",
+            height: "90vh",
+            overflowY: 'auto',
+            overflowX: 'hidden',
             marginTop: theme.spacing(2),
+            // padding: '5px',
           }}
         >
           <Paper
@@ -487,7 +491,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
     } catch (e) {
       console.error(e);
     }
-  });
+  });  
 
   const listed_rent = Intl.NumberFormat("en-US", {
     style: "currency",
@@ -779,10 +783,25 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
     PROCESSING: processing_label,
   };
 
+  const imageStyle = {
+    height: '400px', // Set the desired height
+    objectFit: 'cover', // Ensures the image covers the container without stretching
+  };
+
   return (
     <div>
       <Card sx={{ margin: 5 }}>
-        <ReactImageGallery items={images} showFullscreenButton={false} showPlayButton={false} showThumbnails={false} />
+        <ReactImageGallery
+          items={images}
+          showFullscreenButton={false}
+          showPlayButton={false}
+          showThumbnails={false} 
+          renderItem={(item) => (
+            <div style={{ height: '400px' }}>
+              <img src={item.original} style={imageStyle} alt="" />
+            </div>
+          )}
+        />
 
         <Stack direction='row' justifyContent='space-between'>
           <Box

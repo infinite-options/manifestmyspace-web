@@ -7,7 +7,7 @@ import theme from "../../theme/theme";
 import refundIcon from "./refundIcon.png";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
-import { CustomTabPanel } from "../Maintenance/MaintenanceRequestDetail";
+// import { CustomTabPanel } from "../Maintenance/MaintenanceRequestDetail";
 import { useUser } from "../../contexts/UserContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop";
@@ -213,20 +213,18 @@ const QuotesList = (props) => {
                 All Property Management Requests
               </Typography>
               <Stack
-                direction='column'
-                // alignItems='center'
-                // justifyContent='center'
-                sx={{
-                  width: "100%", // Take up full screen width
-                  height: "100vh", // Set the Box height to full height
-                  borderRadius: "10px",
-                  // paddingTop: '1200px',
-                  overflow: "auto",
-                  // marginTop: theme.spacing(2), // Set the margin to 20px
-                }}
-              >
+                  direction='column'
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    overflow: "auto",
+                    padding: "0px",  
+                    margin: "0px",  
+                    gap: "10px",  
+                  }}
+                >
                 {contractRequests.map((contract, index) => (
-                  <Grid item xs={12}>
+                  <Grid item xs={12} key={index} sx={{marginBottom: 0}} >
                     <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} index={index} setIndex={setIndex} />
                   </Grid>
                 ))}
@@ -242,6 +240,7 @@ const QuotesList = (props) => {
 function ContractCard(props) {
   let navigate = useNavigate();
 
+  console.log("props for contract card", props);
   const contract = props.contract;
   const property_endpoint_resp = props.property_endpoint_resp;
 
@@ -258,24 +257,21 @@ function ContractCard(props) {
   // Determine text color based on contract_status or use default blue
   const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
   let announcements = JSON.parse(contract.announcements);
+  console.log("Annoncements", announcements);
   if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
   return (
     <Grid
       container
-      alignContent='flex-start'
       item
       xs={12}
       sx={{
         backgroundColor: "#D6D5DA",
-        // backgroundColor: "red",
         borderRadius: "10px",
         padding: "10px",
-        marginBottom: "20px",
+        marginBottom: "0px",  // Remove or set minimal margin
         fontSize: "11px",
         cursor: "pointer",
-        // position: "relative",
-        // height: '500px',
       }}
       onClick={() => setCurrentIndex(index)}
     >

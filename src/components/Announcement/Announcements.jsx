@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import "../../css/announcement.css";
 import AnnouncementCard from "./AnnouncementCard";
-import Searchbar from "./Searchbar";
+// import Searchbar from "./Searchbar";
 import axios from "axios";
-import SearchFilter from "./SearchFilter";
+// import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, TextField, Typography, Alert, AlertTitle, Snackbar } from "@mui/material";
+import { Box, TextField, Alert, AlertTitle, Snackbar } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
@@ -137,6 +137,12 @@ export default function Announcements() {
       setAnnData(announcement);
       setShowAnnouncement(true);
     } else if (announcement.announcement_mode == "LEASE") {
+      // console.log(announcement.announcement_title);
+      setAnnData(announcement);
+      await setShowAnnouncement(true);
+      await markAnnouncementAsRead([announcement.announcement_uid]);
+    }
+    else if (announcement.announcement_mode == "MAINTENANCE") {
       // console.log(announcement.announcement_title);
       setAnnData(announcement);
       await setShowAnnouncement(true);

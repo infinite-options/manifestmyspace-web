@@ -407,17 +407,18 @@ export default function MaintenanceRequestDetailNew({
                     value={value}
                     index={index}
                     style={{
-                      backgroundColor: theme.palette.primary.main,
+                      backgroundColor: item.color,
                       borderBottomRightRadius: "10px",
                       borderBottomLeftRadius: "10px",
+                      
                     }}
                   >
                     <Grid
                       sx={{
                         backgroundColor: theme.palette.primary.main,
                         justifyContent: "center",
-                        marginLeft: "25px",
-                        marginRight: "25px",
+                        marginLeft: "5px",
+                        marginRight: "5px",
                         paddingBottom: "0px",
                       }}
                     >

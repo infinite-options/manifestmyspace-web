@@ -1,17 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, Typography, Grid, Button, Box, IconButton } from '@mui/material';
 import { ArrowBack, ArrowForward, Description as DescriptionIcon } from '@mui/icons-material';
 import Carousel from 'react-material-ui-carousel';
 import dayjs from 'dayjs';
 import APIConfig from "../../../utils/APIConfig";
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
-const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
-    //console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[currentIndex];
+import NoImageAvailable from '../../../images/NoImageAvailable.png';
+
+const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
+    //console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex);
+
+    const [currentIndex, setCurrentIndex] = useState(initialIndex);
+    //console.log('currentIndex=----', currentIndex);
+    const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[initialIndex];
     //console.log('currentItem=----', currentItem);
     const [showSpinner, setShowSpinner] = useState(false);
+
+    useEffect(() => {
+		setCurrentIndex(initialIndex);
+	}, [initialIndex]);
 
     const handlePrev = () => {
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? maintenanceQuotesForItem.length - 1 : prevIndex - 1));
@@ -132,6 +144,36 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
         changeMaintenanceQuoteStatus(quoteStatusParam);
       };
 
+      const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
+		}
+	};
+
+    const isAnyQuoteAccepted = maintenanceQuotesForItem.some(item => item.quote_status === 'ACCEPTED');
+
+
     return (
         <Card
             variant="outlined"
@@ -151,12 +193,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                 </Typography>
 
                 <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <IconButton
-                        sx={{ position: 'absolute', left: -20, top: '50%', transform: 'translateY(-50%)' }}
-                        onClick={handlePrev}
-                    >
-                        <ArrowBack sx={{ color: '#2c2a75' }} />
-                    </IconButton>
+                    
                     <Card
                         variant="outlined"
                         sx={{
@@ -268,17 +305,109 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                                                 </Grid>
                                             </>
                                         ) : null}
+                                        <Grid item xs={12}>
+								<Box
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										padding: 2,
+									}}
+								>
+									<IconButton
+										onClick={() => handleScroll('left')}
+										disabled={scrollPosition === 0}
+									>
+										<ArrowBackIosIcon />
+									</IconButton>
+									<Box
+										sx={{
+											display: 'flex',
+											overflowX: 'auto',
+											scrollbarWidth: 'none',
+											msOverflowStyle: 'none',
+											'&::-webkit-scrollbar': {
+												display: 'none',
+											},
+										}}
+									>
+										<Box
+											sx={{
+												display: 'flex',
+												overflowX: 'auto',
+												scrollbarWidth: 'none',
+												msOverflowStyle: 'none',
+												'&::-webkit-scrollbar': {
+													display: 'none',
+												},
+											}}
+										>
+										<ImageList 
+    ref={scrollRef}
+    sx={{ display: 'flex', flexWrap: 'nowrap' }} 
+    cols={5}
+>
+    {JSON.parse(item.quote_maintenance_images)?.length > 0 ? (
+        JSON.parse(item.quote_maintenance_images).map((image, index) => (
+            <ImageListItem
+                key={index}
+                sx={{
+                    width: 'auto',
+                    flex: '0 0 auto',
+                    border: '1px solid #ccc',
+                    margin: '0 2px',
+                    position: 'relative', // Added to position icons
+                }}
+            >
+                <img
+                    src={image}
+                    alt={`maintenance-${index}`}
+                    style={{
+                        height: '150px',
+                        width: '150px',
+                        objectFit: 'cover',
+                    }}
+                />
+            </ImageListItem>
+        ))
+    ) : (
+        <ImageListItem
+            sx={{
+                width: 'auto',
+                flex: '0 0 auto',
+                border: '1px solid #ccc',
+                margin: '0 2px',
+                position: 'relative',
+            }}
+        >
+            <img
+                src={NoImageAvailable}
+                alt="No images available"
+                style={{
+                    height: '150px',
+                    width: '150px',
+                    objectFit: 'cover',
+                }}
+            />
+        </ImageListItem>
+    )}
+</ImageList>
+										</Box>
+									</Box>
+									<IconButton onClick={() => handleScroll('right')}>
+										<ArrowForwardIosIcon />
+									</IconButton>
+								</Box>
+							
+									
+
+								</Grid>
                                     </Grid>
                                 </Box>
                             ))}
                         </Carousel>
                     </Card>
-                    <IconButton
-                        sx={{ position: 'absolute', right: -20, top: '50%', transform: 'translateY(-50%)' }}
-                        onClick={handleNext}
-                    >
-                        <ArrowForward sx={{ color: '#2c2a75' }} />
-                    </IconButton>
+                   
                 </Box>
             </CardContent>
             {currentItem && (
@@ -301,37 +430,39 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                         </Button>
                     ) : currentItem.quote_status === 'SENT' ? (
                         <>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    backgroundColor: '#9EAED6',
-                                    '&:hover': {
-                                        backgroundColor: '#9EAED6',
-                                    },
-                                    color: '#160449',
-                                    fontWeight: 'bold',
-                                    textTransform: 'none',
-                                }}
-                                onClick={() => handleSubmit("ACCEPTED")}
-                            >
-                                Accept
-                            </Button>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    backgroundColor: '#FFC614',
-                                    '&:hover': {
-                                        backgroundColor: '#FFC614',
-                                    },
-                                    color: '#160449',
-                                    fontWeight: 'bold',
-                                    textTransform: 'none',
-                                }}
-                                onClick={() => handleSubmit("REJECTED")}
-                            >
-                                Decline
-                            </Button>
-                        </>
+                           {!isAnyQuoteAccepted && (
+            <Button
+                variant="contained"
+                sx={{
+                    backgroundColor: '#9EAED6',
+                    '&:hover': {
+                        backgroundColor: '#9EAED6',
+                    },
+                    color: '#160449',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                }}
+                onClick={() => handleSubmit("ACCEPTED")}
+            >
+                Accept
+            </Button>
+        )}
+        <Button
+            variant="contained"
+            sx={{
+                backgroundColor: '#FFC614',
+                '&:hover': {
+                    backgroundColor: '#FFC614',
+                },
+                color: '#160449',
+                fontWeight: 'bold',
+                textTransform: 'none',
+            }}
+            onClick={() => handleSubmit("REJECTED")}
+        >
+            Decline
+        </Button>
+    </>
                     ) : currentItem.quote_status === 'ACCEPTED' ? (
                         <Button
                             variant="contained"

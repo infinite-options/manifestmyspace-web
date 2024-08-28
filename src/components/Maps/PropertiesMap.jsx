@@ -1,5 +1,5 @@
-import React from 'react';
-import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
+import React, { useState } from 'react';
+import { GoogleMap, useJsApiLoader, MarkerF, InfoWindow } from '@react-google-maps/api';
 import { Typography } from '@material-ui/core';
 import defaultHouseImage from "../Property/defaultHouseImage.png";
 
@@ -46,8 +46,14 @@ const libraries = ['places'];
 const PropertiesMap = ({ properties }) => {
   const [selectedProperty, setSelectedProperty] = React.useState(null);
 
+  // console.log("PropertiesMap - properties - ", properties)
+  // const libs = ['places']
+  const [ libraries ] = useState(['places']);
+
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_API_KEY,
+    // libraries: ['places'],
+    // libs
     libraries,
   });
 
@@ -69,13 +75,13 @@ const PropertiesMap = ({ properties }) => {
       {properties.map((property, idx) => {
         const latitude = parseFloat(property.property_latitude);
         const longitude = parseFloat(property.property_longitude);
-        // console.log("property.property_latitude - ", parseFloat(property.property_latitude));
-        // console.log("property.property_longitude - ", parseFloat(property.property_longitude));
+        console.log("property.property_latitude - ", parseFloat(property.property_latitude));
+        console.log("property.property_longitude - ", parseFloat(property.property_longitude));
 
 
         if (!isNaN(latitude) && !isNaN(longitude)) {
           return (
-            <Marker
+            <MarkerF
               key={idx}
               position={{ lat: latitude, lng: longitude }}
               onClick={() => setSelectedProperty(property)}

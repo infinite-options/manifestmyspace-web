@@ -26,6 +26,8 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
     const [vehicles, setVehicles] = useState([{ id: 1, make: "", model: "", year: "", license: "", state: "" }]);
     const [documents, setDocuments] = useState([]);
     const documentsRef = useRef([]);
+    const [uploadedFiles, setuploadedFiles] = useState([]);
+    const [deletedFiles, setDeletedFiles] = useState([]);
     const [relationships, setRelationships] = useState([]);
     const [states, setStates] = useState([]);
     const [modifiedData, setModifiedData] = useState([]);
@@ -36,6 +38,8 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
     const [lease, setLease] = useState([]);
     const { user, getProfileId, roleName } = useUser();
     const [isReload, setIsReload] = useState(false);
+
+    const [ occupantsExpanded, setOccupantsExpanded ] = useState(true);
 
     const getListDetails = async () => {
         try {
@@ -286,6 +290,11 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                             Tenant Application Edit
                         </Typography>
                     </Grid>
+                    <Grid item xs={11} md={11}>
+                        <Typography align='center' gutterBottom sx={{ fontSize: "16px", fontWeight: "bold", color: "#1f1f1f" }}>                            
+                            Your changes will be saved to the Lease Application without impacting your profile.
+                        </Typography>
+                    </Grid>
                     <Grid item xs={1} md={1}>
                         <Box>
                             <Button onClick={(e) => handleCloseButton(e)}>
@@ -298,10 +307,10 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                             <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
                             {snackbarMessage}
                         </Alert>
-                    </Snackbar>
+                    </Snackbar>                    
                     <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
-                            <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }}>
+                            <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={occupantsExpanded} onChange={() => setOccupantsExpanded(prevState => !prevState)}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
                                     <Grid container>
                                         <Grid item md={11.2}>
@@ -363,11 +372,42 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                                             modifiedData={modifiedData}
                                             setModifiedData={setModifiedData}
                                             dataKey={lease_uid !== null ? "lease_vehicles" : "tenant_vehicle_info"}
+                                            ownerOptions={[...adults, ...children]}
                                         />
                                     )}
                                 </AccordionDetails>
                             </Accordion>
                         </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+                        <Grid item xs={12} md={12}>
+                        <Documents
+                            documents={documents}
+                            setDocuments={setDocuments}
+                            setuploadedFiles={setuploadedFiles}
+                            editOrUpdateLease={editOrUpdateLease}
+                            documentsRef={documentsRef}
+                            setDeletedFiles={setDeletedFiles}
+                            modifiedData={modifiedData}
+                            setModifiedData={setModifiedData}
+                            dataKey={"lease_documents"}
+                        />
+                        </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent='center' item xs={11} md={11}>
+                        <Button
+                            sx={{
+                                backgroundColor: '#3D5CAC',                                
+                            }}
+                            onClick={(e) => handleCloseButton(e)}
+                        >
+                            <Typography sx={{ textTransform: 'none', fontWeight: 'bold', color: "#FFFFFF",}}>
+                                Return to Application
+                            </Typography>
+
+                        </Button>
                     </Grid>
                 </Grid>
             </Paper>

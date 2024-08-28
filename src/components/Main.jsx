@@ -92,7 +92,6 @@ import MaintenanceManager from "./Maintenance/MaintenanceManager";
 import { MaintenanceOwner } from "./Maintenance/MaintenanceOwner";
 import AddMaintenanceItem from "./Maintenance/AddMaintenanceItem";
 import EditMaintenanceItem from "./Maintenance/EditMaintenanceItem";
-import { MaintenanceRequestDetail } from "./Maintenance/MaintenanceRequestDetail";
 import AddProperty from "./Property/AddProperty";
 import EditProperty from "./Property/EditProperty";
 import PropertyDetail from "./Property/PropertyDetail";
@@ -100,7 +99,6 @@ import SearchManager from "./Property/SearchManager";
 import ManagerDetails from "./Property/ManagerDetails";
 import TenantMaintenance from "./Maintenance/TenantMaintenance";
 import AddTenantMaintenanceItem from "./Maintenance/AddTenantMaintenanceItem";
-import MaintenanceRequestNavigator from "./Maintenance/MaintenanceRequestNavigator";
 import TenantProperty from "./Property/TenantProperty";
 import TenantMaintenanceItemDetail from "./Maintenance/TenantMaintenanceItemDetail";
 import DocumentPDF from "./Documents/OwnerDocuments/DocumentPDF";
@@ -335,8 +333,6 @@ function Main() {
             <Route path='maintenanceDashboard2' element={<MaintenanceDashboard2 />} />
             <Route path='addMaintenanceItem' element={<AddMaintenanceItem />} />
             <Route path='editMaintenanceItem' element={<EditMaintenanceItem />} />
-            <Route path='maintenance/detail' element={<MaintenanceRequestDetail />} />
-            <Route path='maintenanceRequestNavigator' element={<MaintenanceRequestNavigator />} />
             <Route path='addProperty' element={<AddProperty />} />
             <Route path='editProperty' element={<EditProperty />} />
             <Route path='propertyDetail' element={<PropertyDetail />} />

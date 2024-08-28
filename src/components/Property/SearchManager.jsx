@@ -15,6 +15,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { DataGrid } from '@mui/x-data-grid';
 
 // Styles
 const useStyles = makeStyles((theme) => ({
@@ -282,6 +283,7 @@ function DocumentCard(props) {
   }  
   let distance = location1[0]!==undefined ? location1[0]?.distance : "";
   let feesArray = JSON.parse(obj.business_services_fees);
+  let locationsArray = JSON.parse(obj.business_locations);
 
   const handleRequestQuotes = async (obj) => {
     console.log('---handle request quotes---', propertyData, index);
@@ -315,12 +317,7 @@ function DocumentCard(props) {
                     }}
                 >
                     <Typography>{obj.business_name}</Typography>
-                </Box>
-                <Box>
-                    <Typography>
-                        Area of service: {city} +-{" "}{distance} miles
-                    </Typography>
-                </Box>
+                </Box>                
             </Grid>
             <Grid item xs={4}>
                 <Box
@@ -356,6 +353,28 @@ function DocumentCard(props) {
             </Grid>
         </Grid>
         <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
+          <Accordion>
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+            >
+                <Typography>
+                    Service Locations
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>                        
+                {
+                  locationsArray && (
+                    <>
+                      <LocationsDataGrid data={locationsArray} />
+                    </>
+                  )
+                }
+            </AccordionDetails>
+          </Accordion>
+        </Box>
+        <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
             <Accordion>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -367,9 +386,16 @@ function DocumentCard(props) {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {feesArray && feesArray.map((fee) =>{
+                    {/* {feesArray && feesArray?.map((fee) =>{
                         return( <FeesTextCard key={fee.fee_name} fee={fee}/>)
-                    })}
+                    })} */}
+                    {
+                      feesArray && (
+                        <>
+                          <FeesDataGrid data={feesArray} />
+                        </>
+                      )
+                    }
                 </AccordionDetails>
             </Accordion>
         </Box>
@@ -385,5 +411,134 @@ function FeesTextCard(props) {
         </Typography>
     )
 }
+
+const FeesDataGrid = ({ data }) => {
+  const columns = [
+    { field: "frequency",
+      headerName: "Frequency",
+      width: 120,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "fee_name",
+      headerName: "Name",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    {
+      field: "charge",
+      headerName: "Charge",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const charge = params.value;
+
+        return (
+          <Typography>
+            {feeType === "PERCENT" ? `${charge}%` : feeType === "FLAT-RATE" ? `$${charge}` : charge}
+          </Typography>
+        );
+      },
+    },    
+    {
+      field: "of",
+      headerName: "Of",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {        
+        const of = params.value;
+
+        return (
+          <Typography>
+            {(of === null || of === undefined) ? `-` : `${of}`}
+          </Typography>
+        );
+      },
+    },
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(fee) => fee.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
+  );
+};
+
+const LocationsDataGrid = ({ data }) => {
+  const columns = [
+    { 
+      field: "address",
+      headerName: "Address",
+      width: 200,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "city",
+      headerName: "City",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    {
+      field: "state",
+      headerName: "State",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),      
+    },    
+    {
+      field: "miles",
+      headerName: "Area of Service",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),      
+      renderCell: (params) => (
+        <Typography>
+          +- {params.row.miles} miles
+        </Typography>
+      ),      
+    },
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(fee) => fee.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
+  );
+};
 
 export default SearchManager;
