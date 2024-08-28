@@ -1340,25 +1340,25 @@ const PropertyCard = (props) => {
 
     if (contractFiles.length) {
 
-    //   const documentsDetails = [];
+      const documentsDetails = [];
       [...contractFiles].forEach((file, i) => {
 		
 		// console.log(JSON.stringify(file));
 		
 
-        formData.append(`file_${i}`, createCustomTypeFile(file, contractFileTypes[i] || ""));
-        // const fileType = contractFileTypes[i] || "";
+        formData.append(`file_${i}`, file);
+        const fileType = contractFileTypes[i] || "";
 		// formData.append("contract")
-        // const documentObject = {
-        //   // file: file,
-        // //   fileIndex: i, //may not need fileIndex - will files be appended in the same order?
-        // //   fileName: file.name, //may not need filename
-        //   fileType: fileType,
-        // };
-        // documentsDetails.push(documentObject);
+        const documentObject = {
+          // file: file,
+          fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+          fileName: file.name, //may not need filename
+          fileType: fileType,
+        };
+        documentsDetails.push(documentObject);
       });
 
-    //   formData.append("contract_documents_contentType", JSON.stringify(contractFileTypes));
+      formData.append("contract_documents_details", JSON.stringify(documentsDetails));
     }
 
     // console.log("Quote sent. Data sent - ");
@@ -2980,11 +2980,11 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
 	);
 }
 
-function createCustomTypeFile(file, customType) {
-	return new File([file], file.name, {
-	  type: customType,
-	  lastModified: file.lastModified,
-	});
-}
+// function createCustomTypeFile(file, customType) {
+// 	return new File([file], file.name, {
+// 	  type: customType,
+// 	  lastModified: file.lastModified,
+// 	});
+// }
 
 export default PropertyCard;
