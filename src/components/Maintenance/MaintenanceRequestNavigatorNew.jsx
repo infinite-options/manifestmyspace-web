@@ -338,6 +338,12 @@ export default function MaintenanceRequestNavigatorNew({
 		displayScheduledDate(data);
 	}, [data]);
 
+	const [selectedQuoteIndex, setSelectedQuoteIndex] = useState(0);
+
+    const handleQuoteSelect = (index) => {
+        setSelectedQuoteIndex(index);
+    };
+
 	return (
 		<div style={{ paddingBottom: '10px' }}>
 			<Box
@@ -599,12 +605,14 @@ export default function MaintenanceRequestNavigatorNew({
 										maintenanceItem={data}
 										navigateParams={navigateParams}
 										maintenanceQuotesForItem={maintenanceQuotes}
+										onQuoteSelect={handleQuoteSelect}
 									/>
 									<Grid container sx={{ padding: '0px' }}>
 									{data.maintenance_request_status !== 'NEW' && maintenanceQuotes.length > 0? (
   <QuoteDetails
     maintenanceItem={data}
     navigateParams={navigateParams}
+	initialIndex={selectedQuoteIndex}
     maintenanceQuotesForItem={maintenanceQuotes}
 	fetchAndUpdateQuotes={fetchAndUpdateQuotes}
   />

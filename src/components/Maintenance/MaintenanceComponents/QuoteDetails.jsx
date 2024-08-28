@@ -12,13 +12,18 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
 
-const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
-    console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
+const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
+    //console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex);
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[currentIndex];
-    console.log('currentItem=----', currentItem);
+    const [currentIndex, setCurrentIndex] = useState(initialIndex);
+    //console.log('currentIndex=----', currentIndex);
+    const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[initialIndex];
+    //console.log('currentItem=----', currentItem);
     const [showSpinner, setShowSpinner] = useState(false);
+
+    useEffect(() => {
+		setCurrentIndex(initialIndex);
+	}, [initialIndex]);
 
     const handlePrev = () => {
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? maintenanceQuotesForItem.length - 1 : prevIndex - 1));
@@ -188,12 +193,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                 </Typography>
 
                 <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <IconButton
-                        sx={{ position: 'absolute', left: -20, top: '50%', transform: 'translateY(-50%)' }}
-                        onClick={handlePrev}
-                    >
-                        <ArrowBack sx={{ color: '#2c2a75' }} />
-                    </IconButton>
+                    
                     <Card
                         variant="outlined"
                         sx={{
@@ -407,12 +407,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                             ))}
                         </Carousel>
                     </Card>
-                    <IconButton
-                        sx={{ position: 'absolute', right: -20, top: '50%', transform: 'translateY(-50%)' }}
-                        onClick={handleNext}
-                    >
-                        <ArrowForward sx={{ color: '#2c2a75' }} />
-                    </IconButton>
+                   
                 </Box>
             </CardContent>
             {currentItem && (
