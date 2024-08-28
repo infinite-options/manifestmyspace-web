@@ -41,10 +41,10 @@ export default function RevenueWidget({ revenueData }) {
                 <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Profit (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{profit.toFixed(2)}</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{profit? profit.toFixed(2) : '0.00'}</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{profitReceived.toFixed(2)}</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{profitReceived? profitReceived.toFixed(2) : '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -64,10 +64,10 @@ export default function RevenueWidget({ revenueData }) {
                 <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Revenue (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{revenue}</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{revenue ? revenue : '0.00'}</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{revenueReceived}</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{revenueReceived ? revenueReceived : '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -86,10 +86,10 @@ export default function RevenueWidget({ revenueData }) {
                 <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Expenses (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{expenses}</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{expenses ? expenses : '0.00'}</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{expensesReceived}</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{expensesReceived ? expensesReceived : '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>

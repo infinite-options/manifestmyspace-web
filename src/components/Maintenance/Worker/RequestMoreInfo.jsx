@@ -18,23 +18,28 @@ import CloseIcon from '@mui/icons-material/Close';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 
+import { useUser } from '../../../contexts/UserContext';
+
 export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMoreInfo, maintenanceItem}){
     
+    const { user, getProfileId, roleName } = useUser();
     const [pmNotes, setPmNotes] = useState();
     const [showSpinner, setShowSpinner] = useState(false);
 
+    // console.log("RequestMoreInfo - props.maintenanceItem - ", maintenanceItem)
+
     const handleChange1 = (event) => {
         setPmNotes(event.target.value);
-      };
+    };
 
-      const handleSendNotes = () => {
+    const handleSendNotes = () => {
 
-        const headers = { 
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Credentials":"*"
-        };
+    const headers = { 
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Credentials":"*"
+    };
 
         const formData = new FormData();
         formData.append("maintenance_request_uid", maintenanceItem.maintenance_request_uid);
@@ -71,7 +76,43 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
             setShowSpinner(false);
         });
         
-      };
+    sendAnnouncement();
+    };
+    
+    const sendAnnouncement = async () => {
+    try {
+        const receiverPropertyMapping = {
+        [maintenanceItem.tenant_uid]: [maintenanceItem.property_uid],
+        };
+
+
+
+        await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            announcement_title: `Additional Info Required for Maintenance`,
+            // announcement_msg: `Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease.`,
+            announcement_msg: `Please provide the following information for the maintenance request - ${maintenanceItem?.maintenance_title} - ${pmNotes}`,
+            announcement_sender: getProfileId(),
+            announcement_date: new Date().toDateString(),
+            // announcement_properties: property.property_uid,
+            announcement_properties: JSON.stringify(receiverPropertyMapping),
+            announcement_mode: "MAINTENANCE",
+            announcement_receiver: [maintenanceItem?.tenant_uid],
+            announcement_type: ["Text", "Email"],
+        }),
+        });
+    } catch (error) {
+        console.log("Error in sending announcement for more info:", error);
+        alert("We were unable to Text the Tenant but we were able to send them a notification through the App");
+    }
+    };
+    
+    
+
     return (
         <Dialog open={showRequestMoreInfo} onClose={() => setShowRequestMoreInfo(false)} maxWidth="lg">
                 <Backdrop

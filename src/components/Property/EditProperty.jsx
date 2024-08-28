@@ -62,6 +62,10 @@ function EditProperty(props) {
 	// let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state || editPropertyState;
 	let { index, propertyList, setPropertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick, } = props;
 
+	const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+	const [isReturnDisabled, setIsReturnDisabled] = useState(false);
+	const [saveButtonText, setSaveButtonText] = useState('Save and Return to Dashboard');
+
 	const [cookies, setCookie] = useCookies(['default_form_vals']);
 	const cookiesData = cookies['default_form_vals'];
 
@@ -182,6 +186,7 @@ function EditProperty(props) {
 	const [favoriteIcons, setFavoriteIcons] = useState(
     JSON.parse(propertyData.property_images).map(image => image === propertyData.property_favorite_image)
   );
+
   
 
 	useEffect(() => {
@@ -544,6 +549,13 @@ function EditProperty(props) {
 		event.preventDefault();
 		console.log('handleSubmit');
 
+		setIsSaveDisabled(true);
+		setSaveButtonText('Return to Dashboard');
+
+		// if (stayOnPage) {
+		// 	setSavedClicked(true);
+		// }
+
 		const changedFields = getChangedFields();
 		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0) {
 			setHasChanges(false);
@@ -735,21 +747,14 @@ function EditProperty(props) {
 
 		try {
 			await Promise.all(promises);
-			//console.log('All Changes saved to the Database', promises);
 			const updatedPropertyData = await autoUpdate();
 			setDeletedIcons(new Array(JSON.parse(updatedPropertyData.property_images).length).fill(false));
 			setFavoriteIcons(JSON.parse(updatedPropertyData.property_images).map(image => image === updatedPropertyData.property_favorite_image));
-			
-			if (stayOnPage) {
-				console.log('STAY ON PAGE', stayOnPage);
-				// setCookie("user_data", { ...cookiesData, index }, { path: "/" });
-			} else {
-				console.log('propertyList after autoUpdate - ', propertyList);
+	
+			if (!stayOnPage) {
 				if (isDesktop) {
 					props.setRHS('PropertyNavigator');
 					navigate('/propertiesPM', { state: { index, propertyList } });
-					// setCookie("user_data", { ...cookiesData, index }, { path: "/" });
-					window.location.reload();
 				} else {
 					navigate('/propertiesPM', {
 						state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData },
@@ -833,7 +838,12 @@ function EditProperty(props) {
 
 	useEffect(() => {
 		const changedFields = getChangedFields();
-		setHasChanges(Object.keys(changedFields).length > 0);
+		const hasUnsavedChanges = Object.keys(changedFields).length > 0;
+	
+		setHasChanges(hasUnsavedChanges);
+		setIsSaveDisabled(!hasUnsavedChanges);
+		setIsReturnDisabled(!hasUnsavedChanges);
+		setSaveButtonText(hasUnsavedChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard');
 	}, [
 		address,
 		city,
@@ -1336,18 +1346,20 @@ function EditProperty(props) {
 				</Paper>
 
 				<Box
-					sx={{
-						marginBottom: '30px',
-						width: '80%',
-						paddingBottom: '30px',
-					}}
-				>
-					<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
-						{page !== 'add_listing' && (
+				sx={{
+					marginBottom: '30px',
+					width: '80%',
+					paddingBottom: '30px',
+				}}
+			>
+				<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
+					{hasChanges ? (
+						<Fragment>
 							<Button
 								variant="contained"
 								sx={{ backgroundColor: theme.typography.formButton.background }}
 								onClick={(event) => handleSubmit(event, true)}
+								disabled={isSaveDisabled} // Disable the "Save" button when appropriate
 							>
 								<Typography
 									sx={{
@@ -1359,51 +1371,44 @@ function EditProperty(props) {
 									Save
 								</Typography>
 							</Button>
-						)}
 
+							<Button
+								variant="contained"
+								sx={{ backgroundColor: theme.typography.formButton.background }}
+								onClick={(event) => handleSubmit(event, false)}
+								disabled={isReturnDisabled} // Disable "Return to Dashboard" if no changes are made
+							>
+								<Typography
+									sx={{
+										color: '#FFFFFF',
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.mediumFont,
+									}}
+								>
+									{saveButtonText}
+								</Typography>
+							</Button>
+						</Fragment>
+					) : (
 						<Button
 							variant="contained"
-							type="submit"
-							form="editPropertyForm"
 							sx={{ backgroundColor: theme.typography.formButton.background }}
-							disabled={!hasChanges}
+							onClick={(e) => handleBackButton(e)} // This will just return to the dashboard
 						>
-							{page === 'edit_property' && (
-								<Typography
-									sx={{
-										color: 'black',
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.mediumFont,
-									}}
-								>
-									Save and Return to Dashboard
-								</Typography>
-							)}
-							{page === 'add_listing' && (
-								<Typography
-									sx={{
-										color: 'black',
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.mediumFont,
-									}}
-								>
-									Create Listing
-								</Typography>
-							)}
-							{page === 'edit_listing' && (
-								<Typography
-									sx={{
-										color: 'black',
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.mediumFont,
-									}}
-								>
-									Update Listing
-								</Typography>
-							)}
+							<Typography
+								sx={{
+									color: '#FFFFFF',
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: theme.typography.mediumFont,
+								}}
+							>
+								Return to Dashboard
+							</Typography>
 						</Button>
-					</Stack>
-				</Box>
+					)}
+				</Stack>
+			</Box>
+
 			</Stack>
 		</ThemeProvider>
 	);

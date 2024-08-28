@@ -4,7 +4,7 @@ import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 const libraries = ["places"];
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
-const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
+const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID }) => {
   // console.log('In address autocomplete, checking address', defaultValue);
   // console.log('In address autocomplete, checking gray', gray);
   const autocomplete = useRef(null);
@@ -42,7 +42,7 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
       }
     });
 
-    console.log("extractAddress - address - ", address);
+    // console.log("extractAddress - address - ", address);
 
     return address;
   };
@@ -53,7 +53,14 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray }) => {
       if (place && place.address_components) {
         const addressComponents = place.address_components;
         const address = extractAddress(addressComponents);
-        onAddressSelect(address);
+        // onAddressSelect(address);
+        if (typeof onAddressSelect === 'function') {
+          if (onAddressSelect.length === 2) {              
+              onAddressSelect(rowID, address);
+          } else {
+              onAddressSelect(address);
+          }
+        }
       }
     }
   }, [onAddressSelect]);

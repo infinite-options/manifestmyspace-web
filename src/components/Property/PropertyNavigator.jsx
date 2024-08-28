@@ -1069,14 +1069,14 @@ export default function PropertyNavigator({
 
   // Define the custom cell renderer for the appliance_images column
   const ImageCell = (params) => {
-    console.log("---params----", params);
+    // console.log("---params----", params);
     let images;
     try {
       images = JSON.parse(params.value); // Try to parse as JSON
     } catch (e) {
       images = params.value; // If parsing fails, treat as a single URL string
     }
-    console.log("---images----", images);
+    // console.log("---images----", images);
     const imageUrl = images?.length > 0 ? images[0] : ""; // Get the first image URL
 
     return (

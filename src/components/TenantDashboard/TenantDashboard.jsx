@@ -87,9 +87,9 @@ function TenantDashboard(props) {
 
   const { user } = useUser();
 
-  useEffect(() => {
-    console.log("ROHIT - paymentState - ", paymentState);
-  }, [paymentState]);
+  // useEffect(() => {
+  //   console.log("paymentState - ", paymentState);
+  // }, [paymentState]);
 
   useEffect (() => {
     async function fetchData() {
@@ -207,9 +207,16 @@ function TenantDashboard(props) {
   //[getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance, tenantId]);
   // End Main UseEffect
 
-  useEffect(() => {
+  useEffect(() => {    
     if (propertyData && propertyData.length === 0) {
-      setRightPane({ type: "listings" });
+      const activeLeases = propertyData?.filter( property => property.lease_status === "ACTIVE")
+      // console.log("activeLeases - ", activeLeases)
+      
+      if (activeLeases && activeLeases.length === 0) {
+        setRightPane({ type: "listings" });
+      } else {
+        setRightPane("");
+      }
     } else {
       setRightPane("");
     }
