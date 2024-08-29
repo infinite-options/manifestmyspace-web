@@ -64,7 +64,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
         backgroundColor: 'rgba(61, 92, 172, 0.08)', // Hover effect color when checked
       },
       '& + .MuiSwitch-track': {
-        backgroundColor: 'gray', // Track color when checked
+        backgroundColor: '#3D5CAC', // Track color when checked
         opacity: 1,
       },
     },
@@ -237,7 +237,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
               handleChangeSettings(e);
               setDarkMode(e.target.checked);
               setSettingsChanged(true);
-            }}
+            }}            
           />
         </Grid>
         <Grid container justifyContent='space-between' alignContent='center' item xs={12}>

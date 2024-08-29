@@ -148,7 +148,9 @@ export default function QuoteRequestForm() {
 
 			formData.append('quote_maintenance_request_id', maintenanceItem.maintenance_request_uid);
 			formData.append('quote_pm_notes', additionalInfo);
-			formData.append('quote_maintenance_contacts', maintenanceContactIds); // maintenanceContactIds
+			formData.append('quote_status', "REQUESTED");
+			// formData.append('quote_maintenance_contacts', maintenanceContactIds); // maintenanceContactIds
+			formData.append('quote_business_id', maintenanceContactIds); // maintenanceContactIds
 			// formData.append("quote_maintenance_images", additionalInfo);
 
 			for (let i = 0; i < selectedImageList.length; i++) {
@@ -168,7 +170,8 @@ export default function QuoteRequestForm() {
 
 			try {
 				// console.log("right before call");
-				const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
+				// const response = await fetch(`http://localhost:4000/maintenanceQuotes`, { 
+				const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {				
 					method: 'POST',
 					body: formData,
 				});
@@ -203,10 +206,13 @@ export default function QuoteRequestForm() {
 	};
 
 	function numImages() {
-		if (displayImages.length == 0) {
+		if(displayImages == null){
+			return 0;
+		}
+		else if (displayImages?.length == 0) {
 			return 0;
 		} else {
-			return displayImages.length;
+			return displayImages?.length;
 		}
 	}
 

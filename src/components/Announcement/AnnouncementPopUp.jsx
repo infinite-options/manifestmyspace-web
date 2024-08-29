@@ -29,6 +29,24 @@ export default function AnnouncementPopUp({showAnnouncement, setShowAnnouncement
     }
     
     const formatted_announcement_date = formatDate(announcement_date);
+
+    
+
+    const createLinkFromMessage = (message) => {
+        if (!message) return "No Message";
+      
+        // Improved regex pattern to detect URLs
+        const urlPattern = /((https?:\/\/)?(localhost|[a-zA-Z0-9-_.]+\.[a-zA-Z]{2,})(:\d+)?(\/\S*)?)/g;
+      
+        // Replace URLs with clickable links
+        const result = message.replace(urlPattern, (url) => {
+          // Add 'http://' if the URL does not already have a scheme
+          const href = url.startsWith('http') ? url : `http://${url}`;
+          return `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color: #3D5CAC; text-decoration: underline;">${url}</a>`;
+        });
+      
+        return <span dangerouslySetInnerHTML={{ __html: result }} />;
+      };
     
     return (
         <Dialog
@@ -97,7 +115,7 @@ export default function AnnouncementPopUp({showAnnouncement, setShowAnnouncement
                 </Box>
                 <Box ml={2}>
                         <Typography variant="body1" fontFamily="Source Sans Pro" color="#3D5CAC" fontSize="15px" fontWeight="600">{annData?.announcement_title || 'No Title'}</Typography>
-                        <Typography variant="body1" fontFamily="Source Sans Pro" color="#3D5CAC" fontSize="15px" >{annData?.announcement_msg || 'No Message'}</Typography>
+                        <Typography variant="body1" fontFamily="Source Sans Pro" color="#3D5CAC" fontSize="15px" >{createLinkFromMessage(annData?.announcement_msg) || 'No Message'}</Typography>
                 </Box>
             </DialogContent>
            

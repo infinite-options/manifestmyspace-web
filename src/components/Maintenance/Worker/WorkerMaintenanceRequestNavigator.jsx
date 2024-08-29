@@ -120,6 +120,12 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
     }
   }, [data]);
 
+  console.log("ROHIT - data - ", data);
+  const quoteMaintenanceImages = 
+    data.quote_maintenance_images != null
+      ? JSON.parse(data.quote_maintenance_images) 
+      : [];
+
   return (
     <div style={{ paddingBottom: "10px" }}>
       <Box
@@ -201,7 +207,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
               >
                 <CardMedia
                   component="img"
-                  image={[...images, ...JSON.parse(data.quote_maintenance_images)][activeStep]}
+                  image={[...images, ...quoteMaintenanceImages][activeStep]}
                   sx={{
                     elevation: "0",
                     boxShadow: "none",
@@ -218,7 +224,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 />
               </div>
               <MobileStepper
-                steps={maxSteps + JSON.parse(data.quote_maintenance_images).length}
+                steps={maxSteps + quoteMaintenanceImages?.length}
                 position="static"
                 activeStep={activeStep}
                 variant="text"

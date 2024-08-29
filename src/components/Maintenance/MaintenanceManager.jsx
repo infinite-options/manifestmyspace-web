@@ -4,7 +4,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams, } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 import theme from "../../theme/theme";
 import MaintenanceStatusTable from "./MaintenanceStatusTable";
@@ -126,6 +126,7 @@ function determineInitialStatus(array1, array2, array3, array4, array5, array6) 
 }
 
 export default function MaintenanceManager() {
+  let { maintenanceIDParam } = useParams();
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId } = useUser();
@@ -349,6 +350,71 @@ export default function MaintenanceManager() {
       navigate(-1);
     }
   };
+
+
+  // const mappedMaintenanceData = colorStatus.map((item, index) => {
+  //   let mappingKey = item.mapping;
+
+  //   let maintenanceArray = maintenanceData[mappingKey] || [];
+
+  //   let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
+
+  //   for (const item of filteredArray) {
+  //     newDataObject[mappingKey].push(item);
+  //   }
+
+  //   return (
+  //     <MaintenanceStatusTable
+  //       key={index}
+  //       status={item.status}
+  //       color={item.color}
+  //       maintenanceItemsForStatus={filteredArray}
+  //       allMaintenanceData={newDataObject}
+  //       maintenanceRequestsCount={filteredArray}
+  //       onRowClick={handleRowClick}
+  //     />
+  //   );
+  // })
+
+  useEffect(() => {
+    if(maintenanceIDParam && maintenanceData) {    
+      // console.log("ROHIT - maintenanceData - ", maintenanceData);
+      
+      const searchId = maintenanceIDParam;
+      let foundRequest = null;
+      let foundIndex = -1;
+      let foundStatus = null;
+  
+      // Loop through each status array
+      for (const status in maintenanceData) {
+        const requests = maintenanceData[status];
+        
+        // Search for the request with the matching ID
+        for (let i = 0; i < requests.length; i++) {
+          if (requests[i].maintenance_request_uid === searchId) {
+            foundRequest = requests[i];
+            foundIndex = i;
+            foundStatus = status;
+            break;
+          }
+        }
+        
+        // Exit the outer loop if the request is found
+        if (foundRequest) {
+          break;
+        }
+      }
+  
+      if (foundRequest) {
+        console.log("Found maintenance request:", foundRequest);
+        console.log("Index in status array:", foundIndex);
+        console.log("Status:", foundStatus);
+        handleRowClick(foundIndex, foundRequest)
+      } else {
+        console.log("Maintenance request not found.");
+      }
+    }
+  }, [maintenanceData]);  
   
   return (
     <ThemeProvider theme={theme}>

@@ -143,12 +143,12 @@ export default function PropertiesList(props) {
       const index = imageArray.findIndex((image) => image === property.property_favorite_image);
       if (index !== -1) {
         return property.property_favorite_image;
-      } else if (imageArray.length !== 0) {
+      } else if (imageArray != null && imageArray?.length !== 0) {
         return imageArray[0];
       }else {
         return propertyImage;
       }
-    } else if (imageArray.length !== 0) {
+    } else if (imageArray != null && imageArray?.length !== 0) {
       return imageArray[0];
     } else {
       return propertyImage;

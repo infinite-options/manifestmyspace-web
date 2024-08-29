@@ -326,6 +326,7 @@ function Main() {
             <Route path='ownerContactTest' element={<OwnerContactTest />} />
 
             <Route path='managerMaintenance' element={<MaintenanceManager />} />
+            <Route path='managerMaintenance/:maintenanceIDParam' element={<MaintenanceManager />} />
             <Route path='ownerMaintenance' element={<MaintenanceOwner />} />
             <Route path='ownerDashboard' element={<OwnerDashboard />} />
 

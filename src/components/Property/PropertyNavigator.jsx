@@ -859,7 +859,8 @@ export default function PropertyNavigator({
       }
 
       axios
-        .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+        .post("http://localhost:4000/appliances", applianceFormData, headers)
+        // .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
         .then((response) => {
           // console.log("Data updated successfully", response);
           // showSnackbar("Your profile has been successfully updated.", "success");
@@ -2497,8 +2498,7 @@ export default function PropertyNavigator({
                     }}
                     size='small'
                     onClick={() => {
-                      setcurrentApplRow({
-                        appliance_uid: "",
+                      setcurrentApplRow({                        
                         appliance_url: "",
                         appliance_type: "",
                         appliance_desc: "",
