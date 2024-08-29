@@ -21,6 +21,47 @@ async function fetchCashflow2(userProfileId, month, year) {
   }
 }
 
+function getDataByProperty(data, propertyUID) {
+
+  // Fetch only data which are related to this propertyUID, also re-calculate expense and revenue 
+  const newData = data?.result?.map((item) => {
+    const properties = JSON.parse(item.property);
+
+    // Filter properties according to UID
+    const filteredProperties = properties.filter(p => p.property_uid === propertyUID);
+    
+    if (filteredProperties.length === 0) {
+      return null;
+    }
+
+    // Calculate the total pur_amount_due again for this property only
+    const totalPurAmountDue = filteredProperties.reduce((acc, property) => {
+      const individualTotal = property.individual_purchase.reduce(
+        (sum, purchase) => sum + parseFloat(purchase.pur_amount_due),
+        0
+      );
+      return acc + individualTotal;
+    }, 0);
+
+    // Return the updated item with only this property and recalculated pur_amount_due
+    return {
+      ...item,
+      property: JSON.stringify(filteredProperties),
+      pur_amount_due: totalPurAmountDue.toFixed(2),
+    };
+  });
+
+  // Remove null items which are not contain this property data
+  const filteredData = newData.filter(item => item !== null);
+
+  return {
+    code: data.code,
+    message: data.message,
+    result: filteredData
+  };
+}
+
+
 function getRevenueList(data) {
   // return data.response_revenue.result;
   // console.log("getRevenueList - data - ", data);
@@ -246,7 +287,7 @@ function getTotalRevenueByType(data, month, year, expected) {
     RENT: totalRent,
     DEPOSITS: totalDeposits,
     "EXTRA CHARGES": totalExtraCharges,
-    UTILITY: totalUtilities,
+    UTILITIES: totalUtilities,
     "LATE FEE": totalLateFee,
     MAINTENANCE: totalMaintenance,
     REPAIRS: totalRepairs,
@@ -387,4 +428,5 @@ export {
   getTotalExpectedRevenueByMonthYear,
   getTotalExpectedExpenseByMonthYear,
   getNext12MonthsCashflow,
+  getDataByProperty
 };

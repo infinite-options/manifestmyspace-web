@@ -921,6 +921,8 @@ const PropertyCard = (props) => {
   const [contractFileTypes, setContractFileTypes] = useState([]);
   const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
   const [propertyOwnerName, setPropertyOwnerName] = useState("");
+  const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
+  const [documentDetails, setDocumentDetails] = useState([])
 
     
   const setBusinessProfileDetails = () => {
@@ -970,7 +972,16 @@ const PropertyCard = (props) => {
 		}
         
         const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
-        setPreviouslyUploadedDocs(oldDocs);
+		// const oldDocsDetails = contractData["contract_documents_contentType"]? JSON.parse(contractData["contract_documents_contentType"]) : []
+
+		// let temp = []
+
+		// oldDocs.map((d, i) => {
+		// 	temp.push({...d, "contentType": oldDocsDetails[i].fileType})
+		// })
+
+		setPreviouslyUploadedDocs(oldDocs);
+		// setContractFileTypes(oldDocsDetails);
         const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
         if (contractDoc) {
           setContractDocument(contractDoc);
@@ -985,12 +996,12 @@ const PropertyCard = (props) => {
   }, [contractUID]);
 
   const fetchData = async () => {
-    console.log("props.contractUID:", props.contractUID);
+    // console.log("props.contractUID:", props.contractUID);
     setContractUID(props.contractUID);
     if (allContracts === null) {
       const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
       const data = await result.json();
-      // console.log("--debug--", data);
+      console.log("--debug--", data);
 
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
@@ -1213,8 +1224,13 @@ const PropertyCard = (props) => {
     const url = `${APIConfig.baseURL.dev}/contracts`;
     // const url = `http://localhost:4000/contracts`;
 
+	console.log(data)
     fetch(url, {
       method: "PUT",
+	//   headers: {
+	// 	"Content-Type": "application/json", // Ensure the server expects JSON
+	//   },
+	//   body: JSON.stringify(data),
       body: data,
     })
       .then((response) => {
@@ -1243,7 +1259,8 @@ const PropertyCard = (props) => {
     });
   };
 
-  const handleDeletePrevUploadedFile = (index) => {
+  const handleDeletePrevUploadedFile = (doc_url, index) => {
+	setDeletedDocsUrl(prevList => [...prevList, doc_url])
     setPreviouslyUploadedDocs((prevFiles) => {
       const filesArray = Array.from(prevFiles);
       filesArray.splice(index, 1);
@@ -1306,6 +1323,8 @@ const PropertyCard = (props) => {
 
 	//Check here -- Abhinav
 
+	formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+
     formData.append("contract_uid", contractUID);
     formData.append("contract_name", contractName);
     formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
@@ -1314,6 +1333,7 @@ const PropertyCard = (props) => {
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
     formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
 
     const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
     if (!isValidDate(contractEndDate.format("MM-DD-YYYY")) || !isValidDate(contractStartDate.format("MM-DD-YYYY"))) {
@@ -1328,10 +1348,16 @@ const PropertyCard = (props) => {
     }
 
     if (contractFiles.length) {
+
       const documentsDetails = [];
       [...contractFiles].forEach((file, i) => {
-        formData.append(`file-${i}`, file, file.name);
+		
+		// console.log(JSON.stringify(file));
+		
+
+        formData.append(`file_${i}`, file);
         const fileType = contractFileTypes[i] || "";
+		// formData.append("contract")
         const documentObject = {
           // file: file,
           fileIndex: i, //may not need fileIndex - will files be appended in the same order?
@@ -1340,15 +1366,38 @@ const PropertyCard = (props) => {
         };
         documentsDetails.push(documentObject);
       });
+
       formData.append("contract_documents_details", JSON.stringify(documentsDetails));
     }
 
     // console.log("Quote sent. Data sent - ");
-    for (const pair of formData.entries()) {
-      // console.log(`${pair[0]}, ${pair[1]}`);
-    }
+    // for (const pair of formData.entries()) {
+    //   console.log(`${pair[0]}, ${pair[1]}`);
+    // }
 
-    sendPutRequest(formData);
+    // sendPutRequest(formData);
+	const url = `${APIConfig.baseURL.dev}/contracts`;
+    // const url = `http://localhost:4000/contracts`;
+
+    fetch(url, {
+      method: "PUT",
+	//   headers: {
+	// 	"Content-Type": "application/json", // Ensure the server expects JSON
+	//   },
+	//   body: JSON.stringify(data),
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        } else {
+          // console.log("Data updated successfully");
+          navigate("/managerDashboard");
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
   };
 
   useEffect(() => {
@@ -1430,7 +1479,8 @@ if (scrollRef.current) {
 	}
 }
 };
-  return (
+
+return (
     <>
       {/* Time since Inquiry was created */}
       <Box
@@ -1444,7 +1494,8 @@ if (scrollRef.current) {
           // color: '#3D5CAC',
         }}
       >
-		  <Grid item xs={12}>
+		{/* For image list */}
+		<Grid item xs={12}>
 		  <Box
 					sx={{
 						display: 'flex',
@@ -1516,7 +1567,7 @@ if (scrollRef.current) {
         >
           {timeDiff}
         </Box> */}
-		  </Grid>
+		</Grid>
         
       </Box>
       {/* Property Address */}
@@ -1562,6 +1613,7 @@ if (scrollRef.current) {
 					)}
 				</Box>
 			</Box>
+
 			{/* Property Owner and Status */}
 			<Box
 				sx={{
@@ -1696,6 +1748,7 @@ if (scrollRef.current) {
 					</Box>
 				</Box>
 			</Box>
+
 			{/* Property Value*/}
 			<Box
 				sx={{
@@ -1768,6 +1821,7 @@ if (scrollRef.current) {
 					</Box>
 				</Box>
 			</Box>
+
 			{/* Property Type */}
 			<Box
 				sx={{
@@ -1893,7 +1947,8 @@ if (scrollRef.current) {
 					</Box>
 				</Box>
 			</Box>
-
+			
+			{/* Management agreement name */}
 			<Box
 				sx={{
 					fontSize: '15px',
@@ -2025,6 +2080,8 @@ if (scrollRef.current) {
 					Please enter a valid end date in "MM-DD-YYYY" format.
 				</Box>
 			)}
+
+			{/* For management Fees */}
 			<Box
 				sx={{
 					display: 'flex',
@@ -2112,6 +2169,8 @@ if (scrollRef.current) {
 					))
 				)}
 			</Box>
+
+			{/* previously Uploaded docs */}
 			{previouslyUploadedDocs.length ? (
 				<Box
 					sx={{
@@ -2145,11 +2204,12 @@ if (scrollRef.current) {
 							}}
 						>
 							<Box>filename</Box>
-							<Box>type</Box>
+							<Box>ContentType</Box>
 							<Box> </Box>
 						</Box>
 						{[...previouslyUploadedDocs].map((doc, i) => (
 							<>
+							{/* {console.log("details of doc-", doc)} */}
 								<Box
 									key={i}
 									sx={{
@@ -2176,7 +2236,7 @@ if (scrollRef.current) {
 									<Button
 										variant="text"
 										onClick={(event) => {
-											handleDeletePrevUploadedFile(i);
+											handleDeletePrevUploadedFile(doc.link, i);
 										}}
 										sx={{
 											width: '10%',
@@ -2220,62 +2280,65 @@ if (scrollRef.current) {
 						}}
 					>
 						Added Documents:
-						{[...contractFiles].map((f, i) => (
-							<Box
-								key={i}
-								sx={{
-									display: 'flex',
-									flexDirection: 'row',
-									alignItems: 'center',
-									justifyContent: 'space-between',
-								}}
-							>
+						{[...contractFiles].map((f, i) => {
+							
+							return (
 								<Box
+									key={i}
 									sx={{
-										// height: '40px',
-										width: '50%', // Adjust the width as needed
-										padding: '8px', // Adjust the padding as needed
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center',
+										justifyContent: 'space-between',
 									}}
 								>
-									{f.name}
+									<Box
+										sx={{
+											// height: '40px',
+											width: '50%', // Adjust the width as needed
+											padding: '8px', // Adjust the padding as needed
+										}}
+									>
+										{f.name}
+									</Box>
+									<Select
+										value={contractFileTypes[i]}
+										label="Document Type"
+										onChange={(e) => {
+											const updatedTypes = [...contractFileTypes];
+											updatedTypes[i] = e.target.value;
+											setContractFileTypes(updatedTypes);
+										}}
+										required
+										sx={{
+											backgroundColor: '#D6D5DA',
+											height: '40px',
+											width: '40%', // Adjust the width as needed
+											padding: '8px', // Adjust the padding as needed
+										}}
+									>
+										<MenuItem value={'contract'}>contract</MenuItem>
+										<MenuItem value={'other'}>other</MenuItem>
+									</Select>
+									<Button
+										variant="text"
+										onClick={() => {
+											// setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
+											handleRemoveFile(i);
+										}}
+										sx={{
+											width: '10%',
+											cursor: 'pointer',
+											fontSize: '14px',
+											fontWeight: 'bold',
+											color: '#3D5CAC',
+										}}
+									>
+										<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+									</Button>
 								</Box>
-								<Select
-									value={contractFileTypes[i]}
-									label="Document Type"
-									onChange={(e) => {
-										const updatedTypes = [...contractFileTypes];
-										updatedTypes[i] = e.target.value;
-										setContractFileTypes(updatedTypes);
-									}}
-									required
-									sx={{
-										backgroundColor: '#D6D5DA',
-										height: '40px',
-										width: '40%', // Adjust the width as needed
-										padding: '8px', // Adjust the padding as needed
-									}}
-								>
-									<MenuItem value={'contract'}>contract</MenuItem>
-									<MenuItem value={'other'}>other</MenuItem>
-								</Select>
-								<Button
-									variant="text"
-									onClick={() => {
-										// setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
-										handleRemoveFile(i);
-									}}
-									sx={{
-										width: '10%',
-										cursor: 'pointer',
-										fontSize: '14px',
-										fontWeight: 'bold',
-										color: '#3D5CAC',
-									}}
-								>
-									<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-								</Button>
-							</Box>
-						))}
+							)
+						})}
 						{showMissingFileTypePrompt && (
 							<Box
 								sx={{
@@ -2925,5 +2988,12 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
 		</form>
 	);
 }
+
+// function createCustomTypeFile(file, customType) {
+// 	return new File([file], file.name, {
+// 	  type: customType,
+// 	  lastModified: file.lastModified,
+// 	});
+// }
 
 export default PropertyCard;

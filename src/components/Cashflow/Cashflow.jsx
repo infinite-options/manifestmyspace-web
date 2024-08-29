@@ -61,6 +61,7 @@ import {
   getNext12MonthsCashflow,
   getRevenueList,
   getExpenseList,
+  getDataByProperty
 } from "../Cashflow/CashflowFetchData2";
 
 import axios from "axios";
@@ -75,10 +76,10 @@ export default function Cashflow() {
 
   const [month, setMonth] = useState(location.state.month || "January");
   const [year, setYear] = useState(location.state.year || "2024");
-  const cashflowWidgetData = location.state.cashflowWidgetData;
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
-  const [cashflowData2, setCashflowData2] = useState(null); // Cashflow data from API
+  const [cashflowData2, setCashflowData2] = useState(location.state?.cashFlowData); // Cashflow data from API
+  // console.log(location.state?.cashFlowData);
 
   const [expectedRevenueByMonth, setExpectedRevenueByMonth] = useState(0);
   const [expectedExpenseByMonth, setExpectedExpenseByMonth] = useState(0);
@@ -102,8 +103,8 @@ export default function Cashflow() {
 
   const [currentWindow, setCurrentWindow] = useState(location.state?.currentWindow || "CASHFLOW_DETAILS");
 
-  const [propertyList, setPropertyList] = useState([]);
-  const [selectedProperty, setSelectedProperty] = useState("ALL");
+  const [propertyList, setPropertyList] = useState(location.state.propertyList? location.state.propertyList : []);
+  const [selectedProperty, setSelectedProperty] = useState(location.state.selectedProperty ? location.state.selectedProperty : "All Properties");
 
   // useEffect(() => {
   //   fetchCashflow(profileId)
@@ -116,38 +117,53 @@ export default function Cashflow() {
   //     });
   // }, []);
 
-  async function fetchProperties(userProfileId, month, year) {
-    try {
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
-      const properties = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${userProfileId}`);
-      console.log("Owner Properties: ", properties.data);
-      return properties.data;
-    } catch (error) {
-      console.error("Error fetching properties data:", error);
-    }
-  }
-
-  useEffect(() => {
-    fetchCashflow2(profileId)
+  // async function fetchProperties(userProfileId, month, year) {
+  //   try {
+  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
+  //     const properties = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${userProfileId}`);
+  //     // console.log("Owner Properties: ", properties.data);
+  //     return properties.data;
+  //   } catch (error) {
+  //     console.error("Error fetching properties data:", error);
+  //   }
+  // }
+  
+  // Again fetch data when change window from expense to cashFlow
+  useEffect(()=>{
+    if(currentWindow === "CASHFLOW_DETAILS"){
+      fetchCashflow2(profileId)
       .then((data) => {
-        setCashflowData2(data);
+        // console.log("yes window is change")
+        if(selectedProperty === "All Properties"){
+          setCashflowData2(data);
+    
+        }else{
+          const dataByProperty = getDataByProperty(data, selectedProperty);
+          setCashflowData2(dataByProperty);
+        }
+        // setCashflowData2(data);
         // let currentMonthYearRevenueExpected = get
       })
       .catch((error) => {
         console.error("Error fetching cashflow data:", error);
       });
+    }
+    
+  }, [currentWindow])
 
-    fetchProperties(profileId)
-      .then((data) => {
-        setPropertyList(data?.Property?.result);
-      })
-      .catch((error) => {
-        console.error("Error fetching PropertyList:", error);
-      });
-  }, []);
+  // Fetch data and properties
+  // useEffect(() => {
+  //   // fetchProperties(profileId)
+  //   //   .then((data) => {
+  //   //     setPropertyList(data?.Property?.result);
+  //   //   })
+  //   //   .catch((error) => {
+  //   //     console.error("Error fetching PropertyList:", error);
+  //   //   });
+  // }, []);
 
   useEffect(() => {
     if (cashflowData2 !== null && cashflowData2 !== undefined) {
@@ -186,6 +202,19 @@ export default function Cashflow() {
     }
   }, [month, year, cashflowData2]);
 
+  const getPropertyName = (propertyUID) => {
+    if (propertyUID === "All Properties") {
+      return "All Properties";
+    } else {
+      const property = propertyList.find(p => p.property_uid === propertyUID);
+      if (property) {
+        return property.property_address;
+      } else {
+        return "Property not found"; // Return a fallback message if no match is found
+      }
+    }
+  }
+
   // useEffect(() => {
   //   console.log("propertyList - ", propertyList);
   // }, [propertyList]);
@@ -201,13 +230,14 @@ export default function Cashflow() {
       </Backdrop>
 
       <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
-        <Grid container spacing={6} sx={{ height: "90%" }}>
+        <Grid container spacing={6} sx={{ height: "90%", marginBottom:"10px"}}>
           <Grid item xs={12} md={4}>
             <CashflowWidget
-              data={cashflowWidgetData}
+              data={cashflowData2}
+              setData={setCashflowData2}
               setCurrentWindow={setCurrentWindow}
               page='OwnerCashflow'
-              propertyList={propertyList}
+              // propertyList={propertyList}
               selectedProperty={selectedProperty}
               setSelectedProperty={setSelectedProperty}
             />
@@ -234,6 +264,7 @@ export default function Cashflow() {
                 expenseList={expenseList}
                 last12Months={last12Months}
                 next12Months={next12Months}
+                selectedPropertyName={getPropertyName(selectedProperty)}
               />
             )}
 
@@ -247,9 +278,11 @@ export default function Cashflow() {
   );
 }
 
+
 const CashflowDetails = ({
   uid,
   month,
+  selectedPropertyName,
   setMonth,
   setCurrentWindow,
   year,
@@ -311,8 +344,8 @@ const CashflowDetails = ({
             </Typography>
           </Stack>
 
-          {/* -- Select Month and property button component-- */}
-          <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center'>
+          {/* -- Select Month and property component-- */}
+          <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center' marginY={"20px"}>
             <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
               <CalendarTodayIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px"}} />
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "13px"}}>Select Month / Year</Typography>
@@ -334,10 +367,15 @@ const CashflowDetails = ({
               </Button>
             )}
 
-            <Button sx={{ textTransform: "capitalize" }} onClick={() => setOpenSelectProperty(true)}>
+            {/* <Button sx={{ textTransform: "capitalize" }} onClick={() => setOpenSelectProperty(true)}>
               <HomeWorkIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px" }} />
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "13px" }}>Property</Typography>
-            </Button>
+            </Button> */}
+            <Box display='flex' justifyContent='flex-end' alignItems='center' sx={{ width: "270px", marginRight:"14px"}}>
+              <HomeWorkIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px" }} />
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "13px" }}>{selectedPropertyName}</Typography>
+            </Box>
+
           </Box>
 
           {/* -- For header of table Actual And Expected-- */}
@@ -520,7 +558,7 @@ const CashflowDetails = ({
         </Paper>
         
         {/* "Add Revenue" and "Add Expense" component */}
-        <Paper
+        {/* <Paper
           sx={{
             margin: "2px",
             padding: theme.spacing(2),
@@ -562,7 +600,7 @@ const CashflowDetails = ({
               <img src={AddRevenueIcon}></img> Expense
             </Button>
           </Box>
-        </Paper>
+        </Paper> */}
       </Box>
     </>
   );
@@ -637,7 +675,6 @@ function StatementTable(props) {
   const navigateType = "/edit" + tableType;
 
   function handleNavigation(type, item) {
-    console.log(item);
     navigate(type, { state: { itemToEdit: item, edit: true } });
   }
 
@@ -649,7 +686,9 @@ function StatementTable(props) {
     let count = 0
 
     items.map((i) => {
-      count += i.property.length;
+      i.property.map(p => {
+        count += p.individual_purchase.length;
+      })
     })
 
     return "(" + count + ")";
@@ -658,16 +697,16 @@ function StatementTable(props) {
   function getCategoryItems(category, type) {
     let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
-    let total_amount_due = 0
-    let total_amount_paid = 0
+    // let total_amount_due = 0
+    // let total_amount_paid = 0
 
-    console.log("getCategoryItems for - ", category, "ietms are ", items)
-    var key = "total_paid";
-    if (activeView === "Cashflow") {
-      key = "total_paid";
-    } else {
-      key = "pur_amount_due";
-    }
+    // console.log("getCategoryItems for - ", category, "ietms are ", items)
+    // var key = "total_paid";
+    // if (activeView === "Cashflow") {
+    //   key = "total_paid";
+    // } else {
+    //   key = "pur_amount_due";
+    // }
 
     return (
       <>
@@ -713,36 +752,42 @@ function StatementTable(props) {
               </TableRow>
 
               {item?.property?.map((property, index) => {
-                total_amount_due = 0
-                total_amount_paid = 0
+                // total_amount_due = 0
+                // total_amount_paid = 0
                 return (
-                  <TableRow key={property.property_uid ? property.property_uid : index} sx={{}}>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{property.property_uid ? property.property_uid : ""}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_address? property.property_address : ""}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_unit ? property.property_unit : ""}</Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      {property.individual_purchase.map((p) => {
-                          total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
-                      })}
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>
-                        ${total_amount_due}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      {property.individual_purchase.map((p) => {
-                          total_amount_paid += (p.total_paid ? p.total_paid : 0)
-                      })}
-                      <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
-                        ${total_amount_paid}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
+                  <React.Fragment key={index}>
+                    {property.individual_purchase.map((p, i) => {
+                    return (
+                      <TableRow key={`${property.property_uid}-${i}`} sx={{}}>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{property.property_uid ? property.property_uid : ""}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_address? property.property_address : ""}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_unit ? property.property_unit : ""}</Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          {/* {property.individual_purchase.map((p) => {
+                              total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
+                          })} */}
+                          <Typography sx={{ fontSize: theme.typography.smallFont }}>
+                            ${p.pur_amount_due ? p.pur_amount_due : 0}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          {/* {property.individual_purchase.map((p) => {
+                              total_amount_paid += (p.total_paid ? p.total_paid : 0)
+                          })} */}
+                          <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
+                            ${p.total_paid?p.total_paid:0}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    );
+                    })}
+                  </React.Fragment>
                 );
               })}
             </React.Fragment>
