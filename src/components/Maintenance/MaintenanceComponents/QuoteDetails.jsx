@@ -209,7 +209,6 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                             navButtonsAlwaysInvisible={true}
                             autoPlay={false}
                             index={currentIndex}
-                            animation="slide"
                             indicators={false}
                             onChange={(now, previous) => setCurrentIndex(now)}
                             sx={{ width: '100%' }}
