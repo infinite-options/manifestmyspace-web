@@ -207,7 +207,7 @@ export default function QuoteRequestForm() {
 	};
 
 	function numImages() {
-		if (displayImages.length == 0) {
+		if (displayImages == null || displayImages.length == 0) {
 			return 0;
 		} else {
 			return displayImages.length;
