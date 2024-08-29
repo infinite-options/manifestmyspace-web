@@ -41,6 +41,8 @@ const mapStyles = [
   },
 ];
 
+const libraries = ['places'];
+
 const PropertiesMap = ({ properties }) => {
   const [selectedProperty, setSelectedProperty] = React.useState(null);
 

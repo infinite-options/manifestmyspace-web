@@ -144,7 +144,7 @@ const RequestQuotes = (props) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      console.log("Data added successfully");
+      console.log(response.body);
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }

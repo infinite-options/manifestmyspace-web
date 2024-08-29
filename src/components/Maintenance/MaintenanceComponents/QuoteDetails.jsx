@@ -10,13 +10,20 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
-    console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceQuotesForItem);
+import NoImageAvailable from '../../../images/NoImageAvailable.png';
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[currentIndex];
-    console.log('currentItem=----', currentItem);
+const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
+    //console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex);
+
+    const [currentIndex, setCurrentIndex] = useState(initialIndex);
+    //console.log('currentIndex=----', currentIndex);
+    const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[initialIndex];
+    //console.log('currentItem=----', currentItem);
     const [showSpinner, setShowSpinner] = useState(false);
+
+    useEffect(() => {
+		setCurrentIndex(initialIndex);
+	}, [initialIndex]);
 
     const handlePrev = () => {
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? maintenanceQuotesForItem.length - 1 : prevIndex - 1));
@@ -186,12 +193,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                 </Typography>
 
                 <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <IconButton
-                        sx={{ position: 'absolute', left: -20, top: '50%', transform: 'translateY(-50%)' }}
-                        onClick={handlePrev}
-                    >
-                        <ArrowBack sx={{ color: '#2c2a75' }} />
-                    </IconButton>
+                    
                     <Card
                         variant="outlined"
                         sx={{
@@ -340,32 +342,56 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
 												},
 											}}
 										>
-											<ImageList 
-											ref={scrollRef}
-											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-												{JSON.parse(item.quote_maintenance_images)?.map((image, index) => (
-													<ImageListItem
-														key={index}
-														sx={{
-															width: 'auto',
-															flex: '0 0 auto',
-															border: '1px solid #ccc',
-															margin: '0 2px',
-															position: 'relative', // Added to position icons
-														}}
-													>
-														<img
-															src={image}
-															alt={`maintenance-${index}`}
-															style={{
-																height: '150px',
-																width: '150px',
-																objectFit: 'cover',
-															}}
-														/>
-													</ImageListItem>
-												))}
-											</ImageList>
+										<ImageList 
+    ref={scrollRef}
+    sx={{ display: 'flex', flexWrap: 'nowrap' }} 
+    cols={5}
+>
+    {JSON.parse(item.quote_maintenance_images)?.length > 0 ? (
+        JSON.parse(item.quote_maintenance_images).map((image, index) => (
+            <ImageListItem
+                key={index}
+                sx={{
+                    width: 'auto',
+                    flex: '0 0 auto',
+                    border: '1px solid #ccc',
+                    margin: '0 2px',
+                    position: 'relative', // Added to position icons
+                }}
+            >
+                <img
+                    src={image}
+                    alt={`maintenance-${index}`}
+                    style={{
+                        height: '150px',
+                        width: '150px',
+                        objectFit: 'cover',
+                    }}
+                />
+            </ImageListItem>
+        ))
+    ) : (
+        <ImageListItem
+            sx={{
+                width: 'auto',
+                flex: '0 0 auto',
+                border: '1px solid #ccc',
+                margin: '0 2px',
+                position: 'relative',
+            }}
+        >
+            <img
+                src={NoImageAvailable}
+                alt="No images available"
+                style={{
+                    height: '150px',
+                    width: '150px',
+                    objectFit: 'cover',
+                }}
+            />
+        </ImageListItem>
+    )}
+</ImageList>
 										</Box>
 									</Box>
 									<IconButton onClick={() => handleScroll('right')}>
@@ -381,12 +407,7 @@ const QuoteDetails = ({ maintenanceItem, navigateParams, maintenanceQuotesForIte
                             ))}
                         </Carousel>
                     </Card>
-                    <IconButton
-                        sx={{ position: 'absolute', right: -20, top: '50%', transform: 'translateY(-50%)' }}
-                        onClick={handleNext}
-                    >
-                        <ArrowForward sx={{ color: '#2c2a75' }} />
-                    </IconButton>
+                   
                 </Box>
             </CardContent>
             {currentItem && (

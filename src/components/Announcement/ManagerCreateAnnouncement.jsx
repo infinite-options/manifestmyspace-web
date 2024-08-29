@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import "../../css/announcement.css";
-import AnnouncementCard from "./AnnouncementCard";
+// import AnnouncementCard from "./AnnouncementCard";
 
 import axios from "axios";
-import SearchFilter from "./SearchFilter";
+// import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -12,9 +12,9 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
-import AnnouncementPopUp from "./AnnouncementPopUp";
+// import AnnouncementPopUp from "./AnnouncementPopUp";
 import theme from "../../theme/theme";
-import TenantDoucments from "../Documents/TenantDocuments/TenantDocuments";
+// import TenantDoucments from "../Documents/TenantDocuments/TenantDocuments";
 import FormGroup from "@mui/material/FormGroup";
 import APIConfig from "../../utils/APIConfig";
 
