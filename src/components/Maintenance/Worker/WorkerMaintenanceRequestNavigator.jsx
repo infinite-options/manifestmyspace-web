@@ -25,6 +25,7 @@ async function getInitialImages(requestData, currentIndex) {
 
 export default function WorkerMaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
   //console.log('----inside WorkerMaintenanceRequestNavigator----');
+  console.log("124 - requestData - ", requestData);
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
@@ -113,12 +114,18 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
   }
 
   const data = requestData[currentIndex];
+  console.log("124 - data - ", data);
 
    useEffect(() => {
+    console.log("ROHIT - data - ", data);
     if(data){
       formatDate(data.maintenance_request_created_date);
     }
-  }, [data]);
+  }, [data]);  
+
+  
+  console.log("124 - data?.quote_maintenance_images - ", data?.quote_maintenance_images);
+  const quoteMaintenanceImages = data?.quote_maintenance_images? JSON.parse(data?.quote_maintenance_images) : []
 
   return (
     <div style={{ paddingBottom: "10px" }}>
@@ -201,7 +208,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
               >
                 <CardMedia
                   component="img"
-                  image={[...images, ...JSON.parse(data.quote_maintenance_images)][activeStep]}
+                  image={[...images, ...quoteMaintenanceImages][activeStep]}
                   sx={{
                     elevation: "0",
                     boxShadow: "none",
@@ -218,7 +225,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 />
               </div>
               <MobileStepper
-                steps={maxSteps + JSON.parse(data.quote_maintenance_images).length}
+                steps={maxSteps + quoteMaintenanceImages?.length}
                 position="static"
                 activeStep={activeStep}
                 variant="text"
@@ -233,7 +240,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                   boxShadow: "none",
                 }}
                 nextButton={
-                  <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps + JSON.parse(data.quote_maintenance_images).length - 1} 
+                  <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps + quoteMaintenanceImages?.length - 1} 
                     sx={{color: "white"}}
                   > 
                     <KeyboardArrowRight sx={{color: "white"}} />
