@@ -533,7 +533,7 @@ const TenantLease = () => {
       if (leaseFiles.length) {
         const documentsDetails = [];
         [...leaseFiles].forEach((file, i) => {
-          leaseApplicationFormData.append(`file-${i}`, file, file.name);
+          leaseApplicationFormData.append(`file_${i}`, file, file.name);
           const fileType = leaseFileTypes[i] || "";
           const documentObject = {
             // file: file,

@@ -2203,9 +2203,10 @@ return (
 								color: 'black',
 							}}
 						>
-							<Box>filename</Box>
-							<Box>ContentType</Box>
-							<Box> </Box>
+							<Box sx={{width:"30%"}}>filename</Box>
+							<Box sx={{width:"20%"}}>ContentType</Box>
+							<Box sx={{width:"20%"}}>Type</Box>
+							<Box sx={{width:"10%"}}></Box>
 						</Box>
 						{[...previouslyUploadedDocs].map((doc, i) => (
 							<>
@@ -2219,38 +2220,43 @@ return (
 										justifyContent: 'space-between',
 									}}
 								>
-									<a href={doc.link} target="_blank" rel="noopener noreferrer">
-										<Box
+									<Box sx={{width:"30%"}}>
+										<a href={doc.link} target="_blank" rel="noopener noreferrer">
+											<Box
+												sx={{
+													height: '40px',
+													width: '100%',
+													cursor: 'pointer', // Change cursor to indicate clickability
+													color: '#3D5CAC',
+												}}
+											>
+												{doc.filename}
+											</Box>
+										</a>
+									</Box>
+									<Box sx={{width:"20%"}}>{doc.fileType ? doc.fileType : ""}</Box>
+									<Box sx={{width:"20%"}}>{doc.type}</Box>
+									<Box sx={{width:"10%", display: 'flex', justifyContent: 'center' }}>
+										<Button
+											variant="text"
+											onClick={(event) => {
+												handleDeletePrevUploadedFile(doc.link, i);
+											}}
 											sx={{
-												height: '40px',
-												width: '100%',
-
-												cursor: 'pointer', // Change cursor to indicate clickability
+												// width: '120px',
+												cursor: 'pointer',
+												fontSize: '14px',
+												fontWeight: 'bold',
 												color: '#3D5CAC',
+												'&:hover': {
+													backgroundColor: 'transparent', // Set to the same color as the default state
+												},
 											}}
 										>
-											{doc.filename}
-										</Box>
-									</a>
-									{doc.type}
-									<Button
-										variant="text"
-										onClick={(event) => {
-											handleDeletePrevUploadedFile(doc.link, i);
-										}}
-										sx={{
-											width: '10%',
-											cursor: 'pointer',
-											fontSize: '14px',
-											fontWeight: 'bold',
-											color: '#3D5CAC',
-											'&:hover': {
-												backgroundColor: 'transparent', // Set to the same color as the default state
-											},
-										}}
-									>
-										<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-									</Button>
+											<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+										</Button>
+									</Box>
+									
 								</Box>
 							</>
 						))}
@@ -2988,12 +2994,5 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
 		</form>
 	);
 }
-
-// function createCustomTypeFile(file, customType) {
-// 	return new File([file], file.name, {
-// 	  type: customType,
-// 	  lastModified: file.lastModified,
-// 	});
-// }
 
 export default PropertyCard;
