@@ -239,7 +239,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     const documentsDetails = [];
                     [...uploadedFiles].forEach((file, i) => {
                         console.log('file', file, typeof (file));
-                        leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
+                        leaseApplicationFormData.append(`file_${i}`, file.file, file.name);
                         const fileType = file.name.split('.').pop();
                         const documentObject = {
                             // file: file,
@@ -300,7 +300,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                         if (item.value.length) {
                             const documentsDetails = [];
                             [...item.value].forEach((file, i) => {
-                                leaseApplicationFormData.append(`file-${i}`, file.file, file.name);
+                                leaseApplicationFormData.append(`file_${i}`, file.file, file.name);
                                 const fileType = 'pdf';
                                 const documentObject = {
                                     // file: file,

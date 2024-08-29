@@ -734,7 +734,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
             if (item.value.length) {
               const documentsDetails = [];
               [...item.value].forEach((file, i) => {
-                profileFormData.append(`file-${i}`, file.file, file.name);
+                profileFormData.append(`file_${i}`, file.file, file.name);
                 const fileType = "pdf";
                 const documentObject = {
                   // file: file,

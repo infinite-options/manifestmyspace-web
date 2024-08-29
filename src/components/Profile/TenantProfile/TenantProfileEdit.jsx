@@ -267,7 +267,7 @@ function TenantProfileEdit() {
       setIsEdited(true);
       const documentsDetails = [];
       [...tenantFiles].forEach((file, i) => {
-        profileFormData.append(`file-${i}`, file, file.name);
+        profileFormData.append(`file_${i}`, file, file.name);
         const fileType = tenantFileTypes[i] || "";
         const documentObject = {
           // file: file,

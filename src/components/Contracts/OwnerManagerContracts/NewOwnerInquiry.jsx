@@ -404,7 +404,7 @@ function PropertyCard(props) {
     if (contractFiles.length) {
       const documentsDetails = [];
       [...contractFiles].forEach((file, i) => {
-        formData.append(`file-${i}`, file, file.name);
+        formData.append(`file_${i}`, file, file.name);
         const fileType = contractFileTypes[i] || "";
         const documentObject = {
           // file: file,
