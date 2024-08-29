@@ -161,7 +161,7 @@ const EditLease = (props) => {
         if(contractFiles.length){
             const documentsDetails = [];
             [...contractFiles].forEach((file, i) => {
-                leaseApplicationFormData.append(`file-${i}`, file, file.name);
+                leaseApplicationFormData.append(`file_${i}`, file, file.name);
                 const fileType = contractFileTypes[i] || '';
                 const documentObject = {
                     // file: file,
@@ -171,7 +171,7 @@ const EditLease = (props) => {
                 };
                 documentsDetails.push(documentObject);
             });
-            leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
+            leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
         }
 
         axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
@@ -210,7 +210,7 @@ const EditLease = (props) => {
         if(contractFiles.length){
             const documentsDetails = [];
             [...contractFiles].forEach((file, i) => {
-                leaseApplicationFormData.append(`file-${i}`, file, file.name);
+                leaseApplicationFormData.append(`file_${i}`, file, file.name);
                 const fileType = contractFileTypes[i] || '';
                 const documentObject = {
                     // file: file,
@@ -220,7 +220,7 @@ const EditLease = (props) => {
                 };
                 documentsDetails.push(documentObject);
             });
-            leaseApplicationFormData.append("contract_documents_details", JSON.stringify(documentsDetails));
+            leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
         }
 
         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)

@@ -127,6 +127,8 @@ export default function TenantApplication(props) {
         return "Reference";
       case "other":
         return "Other";
+      case "Lease Agreement":
+        return "Lease Agreement";
 
       default:
         return "";
