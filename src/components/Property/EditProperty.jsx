@@ -284,17 +284,12 @@ function EditProperty(props) {
 		const otherChanges = Object.keys(getChangedFields()).length > 0;
 	  
 		const hasUnsavedChanges = hasImageChanges || otherChanges;
-	
-		// Avoid resetting the button states if they are already in a disabled state after saving
-		if (isSaveDisabled && !hasUnsavedChanges) {
-			return;
-		}
-	  
+
 		// Update states based on unsaved changes
 		setHasChanges(hasUnsavedChanges);
 		setIsSaveDisabled(!hasUnsavedChanges);
-		setIsReturnDisabled(!hasUnsavedChanges);
-		setSaveButtonText(hasUnsavedChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard');
+		setIsReturnDisabled(false);
+		setSaveButtonText(hasUnsavedChanges? 'Save and Return to Dashboard' : 'Return to Dashboard');
 	}, [imageState, deletedImageList, favImage, address, city, propertyState, zip, propertyType, squareFootage, bedrooms, bathrooms, isListed, description, notes, unit, propertyValue, assessmentYear, deposit, listedRent, depositForRent]);
 	
 
@@ -318,7 +313,7 @@ function EditProperty(props) {
 		setListed(event.target.checked);
 	};
 
-	const handleSubmit = async (event, stayOnPage) => {
+	const handleSubmit = async (event, hasChanges) => {
 		event.preventDefault();
 		console.log('handleSubmit');
 
@@ -328,6 +323,11 @@ function EditProperty(props) {
 		// if (stayOnPage) {
 		// 	setSavedClicked(true);
 		// }
+
+		if (!hasChanges) {
+			navigateBackToDashboard();
+			return;
+		}
 
 		const changedFields = getChangedFields();
 		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0) {
@@ -421,54 +421,54 @@ function EditProperty(props) {
 
 			// navigate("/propertyDetail", { state: { index, propertyList }});
 		};
+
 		const autoUpdate = async () => {
 			const updateResponse = await fetch(
 				`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`
 			);
-
-			// const updateResponse = await fetch(
-			// 	`http://localhost:4000/properties/${propertyData.property_uid}`
-			// );
-
-			//console.log('---updateResponse---', updateResponse);
-			// const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
+	
 			const updatedJson = await updateResponse.json();
-			//console.log('---updatedJson---', updatedJson);
 			const updatedProperty = updatedJson.Property.result[0];
-			console.log('updatedProperty---', updatedProperty);
 			const newPropertyList = propertyList.map((property) => {
 				if (property.property_uid === updatedProperty.property_uid) {
 					return { ...property, ...updatedProperty }
 				} else {
 					return property;
 				}
-			});			
+			});
+	
 			setPropertyData(newPropertyList[index]);
-			setPropertyList(newPropertyList) // props.setPropertyList - setting propertyList in parent
+			setPropertyList(newPropertyList);
+	
+			// Reset the image delete/favorite icons after update
+			setDeletedIcons(new Array(JSON.parse(updatedProperty.property_images).length).fill(false));
+			setFavoriteIcons(JSON.parse(updatedProperty.property_images).map(image => image === updatedProperty.property_favorite_image));
+	
 			return newPropertyList[index];
 		};
 
 		putData();
 		try {
 			await Promise.all(promises);
-			const updatedPropertyData = await autoUpdate();
-			setDeletedIcons(new Array(JSON.parse(updatedPropertyData.property_images).length).fill(false));
-			setFavoriteIcons(JSON.parse(updatedPropertyData.property_images).map(image => image === updatedPropertyData.property_favorite_image));
-	
-			if (!stayOnPage) {
-				if (isDesktop) {
-					props.setRHS('PropertyNavigator');
-					navigate('/propertiesPM', { state: { index, propertyList } });
-				} else {
-					navigate('/propertiesPM', {
-						state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData },
-					});
-				}
-			}
+			await autoUpdate();
+			navigateBackToDashboard();
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	};
+
+	const navigateBackToDashboard = () => {
+		if (isDesktop) {
+			props.setRHS('PropertyNavigator');
+			navigate('/propertiesPM', { state: { index, propertyList } });
+		} else {
+			navigate('/propertiesPM', {
+				state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData },
+			});
+		}
+	};
+
+
 	const isCoverPhoto = (link) => {
 		if (link === favImage) {
 			return true;
@@ -1015,61 +1015,24 @@ function EditProperty(props) {
 					paddingBottom: '30px',
 				}}
 			>
-				<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
-					{hasChanges ? (
-						<Fragment>
-							<Button
-								variant="contained"
-								sx={{ backgroundColor: theme.typography.formButton.background }}
-								onClick={(event) => handleSubmit(event, true)}
-								disabled={isSaveDisabled} // Disable the "Save" button when appropriate
-							>
-								<Typography
-									sx={{
-										color: '#FFFFFF',
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.mediumFont,
-									}}
-								>
-									Save
-								</Typography>
-							</Button>
-
-							<Button
-								variant="contained"
-								sx={{ backgroundColor: theme.typography.formButton.background }}
-								onClick={(event) => handleSubmit(event, false)}
-								disabled={isReturnDisabled} // Disable "Return to Dashboard" if no changes are made
-							>
-								<Typography
-									sx={{
-										color: '#FFFFFF',
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.mediumFont,
-									}}
-								>
-									{saveButtonText}
-								</Typography>
-							</Button>
-						</Fragment>
-					) : (
-						<Button
-							variant="contained"
-							sx={{ backgroundColor: theme.typography.formButton.background }}
-							onClick={(e) => handleBackButton(e)} // This will just return to the dashboard
-						>
-							<Typography
-								sx={{
-									color: '#FFFFFF',
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: theme.typography.mediumFont,
-								}}
-							>
-								Return to Dashboard
-							</Typography>
-						</Button>
-					)}
-				</Stack>
+			<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
+			<Button
+				variant="contained"
+				sx={{ backgroundColor: theme.typography.formButton.background }}
+				onClick={(event) => handleSubmit(event, hasChanges)}
+				disabled={false} // The button should always be enabled
+			>
+				<Typography
+				sx={{
+					color: '#FFFFFF',
+					fontWeight: theme.typography.primary.fontWeight,
+					fontSize: theme.typography.mediumFont,
+				}}
+				>
+				{hasChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard'}
+				</Typography>
+			</Button>
+			</Stack>
 			</Box>
 
 			</Stack>

@@ -2412,6 +2412,8 @@ if (scrollRef.current) {
 					width: '100%',
 				}}
 			>
+				{contractStatus !== 'REJECTED' && (
+				<>
 				<Button
 					variant="contained"
 					sx={{
@@ -2434,9 +2436,11 @@ if (scrollRef.current) {
 							textTransform: 'none',
 						}}
 					>
-						{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Offer'}
+						{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Offer 1'}
 					</Typography>
 				</Button>
+				</>
+				)}
 				<Button
 					variant="contained"
 					sx={{
@@ -2444,7 +2448,7 @@ if (scrollRef.current) {
 						textTransform: 'none',
 						borderRadius: '5px',
 						display: 'flex',
-						width: '45%',
+						width: contractStatus === 'REJECTED' ? '100%' : '45%',
 						'&:hover': {
 							backgroundColor: '#9EAED6',
 						},

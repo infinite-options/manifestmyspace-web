@@ -814,8 +814,18 @@ export default function PropertyNavigator({
   };
 
   // check here
-  const handleDeleteClick = (id) => {
-    setAppliances(appliances.filter((appliance) => appliance.appliance_uid !== id));
+  const handleDeleteClick = async (id) => {
+    try {
+      const response = await axios.delete(`${APIConfig.baseURL.dev}/appliances/${id}`);
+  
+      if (response.status === 200) {
+        setAppliances(appliances.filter((appliance) => appliance.appliance_uid !== id));
+      } else {
+        console.error("Failed to delete the appliance. Status code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error deleting the appliance:", error);
+    }
   };
 
   const addAppliance = async (appliance) => {
