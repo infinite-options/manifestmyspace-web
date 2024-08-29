@@ -530,16 +530,33 @@ function EditProperty(props) {
 		const updatedDeletedIcons = [...deletedIcons];
 		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
 		setDeletedIcons(updatedDeletedIcons);
-
+	
 		const imageToDelete = JSON.parse(propertyData.property_images)[index];
-		setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
-
-		console.log('Delete image at index:', JSON.stringify(deletedIcons));
-		setHasChanges(true);
-		setIsSaveDisabled(false);
-		setIsReturnDisabled(false);
-		setSaveButtonText('Save and Return to Dashboard');
+	
+		setImagesTobeDeleted((prev) => {
+			let updatedImagesToBeDeleted;
+			if (updatedDeletedIcons[index]) {
+				updatedImagesToBeDeleted = [...prev, imageToDelete];
+			} else {
+				// Remove image from the delete list if the delete icon is toggled off
+				updatedImagesToBeDeleted = prev.filter(image => image !== imageToDelete);
+			}
+	
+			const hasImageChanges = updatedImagesToBeDeleted.length > 0 || imageState.length > 0 || favImage !== propertyData.property_favorite_image;
+			const otherChanges = Object.keys(getChangedFields()).length > 0;
+			const hasUnsavedChanges = hasImageChanges || otherChanges;
+	
+			setHasChanges(hasUnsavedChanges);
+			setIsSaveDisabled(!hasUnsavedChanges);
+			setIsReturnDisabled(false);
+			setSaveButtonText(hasUnsavedChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard');
+	
+			return updatedImagesToBeDeleted;
+		});
+	
+		console.log('Delete image at index:', JSON.stringify(updatedDeletedIcons));
 	};
+	
 
 	const handleFavorite = (index) => {
     const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
