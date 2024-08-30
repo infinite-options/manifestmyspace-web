@@ -347,20 +347,23 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 formData.append("quote_earliest_available_date", availabilityDate)
                 formData.append("quote_earliest_available_time", availabilityTime)
 
-                for (let i = 0; i < selectedImageList.length; i++) {
-                    try {
-                        let key = i === 0 ? "img_cover" : `img_${i-1}`;
-        
-                        if(selectedImageList[i]?.image?.startsWith("data:image")){
-                            const imageBlob = dataURItoBlob(selectedImageList[i].image);
-                            formData.append(key, imageBlob)
-                        } else {
-                            formData.append(key, selectedImageList[i])
-                        }
-                    } catch (error) {
-                        console.log("Error creating image binary", error)
-                    }
-                }
+                const files = selectedImageList;
+    let i = 0;
+    for (const file of selectedImageList) {
+      // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+      let key = `img_${i++}`;
+      if (file.file !== null) {
+        // newProperty[key] = file.file;
+        formData.append(key, file.file);
+      } else {
+        // newProperty[key] = file.image;
+        formData.append(key, file.image);
+      }
+      if (file.coverPhoto) {
+        formData.append("img_favorite", key);
+      }
+    }
+
 
                 var documentBinary = []
                 if (selectedDocumentList.length > 0){
