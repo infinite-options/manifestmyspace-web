@@ -4,7 +4,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams, } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 import theme from "../../theme/theme";
 import MaintenanceStatusTable from "./MaintenanceStatusTable";
@@ -126,6 +126,7 @@ function determineInitialStatus(array1, array2, array3, array4, array5, array6) 
 }
 
 export default function MaintenanceManager() {
+  const { maintenanceIDParam } = useParams();
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId } = useUser();
@@ -328,6 +329,31 @@ export default function MaintenanceManager() {
       });
     } else {
       // Save data to session storage
+      console.log("ROHIT - MaintenanceManager - row - ", row);
+      const quotesList = row.quotes;
+      if(quotesList && quotesList?.length > 0){
+        let quoteInfo = []
+        try {
+          quoteInfo = JSON.parse(quotesList[0]?.quote_info);
+          console.log("ROHIT - MaintenanceManager - quoteInfo - ", quoteInfo);
+        } catch(error){
+          console.error("ROHIT - error parsing quotesList - ", error);
+        }
+        const quoteBusinessIDs = []
+
+        if(quoteInfo && quoteInfo?.length > 0 ){
+          quoteInfo?.forEach(qInfo => {
+            quoteBusinessIDs.push(qInfo.quote_business_id)
+          })
+        }
+
+        console.log("ROHIT - MaintenanceManager - quoteBusinessIDs - ", quoteBusinessIDs);
+        
+        if(quoteBusinessIDs.length > 0 ){
+          sessionStorage.setItem("quoteBusinessIDs", JSON.stringify(quoteBusinessIDs));
+        }
+
+      }
       sessionStorage.setItem("selectedRequestIndex", index);
       sessionStorage.setItem("selectedStatus", row.maintenance_status);
       sessionStorage.setItem("maintenanceItemsForStatus", JSON.stringify(maintenanceData[row.maintenance_status]));
@@ -349,6 +375,45 @@ export default function MaintenanceManager() {
       navigate(-1);
     }
   };
+
+  useEffect(() => {
+    if(maintenanceIDParam && maintenanceData) {    
+      console.log("ROHIT - maintenanceData - ", maintenanceData);
+
+      let foundRequest = null;
+      let foundIndex = -1;
+      let foundStatus = null;
+
+      // Loop through each status array
+      for (const status in maintenanceData) {
+        const requests = maintenanceData[status];
+
+        // Search for the request with the matching ID
+        for (let i = 0; i < requests.length; i++) {
+          if (requests[i].maintenance_request_uid === maintenanceIDParam) {
+            foundRequest = requests[i];
+            foundIndex = i;
+            foundStatus = status;
+            break;
+          }
+        }
+
+        // Exit the outer loop if the request is found
+        if (foundRequest) {
+          break;
+        }
+      }
+
+      if (foundRequest) {
+        console.log("Found maintenance request:", foundRequest);
+        console.log("Index in status array:", foundIndex);
+        console.log("Status:", foundStatus);
+        handleRowClick(foundIndex, foundRequest)
+      } else {
+        console.log("Maintenance request not found.");
+      }
+    }
+  }, [maintenanceData]);  
   
   return (
     <ThemeProvider theme={theme}>

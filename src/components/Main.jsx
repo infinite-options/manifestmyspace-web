@@ -326,11 +326,13 @@ function Main() {
             <Route path='ownerContactTest' element={<OwnerContactTest />} />
 
             <Route path='managerMaintenance' element={<MaintenanceManager />} />
+            <Route path='managerMaintenance/:maintenanceIDParam' element={<MaintenanceManager />} />
             <Route path='ownerMaintenance' element={<MaintenanceOwner />} />
             <Route path='ownerDashboard' element={<OwnerDashboard />} />
 
             <Route path='maintenanceDashboard' element={<MaintenanceDashboard />} />
             <Route path='maintenanceDashboard2' element={<MaintenanceDashboard2 />} />
+            <Route path='maintenanceDashboard2/:requestIDParam' element={<MaintenanceDashboard2 />} />
             <Route path='addMaintenanceItem' element={<AddMaintenanceItem />} />
             <Route path='editMaintenanceItem' element={<EditMaintenanceItem />} />
             <Route path='addProperty' element={<AddProperty />} />

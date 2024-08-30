@@ -62,7 +62,7 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
         // console.log(input.maintenance_pm_notes);
         // console.log(input.maintenance_request_status);
         setShowSpinner(true);
-        axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests",
+        axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes",
         formData,
         headers)
         .then(response => {

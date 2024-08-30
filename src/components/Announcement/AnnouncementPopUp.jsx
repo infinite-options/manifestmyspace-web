@@ -29,6 +29,73 @@ export default function AnnouncementPopUp({showAnnouncement, setShowAnnouncement
     }
     
     const formatted_announcement_date = formatDate(announcement_date);
+
+    // const createLinkFromMessage = (message) => {
+    //     if (!message) return "No Message";
+
+    //     // Improved regex pattern to detect URLs
+    //     const urlPattern = /((https?:\/\/)?(localhost|[a-zA-Z0-9-_.]+\.[a-zA-Z]{2,})(:\d+)?(\/\S*)?)/g;
+
+    //     // Replace URLs with clickable links
+    //     const result = message.replace(urlPattern, (url) => {
+    //       // Add 'http://' if the URL does not already have a scheme
+    //       const href = url.startsWith('http') ? url : `http://${url}`;
+    //       return `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color: #3D5CAC; text-decoration: underline;">${url}</a>`;
+    //     });
+
+    //     return <span dangerouslySetInnerHTML={{ __html: result }} />;
+    //   };
+
+    const createLinkFromMessage = (message) => {
+        if (!message) return "No Message";
+      
+        // Improved regex pattern to detect URLs
+        const urlPattern = /((https?:\/\/)?(localhost|[a-zA-Z0-9-_.]+\.[a-zA-Z]{2,})(:\d+)?(\/\S*)?)/g;
+      
+        // Find all matches of URLs in the message
+        const matches = [...message.matchAll(urlPattern)];
+      
+        // Initialize an array to store React elements
+        const elements = [];
+        let lastIndex = 0;
+      
+        // Iterate over each match to build the resulting array
+        matches.forEach((match, index) => {
+          // Get the start index of the current match
+          const startIndex = match.index;
+      
+          // Add the text before the current match as a span element
+          if (startIndex > lastIndex) {
+            elements.push(<span key={`text-${index}`}>{message.slice(lastIndex, startIndex)}</span>);
+          }
+      
+          // Add the matched URL as an anchor element
+          const url = match[0];
+          const href = url.startsWith('http') ? url : `http://${url}`;
+          elements.push(
+            <a
+              key={`link-${index}`}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#3D5CAC', textDecoration: 'underline' }}
+            >
+              {url}
+            </a>
+          );
+      
+          // Update the last index to the end of the current match
+          lastIndex = startIndex + url.length;
+        });
+      
+        // Add any remaining text after the last match
+        if (lastIndex < message.length) {
+          elements.push(<span key="text-end">{message.slice(lastIndex)}</span>);
+        }
+      
+        return <span>{elements}</span>;
+      };
+      
     
     return (
         <Dialog
@@ -97,7 +164,7 @@ export default function AnnouncementPopUp({showAnnouncement, setShowAnnouncement
                 </Box>
                 <Box ml={2}>
                         <Typography variant="body1" fontFamily="Source Sans Pro" color="#3D5CAC" fontSize="15px" fontWeight="600">{annData?.announcement_title || 'No Title'}</Typography>
-                        <Typography variant="body1" fontFamily="Source Sans Pro" color="#3D5CAC" fontSize="15px" >{annData?.announcement_msg || 'No Message'}</Typography>
+                        <Typography variant="body1" fontFamily="Source Sans Pro" color="#3D5CAC" fontSize="15px" >{createLinkFromMessage(annData?.announcement_msg) || 'No Message'}</Typography>
                 </Box>
             </DialogContent>
            

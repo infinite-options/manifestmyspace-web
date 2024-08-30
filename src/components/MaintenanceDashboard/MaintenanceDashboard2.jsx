@@ -25,6 +25,7 @@ import { ReactComponent as HomeIcon } from '../../images/home_icon.svg';
 import { ReactComponent as CalendarIcon } from '../../images/calendar_icon.svg';
 import { useMediaQuery } from '@mui/material';
 import { useState, useEffect } from 'react';
+import { useParams, } from "react-router-dom";
 import theme from '../../theme/theme';
 import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
@@ -38,6 +39,7 @@ import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 
 export default function MaintenanceDashboard2() {
+	const { requestIDParam } = useParams();
 	const { user, getProfileId } = useUser();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [showSpinner, setShowSpinner] = useState(false);
@@ -83,14 +85,15 @@ export default function MaintenanceDashboard2() {
 					'Quotes Accepted': [],
 					Scheduled: [],
 					Finished: [],
-					Paid: [],
+					Paid: [],					
 				},
 			];
 			currentActivities
 				.map((item) => {
 					const statusMapping = theme.colorStatusMM.find(
 						(statusObj) => statusObj.mapping === item.maintenance_status
-					);
+					);				
+					// console.log("ROHIT - statusMapping - ", statusMapping)	;
 					if (statusMapping) {
 						currentgraphData[0][statusMapping.status].push({
 							value: item.num,
@@ -108,7 +111,7 @@ export default function MaintenanceDashboard2() {
 				ACCEPTED: [],
 				SCHEDULED: [],
 				FINISHED: [],
-				PAID: [],
+				PAID: [],				
 			};
 
 			currentActivities.forEach((item) => {
@@ -122,6 +125,7 @@ export default function MaintenanceDashboard2() {
 					maintainance_info[status].push(...mergedItems);
 				}
 			});
+			
 
 			await setMaintenanceRequests(maintainance_info);
 			await setMaintenanceStatusRequests(statusdata);
@@ -209,6 +213,69 @@ export default function MaintenanceDashboard2() {
 			);
 		};
 	}, []);
+
+
+	// async function handleRequestDetailPage(maintenance_request_index, status, property_uid, maintenance_request_uid) {
+    
+	// 	// console.log("handleRequestDetailPage")
+	// 	//console.log("maintenance_request_index", maintenance_request_index)
+	// 	//console.log("status", status);
+	// 	//console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
+	// 	//console.log("inside func allMaintenanceData", allMaintenanceData);
+	// 	if (isMobile) {
+	
+	// 	  navigate(`/workerMaintenance/detail`, {
+	// 		state: {
+	// 		  maintenance_request_index,
+	// 		  status,
+	// 		  maintenanceItemsForStatus: maintenanceRequests[status],
+	// 		  data,
+	// 		  maintenance_request_uid,
+	// 		},
+	// 	  });
+	// 	} else {
+	// 			// Save data to session storage
+	// 			sessionStorage.setItem('workerselectedRequestIndex', maintenance_request_index);
+	// 			sessionStorage.setItem('workerselectedStatus', status);
+	// 			sessionStorage.setItem(
+	// 				'workermaintenanceItemsForStatus',
+	// 				JSON.stringify(maintenanceRequests[status])
+	// 			);
+	// 			sessionStorage.setItem('workerallMaintenanceData', JSON.stringify(data));
+	// 	  sessionStorage.setItem('workermaintenance_request_uid', maintenance_request_uid);
+	 
+	// 			sessionStorage.setItem('workerMaintenanceView', true);
+		  
+	// 			// Trigger the custom event
+	// 			window.dispatchEvent(new Event('workermaintenanceRequestSelected'));
+	// 		}
+	//   }
+
+	useEffect(() => {
+		if(requestIDParam){		
+			console.log("216 - maintenanceRequests - ", maintenanceRequests)
+			const maintenanceItems = []
+
+			if(maintenanceRequests){
+				Object.keys(maintenanceRequests)?.forEach( status => {
+					maintenanceRequests[status]?.forEach( (request, index) => {
+						maintenanceItems.push({...request, maintenance_request_index: index});					
+					})
+				})
+			}
+			console.log("216 - maintenanceItems - ", maintenanceItems)	
+			const selectedItemIndex = maintenanceItems?.findIndex((row) => row.maintenance_request_uid === requestIDParam);			
+			console.log("216 - selectedItemIndex - ", selectedItemIndex);
+			if(selectedItemIndex >= 0){
+				const selectedItem = maintenanceItems[selectedItemIndex]
+				console.log("216 - selectedItem - ", selectedItem);
+
+				// handleRequestDetailPage(index, selectedItem.maintenance_status, selectedItem.maintenance_property_id, selectedItem.maintenance_request_uid);
+			}
+
+			
+		}
+	}, [maintenanceRequests]);
 
 
 
@@ -674,8 +741,7 @@ const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData }) 
 				{colorStatus.map((item, index) => {
 					let mappingKey = item.mapping;
 					let maintenanceArray = maintenanceRequests[mappingKey] || [];
-					let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);
-
+					let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);					
 					return (
 						<WorkerMaintenanceStatusTable
 							key={index}

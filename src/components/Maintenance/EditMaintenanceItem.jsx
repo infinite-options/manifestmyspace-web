@@ -61,6 +61,7 @@ export default function EditMaintenanceItem({setRightPane}) {
 	let testIssue1, testProperty1, testIssueItem1, testCost1;
     let testTitle1, testPriority1, completionStatus1;
     let requestUid1, propID1, maintainanceImages, maintainanceFavImage;
+	let quoteBusinessIDs;
 
 	if (isMobile) {
 		testIssue1 = location.state.testIssue;
@@ -85,6 +86,23 @@ export default function EditMaintenanceItem({setRightPane}) {
 
 		maintainanceImages = sessionStorage.getItem('maintainanceImages');
 		maintainanceFavImage = sessionStorage.getItem('maintainanceFavImage');
+
+		try {
+			quoteBusinessIDs = JSON.parse(sessionStorage.getItem('quoteBusinessIDs'));
+		} catch(error) {
+			console.error("EditMaintenanceItem - error parsing quoteBusinessIDs from session storage");
+			quoteBusinessIDs = []
+		}
+		
+
+		// console.log("ROHIT - testIssue1", testIssue1)
+		// console.log("ROHIT - testProperty1 -", testProperty1)
+		// console.log("ROHIT - testIssueItem1 - ", testIssueItem1 )
+		// console.log("ROHIT - requestUid1 - ", requestUid1)
+		// console.log("ROHIT - propID1 - ", propID1)
+		// // console.log("ROHIT - ")
+		// // console.log("ROHIT - ")
+		console.log("ROHIT - EditMaintenanceItem - quoteBusinessIDs - ", quoteBusinessIDs);
 	}
 
 	// setCost(testCost1);
@@ -320,7 +338,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 		// }
 		console.log('editFormData>>>>>>');
 		for (let [key, value] of editFormData.entries()) {
-			console.log(key, value);
+			console.log("editFormData - ", key, value);
 		}
 
 		const putData = async () => {
@@ -359,7 +377,57 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 			}
 			setShowSpinner(false);
 		};
-		putData();
+
+		const sendAnnouncement = async () => {
+			try {
+				let receiverPropertyMapping = {}
+				const annReceivers = []
+
+				quoteBusinessIDs?.forEach(businessID => {
+					annReceivers.push(businessID)
+					if (receiverPropertyMapping[businessID]) {						
+						receiverPropertyMapping[businessID].push(propertyId);
+					} else {						
+						receiverPropertyMapping[businessID] = [propertyId];
+					}
+				})
+				
+
+				const payload = JSON.stringify({
+					announcement_title: `Additional Info Added for Maintenance Quote`,					
+					announcement_msg: `Information added for maintenance item - ${title} - (Property - ${property})\n localhost:3000/maintenanceDashboard2/${requestUid1}`,
+					announcement_sender: getProfileId(),
+					announcement_date: new Date().toDateString(),
+					// announcement_properties: property.property_uid,
+					announcement_properties: JSON.stringify(receiverPropertyMapping),
+					announcement_mode: "MAINTENANCE",
+					// announcement_receiver: [maintenanceItem?.tenant_uid],
+					announcement_receiver: annReceivers,
+					announcement_type: ["Text", "Email"],
+				})
+		
+				console.log("ROHIT - EditMaintenanceItem - receiverPropertyMapping - ", receiverPropertyMapping);
+				console.log("ROHIT - EditMaintenanceItem - annReceivers - ", annReceivers);
+				console.log("ROHIT - payload - annReceivers - ", payload);
+		
+				await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: payload,
+				});
+			} catch (error) {
+				console.log("Error in sending announcement for more info:", error);
+				alert("We were unable to Text the Tenant but we were able to send them a notification through the App");
+			}
+			};
+
+
+
+
+		// putData(); ROHIT - uncomment
+		sendAnnouncement();
 
 		// setSelectedImageList([])
 		// setProperty('')
