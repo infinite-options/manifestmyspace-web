@@ -376,7 +376,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                         fileIndex: i, //may not need fileIndex - will files be appended in the same order?
                         fileName: file.name, //may not need filename
                         fileType: file.type,
-                        type:"Other",
+                        content_type:"Quote",
                       };
                       documentsDetails.push(documentObject);
                     });
