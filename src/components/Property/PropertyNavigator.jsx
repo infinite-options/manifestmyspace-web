@@ -853,6 +853,7 @@ export default function PropertyNavigator({
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
       let i = 0;
+      if (selectedImageList.length > 0) {
       for (const file of selectedImageList) {
         // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
         let key = `img_${i++}`;
@@ -867,10 +868,14 @@ export default function PropertyNavigator({
           applianceFormData.append("img_favorite", key);
         }
       }
-
+    }
       axios
-        .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
-        .then((response) => {
+      .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+      .then((response) => {
+        // Check if the response contains the `appliance_uid`
+        const newApplianceUID = response?.data?.appliance_uid;
+        if (newApplianceUID) {
+
           // console.log("Data updated successfully", response);
           // showSnackbar("Your profile has been successfully updated.", "success");
           // handleUpdate();
@@ -878,27 +883,55 @@ export default function PropertyNavigator({
           console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
           const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
           console.log("Appliance is $$", applianceCategory);
-          setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid, appliance_item: applianceCategory }]);
+          setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID }]);
+        }
+        setShowSpinner(false);
+        setSelectedImageList([]);
+      })
+      .catch((error) => {
+        setShowSpinner(false);
+        console.error(error.response?.data || error.message);
+      });
+  } catch (error) {
+    console.error("Cannot Update Appliances", error);
+    setShowSpinner(false);
+  }
+};
 
-          setShowSpinner(false);
-          console.log("Appliance after", appliance);
-        })
-        .catch((error) => {
-          setShowSpinner(false);
-          // showSnackbar("Cannot update your profile. Please try again", "error");
-          if (error.response) {
-            console.log(error.response.data);
-          }
-        });
-      setShowSpinner(false);
-      setSelectedImageList([]);
-      // setModifiedData([]);
-    } catch (error) {
-      // showSnackbar("Cannot update the lease. Please try again", "error");
-      console.log("Cannot Update Appliances", error);
-      setShowSpinner(false);
-    }
-  };
+  //     axios
+  //       .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+  //       .then((response) => {
+  //         // console.log("Data updated successfully", response);
+  //         // showSnackbar("Your profile has been successfully updated.", "success");
+  //         // handleUpdate();
+  //         console.log("Appliance befor", appliance);
+  //         console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
+  //         const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
+  //         console.log("Appliance is $$", applianceCategory);
+  //         const newApplianceUID = response?.data?.appliance_uid;
+  //         if (newApplianceUID) {
+  //           setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID }]);
+  //         }
+
+  //         setShowSpinner(false);
+  //         console.log("Appliance after", appliance);
+  //       })
+  //       .catch((error) => {
+  //         setShowSpinner(false);
+  //         // showSnackbar("Cannot update your profile. Please try again", "error");
+  //         if (error.response) {
+  //           console.log(error.response.data);
+  //         }
+  //       });
+  //     setShowSpinner(false);
+  //     setSelectedImageList([]);
+  //     // setModifiedData([]);
+  //   } catch (error) {
+  //     // showSnackbar("Cannot update the lease. Please try again", "error");
+  //     console.log("Cannot Update Appliances", error);
+  //     setShowSpinner(false);
+  //   }
+  // };
 
   const getAppliancesChanges = () => {
     const changes = {};
@@ -1036,7 +1069,7 @@ export default function PropertyNavigator({
         editAppliance(currentApplRow);
       } else {
         // setAppliances([...appliances, { ...currentApplRow, appliance_uid: uuidv4() }]);
-        //console.log("---currentApplRow---", currentApplRow);
+        console.log("---currentApplRow---", currentApplRow);
         addAppliance(currentApplRow);
       }
       handleClose();
@@ -1054,7 +1087,7 @@ export default function PropertyNavigator({
       const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
       //const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
       if (!response.ok) {
-        // console.log("Error fetching lists data");
+        console.log("Error fetching lists data");
       }
       const responseJson = await response.json();
       const applnCategories = responseJson.result.filter((res) => res.list_category === "appliances" && res.list_item.trim() !== "");
@@ -1071,7 +1104,7 @@ export default function PropertyNavigator({
         return acc;
       }, {});
       // console.log("appliance UIDs to categories- ", listUidToItemMapping);
-      setApplianceUIDToCategoryMap(listUidToItemMapping);
+      setApplianceUIDToCategoryMap(listUidToItemMapping); 
     } catch (error) {
       console.log(error);
     }
@@ -1234,6 +1267,12 @@ export default function PropertyNavigator({
         }
       }
   };
+
+  appliances.forEach(row => {
+    if (!row.appliance_uid) {
+      console.error("Missing appliance_uid for row:", row);
+    }
+  });
 
   return (
     <Paper

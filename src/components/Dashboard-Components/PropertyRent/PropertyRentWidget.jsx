@@ -376,7 +376,7 @@ export default function PropertyRentWidget(props) {
           //   navigate(propertyRoutingBasedOnSelectedRole());
           // }}
           // onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
-          onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator", filterVacant: true } })}
+          onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
         >
           View {vacantCount} Property Listings
         </Button>
