@@ -347,35 +347,56 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 formData.append("quote_earliest_available_date", availabilityDate)
                 formData.append("quote_earliest_available_time", availabilityTime)
 
-                for (let i = 0; i < selectedImageList.length; i++) {
-                    try {
-                        let key = i === 0 ? "img_cover" : `img_${i-1}`;
-        
-                        if(selectedImageList[i]?.image?.startsWith("data:image")){
-                            const imageBlob = dataURItoBlob(selectedImageList[i].image);
-                            formData.append(key, imageBlob)
-                        } else {
-                            formData.append(key, selectedImageList[i])
-                        }
-                    } catch (error) {
-                        console.log("Error creating image binary", error)
-                    }
-                }
+                const files = selectedImageList;
+    let i = 0;
+    for (const file of selectedImageList) {
+      // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+      let key = `img_${i++}`;
+      if (file.file !== null) {
+        // newProperty[key] = file.file;
+        formData.append(key, file.file);
+      } else {
+        // newProperty[key] = file.image;
+        formData.append(key, file.image);
+      }
+      if (file.coverPhoto) {
+        formData.append("img_favorite", key);
+      }
+    }
+    formData.append("quote_documents", []);
+                //console.log('---business document---', selectedDocumentList);
 
-                var documentBinary = []
-                if (selectedDocumentList.length > 0){
+                if (selectedDocumentList.length) {
+                    const documentsDetails = [];
+                    [...selectedDocumentList].forEach((file, i) => {
+                      formData.append(`file_${i}`, file, file.name);
+                      //const fileType = contractFileTypes[i] || "";
+                      const documentObject = {
+                        // file: file,
+                        fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+                        fileName: file.name, //may not need filename
+                        fileType: file.type,
+                        contentType:"Quote",
+                      };
+                      documentsDetails.push(documentObject);
+                    });
+                    formData.append("quote_documents_details", JSON.stringify(documentsDetails));
+                  }
+
+                // var documentBinary = []
+                // if (selectedDocumentList.length > 0){
                     
-                    for (let i = 0; i < selectedDocumentList.length; i++){
-                        try {
-                            const documentBlob = dataURItoBlob(selectedDocumentList[i]);
-                            documentBinary.push(documentBlob)
-                        } catch (error){
-                            console.log("Error creating document binary", error)
-                        }
-                    }
+                //     for (let i = 0; i < selectedDocumentList.length; i++){
+                //         try {
+                //             const documentBlob = dataURItoBlob(selectedDocumentList[i]);
+                //             documentBinary.push(documentBlob)
+                //         } catch (error){
+                //             console.log("Error creating document binary", error)
+                //         }
+                //     }
 
-                    formData.append("qd_files", documentBinary);
-                }
+                //     formData.append("qd_files", documentBinary);
+                // }
         
                 for (let [key, value] of formData.entries()) {
                     console.log(key, value);    

@@ -26,7 +26,7 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
     const [pmNotes, setPmNotes] = useState();
     const [showSpinner, setShowSpinner] = useState(false);
 
-    // console.log("RequestMoreInfo - props.maintenanceItem - ", maintenanceItem)
+    console.log("ROHIT - RequestMoreInfo - props.maintenanceItem - ", maintenanceItem)
 
     const handleChange1 = (event) => {
         setPmNotes(event.target.value);
@@ -42,9 +42,9 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
     };
 
         const formData = new FormData();
-        formData.append("maintenance_request_uid", maintenanceItem.maintenance_request_uid);
-        formData.append("maintenance_pm_notes", pmNotes);
-        formData.append("maintenance_request_status", "INFO");
+        formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+        formData.append("quote_notes", pmNotes);
+        formData.append("quote_status", "MORE INFO");
 
         // console.log('formData>>>>>> in request more info');
 		// for (let [key, value] of formData.entries()) {
@@ -82,7 +82,8 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
     const sendAnnouncement = async () => {
     try {
         const receiverPropertyMapping = {
-        [maintenanceItem.tenant_uid]: [maintenanceItem.property_uid],
+        // [maintenanceItem.tenant_uid]: [maintenanceItem.property_uid], //tenant
+        [maintenanceItem.business_uid]: [maintenanceItem.property_uid], //manager
         };
 
 
@@ -95,13 +96,14 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
         body: JSON.stringify({
             announcement_title: `Additional Info Required for Maintenance`,
             // announcement_msg: `Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease.`,
-            announcement_msg: `Please provide the following information for the maintenance request - ${maintenanceItem?.maintenance_title} - ${pmNotes}`,
+            announcement_msg: `Please provide the following information for the maintenance request - ${maintenanceItem?.maintenance_title} - ${pmNotes} \n Maintenance Item - localhost:3000/managerMaintenance/${maintenanceItem.maintenance_request_uid}`,
             announcement_sender: getProfileId(),
             announcement_date: new Date().toDateString(),
             // announcement_properties: property.property_uid,
             announcement_properties: JSON.stringify(receiverPropertyMapping),
             announcement_mode: "MAINTENANCE",
-            announcement_receiver: [maintenanceItem?.tenant_uid],
+            // announcement_receiver: [maintenanceItem?.tenant_uid],
+            announcement_receiver: [maintenanceItem?.business_uid],
             announcement_type: ["Text", "Email"],
         }),
         });

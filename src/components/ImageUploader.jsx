@@ -257,13 +257,13 @@ export default function ImageUploader({updateFavoriteIcons, selectedImageList, s
   file.image === favImage ? (
     <FavoriteIcon color="primary" sx={{ color: "red" }} />
   ) : (
-    <FavoriteBorderIcon color="black" />
+    <FavoriteBorderIcon color="red" />
   )
 ) : (
   selectedImageList[index].coverPhoto ? (
-    <FavoriteIcon color="primary" sx={{ color: theme.typography.propertyPage.color }} />
+    <FavoriteIcon color="primary" sx={{ color: "red"}} />
   ) : (
-    <FavoriteBorderIcon color="black" />
+    <FavoriteBorderIcon color="red" />
   )
 )}
                     </IconButton>

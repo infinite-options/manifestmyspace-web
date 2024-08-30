@@ -209,10 +209,12 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                             navButtonsAlwaysInvisible={true}
                             autoPlay={false}
                             index={currentIndex}
-                            animation="slide"
                             indicators={false}
                             onChange={(now, previous) => setCurrentIndex(now)}
-                            sx={{ width: '100%' }}
+                            sx={{ width: '100%', 
+                            height: '400px',  // Set the desired fixed height here
+                            overflow: 'hidden' // Ensure content doesn't overflow
+                         }}
                         >
                             {maintenanceQuotesForItem.map((item, index) => (
                                 <Box key={index} sx={{ padding: 2 }}>

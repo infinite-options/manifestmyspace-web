@@ -136,7 +136,6 @@ function EditProperty(props) {
 	const [bedrooms, setBedrooms] = useState('');
 	const [bathrooms, setBathrooms] = useState('');
 	const [isListed, setListed] = useState(false);
-	const [utilities, setUtilities] = useState(null);
 	const [activeDate, setActiveDate] = useState(null);
 	const [description, setDescription] = useState('');
 	const [selectedImageList, setSelectedImageList] = useState('');
@@ -212,7 +211,6 @@ function EditProperty(props) {
 		setInitBathrooms(property.property_num_baths);
 		setListed(property.property_available_to_rent === 1 ? true : false);
 		setInitListed(property.property_available_to_rent === 1 ? true : false);
-		setUtilities(property.property_utilities);
 		setActiveDate(property.property_active_date);
 		setDescription(property.property_description);
 		setSelectedImageList(JSON.parse(property.property_images));
@@ -281,254 +279,24 @@ function EditProperty(props) {
 		return changes;
 	};
 
-	// useEffect(() => {
-	// 	console.log("deletedImageList - ", deletedImageList);
-	// }, [deletedImageList]);
+	useEffect(() => {
+		const hasImageChanges = imageState.length > 0 || deletedImageList.length > 0 || favImage !== propertyData.property_favorite_image;
+		const otherChanges = Object.keys(getChangedFields()).length > 0;
+	  
+		const hasUnsavedChanges = hasImageChanges || otherChanges;
 
-	// useEffect(() => {
-	// 	console.log("imageState - ", imageState);
-	// }, [imageState]);
-
-
+		// Update states based on unsaved changes
+		setHasChanges(hasUnsavedChanges);
+		setIsSaveDisabled(!hasUnsavedChanges);
+		setIsReturnDisabled(false);
+		setSaveButtonText(hasUnsavedChanges? 'Save and Return to Dashboard' : 'Return to Dashboard');
+	}, [imageState, deletedImageList, favImage, address, city, propertyState, zip, propertyType, squareFootage, bedrooms, bathrooms, isListed, description, notes, unit, propertyValue, assessmentYear, deposit, listedRent, depositForRent]);
 	
-	const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
-	const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
-
-	const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
-
-	const utilitiesMap = new Map([
-		['050-000001', 'electricity'],
-		['050-000002', 'water'],
-		['050-000003', 'gas'],
-		['050-000004', 'trash'],
-		['050-000005', 'sewer'],
-		['050-000006', 'internet'],
-		['050-000007', 'cable'],
-		['050-000008', 'hoa_dues'],
-		['050-000009', 'security_system'],
-		['050-000010', 'pest_control'],
-		['050-000011', 'gardener'],
-		['050-000012', 'maintenance'],
-	]);
-
-	const entitiesMap = new Map([
-		['050-000041', 'owner'],
-		['050-000042', 'property manager'],
-		['050-000043', 'tenant'],
-		['050-000049', 'user'],
-	]);
-
-	const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
-	const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
-
-	const mapUIDsToUtilities = (propertyUtilities) => {
-		// let propertyUtilities = JSON.parse(utilities)
-		if (!propertyUtilities) {
-			return {};
-		}
-		console.log('----- in mapUIDsToUtilities, input - ', propertyUtilities);
-		const mappedUtilities = {};
-		for (const key of Object.keys(propertyUtilities)) {
-			const utilityName = utilitiesMap.get(key);
-			const entityName = entitiesMap.get(propertyUtilities[key]);
-
-			if (utilityName && entityName) {
-				mappedUtilities[utilityName] = entityName;
-			}
-		}
-
-		console.log('----- in mapUIDsToUtilities, mappedUtilities - ', mappedUtilities);
-		return mappedUtilities;
-	};
-
-	const mapUtilitiesAndEntitiesToUIDs = (utilitiesObject) => {
-		const mappedResults = {};
-
-		for (const [key, value] of Object.entries(utilitiesObject)) {
-			const utilityUID = reverseUtilitiesMap.get(key);
-			const entityUID = reverseEntitiesMap.get(value);
-
-			if (utilityUID && entityUID) {
-				mappedResults[utilityUID] = entityUID;
-			}
-		}
-
-		return mappedResults;
-	};
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// const utilitiesObject = JSON.parse(utilities);
-	// console.log("UTILITIES OBJECT", utilitiesObject);
-	// let utilitiesInUIDForm = {};
-	// let mappedUtilities2 = {};
-	// useEffect(() => {
-	//   if (utilitiesObject) {
-	//     console.log("***********************************EditProperty useEffect*************************************************");
-	//     for (const utility of utilitiesObject) {
-	//       console.log(utility.utility_type_id, utility.utility_payer_id);
-	//       utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
-	//     }
-	//     console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
-
-	//     // setUtilitiesPaidBy(utilitiesInUIDForm)
-	//     mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-	//     console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-	//     console.log("   ", mappedUtilities2);
-	//     setMappedUtilitiesPaidBy(mappedUtilities2);
-	//   } else {
-	//     setMappedUtilitiesPaidBy(defaultUtilities);
-	//     setIsDefaultUtilities(true);
-	//   }
-	//   loadImages();
-	//   console.log("****************************************EditProperty useEffect********************************************");
-	// }, []);
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// useEffect(() => {
-	//   let utilitiesObject;
-	//   let utilitiesInUIDForm = {};
-	//   let mappedUtilities2 = {};
-
-	//   if(utilities != undefined){
-	//     utilitiesObject = JSON.parse(utilities)
-	//     console.log("UTILITIES OBJECT", utilitiesObject);
-	//   }
-	//   if (utilitiesObject) {
-	//     console.log("***********************************EditProperty useEffect*************************************************");
-	//     for (const utility of utilitiesObject) {
-	//       console.log(utility.utility_type_id, utility.utility_payer_id);
-	//       utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
-	//     }
-	//     console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
-
-	//     // setUtilitiesPaidBy(utilitiesInUIDForm)
-	//     mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-	//     console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-	//     console.log("   ", mappedUtilities2);
-	//     setMappedUtilitiesPaidBy(mappedUtilities2);
-	//   } else {
-	//     setMappedUtilitiesPaidBy(defaultUtilities);
-	//     setIsDefaultUtilities(true);
-	//   }
-	//   // loadImages();
-	//   console.log("****************************************EditProperty useEffect********************************************");
-	// }, [utilities]);
-
-	useEffect(() => {
-		let utilitiesObject;
-		let utilitiesInUIDForm = {};
-		let mappedUtilities2 = {};
-
-		// console.log("utilities - ", utilities);
-		try {
-			if (utilities && utilities.length > 0) {
-				utilitiesObject = JSON.parse(utilities);
-				console.log('UTILITIES OBJECT', utilitiesObject);
-			}
-		} catch (error) {
-			console.error('Error parsing utilities JSON:', error);
-		}
-
-		if (utilitiesObject) {
-			console.log(
-				'***********************************utilities useEffect*************************************************'
-			);
-			for (const utility of utilitiesObject) {
-				console.log(utility.utility_type_id, utility.utility_payer_id);
-				utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
-			}
-			console.log('UTILITIES IN UID FORM', utilitiesInUIDForm);
-
-			mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-			console.log('----- Mapped UIDs to Utilities, mappedUtilities2');
-			console.log('   ', mappedUtilities2);
-			setMappedUtilitiesPaidBy(mappedUtilities2);
-			setIsDefaultUtilities(false);
-		} else {
-			setMappedUtilitiesPaidBy(defaultUtilities);
-			setIsDefaultUtilities(true);
-		}
-		console.log(
-			'****************************************utilities useEffect********************************************'
-		);
-	}, [utilities]);
-
-	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	useEffect(() => {
-		console.log('mappedUtilitiesPaidBy - ', mappedUtilitiesPaidBy);
-	}, [mappedUtilitiesPaidBy]);
-
-	useEffect(() => {
-		console.log('newUtilitiesPaidBy - ', newUtilitiesPaidBy);
-	}, [newUtilitiesPaidBy]);
-
-	const handleUtilityChange = (utility, entity) => {
-		const utilityObject = { [utility]: `${entity}` };
-		console.log('----- handleUtilityChange called - ', utilityObject);
-		// setMappedUtilitiesPaidBy((prevState)=> ({...prevState, ...utility}))
-
-		setMappedUtilitiesPaidBy((prevState) => ({
-			...prevState,
-			[utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
-		}));
-		// setUtilitiesPaidBy(utilities);
-		// setMappedUtilitiesPaidBy(utilities);
-
-		setNewUtilitiesPaidBy((prevState) => ({
-			...(prevState.hasOwnProperty(utility) ? { ...prevState, [utility]: entity } : prevState),
-		}));
-	};
-
-	//Add utility
-	// const getKeysNotInUtilitiesMap = () => {
-	//     const mappedKeys = Object.keys(mappedUtilitiesPaidBy);
-	//     const allKeys = Array.from(utilitiesMap.values());
-	//     return allKeys.filter(key => !mappedKeys.includes(key));
-	// };
-
-	const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
-	// const [keysNotInUtilitiesMap] = useState(getKeysNotInUtilitiesMap());
-	const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter(
-		(utility) => !(utility in mappedUtilitiesPaidBy)
-	);
-
-	const handleAddUtilityButtonClick = (event) => {
-		setAddUtilityAnchorElement(event.currentTarget);
-	};
-
-	const handleAddUtilityClose = () => {
-		setAddUtilityAnchorElement(null);
-	};
-
-	const handleAddUtility = (utility) => {
-		const updatedMappedUtilities = { ...mappedUtilitiesPaidBy }; // Create a copy of mappedUtilitiesPaidBy
-		updatedMappedUtilities[utility] = 'owner';
-		setMappedUtilitiesPaidBy(updatedMappedUtilities);
-
-		const updatedNewUtilitiesMappedBy = { ...newUtilitiesPaidBy };
-		updatedNewUtilitiesMappedBy[utility] = 'owner';
-		setNewUtilitiesPaidBy(updatedNewUtilitiesMappedBy);
-
-		console.log(`Adding utility: ${utility}`);
-		handleAddUtilityClose();
-	};
-
-	const handleNext = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep + 1);
-	};
-
-	const handleBack = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep - 1);
-	};
-
-	useEffect(() => {
-		//property_utilities
-	}, [utilities]);
-
-	useEffect(() => {
-		console.log('Size of selectedImageList:', selectedImageList.length);
-		console.log('Contents of selectedImageList:', selectedImageList);
-	}, [selectedImageList]);
+	// 	console.log('Size of selectedImageList:', selectedImageList.length);
+	// 	console.log('Contents of selectedImageList:', selectedImageList);
+	// }, [selectedImageList]);
 
 	const handleUnitChange = (event) => {
 		console.log('handleUnitChange', event.target.value);
@@ -545,28 +313,34 @@ function EditProperty(props) {
 		setListed(event.target.checked);
 	};
 
-	const handleSubmit = async (event, stayOnPage = false) => {
+	const handleSubmit = async (event, hasChanges) => {
 		event.preventDefault();
 		console.log('handleSubmit');
 
-		setIsSaveDisabled(true);
-		setSaveButtonText('Return to Dashboard');
+		// setIsSaveDisabled(true);
+		// setSaveButtonText('Return to Dashboard');
 
 		// if (stayOnPage) {
 		// 	setSavedClicked(true);
 		// }
+
+		if (!hasChanges) {
+			navigateBackToDashboard();
+			return;
+		}
 
 		const changedFields = getChangedFields();
 		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0) {
 			setHasChanges(false);
 			console.log('No changes detected.');
 			return;
-		} else {
-			setHasChanges(true);
 		}
 
+		setIsSaveDisabled(true);
+		setSaveButtonText('Return to Dashboard');
+		setIsReturnDisabled(false);
+
 		const formData = new FormData();
-		const utilitiesFormData = new FormData();
 
 		for (const [key, value] of Object.entries(changedFields)) {
 			formData.append(key, value);
@@ -595,22 +369,6 @@ function EditProperty(props) {
 			formData.append('property_latitude', coordinates.latitude);
 			formData.append('property_longitude', coordinates.longitude);
 		}
-
-		//utilities form data
-		const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
-		//console.log("----- Submitted uitilitiesPaidBy JSON string");
-		console.log(utilitiesJSONString);
-
-		utilitiesFormData.append('property_uid', propertyData.property_uid);
-		utilitiesFormData.append('property_utility', utilitiesJSONString);
-
-		const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
-		//console.log("----- addedUtilitiesJSONString");
-		console.log(addedUtilitiesJSONString);
-
-		const addedUtilitiesFormData = new FormData();
-		addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
-		addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
     if (imagesTobeDeleted.length > 0) {
   
       let updatedImages = JSON.parse(propertyData.property_images);
@@ -658,126 +416,58 @@ function EditProperty(props) {
 				})
 			);
 			// promises_added.push("putData");
-			setImageState([])
 			setShowSpinner(false);
+			setImageState([])
 
 			// navigate("/propertyDetail", { state: { index, propertyList }});
-		};
-		const updateUtilitiesData = async () => {
-			setShowSpinner(true);
-
-			promises.push(
-				fetch(`${APIConfig.baseURL.dev}/utilities`, {
-					method: 'PUT',
-					body: utilitiesFormData,
-				})
-			);
-			promises_added.push('putUtilitiesData - PUT');
-
-			setShowSpinner(false);
-
-			const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
-			console.log('----- addedUtilitiesJSONString');
-			console.log(addedUtilitiesJSONString);
-
-			const addedUtilitiesFormData = new FormData();
-			addedUtilitiesFormData.append('property_uid', propertyData.property_uid);
-			addedUtilitiesFormData.append('property_utility', addedUtilitiesJSONString);
-
-			const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
-			if (numberOfAddedUtilities > 0) {
-				promises.push(
-					fetch(`${APIConfig.baseURL.dev}/utilities`, {
-						method: 'POST',
-						body: addedUtilitiesFormData,
-					})
-				);
-				promises_added.push('putUtilitiesData - POST');
-
-				setShowSpinner(false);
-			}
-		};
-		const postUtilitiesData = async () => {
-			setShowSpinner(true);
-
-			promises.push(
-				fetch(`${APIConfig.baseURL.dev}/utilities`, {
-					method: 'POST',
-					body: utilitiesFormData,
-				})
-			);
-			promises_added.push('postUtilitiesData');
-			onBackClick();
-			setShowSpinner(false);
 		};
 
 		const autoUpdate = async () => {
 			const updateResponse = await fetch(
 				`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`
 			);
-
-			// const updateResponse = await fetch(
-			// 	`http://localhost:4000/properties/${propertyData.property_uid}`
-			// );
-
-			//console.log('---updateResponse---', updateResponse);
-			// const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
+	
 			const updatedJson = await updateResponse.json();
-			//console.log('---updatedJson---', updatedJson);
 			const updatedProperty = updatedJson.Property.result[0];
-			console.log('updatedProperty---', updatedProperty);
 			const newPropertyList = propertyList.map((property) => {
 				if (property.property_uid === updatedProperty.property_uid) {
 					return { ...property, ...updatedProperty }
 				} else {
 					return property;
 				}
-			});			
+			});
+	
 			setPropertyData(newPropertyList[index]);
-			setPropertyList(newPropertyList) // props.setPropertyList - setting propertyList in parent
+			setPropertyList(newPropertyList);
+	
+			// Reset the image delete/favorite icons after update
+			setDeletedIcons(new Array(JSON.parse(updatedProperty.property_images).length).fill(false));
+			setFavoriteIcons(JSON.parse(updatedProperty.property_images).map(image => image === updatedProperty.property_favorite_image));
+	
 			return newPropertyList[index];
 		};
 
 		putData();
-		if (isDefaultUtilities) {
-			postUtilitiesData();
-		} else {
-			updateUtilitiesData();
-		}
-
 		try {
 			await Promise.all(promises);
-			const updatedPropertyData = await autoUpdate();
-			setDeletedIcons(new Array(JSON.parse(updatedPropertyData.property_images).length).fill(false));
-			setFavoriteIcons(JSON.parse(updatedPropertyData.property_images).map(image => image === updatedPropertyData.property_favorite_image));
-	
-			if (!stayOnPage) {
-				if (isDesktop) {
-					props.setRHS('PropertyNavigator');
-					navigate('/propertiesPM', { state: { index, propertyList } });
-				} else {
-					navigate('/propertiesPM', {
-						state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData },
-					});
-				}
-			}
+			await autoUpdate();
+			navigateBackToDashboard();
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	};
 
-	const formatUtilityName = (utility) => {
-		const formattedUtility = utility.replace(/_/g, ' ');
-		return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
+	const navigateBackToDashboard = () => {
+		if (isDesktop) {
+			props.setRHS('PropertyNavigator');
+			navigate('/propertiesPM', { state: { index, propertyList } });
+		} else {
+			navigate('/propertiesPM', {
+				state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData },
+			});
+		}
 	};
 
-	const defaultUtilities = {
-		electricity: 'owner',
-		trash: 'owner',
-		water: 'owner',
-		internet: 'owner',
-		gas: 'owner',
-	};
 
 	const isCoverPhoto = (link) => {
 		if (link === favImage) {
@@ -836,51 +526,37 @@ function EditProperty(props) {
 		}
 	};
 
-	useEffect(() => {
-		const changedFields = getChangedFields();
-		const hasUnsavedChanges = Object.keys(changedFields).length > 0;
-	
-		setHasChanges(hasUnsavedChanges);
-		setIsSaveDisabled(!hasUnsavedChanges);
-		setIsReturnDisabled(!hasUnsavedChanges);
-		setSaveButtonText(hasUnsavedChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard');
-	}, [
-		address,
-		city,
-		propertyState,
-		zip,
-		propertyType,
-		squareFootage,
-		bedrooms,
-		bathrooms,
-		isListed,
-		description,
-		notes,
-		unit,
-		propertyValue,
-		assessmentYear,
-		deposit,
-		listedRent,
-		petsAllowed,
-		depositForRent,
-		taxes,
-		mortgages,
-		insurance,
-		communityAmenities,
-		unitAmenities,
-		nearbyAmenities,
-	]);
-
 	const handleDelete = (index) => {
 		const updatedDeletedIcons = [...deletedIcons];
 		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
 		setDeletedIcons(updatedDeletedIcons);
-
+	
 		const imageToDelete = JSON.parse(propertyData.property_images)[index];
-		setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
-
-		console.log('Delete image at index:', JSON.stringify(deletedIcons));
+	
+		setImagesTobeDeleted((prev) => {
+			let updatedImagesToBeDeleted;
+			if (updatedDeletedIcons[index]) {
+				updatedImagesToBeDeleted = [...prev, imageToDelete];
+			} else {
+				// Remove image from the delete list if the delete icon is toggled off
+				updatedImagesToBeDeleted = prev.filter(image => image !== imageToDelete);
+			}
+	
+			const hasImageChanges = updatedImagesToBeDeleted.length > 0 || imageState.length > 0 || favImage !== propertyData.property_favorite_image;
+			const otherChanges = Object.keys(getChangedFields()).length > 0;
+			const hasUnsavedChanges = hasImageChanges || otherChanges;
+	
+			setHasChanges(hasUnsavedChanges);
+			setIsSaveDisabled(!hasUnsavedChanges);
+			setIsReturnDisabled(false);
+			setSaveButtonText(hasUnsavedChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard');
+	
+			return updatedImagesToBeDeleted;
+		});
+	
+		console.log('Delete image at index:', JSON.stringify(updatedDeletedIcons));
 	};
+	
 
 	const handleFavorite = (index) => {
     const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
@@ -897,6 +573,10 @@ function EditProperty(props) {
     );
   
     console.log(`Favorite image at index: ${index}`);
+	setHasChanges(true);
+	setIsSaveDisabled(false);
+    setIsReturnDisabled(false);
+    setSaveButtonText('Save and Return to Dashboard');
   };
 
   const handleUpdateFavoriteIcons = () => {
@@ -1352,61 +1032,24 @@ function EditProperty(props) {
 					paddingBottom: '30px',
 				}}
 			>
-				<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
-					{hasChanges ? (
-						<Fragment>
-							<Button
-								variant="contained"
-								sx={{ backgroundColor: theme.typography.formButton.background }}
-								onClick={(event) => handleSubmit(event, true)}
-								disabled={isSaveDisabled} // Disable the "Save" button when appropriate
-							>
-								<Typography
-									sx={{
-										color: '#FFFFFF',
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.mediumFont,
-									}}
-								>
-									Save
-								</Typography>
-							</Button>
-
-							<Button
-								variant="contained"
-								sx={{ backgroundColor: theme.typography.formButton.background }}
-								onClick={(event) => handleSubmit(event, false)}
-								disabled={isReturnDisabled} // Disable "Return to Dashboard" if no changes are made
-							>
-								<Typography
-									sx={{
-										color: '#FFFFFF',
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.mediumFont,
-									}}
-								>
-									{saveButtonText}
-								</Typography>
-							</Button>
-						</Fragment>
-					) : (
-						<Button
-							variant="contained"
-							sx={{ backgroundColor: theme.typography.formButton.background }}
-							onClick={(e) => handleBackButton(e)} // This will just return to the dashboard
-						>
-							<Typography
-								sx={{
-									color: '#FFFFFF',
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: theme.typography.mediumFont,
-								}}
-							>
-								Return to Dashboard
-							</Typography>
-						</Button>
-					)}
-				</Stack>
+			<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
+			<Button
+				variant="contained"
+				sx={{ backgroundColor: theme.typography.formButton.background }}
+				onClick={(event) => handleSubmit(event, hasChanges)}
+				disabled={false} // The button should always be enabled
+			>
+				<Typography
+				sx={{
+					color: '#FFFFFF',
+					fontWeight: theme.typography.primary.fontWeight,
+					fontSize: theme.typography.mediumFont,
+				}}
+				>
+				{hasChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard'}
+				</Typography>
+			</Button>
+			</Stack>
 			</Box>
 
 			</Stack>
