@@ -223,23 +223,24 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
         <ThemeProvider theme={theme}>
             <Box
                 style={{
-                    // display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
                     alignContent: 'center',
                     width: '100%', // Take up full screen width
                     // maxWidth: '60%',
                     minHeight: '100vh', // Set the Box height to full height
-                    marginTop: theme.spacing(-5), // Set the margin to 20px
+                    marginTop: theme.spacing(-5), // Set the margin to 20px                    
                 }}
             >
                 <Paper
                     style={{
-                        margin: '10px',
+                        marginTop: '10px',
                         backgroundColor: theme.palette.primary.main,
                         width: '100%', // Occupy full width with 25px margins on each side
                         paddingTop: '10px',
                         paddingBottom: '30px',
+                        borderRadius: '10px',
                     }}
                 >
                      <Stack
