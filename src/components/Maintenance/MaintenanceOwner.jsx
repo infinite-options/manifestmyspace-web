@@ -40,7 +40,7 @@ import AddMaintenanceItem from "./AddMaintenanceItem";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditMaintenanceItem from "./EditMaintenanceItem";
 
-export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId) {
+export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus) {
   const dataObject = {};
 
   const getMaintenanceData = async () => {
@@ -86,9 +86,31 @@ export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, 
       ...dataObject,
     }));
 
+    const initialStatus = determineInitialStatus(array1, array2, array3, array4, array5, array6);
+    setSelectedStatus(initialStatus);
+
     setShowSpinner(false);
   };
   getMaintenanceData();
+}
+
+// Function to determine the initial status based on non-empty arrays
+function determineInitialStatus(array1, array2, array3, array4, array5, array6) {
+  if (array1 && array1.length > 0) {
+    return "NEW REQUEST";
+  } else if (array2 && array2.length > 0) {
+    return "INFO REQUESTED";
+  } else if (array3 && array3.length > 0) {
+    return "PROCESSING";
+  } else if (array4 && array4.length > 0) {
+    return "SCHEDULED";
+  } else if (array5 && array5.length > 0) {
+    return "COMPLETED";
+  } else if (array6 && array6.length > 0) {
+    return "CANCELLED";
+  } else {
+    return "NEW REQUEST"; // Default to "NEW REQUEST" if all arrays are empty
+  }
 }
 
 export function MaintenanceOwner() {
@@ -251,14 +273,14 @@ export function MaintenanceOwner() {
   }
 
   useEffect(() => {
-    maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId);
+    maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus);
   }, []);
 
   useEffect(() => {
     const handleMaintenanceUpdate = () => {
       // Using a closure to capture the current profileId when the effect runs
       const currentProfileId = profileId;
-      maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, currentProfileId);
+      maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, currentProfileId, setSelectedStatus);
     };
 
     window.addEventListener("maintenanceUpdate", handleMaintenanceUpdate);

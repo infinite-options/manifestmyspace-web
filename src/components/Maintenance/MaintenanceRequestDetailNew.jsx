@@ -410,6 +410,8 @@ export default function MaintenanceRequestDetailNew({
                       backgroundColor: item.color,
                       borderBottomRightRadius: "10px",
                       borderBottomLeftRadius: "10px",
+                      paddingBottom: "5px",
+                      borderRadius: '5px',
                       
                     }}
                   >

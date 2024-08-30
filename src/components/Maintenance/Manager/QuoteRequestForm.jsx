@@ -148,19 +148,23 @@ export default function QuoteRequestForm() {
 
 			formData.append('quote_maintenance_request_id', maintenanceItem.maintenance_request_uid);
 			formData.append('quote_pm_notes', additionalInfo);
-			formData.append('quote_maintenance_contacts', maintenanceContactIds); // maintenanceContactIds
+			formData.append('quote_business_id', maintenanceContactIds); // maintenanceContactIds
 			// formData.append("quote_maintenance_images", additionalInfo);
 
-			for (let i = 0; i < selectedImageList.length; i++) {
-				try {
-					let key = i === 0 ? 'img_cover' : `img_${i - 1}`;
-					//console.log('uploading images, image key: ', key, selectedImageList[i]);
-						formData.append(key, selectedImageList[i].file);
-					}
-				catch (error) {
-					console.log('Error uploading images', error);
-				}
-			}
+			const files = selectedImageList;
+    let i = 0;
+    for (const file of selectedImageList) {
+      // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+      let key = `img_${i++}`;
+      if (file.file !== null) {
+        // newProperty[key] = file.file;
+        formData.append(key, file.file);
+      } else {
+        // newProperty[key] = file.image;
+        formData.append(key, file.image);
+      }
+    }
+
 
 			for (let [key, value] of formData.entries()) {
 				console.log(key, value);
@@ -203,7 +207,7 @@ export default function QuoteRequestForm() {
 	};
 
 	function numImages() {
-		if (displayImages.length == 0) {
+		if (displayImages == null || displayImages.length == 0) {
 			return 0;
 		} else {
 			return displayImages.length;
