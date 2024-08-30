@@ -1362,7 +1362,7 @@ const PropertyCard = (props) => {
           // file: file,
           fileIndex: i, //may not need fileIndex - will files be appended in the same order?
           fileName: file.name, //may not need filename
-          fileType: fileType,
+          contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
         };
         documentsDetails.push(documentObject);
       });
@@ -2200,13 +2200,14 @@ return (
 								alignItems: 'center',
 								justifyContent: 'space-between',
 								paddingTop: '5px',
+								marginY:"7px",
 								color: 'black',
 							}}
 						>
-							<Box sx={{width:"30%"}}>filename</Box>
-							<Box sx={{width:"20%"}}>ContentType</Box>
-							<Box sx={{width:"20%"}}>Type</Box>
-							<Box sx={{width:"10%"}}></Box>
+							<Box sx={{width:"30%"}}>Filename</Box>
+							<Box sx={{width:"20%"}}>Content Type</Box>
+							<Box sx={{width:"20%"}}>File Type</Box>
+							<Box sx={{width:"15%"}}></Box>
 						</Box>
 						{[...previouslyUploadedDocs].map((doc, i) => (
 							<>
@@ -2224,7 +2225,7 @@ return (
 										<a href={doc.link} target="_blank" rel="noopener noreferrer">
 											<Box
 												sx={{
-													height: '40px',
+													// height: '40px',
 													width: '100%',
 													cursor: 'pointer', // Change cursor to indicate clickability
 													color: '#3D5CAC',
@@ -2234,9 +2235,50 @@ return (
 											</Box>
 										</a>
 									</Box>
-									<Box sx={{width:"20%"}}>{doc.fileType ? doc.fileType : ""}</Box>
-									<Box sx={{width:"20%"}}>{doc.type}</Box>
-									<Box sx={{width:"10%", display: 'flex', justifyContent: 'center' }}>
+									<Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
+									<Box sx={{width:"20%"}}>{doc.fileType}</Box>
+									{/* <Box sx={{width:"10%", display: 'flex', justifyContent: 'center' }}>
+										<Button
+												variant="text"
+												onClick={(event) => {
+													// handleDeletePrevUploadedFile(doc.link, i);
+												}}
+												sx={{
+													// width: '120px',
+													cursor: 'pointer',
+													fontSize: '14px',
+													fontWeight: 'bold',
+													color: '#3D5CAC',
+													'&:hover': {
+														backgroundColor: 'transparent', // Set to the same color as the default state
+													},
+												}}
+											>
+												
+										</Button>
+									</Box> */}
+									<Box sx={{width:"15%", display: 'flex', justifyContent: 'center'}}>
+										{/* Edit icon */}
+										<Button
+												variant="text"
+												onClick={(event) => {
+													// handleDeletePrevUploadedFile(doc.link, i);
+												}}
+												sx={{
+													// width: '120px',
+													cursor: 'pointer',
+													fontSize: '14px',
+													fontWeight: 'bold',
+													color: '#3D5CAC',
+													'&:hover': {
+														backgroundColor: 'transparent', // Set to the same color as the default state
+													},
+												}}
+											>
+												<EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+										</Button>
+
+										{/* Delete icon */}
 										<Button
 											variant="text"
 											onClick={(event) => {
@@ -2256,7 +2298,6 @@ return (
 											<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
 										</Button>
 									</Box>
-									
 								</Box>
 							</>
 						))}
