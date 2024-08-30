@@ -132,6 +132,7 @@ export default function PropertyNavigator({
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
+
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     // const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
@@ -828,6 +829,9 @@ export default function PropertyNavigator({
     }
   };
 
+  const [dataGridKey, setDataGridKey] = useState(0);
+  const [forceRender, setForceRender] = useState(false);
+
   const addAppliance = async (appliance) => {
     // console.log("inside editOrUpdateAppliance", appliance);
     try {
@@ -838,43 +842,43 @@ export default function PropertyNavigator({
         "Access-Control-Allow-Headers": "*",
         "Access-Control-Allow-Credentials": "*",
       };
-
+  
       const applianceFormData = new FormData();
-
+  
       Object.keys(appliance).forEach((key) => {
         // console.log(`Key: ${key}`);
 
         applianceFormData.append(key, appliance[key]);
       });
       // applianceFormData.append('appiliance_uid', appliance.uid);
-
+  
       // console.log(" editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
       let i = 0;
       if (selectedImageList.length > 0) {
-      for (const file of selectedImageList) {
+        for (const file of selectedImageList) {
         // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-        let key = `img_${i++}`;
-        if (file.file !== null) {
+          let key = `img_${i++}`;
+          if (file.file !== null) {
           // newProperty[key] = file.file;
-          applianceFormData.append(key, file.file);
-        } else {
+            applianceFormData.append(key, file.file);
+          } else {
           // newProperty[key] = file.image;
-          applianceFormData.append(key, file.image);
-        }
-        if (file.coverPhoto) {
-          applianceFormData.append("img_favorite", key);
+            applianceFormData.append(key, file.image);
+          }
+          if (file.coverPhoto) {
+            applianceFormData.append("img_favorite", key);
+          }
         }
       }
-    }
       axios
-      .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
-      .then((response) => {
+        .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+        .then((response) => {
         // Check if the response contains the `appliance_uid`
-        const newApplianceUID = response?.data?.appliance_uid;
-        if (newApplianceUID) {
+          const newApplianceUID = response?.data?.appliance_uid;
+          if (newApplianceUID) {
 
           // console.log("Data updated successfully", response);
           // showSnackbar("Your profile has been successfully updated.", "success");
@@ -885,18 +889,20 @@ export default function PropertyNavigator({
           console.log("Appliance is $$", applianceCategory);
           setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID }]);
         }
-        setShowSpinner(false);
-        setSelectedImageList([]);
-      })
-      .catch((error) => {
-        setShowSpinner(false);
-        console.error(error.response?.data || error.message);
-      });
-  } catch (error) {
+            setShowSpinner(false);
+            setSelectedImageList([]);
+            handleClose();
+            window.location.reload(); //change here for alt referesh
+        })
+        .catch((error) => {
+          setShowSpinner(false);
+          console.error(error.response?.data || error.message);
+        });
+    } catch (error) {
     console.error("Cannot Update Appliances", error);
-    setShowSpinner(false);
-  }
-};
+      setShowSpinner(false);
+    }
+  };
 
   //     axios
   //       .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
@@ -945,6 +951,11 @@ export default function PropertyNavigator({
         changes[key] = currentApplRow[key];
       }
     });
+
+    if (initialApplData.appliance_favorite_image !== favImage) {
+      changes['appliance_favorite_image'] = favImage;
+    }
+
     return changes;
   };
 
@@ -961,7 +972,7 @@ export default function PropertyNavigator({
 
       const changedFields = getAppliancesChanges();
 
-      if (Object.keys(changedFields).length == 0) {
+      if (Object.keys(changedFields).length == 0 && selectedImageList.length === 0 && imagesTobeDeleted.length === 0) {
         console.log("No changes detected.");
         setShowSpinner(false);
         return;
@@ -989,6 +1000,7 @@ export default function PropertyNavigator({
 
       applianceFormData.append("appliance_images", JSON.stringify(currentApplRow.appliance_images));
       applianceFormData.append("appliance_favorite_image", favImage);
+      console.log(favImage);
       let i = 0;
       for (const file of selectedImageList) {
         // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
@@ -1010,35 +1022,33 @@ export default function PropertyNavigator({
       }
 
       for (let [key, value] of applianceFormData.entries()) {
-        console.log(key, value);
+        console.log("check here:",key, value);
       }
 
       if (appliance.appliance_uid) {
         applianceFormData.append("appliance_uid", appliance.appliance_uid);
       }
 
-      axios
-        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
-        .then((response) => {
-          // console.log("Data updated successfully", response);
-          // showSnackbar("Your profile has been successfully updated.", "success");
-          // handleUpdate();
-          // setAppliances([...appliances, { ...appliance, appliance_uid: response?.data?.appliance_uid }]);
-          // setAppliances([...appliances, { ...currentApplRow }]);
-          setAppliances((prevAppliances) => {
-            const index = prevAppliances.findIndex((appliance) => appliance.appliance_uid === currentApplRow.appliance_uid);
+    axios
+      .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+      .then((response) => {
+        // Update the appliance in the state directly after successful edit
+        setAppliances((prevAppliances) => {
+          const index = prevAppliances.findIndex((item) => item.appliance_uid === appliance.appliance_uid);
+          if (index !== -1) {
+            const updatedAppliances = [...prevAppliances];
+            updatedAppliances[index] = { ...appliance, appliance_favorite_image: favImage };
+            return updatedAppliances;
+          } else {
+            return prevAppliances;
+          }
+        });
 
-            if (index !== -1) {
-              // Update existing item
-              return prevAppliances.map((appliance, i) => (i === index ? { ...appliance, ...currentApplRow } : appliance));
-            } else {
-              // Add new item
-              return [...prevAppliances, { ...currentApplRow }];
-            }
-          });
-          setShowSpinner(false);
-          setSelectedImageList([]);
-        })
+        // Optionally close the dialog and reset states
+        setShowSpinner(false);
+        setSelectedImageList([]);
+        handleClose(); // Close the dialog after successful edit
+      })
         .catch((error) => {
           setShowSpinner(false);
           // showSnackbar("Cannot update your profile. Please try again", "error");
@@ -1053,6 +1063,7 @@ export default function PropertyNavigator({
       // console.log("Cannot Update Appliances", error);
       setShowSpinner(false);
     }
+    // window.location.reload();
   };
 
   const handleAddAppln = () => {
@@ -1121,10 +1132,12 @@ export default function PropertyNavigator({
     }
     // console.log("---images----", images);
     const imageUrl = images?.length > 0 ? images[0] : ""; // Get the first image URL
+    const appliance = params.row;
+    const favImage = appliance.appliance_favorite_image;
 
     return (
       <Avatar
-        src={imageUrl}
+        src={favImage}
         alt='Appliance'
         sx={{
           borderRadius: "0",
@@ -1178,7 +1191,7 @@ export default function PropertyNavigator({
     { field: "appliance_warranty_till", headerName: "Warranty Till", width: 80 },
     { field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
     { field: "appliance_url", headerName: "URLs", width: 80 },
-    { field: "appliance_images", headerName: "Image", width: 80, flex: 1, renderCell: ImageCell },
+    { field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
     { field: "appliance_documents", headerName: "Documents", width: 80 },
     {
       field: "actions",
@@ -2594,45 +2607,35 @@ export default function PropertyNavigator({
                 <Dialog open={open} onClose={handleClose}>
                   <DialogTitle>{isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
                   <DialogContent>
-                    <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
-                      <InputLabel required>Appliance Type</InputLabel>
-                      <Select
-                        margin='dense'
-                        label='Appliance Type'
-                        fullWidth
-                        required
-                        variant='outlined'
-                        value={currentApplRow?.appliance_type ? applianceUIDToCategoryMap[currentApplRow?.appliance_type] : "range"}
-                        // value={currentApplRow?.appliance_type || ""}
-                        onChange={(e) => {
-                          if (isEditing) {
-                            // fix - send only updated fields
-                            // setModifiedApplRow({
-                            //   ...modifiedApplRow,
-                            //   appliance_type: applianceCategoryToUIDMap[e.target.value],
-                            // })
-                            // console.log("setting appliance type to - ", e.target.value);
-                            setcurrentApplRow({
-                              ...currentApplRow,
-                              appliance_type: applianceCategoryToUIDMap[e.target.value],
-                            });
-                          } else {
-                            // console.log("setting appliance type to - ", applianceCategoryToUIDMap[e.target.value]);
-                            setcurrentApplRow({
-                              ...currentApplRow,
-                              appliance_type: applianceCategoryToUIDMap[e.target.value],
-                            });
-                          }
-                        }}
-                      >
-                        {applianceCategories &&
-                          applianceCategories.map((appln) => (
-                            <MenuItem key={appln.list_uid} value={appln.list_item}>
-                              {appln.list_item}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                    </FormControl>
+                  <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
+                  <InputLabel required>Appliance Type</InputLabel>
+                  <Select
+                    margin='dense'
+                    label='Appliance Type'
+                    fullWidth
+                    required
+                    variant='outlined'
+                    value={applianceUIDToCategoryMap[currentApplRow?.appliance_type] || ""}
+                    onChange={(e) => {
+                      const selectedItem = applianceCategories.find(
+                        (appln) => appln.list_item === e.target.value
+                      );
+                      if (selectedItem) {
+                        setcurrentApplRow({
+                          ...currentApplRow,
+                          appliance_type: selectedItem.list_uid,
+                        });
+                      }
+                    }}
+                  >
+                    {applianceCategories &&
+                      applianceCategories.map((appln) => (
+                        <MenuItem key={appln.list_uid} value={appln.list_item}>
+                          {appln.list_item}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
                     {isEditing && (
                       <Box
                         sx={{
