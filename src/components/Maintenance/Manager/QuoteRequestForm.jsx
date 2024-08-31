@@ -204,8 +204,8 @@ export default function QuoteRequestForm() {
 		};
 
 		const sendAnnouncement = async (maintenanceContactIds) => {
-			console.log("sendAnnouncement - maintenanceContactIds - ", maintenanceContactIds);
-			console.log("sendAnnouncement - maintenanceItem - ", maintenanceItem);			
+			// console.log("sendAnnouncement - maintenanceContactIds - ", maintenanceContactIds);
+			// console.log("sendAnnouncement - maintenanceItem - ", maintenanceItem);			
 			try {
 				let receiverPropertyMapping = {}
 				const annReceivers = []
@@ -233,9 +233,9 @@ export default function QuoteRequestForm() {
 					announcement_type: ["Text", "Email"],
 				})
 
-				console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
-				console.log("QuoteRequestForm - annReceivers - ", annReceivers);
-				console.log("QuoteRequestForm - payload - ", payload);
+				// console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
+				// console.log("QuoteRequestForm - annReceivers - ", annReceivers);
+				// console.log("QuoteRequestForm - payload - ", payload);
 
 				await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
 				method: "POST",
