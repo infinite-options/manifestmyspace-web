@@ -211,7 +211,7 @@ export default function SettingsMaintenance() {
                 
               
                 
-                <Typography>Dark Mode</Typography> 
+                <Typography>Dark Mode 1</Typography> 
                 <IOSSwitch  checked={isOn2} onChange={()=>{switchState2(!isOn2)}} />
                 
 

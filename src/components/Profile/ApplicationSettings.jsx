@@ -64,15 +64,15 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
         backgroundColor: 'rgba(61, 92, 172, 0.08)', // Hover effect color when checked
       },
       '& + .MuiSwitch-track': {
-        backgroundColor: 'gray', // Track color when checked
+        backgroundColor: '#3D5CAC', // Track color when checked
         opacity: 1,
       },
     },
     '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track:before': {
-      backgroundColor: 'gray',
+      backgroundColor: 'blue',
     },
     '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track:after': {
-      backgroundColor: 'gray',
+      backgroundColor: 'blue',
     },
     '& .MuiSwitch-track': {
       backgroundColor: 'gray', // Track color when not checked
