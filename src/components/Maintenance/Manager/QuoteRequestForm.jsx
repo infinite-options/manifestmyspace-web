@@ -152,18 +152,18 @@ export default function QuoteRequestForm() {
 			// formData.append("quote_maintenance_images", additionalInfo);
 
 			const files = selectedImageList;
-    let i = 0;
-    for (const file of selectedImageList) {
-      // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-      let key = `img_${i++}`;
-      if (file.file !== null) {
-        // newProperty[key] = file.file;
-        formData.append(key, file.file);
-      } else {
-        // newProperty[key] = file.image;
-        formData.append(key, file.image);
-      }
-    }
+			let i = 0;
+			for (const file of selectedImageList) {
+			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+			let key = `img_${i++}`;
+			if (file.file !== null) {
+				// newProperty[key] = file.file;
+				formData.append(key, file.file);
+			} else {
+				// newProperty[key] = file.image;
+				formData.append(key, file.image);
+			}
+			}
 
 
 			for (let [key, value] of formData.entries()) {
@@ -183,6 +183,7 @@ export default function QuoteRequestForm() {
 				if (response.status === 200) {
 					// console.log("success");
 					changeMaintenanceRequestStatus();
+					sendAnnouncement(maintenanceContactIds);					
 					if (isMobile) {
 						navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
 					} else {
@@ -202,8 +203,56 @@ export default function QuoteRequestForm() {
 			setShowSpinner(false);
 		};
 
+		const sendAnnouncement = async (maintenanceContactIds) => {
+			console.log("sendAnnouncement - maintenanceContactIds - ", maintenanceContactIds);
+			console.log("sendAnnouncement - maintenanceItem - ", maintenanceItem);			
+			try {
+				let receiverPropertyMapping = {}
+				const annReceivers = []
+
+				maintenanceContactIds?.forEach(businessID => {
+					annReceivers.push(businessID)
+					if (receiverPropertyMapping[businessID]) {						
+						receiverPropertyMapping[businessID].push(maintenanceItem.property_uid);
+					} else {						
+						receiverPropertyMapping[businessID] = [maintenanceItem.property_uid];
+					}
+				})
+
+
+				const payload = JSON.stringify({
+					announcement_title: `New Request for Quote`,					
+					announcement_msg: `Quote requested for maintenance item - ${maintenanceItem.maintenance_title} - (Property - ${maintenanceItem.property_address})\n localhost:3000/maintenanceDashboard2/${maintenanceItem.maintenance_request_uid}`,
+					announcement_sender: getProfileId(),
+					announcement_date: new Date().toDateString(),
+					// announcement_properties: property.property_uid,
+					announcement_properties: JSON.stringify(receiverPropertyMapping),
+					announcement_mode: "MAINTENANCE",
+					// announcement_receiver: [maintenanceItem?.tenant_uid],
+					announcement_receiver: annReceivers,
+					announcement_type: ["Text", "Email"],
+				})
+
+				console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
+				console.log("QuoteRequestForm - annReceivers - ", annReceivers);
+				console.log("QuoteRequestForm - payload - ", payload);
+
+				await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: payload,
+				});
+			} catch (error) {
+				console.log("Error in sending announcement for requesting quotes:", error);
+				alert("We were unable to send a Text but we were able to send them a notification through the App");
+			}
+			};
+
 		// for (let contact of maintenanceContactIds)
-		submitQuoteRequest(maintenanceContactIds);
+		
+		submitQuoteRequest(maintenanceContactIds); 		 
 	};
 
 	function numImages() {
