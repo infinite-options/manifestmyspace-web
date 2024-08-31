@@ -139,6 +139,7 @@ export default function PropertiesList(props) {
     console.log("In Property List >> In getCoverPhoto");
     // console.log(property.property_images);
     const imageArray = JSON.parse(property.property_images);
+    // console.log("getCoverPhoto - imageArray - ", imageArray);
     if (property.property_favorite_image) {
       const index = imageArray.findIndex((image) => image === property.property_favorite_image);
       if (index !== -1) {
@@ -148,7 +149,7 @@ export default function PropertiesList(props) {
       }else {
         return propertyImage;
       }
-    } else if (imageArray.length !== 0) {
+    } else if (imageArray != null && imageArray?.length !== 0) {
       return imageArray[0];
     } else {
       return propertyImage;
