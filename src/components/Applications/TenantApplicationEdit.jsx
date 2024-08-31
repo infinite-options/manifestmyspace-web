@@ -156,8 +156,8 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                                     // file: file,
                                     fileIndex: i,
                                     fileName: file.name,
-                                    fileType: file.type,
-                                    type: file.type,
+                                    contentType: file.contentType,
+                                    // type: file.type,
                                 };
                                 documentsDetails.push(documentObject);
                             });
@@ -222,8 +222,8 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                                     // file: file,
                                     fileIndex: i,
                                     fileName: file.name,
-                                    fileType: file.type,
-                                    type: file.type,
+                                    contentType: file.contentType,
+                                    // type: file.type,
                                 };
                                 documentsDetails.push(documentObject);
                             });

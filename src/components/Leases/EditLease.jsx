@@ -42,6 +42,7 @@ const EditLease = (props) => {
     const [rentDue, setRentDue] = useState(leaseData.lease_rent_due_by)
     const [availablePay, setAvailablePay] = useState(leaseData.lease_rent_available_topay)
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
+    console.log("---dhyey---- inside edit lease- leasedata, ", leaseData);
 
     const checkFileTypeSelected = () => {
         for (let i = 0; i < contractFiles.length; i++) {
@@ -145,7 +146,7 @@ const EditLease = (props) => {
         leaseApplicationFormData.append('lease_pets', leaseData?.tenant_pet_occupants)
         leaseApplicationFormData.append('lease_vehicles', leaseData?.tenant_vehicle_info)
         leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString())
-        leaseApplicationFormData.append('tenant_uid', leaseData.tenant_uid)
+        leaseApplicationFormData.append('tenant_uid', getTenantsUid(leaseData))
 
         leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
@@ -167,7 +168,7 @@ const EditLease = (props) => {
                     // file: file,
                     fileIndex: i, //may not need fileIndex - will files be appended in the same order?
                     fileName: file.name, //may not need filename
-                    fileType: fileType,
+                    contentType: fileType,
                 };
                 documentsDetails.push(documentObject);
             });
@@ -216,7 +217,7 @@ const EditLease = (props) => {
                     // file: file,
                     fileIndex: i, //may not need fileIndex - will files be appended in the same order?
                     fileName: file.name, //may not need filename
-                    fileType: fileType,
+                    contentType: fileType,
                 };
                 documentsDetails.push(documentObject);
             });
@@ -887,5 +888,21 @@ function getTenantName(leaseData){
 
 }
 
+function getTenantsUid(leaseData){
+    let tenants = leaseData.tenants ? JSON.parse(leaseData.tenants): []
+
+    let tenantsUid = "";
+
+
+    tenants.map((t, i)=>{
+        if(i == 0){
+            tenantsUid += t.tenant_uid;
+        }else{
+            tenantsUid += "," + t.tenant_uid;
+        }
+    })
+
+    return tenantsUid;
+}
 
 export default EditLease;

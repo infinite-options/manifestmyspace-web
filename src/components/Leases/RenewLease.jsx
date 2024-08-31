@@ -75,7 +75,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         console.log('In Renew Lease', leaseDetails, selectedLeaseId, filtered);
         const tenantsRow = JSON.parse(filtered.tenants);
         setTenantWithId(tenantsRow);
-        // console.log('tenantRow', tenantsRow);
+        console.log('----dhyey---- tenantRow', tenantsRow);
 
         //Set utilities details
         const utils = JSON.parse(filtered.property_utilities);
@@ -245,8 +245,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                             // file: file,
                             fileIndex: i,
                             fileName: file.name,
-                            fileType: file.type, //lease or other type
-                            type: file.type,
+                            contentType: file.type, //lease or other type
+                            // type: file.type,
                         };
                         documentsDetails.push(documentObject);
                     });
@@ -306,8 +306,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                                     // file: file,
                                     fileIndex: i,
                                     fileName: file.name,
-                                    fileType: file.type,
-                                    type: file.type,
+                                    contentType: file.contentType,
+                                    // type: file.type,
                                 };
                                 documentsDetails.push(documentObject);
                             });

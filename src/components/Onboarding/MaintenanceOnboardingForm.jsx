@@ -1117,15 +1117,14 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
             console.log("uploadedFiles", item.value);
             if (item.value.length) {
               const documentsDetails = [];
-              [...item.value].forEach((file, i) => {
-                profileFormData.append(`file_${i}`, file.file, file.name);
+              [...item.value].forEach((fileItem, i) => {
+                profileFormData.append(`file_${i}`, fileItem.file, fileItem.name);
                 const fileType = "pdf";
                 const documentObject = {
                   // file: file,
                   fileIndex: i,
-                  fileName: file.name,
-                  fileType: file.type,
-                  type: file.type,
+                  fileName: fileItem.name,
+                  contentType: fileItem.contentType,
                 };
                 documentsDetails.push(documentObject);
               });
