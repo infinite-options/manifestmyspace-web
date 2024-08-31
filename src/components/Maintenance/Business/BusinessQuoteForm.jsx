@@ -363,22 +363,40 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
         formData.append("img_favorite", key);
       }
     }
+    formData.append("quote_documents", []);
+                //console.log('---business document---', selectedDocumentList);
 
+                if (selectedDocumentList.length) {
+                    const documentsDetails = [];
+                    [...selectedDocumentList].forEach((file, i) => {
+                      formData.append(`file_${i}`, file, file.name);
+                      //const fileType = contractFileTypes[i] || "";
+                      const documentObject = {
+                        // file: file,
+                        fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+                        fileName: file.name, //may not need filename
+                        fileType: file.type,
+                        contentType:"Quote",
+                      };
+                      documentsDetails.push(documentObject);
+                    });
+                    formData.append("quote_documents_details", JSON.stringify(documentsDetails));
+                  }
 
-                var documentBinary = []
-                if (selectedDocumentList.length > 0){
+                // var documentBinary = []
+                // if (selectedDocumentList.length > 0){
                     
-                    for (let i = 0; i < selectedDocumentList.length; i++){
-                        try {
-                            const documentBlob = dataURItoBlob(selectedDocumentList[i]);
-                            documentBinary.push(documentBlob)
-                        } catch (error){
-                            console.log("Error creating document binary", error)
-                        }
-                    }
+                //     for (let i = 0; i < selectedDocumentList.length; i++){
+                //         try {
+                //             const documentBlob = dataURItoBlob(selectedDocumentList[i]);
+                //             documentBinary.push(documentBlob)
+                //         } catch (error){
+                //             console.log("Error creating document binary", error)
+                //         }
+                //     }
 
-                    formData.append("qd_files", documentBinary);
-                }
+                //     formData.append("qd_files", documentBinary);
+                // }
         
                 for (let [key, value] of formData.entries()) {
                     console.log(key, value);    

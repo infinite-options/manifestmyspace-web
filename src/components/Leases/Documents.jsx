@@ -29,6 +29,7 @@ import theme from "../../theme/theme";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { makeStyles } from "@material-ui/core/styles";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from '@mui/icons-material/Delete';
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Close } from "@mui/icons-material";
 
@@ -79,14 +80,14 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
   const checkRequiredFields = () => {
     let retVal = true;
     console.log("name", currentRow.filename, currentRow.name);
-    console.log("type", currentRow.type);
+    console.log("type", currentRow.contentType);
 
     if (!currentRow.filename && !currentRow.name) {
       console.error("Filename is either empty, null, or undefined.");
       return false;
     }
 
-    if (!currentRow.type) {
+    if (!currentRow.contentType) {
       console.error("Type is either empty, null, or undefined.");
       return false;
     }
@@ -95,12 +96,16 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
     if (isEditing === true) {
       console.log("current row is", currentRow);
       const updatedDocuments = documents.map((doc) => (doc.id === currentRow.id ? currentRow : doc));
+      // console.log("---Dhyey--- updateDocs", updatedDocuments)
       const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
+      
       setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
       setIsUpdated(true);
     } else {
-      console.log("arr", newFiles);
-      setModifiedData((prev) => [...prev, { key: dataKey, value: documents }]);
+      // console.log("---dhyey--- arr", uploadedFiles);
+      const updatedDocsWithoutId = documents.map(({ id, ...rest }) => rest);
+
+      setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
       setModifiedData((prev) => [...prev, { key: "uploadedFiles", value: uploadedFiles }]);
       setIsUpdated(true);
     }
@@ -108,23 +113,23 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
   };
 
   const handleFileUpload = (e) => {
-    console.log("uploaded file", e.target.files);
-    console.log("documents", documents);
+    // console.log("uploaded file", e.target.files);
+    // console.log("documents", documents);
     if (isEditing === true) {
       const curr = { ...currentRow, filename: e.target.files[0].name };
       setcurrentRow(curr);
     } else {
       const curr = { ...currentRow, filename: e.target.files[0].name, id: documents?.length };
-      console.log("curr", curr);
+      // console.log("curr", curr);
       setcurrentRow(curr);
     }
 
     const filesArray = Array.from(e.target.files).map((file) => ({
       name: file.name,
-      type: currentRow.type,
+      contentType: currentRow.contentType,
       file: file,
     }));
-    console.log("filesArray", filesArray);
+    // console.log("--dhyey--- filesArray", filesArray);
     setNewFiles(filesArray);
     setuploadedFiles(filesArray);
     // Create a URL for the file preview
@@ -163,7 +168,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
     const updatedDocuments = documents.filter((doc) => doc.id !== currentRow.id);
     const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
     setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
-    setModifiedData((prev) => [...prev, { key: "deleted_documents", value: [currentRow.link] }]);
+    setModifiedData((prev) => [...prev, { key: "delete_documents", value: [currentRow.link] }]);
     setIsUpdated(true);
   };
 
@@ -184,14 +189,14 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
   };
 
   const docsColumns = [
-    {
-      field: "id",
-      headerName: "UID",
-      flex: 0.5,
-    },
+    // {
+    //   field: "id",
+    //   headerName: "UID",
+    //   flex: 0.5,
+    // },
     {
       field: "filename",
-      headerName: "Name",
+      headerName: "Filename",
       valueGetter: (params) => {
         const { filename, name } = params.row;
         return `${filename || ""} ${name || ""}`.trim();
@@ -199,8 +204,13 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
       flex: 1,
     },
     {
+      field: "fileType",
+      headerName: "Content Type",
+      flex: 1,
+    },
+    {
       field: "type",
-      headerName: "Type",
+      headerName: "File Type",
       flex: 1,
     },
     {
@@ -290,7 +300,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
           </Grid>
         </AccordionSummary>
         <AccordionDetails>
-          <DataGrid
+          {/* <DataGrid
             rows={documents}
             columns={docsColumns}
             hideFooter={true}
@@ -314,7 +324,126 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                 fontWeight: "bold",
               },
             }}
-          />
+          /> */}
+          {documents.length ? (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '7px',
+                width: '100%',
+              }}
+            >
+              <Box
+                sx={{
+                  fontSize: '15px',
+                  fontWeight: 'bold',
+                  paddingTop: '10px',
+                  paddingLeft: '5px',
+                  color: '#3D5CAC',
+                  width: '100%',
+                }}
+              >
+                {/* Previously Uploaded Documents: */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingTop: '5px',
+                    marginY:"7px",
+                    color: 'black',
+                  }}
+                >
+                  <Box sx={{width:"30%"}}>Filename</Box>
+                  <Box sx={{width:"20%"}}>Content Type</Box>
+                  <Box sx={{width:"20%"}}>File Type</Box>
+                  <Box sx={{width:"15%"}}></Box>
+                </Box>
+                {[...documents].map((doc, i) => (
+                  <>
+                  {/* {console.log("details of doc-", doc)} */}
+                    <Box
+                      key={i}
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Box sx={{width:"30%"}}>
+                        <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                          <Box
+                            sx={{
+                              // height: '40px',
+                              width: '100%',
+                              cursor: 'pointer', // Change cursor to indicate clickability
+                              color: '#3D5CAC',
+                            }}
+                          >
+                            {doc.filename}
+                          </Box>
+                        </a>
+                      </Box>
+                      <Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
+                      <Box sx={{width:"20%"}}>{doc.fileType}</Box>
+                      <Box sx={{width:"15%", display: 'flex', justifyContent: 'center'}}>
+                        {/* Edit icon */}
+                        <Button
+                            variant="text"
+                            onClick={(event) => {
+                              // setcurrentRow({...doc})
+                              handleEditClick({...doc})
+                              // handleDeletePrevUploadedFile(doc.link, i);
+                            }}
+                            sx={{
+                              // width: '120px',
+                              cursor: 'pointer',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                              color: '#3D5CAC',
+                              '&:hover': {
+                                backgroundColor: 'transparent', // Set to the same color as the default state
+                              },
+                            }}
+                          >
+                            <EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+                        </Button>
+
+                        {/* Delete icon */}
+                        <Button
+                          variant="text"
+                          onClick={(event) => {
+                            setcurrentRow({...doc})
+                            handleDeleteClick()
+                            // handleDeletePrevUploadedFile(doc.link, i);
+                          }}
+                          sx={{
+                            // width: '120px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            color: '#3D5CAC',
+                            '&:hover': {
+                              backgroundColor: 'transparent', // Set to the same color as the default state
+                            },
+                          }}
+                        >
+                          <DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+                        </Button>
+                      </Box>
+                    </Box>
+                  </>
+                ))}
+              </Box>
+            </Box>
+          ) : (
+            <></>
+          )}
         </AccordionDetails>
       </Accordion>
 
@@ -399,9 +528,9 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
               <FormControl fullWidth sx={{ marginTop: "10px" }}>
                 {/* <InputLabel sx={{ color: theme.palette.grey }}>Type</InputLabel> */}
                 <Select
-                  value={(currentRow && currentRow?.type) || ""}
+                  value={(currentRow && currentRow?.contentType) || ""}
                   onChange={(e) => {
-                    setcurrentRow({ ...currentRow, type: e.target.value });
+                    setcurrentRow({ ...currentRow, contentType: e.target.value });
                     if (newFiles) {
                       //update document type
                       let newArr = [...newFiles];
@@ -472,7 +601,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
             >
               Save
             </Button>
-            {isEditing && (
+            {/* {isEditing && (
               <>
                 <Button
                   onClick={handleDeleteClick}
@@ -492,7 +621,14 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                 >
                   Delete
                 </Button>
-                <Dialog open={openDeleteConfirmation} onClose={handleDeleteClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                
+              </>
+            )} */}
+          </Box>
+        </Box>
+      </Modal>
+
+      <Dialog open={openDeleteConfirmation} onClose={handleDeleteClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                   <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
                   <DialogContent>
                     <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Document?</DialogContentText>
@@ -534,12 +670,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                       Confirm
                     </Button>
                   </DialogActions>
-                </Dialog>
-              </>
-            )}
-          </Box>
-        </Box>
-      </Modal>
+      </Dialog>
     </div>
   );
 };
