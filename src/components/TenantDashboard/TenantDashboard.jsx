@@ -144,7 +144,7 @@ function TenantDashboard(props) {
 
         // Extract the necessary data
         let propertyData = tenantRequestsData?.property?.result || [];
-        console.log("propertyData: ", propertyData);
+        // console.log("propertyData: ", propertyData);
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result || [];
         let leaseDetailsData = tenantRequestsData?.leaseDetails?.result || [];
         let announcementsReceivedData = announcementsResponseData?.received?.result || [];
@@ -152,6 +152,7 @@ function TenantDashboard(props) {
         let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result || [];
 
         // console.log("[DEBUG] announcementsReceivedData", announcementsReceivedData);
+        console.log("[DEBUG] leaseDetailsdData", leaseDetailsData);
 
         // Check if all leases are not active
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
@@ -398,6 +399,7 @@ function TenantDashboard(props) {
   }
 
   // console.log("Selected Property before return: ", selectedProperty);
+  console.log("[DEBUG] leaseDetails", leaseDetails);
 
   return (
     <ThemeProvider theme={theme}>
@@ -484,6 +486,7 @@ function TenantDashboard(props) {
                 property={propertyData}
                 lease={leaseListingData}
                 setViewApprovedLeaseNavState={setViewApprovedLeaseNavState}
+                propertyLeaseData={leaseDetails}
               />
             </Grid>
 
@@ -744,12 +747,15 @@ const AccountBalanceWidget = ({
   property,
   lease,
   setViewApprovedLeaseNavState,
+  propertyLeaseData,
 }) => {
   const navigate = useNavigate();
   // console.log("---selectedProperty in acc---", selectedProperty);
   // console.log("---selectedLease in acc---", selectedLease);
+  console.log("---propertyLeaseData in acc---", propertyLeaseData);
+  console.log("---propertyLeaseData in acc---", propertyLeaseData[0].business_name);
   // console.log("---propertyData in acc---", propertyData);
-  console.log("---property in acc---", property);
+  // console.log("---property in acc---", property);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
@@ -898,13 +904,14 @@ const AccountBalanceWidget = ({
   }
 
   const [image, setImage] = useState(defaultHouseImage);
+  const [bN, setBN] = useState("Not A Real Business");
 
   useEffect(() => {
     if (selectedProperty) {
-      console.log("selectedProperty: ", selectedProperty);
-      console.log("property: ", property);
+      // console.log("selectedProperty: ", selectedProperty);
+      // console.log("property: ", property);
       const selectedPropertyImages = propertyData.find((property) => property.property_uid === selectedProperty.property_uid)?.property_favorite_image;
-      console.log("selectedPropertyImages: ", selectedPropertyImages);
+      // console.log("selectedPropertyImages: ", selectedPropertyImages);
       if (selectedPropertyImages) {
         setImage(selectedPropertyImages);
       } else {
@@ -912,6 +919,20 @@ const AccountBalanceWidget = ({
       }
     }
   }, [selectedProperty, propertyData]);
+
+  useEffect(() => {
+    if (selectedProperty) {
+      console.log("selectedProperty: ", selectedProperty);
+      console.log("propertyLeaseData: ", propertyLeaseData);
+      const selectedPropertyBusinessName = propertyLeaseData.find((property) => property.property_uid === selectedProperty.property_uid)?.business_name;
+      console.log("selectedPropertyBusinessName: ", selectedPropertyBusinessName);
+      if (selectedPropertyBusinessName) {
+        setBN(selectedPropertyBusinessName);
+      } else {
+        setBN("Another Fake Business");
+      }
+    }
+  }, [selectedProperty, propertyLeaseData]);
 
   function handlePropertyChange(item) {
     setPropertyAddr(item.property_address + " " + item.property_unit);
@@ -1183,6 +1204,16 @@ const AccountBalanceWidget = ({
           </Grid>
         </Grid>
       </Box>
+
+      <Box>Hello</Box>
+      <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold" }}>Property Manager</Typography>
+      <Grid container>
+        <Grid item xs={12} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+          {" "}
+          {bN ? bN : "Can't touch this"}
+        </Grid>
+      </Grid>
+      <Box>Goodbye</Box>
       {propertyData &&
         propertyData.length > 0 &&
         (selectedProperty?.lease_status === "NEW" ||
@@ -1191,7 +1222,7 @@ const AccountBalanceWidget = ({
         selectedProperty?.lease_status === "PROCESSING" ||
         selectedProperty?.lease_status === "REJECTED" ||
         selectedProperty?.lease_status === "RESCIND" ? (
-          <Box
+          <Box // Lease Application Box
             sx={{
               display: "flex",
               flexDirection: "row",
@@ -1210,7 +1241,7 @@ const AccountBalanceWidget = ({
             <u>View Application</u>
           </Box>
         ) : (
-          <Box
+          <Box // View Lease Box
             sx={{
               display: "flex",
               flexDirection: "row",
@@ -1226,7 +1257,7 @@ const AccountBalanceWidget = ({
             onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
           >
             <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-            <u>View Full Lease</u>
+            <u>View Full Lease 1</u>
           </Box>
         ))}
 
