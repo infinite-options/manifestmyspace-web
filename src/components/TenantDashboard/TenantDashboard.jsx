@@ -753,7 +753,7 @@ const AccountBalanceWidget = ({
   // console.log("---selectedProperty in acc---", selectedProperty);
   // console.log("---selectedLease in acc---", selectedLease);
   console.log("---propertyLeaseData in acc---", propertyLeaseData);
-  console.log("---propertyLeaseData in acc---", propertyLeaseData[0].business_name);
+  // console.log("---propertyLeaseData in acc---", propertyLeaseData[0].business_name);
   // console.log("---propertyData in acc---", propertyData);
   // console.log("---property in acc---", property);
 
@@ -921,9 +921,10 @@ const AccountBalanceWidget = ({
   }, [selectedProperty, propertyData]);
 
   useEffect(() => {
-    if (selectedProperty) {
+    if (selectedProperty && propertyLeaseData) {
       console.log("selectedProperty: ", selectedProperty);
       console.log("propertyLeaseData: ", propertyLeaseData);
+      // let selectedPropertyBusinessName = "Business Failing";
       const selectedPropertyBusinessName = propertyLeaseData.find((property) => property.property_uid === selectedProperty.property_uid)?.business_name;
       console.log("selectedPropertyBusinessName: ", selectedPropertyBusinessName);
       if (selectedPropertyBusinessName) {
@@ -1208,7 +1209,7 @@ const AccountBalanceWidget = ({
       <Box>Hello</Box>
       <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold" }}>Property Manager</Typography>
       <Grid container>
-        <Grid item xs={12} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+        <Grid item xs={12} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "left" }}>
           {" "}
           {bN ? bN : "Can't touch this"}
         </Grid>
