@@ -33,6 +33,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Close } from "@mui/icons-material";
 
+import axios from 'axios';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-input": {
@@ -58,7 +60,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isUpdated, setIsUpdated] = useState(false);
-
+  const [contentTypes, setContentTypes] = useState([]);
   const [ expanded, setExpanded ] = useState(true);
 
   useEffect(() => {
@@ -70,6 +72,20 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
       setuploadedFiles([]);
     }
   }, [isUpdated]);
+
+  useEffect(() =>{
+    fetchContentTypes();
+  }, []);
+
+  const fetchContentTypes = async()=>{
+    try {
+      const response = await axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/lists?list_category=content');
+      // console.log(response.data.result)
+      setContentTypes(response.data.result);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+  }
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -94,7 +110,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
 
     //update setDocuments
     if (isEditing === true) {
-      console.log("current row is", currentRow);
+      // console.log("current row is", currentRow);
       const updatedDocuments = documents.map((doc) => (doc.id === currentRow.id ? currentRow : doc));
       // console.log("---Dhyey--- updateDocs", updatedDocuments)
       const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
@@ -254,6 +270,8 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
       <Accordion sx={{ backgroundColor: color }} expanded={expanded} onChange={() => setExpanded(prevState => !prevState)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
           <Grid container>
+
+            {/* Document Text */}
             <Grid item md={11.2}>
               <Typography
                 sx={{
@@ -270,7 +288,10 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                 Documents
               </Typography>
             </Grid>
+
+            {/* Add Icon button */}
             <Grid item md={0.5}>
+              {/* Add Icon */}
               <Button
                 sx={{
                   "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
@@ -462,6 +483,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
             p: 4,
           }}
         >
+          {/* Close button */}
           <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
             <Typography
               id="add-document-modal"
@@ -478,7 +500,14 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
             >
               Documents
             </Typography>
-            <Button onClick={handleClose} sx={{ ml: "auto" }}>
+            <Button onClick={handleClose} 
+              sx={{ ml: "auto", 
+                  "&:hover": {
+                    '& svg': {
+                      color: '#ffffff',
+                    },
+                  }, 
+            }}>
               <Close
                 sx={{
                   color: theme.typography.primary.black,
@@ -487,11 +516,14 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
               />
             </Button>
           </Box>
+          
           <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
             <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%", height: "100%" }}>
               {snackbarMessage}
             </Alert>
           </Snackbar>
+
+          {/* Container with all fields */}
           <Grid container columnSpacing={8}>
             <Grid item md={1} />
             <Grid item md={5}>
@@ -499,6 +531,8 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                 {"Document Name  "}
                 <span style={{ color: "red" }}>*</span>
               </Typography>
+
+              {/* document type */}
               <TextField
                 sx={{ marginTop: "5px" }}
                 name="file_name"
@@ -524,7 +558,8 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                 {"Document Type  "}
                 <span style={{ color: "red" }}>*</span>
               </Typography>
-
+              
+              {/* Document type select options */}
               <FormControl fullWidth sx={{ marginTop: "10px" }}>
                 {/* <InputLabel sx={{ color: theme.palette.grey }}>Type</InputLabel> */}
                 <Select
@@ -535,7 +570,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                       //update document type
                       let newArr = [...newFiles];
                     //   newArr[0].type = currentRow.type;
-                      newArr[0].type = e.target.value;
+                      newArr[0].contentType = e.target.value;
                       setNewFiles(newArr);
                     //   setuploadedFiles((prevFiles) => [...prevFiles, ...newArr]);
                       setuploadedFiles(() => [...newArr]); 
@@ -546,47 +581,64 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                   className={classes.select}
                   required
                 >
-                  <MenuItem value="Lease Agreement">Lease Agreement</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
+                  {contentTypes.map((item, index) => {
+                    if (item.list_item != null) {
+                        return (
+                          <MenuItem key={index} value={item.list_item}>
+                              {item.list_item}
+                          </MenuItem>
+                        );
+                    }
+                    return null;
+                  })}
+                  {/* <MenuItem value="Lease Agreement">Lease Agreement</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem> */}
                 </Select>
               </FormControl>
-
+              
+              {/* Select file button */}
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px" }}>
                 <Button
+                  variant="contained"
+                  color="primary"
                   component="label"
                   sx={{
                     marginRight: "5px",
-                    background: "#FFC614",
-                    color: "#160449",
+                    background:'#3D5CAC',
                     cursor: "pointer",
-                    width: "100px",
+                    width: "130px",
                     height: "31px",
+                    color:'#ffffff',
                     fontWeight: theme.typography.secondary.fontWeight,
                     fontSize: theme.typography.smallFont,
                     textTransform: "none",
                     "&:hover": {
-                      backgroundColor: "#fabd00",
+                      backgroundColor: "#3D5CAC",
                     },
                   }}
                 >
-                  <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC", paddingBottom: "2px" }} /> Upload
+                  <DescriptionIcon sx={{ fontSize: 19, color: "#ffffff", paddingBottom: "2px", paddingRight:"2px"}} /> Select File
                   <input id="file-upload" type="file" accept=".doc,.docx,.txt,.pdf" hidden onChange={(e) => handleFileUpload(e)} />
                 </Button>
               </Box>
             </Grid>
             {/* <Grid item md={0.5} /> */}
+
+            {/* PDF Preview */}
             <Grid item md={5}>
               <Box sx={{ marginTop: "10px", backgroundColor: "#D9D9D9" }}>
                 <iframe src={filePreview} width="100%" height="322px" title="File Preview" />
               </Box>
             </Grid>
           </Grid>
+
+          {/* Save button */}
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "40px" }}>
             <Button
               onClick={handleSubmit}
               sx={{
-                background: "#FFC614",
-                color: "#160449",
+                background: "#3D5CAC",
+                color: "#ffffff",
                 marginRight: "30px",
                 cursor: "pointer",
                 width: "100px",
@@ -595,7 +647,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                 fontSize: theme.typography.smallFont,
                 textTransform: "none",
                 "&:hover": {
-                  backgroundColor: "#fabd00",
+                  backgroundColor: "#3D5CAC",
                 },
               }}
             >

@@ -751,7 +751,7 @@ const TenantApplicationNav = (props) => {
                                     {doc.filename}
                                   </Box>
                                 </a>
-                                <Box sx={{ color: "#160449" }}>{formatDocumentType(doc.type)}</Box>
+                                <Box sx={{ color: "#160449" }}>{doc.contentType}</Box>
                               </Box>
                             </>
                           ))}

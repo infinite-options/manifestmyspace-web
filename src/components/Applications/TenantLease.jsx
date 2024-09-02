@@ -34,11 +34,19 @@ import APIConfig from "../../utils/APIConfig";
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
-      backgroundColor: "#D6D5DA",
-      borderRadius: 10,
-      height: 30,
+      backgroundColor: "#D6D5DA !important",
+      borderRadius: "10px !import",
+      height: "30px !important",
       marginBlock: 10,
-      paddingBottom: "15px",
+      paddingBottom: "15px !important",
+    },
+    '& input:-webkit-autofill': {
+      backgroundColor: '#D6D5DA !important',
+      color: '#000000 !important',
+      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    },
+    '& input:-webkit-autofill:focus': {
+      transition: 'background-color 0s 600000s, color 0s 600000s !important',
     },
   },
   select: {
@@ -233,9 +241,12 @@ const TenantLease = () => {
     list.splice(index - 1, 1);
     setFees(list);
   };
+
   const handleFeeChange = (e, index) => {
     const { name, value } = e.target;
     const list = [...fees];
+  
+    
     if (name === "due_by" || name === "late_by" || name === "available_topay") {
       if (typeof parseInt(value) === "number" && !isNaN(parseInt(value))) {
         list[index - 1][name] = parseInt(value);
@@ -1044,11 +1055,12 @@ const TenantLease = () => {
                         variant='filled'
                         fullWidth
                         className={classes.root}
-                        onChange={(e) => handleFeeChange(e, row.id)}
+                        onChange={(e) => handleFeeChange(e, row.id)}  
                         InputProps={{
                           endAdornment: <InputAdornment position='start'>{getDateAdornmentString(row.due_by)}</InputAdornment>,
                         }}
                       />
+
                     )}
                     {(row.frequency === "One-time" || row.frequency === "Annually") && (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>

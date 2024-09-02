@@ -17,7 +17,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function TenantApplication(props) {
-  console.log("In Tenant Application", props);
+  // console.log("In Tenant Application", props.data);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId, roleName } = useUser();
@@ -81,6 +81,7 @@ export default function TenantApplication(props) {
         const fetchedLease = leaseResponse.data["Lease_Details"].result.filter(
           (lease) => lease.lease_uid === props.lease.lease_uid
         );
+        console.log("----dhyey---- fetchedLease - ", fetchedLease)
         setLease(fetchedLease);
   
         // Fetch tenant profile information asynchronously
@@ -325,7 +326,7 @@ export default function TenantApplication(props) {
       }
 
       leaseApplicationData.append("lease_referred", "[]");
-      leaseApplicationData.append("lease_rent", "[]");
+      leaseApplicationData.append("lease_fees", "[]");
       leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
       leaseApplicationData.append("tenant_uid", getProfileId());
       const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -418,7 +419,8 @@ export default function TenantApplication(props) {
                 <Button onClick={(e) => handleCloseButton(e)}>
                   <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
                 </Button>
-              </Box>}
+              </Box>
+            }
             <Typography
               sx={{
                 justifySelf: "center",
@@ -430,6 +432,7 @@ export default function TenantApplication(props) {
               Your Application For
             </Typography>
           </Box>
+          
           <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
             <Typography
               sx={{
@@ -442,6 +445,7 @@ export default function TenantApplication(props) {
               {formattedAddress}
             </Typography>
           </Box>
+
           {props.from === "PropertyInfo" &&
             <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "10px" }}>
               <Button
@@ -483,6 +487,7 @@ export default function TenantApplication(props) {
               </Typography>
             </Box>
           ) : null}
+
           <Paper
             style={{
               margin: "25px",
@@ -986,7 +991,7 @@ export default function TenantApplication(props) {
                           {doc.filename}
                         </Box>
                       </a>
-                      {formatDocumentType(doc.type)}
+                      {doc.contentType}
                       <Button
                         variant='text'
                         onClick={(event) => {
@@ -1046,7 +1051,7 @@ export default function TenantApplication(props) {
                       Submit
                     </Typography>
                   </Button>}
-                {(status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND") &&
+                {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND") &&
                 <Button
                   variant='contained'
                   sx={{

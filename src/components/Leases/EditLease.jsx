@@ -35,14 +35,18 @@ const EditLease = (props) => {
     const [endDate, setEndDate] = useState(leaseData.lease_end)
     const [moveIn, setMoveIn] = useState(leaseData.lease_move_in_date)
     const [noOfOcc, setNoOfOcc] = useState("")
-    const [rent, setRent] = useState(leaseData.property_listed_rent)
-    const [rentFreq, setRentFreq] = useState(leaseData.frequency)
-    const [lateFeeAfter, setLateFeeAfter] = useState(leaseData.lease_rent_late_by)
-    const [lateFeePerDay, setLateFeePerDay] = useState(leaseData.lease_rent_late_fee)
-    const [rentDue, setRentDue] = useState(leaseData.lease_rent_due_by)
-    const [availablePay, setAvailablePay] = useState(leaseData.lease_rent_available_topay)
+    const [contentTypes, setContentTypes] = useState([]);
+
+    const rentDataFromLease = JSON.parse(leaseData.lease_fees).filter((lease) => lease.fee_name === "Rent");
+
+    const [rent, setRent] = useState(rentDataFromLease[0].charge? rentDataFromLease[0].charge : 0)
+    const [rentFreq, setRentFreq] = useState(rentDataFromLease[0].frequency? rentDataFromLease[0].frequency : "Monthly")
+    const [lateFeeAfter, setLateFeeAfter] = useState(rentDataFromLease[0].late_by? rentDataFromLease[0].late_by : 0)
+    const [lateFeePerDay, setLateFeePerDay] = useState(rentDataFromLease[0].late_fee? rentDataFromLease[0].late_fee:0)
+    const [rentDue, setRentDue] = useState(rentDataFromLease[0].due_by? rentDataFromLease[0].due_by : 0)
+    const [availablePay, setAvailablePay] = useState(rentDataFromLease[0].available_topay? rentDataFromLease[0].available_topay:0)
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
-    console.log("---dhyey---- inside edit lease- leasedata, ", leaseData);
+    // console.log("---dhyey---- inside edit lease- leasedata, ", rentDataFromLease);
 
     const checkFileTypeSelected = () => {
         for (let i = 0; i < contractFiles.length; i++) {
@@ -123,6 +127,19 @@ const EditLease = (props) => {
         });
     };
 
+    useEffect(() =>{
+        fetchContentTypes();
+    }, []);
+    
+    const fetchContentTypes = async()=>{
+        try {
+          const response = await axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/lists?list_category=content');
+          // console.log(response.data.result)
+          setContentTypes(response.data.result);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
 
     const handleNewLease = () => {
 
@@ -151,13 +168,18 @@ const EditLease = (props) => {
         leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
         leaseApplicationFormData.append("lease_end",leaseData.lease_end)
-        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)                                     
-        leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
-        leaseApplicationFormData.append("frequency",leaseData.frequency)
-        leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
-        leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
-        leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
-        leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
+        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)    
+        
+        const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "leaseFees_uid": rentDataFromLease[0].leaseFees_uid, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
+
+        // leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
+        // leaseApplicationFormData.append("frequency",leaseData.frequency)
+        // leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
+        // leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
+        // leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
+        // leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
+
+        leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees))
 
         if(contractFiles.length){
             const documentsDetails = [];
@@ -200,13 +222,17 @@ const EditLease = (props) => {
         leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
         leaseApplicationFormData.append("lease_end",leaseData.lease_end)
-        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)                                     
-        leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
-        leaseApplicationFormData.append("frequency",leaseData.frequency)
-        leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
-        leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
-        leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
-        leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
+        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date) 
+        
+        const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "leaseFees_uid": rentDataFromLease[0].leaseFees_uid, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
+        leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees))
+
+        // leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
+        // leaseApplicationFormData.append("frequency",leaseData.frequency)
+        // leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
+        // leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
+        // leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
+        // leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
 
         if(contractFiles.length){
             const documentsDetails = [];
@@ -791,8 +817,18 @@ const EditLease = (props) => {
                                             padding: '8px', // Adjust the padding as needed
                                         }}
                                     >
-                                        <MenuItem value={"contract"}>contract</MenuItem>
-                                        <MenuItem value={"other"}>other</MenuItem>
+                                        {contentTypes.map((item, index) => {
+                                            if (item.list_item != null) {
+                                                return (
+                                                <MenuItem key={index} value={item.list_item}>
+                                                    {item.list_item}
+                                                </MenuItem>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                        {/* <MenuItem value={"contract"}>contract</MenuItem>
+                                        <MenuItem value={"other"}>other</MenuItem> */}
                                     </Select>
                                     <Button 
                                         variant="text"

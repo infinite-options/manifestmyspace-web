@@ -265,7 +265,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
     const handleCloseButton = (e) => {
         e.preventDefault();
         const state = {
-            data: property, status: lease_uid === null ? "" : property.lease_status, lease:  lease_uid === null ? [] : lease[0] , from: from
+            data: property, status: lease_uid === null ? "" : lease[0].lease_status, lease:  lease_uid === null ? [] : lease[0] , from: from
         }
         setRightPane?.({ type: "tenantApplication", state: state });
     };
@@ -307,7 +307,9 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                             <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
                             {snackbarMessage}
                         </Alert>
-                    </Snackbar>                    
+                    </Snackbar>
+
+                    {/* occupancy details                     */}
                     <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
                             <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={occupantsExpanded} onChange={() => setOccupantsExpanded(prevState => !prevState)}>
@@ -379,7 +381,8 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                             </Accordion>
                         </Grid>
                     </Grid>
-
+                    
+                    {/* documents details */}
                     <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12} md={12}>
                         <Documents
