@@ -644,6 +644,11 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
   const sentContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "SENT");
   const newContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "NEW");
 
+  // add an onclick function for propertiesDataGrid
+  // or send in property_uid to propertiespM instead of index
+  // setup index on propertiesPM side
+  // 
+
   return (
     <>
       <Grid container sx={{ padding: "10px" }}>
@@ -730,7 +735,18 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
     {
       field: "property_address",
       flex: 1,
-      renderCell: (params) => <Typography sx={{ fontSize: "14px", color: "#160449" }}>{`${params.row.property_address}, Unit - ${params.row.property_unit}`}</Typography>,
+      renderCell: (params) => (
+        <Typography
+          sx={{ fontSize: "14px", color: "#160449", cursor: "pointer" }}
+          onClick={() => {
+            navigate("/propertiesPM", {
+              state: { currentProperty: params.row.property_uid }
+            });
+          }}
+        >
+          {`${params.row.property_address}, Unit - ${params.row.property_unit}`}
+        </Typography>
+      ),
     },
     {
       field: "rent_status",
