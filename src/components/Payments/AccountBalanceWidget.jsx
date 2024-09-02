@@ -87,13 +87,13 @@ const AccountBalanceWidget = ({ selectedProperty, selectedLease, propertyAddr, p
   const showLeaseStatusIndicator = (lease_status) => {
     return (
       <>
-        {lease_status === "ACTIVE" ? <CircleIcon fontSize="small" sx={{ color: "#3D5CAC", paddingRight: "10px" }} /> : null /* blue */}
-        {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ? <CircleIcon fontSize="small" sx={{ color: "#FF8832", paddingRight: "10px" }} /> : null /* orange */}
-        {lease_status === "NEW" ? <CircleIcon fontSize="small" sx={{ color: "#FAD102", paddingRight: "10px" }} /> : null /* yellow */}
-        {lease_status === "PROCESSING" ? <CircleIcon fontSize="small" sx={{ color: "#00D100", paddingRight: "10px" }} /> : null /* green */}
-        {lease_status === "REJECTED" ? <CircleIcon fontSize="small" sx={{ color: "#FA0202", paddingRight: "10px" }} /> : null /* red */}
-        {lease_status === "RESCIND" ? <CircleIcon fontSize="small" sx={{ color: "#000000", paddingRight: "10px" }} /> : null /* black */}
-        {lease_status === "ENDED" ? <CircleIcon fontSize="small" sx={{ color: "#2E2E2E", paddingRight: "10px" }} /> : null /* black */}
+        {lease_status === "ACTIVE" ? <CircleIcon fontSize='small' sx={{ color: "#3D5CAC", paddingRight: "10px" }} /> : null /* blue */}
+        {lease_status === "REFUSED" || lease_status === "WITHDRAWN" ? <CircleIcon fontSize='small' sx={{ color: "#FF8832", paddingRight: "10px" }} /> : null /* orange */}
+        {lease_status === "NEW" ? <CircleIcon fontSize='small' sx={{ color: "#FAD102", paddingRight: "10px" }} /> : null /* yellow */}
+        {lease_status === "PROCESSING" ? <CircleIcon fontSize='small' sx={{ color: "#00D100", paddingRight: "10px" }} /> : null /* green */}
+        {lease_status === "REJECTED" ? <CircleIcon fontSize='small' sx={{ color: "#FA0202", paddingRight: "10px" }} /> : null /* red */}
+        {lease_status === "RESCIND" ? <CircleIcon fontSize='small' sx={{ color: "#000000", paddingRight: "10px" }} /> : null /* black */}
+        {lease_status === "ENDED" ? <CircleIcon fontSize='small' sx={{ color: "#2E2E2E", paddingRight: "10px" }} /> : null /* black */}
       </>
     );
   };
@@ -325,8 +325,8 @@ const AccountBalanceWidget = ({ selectedProperty, selectedLease, propertyAddr, p
         }}
         onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
       >
-        <img src={documentIcon} alt="document-icon" style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-        <u>View Full Lease</u>
+        <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+        <u>View Full Lease 2</u>
       </Box>
     </DashboardTab>
     //   )}
