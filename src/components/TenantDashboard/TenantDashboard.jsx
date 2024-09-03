@@ -91,19 +91,15 @@ function TenantDashboard(props) {
   //   console.log("paymentState - ", paymentState);
   // }, [paymentState]);
 
-  useEffect (() => {
+  useEffect(() => {
     async function fetchData() {
       const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
-      const propertyData = await propertyResponse.json();
+      const propertyDataListings = await propertyResponse.json();
 
-      const listings = propertyData?.Available_Listings?.result;
-      const tenants = propertyData?.Tenant_Leases?.result;
+      const listings = propertyDataListings.Available_Listings?.result;
+      const tenants = propertyDataListings?.Tenant_Leases?.result;
 
-      const filteredListings = listings.filter(listing =>
-        tenants.some(tenant => 
-          tenant.lease_property_id === listing.property_uid
-        )
-      );
+      const filteredListings = listings.filter((listing) => tenants.some((tenant) => tenant.lease_property_id === listing.property_uid));
 
       setPropertyListingData(filteredListings);
       setLeaseListingData(tenants);
@@ -148,6 +144,7 @@ function TenantDashboard(props) {
 
         // Extract the necessary data
         let propertyData = tenantRequestsData?.property?.result || [];
+        // console.log("propertyData: ", propertyData);
         let maintenanceRequestsData = tenantRequestsData?.maintenanceRequests?.result || [];
         let leaseDetailsData = tenantRequestsData?.leaseDetails?.result || [];
         let announcementsReceivedData = announcementsResponseData?.received?.result || [];
@@ -155,6 +152,7 @@ function TenantDashboard(props) {
         let paymentsExpectedData = paymentsResponseData?.MoneyToBePaid?.result || [];
 
         // console.log("[DEBUG] announcementsReceivedData", announcementsReceivedData);
+        console.log("[DEBUG] leaseDetailsdData", leaseDetailsData);
 
         // Check if all leases are not active
         const allNonActiveLease = propertyData.every((item) => item.lease_status !== "ACTIVE");
@@ -207,11 +205,11 @@ function TenantDashboard(props) {
   //[getProfileId, location.state?.propertyId, navigate, user.first_name, addMaintenance, tenantId]);
   // End Main UseEffect
 
-  useEffect(() => {    
+  useEffect(() => {
     if (propertyData && propertyData.length === 0) {
-      const activeLeases = propertyData?.filter( property => property.lease_status === "ACTIVE")
+      const activeLeases = propertyData?.filter((property) => property.lease_status === "ACTIVE");
       // console.log("activeLeases - ", activeLeases)
-      
+
       if (activeLeases && activeLeases.length === 0) {
         setRightPane({ type: "listings" });
       } else {
@@ -364,7 +362,15 @@ function TenantDashboard(props) {
       case "addtenantmaintenance":
         return <AddTenantMaintenanceItem newTenantMaintenanceState={newTenantMaintenanceState} setRightPane={setRightPane} setReload={setReload} />;
       case "viewlease":
-        return <ViewLease key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`} property_uid={viewLeaseState.property_uid} lease_id={viewLeaseState.lease_id} isDesktop={viewLeaseState.isDesktop} setRightPane={setRightPane} />;
+        return (
+          <ViewLease
+            key={`${viewLeaseState.property_uid}-${viewLeaseState.lease_id}-${viewLeaseState.isDesktop}`}
+            property_uid={viewLeaseState.property_uid}
+            lease_id={viewLeaseState.lease_id}
+            isDesktop={viewLeaseState.isDesktop}
+            setRightPane={setRightPane}
+          />
+        );
       case "payment":
         return <Payments accountBalanceWidgetData={paymentState} setRightPane={setRightPane} />;
       case "editmaintenance":
@@ -393,561 +399,280 @@ function TenantDashboard(props) {
   }
 
   // console.log("Selected Property before return: ", selectedProperty);
+  console.log("[DEBUG] leaseDetails", leaseDetails);
 
   return (
     <ThemeProvider theme={theme}>
-       {showSpinner ? (
+      {showSpinner ? (
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color='inherit' />
         </Backdrop>
       ) : (
-      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-        <Grid container spacing={6}>
-          {/* <Grid item xs={12}> */}
-          <Grid item xs={8} md={6} lg={6}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: isMobile ? "column" : "row",
-                justifyContent: isMobile ? "center" : "left",
-                paddingLeft: "10px",
-                paddingRight: "10px",
-                alignText: "center",
-                alignContent: "center",
-              }}
-            >
-              <Typography
+        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+          <Grid container spacing={6}>
+            {/* <Grid item xs={12}> */}
+            <Grid item xs={8} md={6} lg={6}>
+              <Box
                 sx={{
-                  fontSize: { xs: "22px", sm: "28px", md: "32px" },
-                  fontWeight: "600",
+                  display: "flex",
+                  flexDirection: isMobile ? "column" : "row",
+                  justifyContent: isMobile ? "center" : "left",
+                  paddingLeft: "10px",
+                  paddingRight: "10px",
+                  alignText: "center",
+                  alignContent: "center",
                 }}
               >
-                Welcome, {user.first_name}!
-              </Typography>
-            </Box>
-          </Grid>
-
-          <Grid item xs={4} md={6} lg={6}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "right",
-                alignItems: "center",
-                color: "#160449",
-              }}
-            >
-              <Button
-                variant='contained'
-                sx={{
-                  backgroundColor: "#97A7CF",
-                  color: theme.typography.secondary.white,
-                  textTransform: "none",
-                  whiteSpace: "nowrap",
-                }}
-                onClick={() => setRightPane({ type: "listings" })}
-              >
-                <SearchIcon />
-                {!isMobile && "Search Property"}
-              </Button>
-            </Box>
-          </Grid>
-          {/* </Grid> */}
-
-          <Grid item xs={12} md={4}>
-            <AccountBalanceWidget
-              selectedProperty={selectedProperty}
-              selectedLease={selectedLease}
-              propertyAddr={propertyAddr}
-              propertyData={propertyData}
-              total={total}
-              rentFees={rentFees}
-              lateFees={lateFees}
-              utilityFees={utilityFees}
-              setPropertyAddr={setPropertyAddr}
-              setPropertyId={setPropertyId}
-              setSelectedProperty={setSelectedProperty}
-              setSelectedLease={setSelectedLease}
-              setTotal={setTotal}
-              setViewLeaseState={setViewLeaseState}
-              rightPane={rightPane.type}
-              setPaymentState={setPaymentState}
-              setRightPane={setRightPane}
-              setTenantApplicationNavState={setTenantApplicationNavState}
-              property={propertyListingData}
-              lease={leaseListingData} 
-              setViewApprovedLeaseNavState={setViewApprovedLeaseNavState}
-
-            />
-          </Grid>
-
-          <Grid item xs={12} md={8}>
-            {rightPane !== "" ? (
-              renderRightPane()
-            ) : (
-              <Grid container>
-                <Grid item xs={12}>
-                  <DashboardTab>
-                    <Grid
-                      container
-                      direction='row'
-                      sx={{
-                        paddingBottom: "10px",
-                      }}
-                    >
-                      <Grid item xs={2}></Grid>
-                      <Grid item xs={8}>
-                        <Box
-                          sx={{
-                            flexGrow: 1, // Allow this Box to grow and fill space
-                            display: "flex",
-                            justifyContent: "center", // Center the content of this Box
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              color: "#160449",
-                              fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Announcements
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            zIndex: 1, // Look into this for all the components
-                            flex: 1,
-                            height: "100%",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              color: "#007AFF",
-                              fontSize: "18px",
-                              paddingRight: "25px",
-                              fontWeight: "bold",
-                            }}
-                            onClick={() => {
-                              setRightPane({ type: "announcements" });
-                            }}
-                          >
-                            {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
-                          </Box>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                    {announcementsData.length > 0 ? (
-                      <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
-                    ) : (
-                      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
-                        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
-                      </Box>
-                    )}
-                  </DashboardTab>
-                </Grid>
-                <Grid item xs={12}>
-                  <DashboardTab>
-                    <Grid container direction='row' sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                      <Grid item xs={2}></Grid>
-                      <Grid item xs={8}>
-                        <Box
-                          sx={{
-                            flexGrow: 1, // Allow this Box to grow and fill space
-                            display: "flex",
-                            justifyContent: "center", // Center the content of this Box
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              color: "#160449",
-                              fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Payment History
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={2}></Grid>
-                    </Grid>
-                    <Stack>
-                      <TenantPaymentHistoryTable data={filteredPaymentHistory} isMobile={isMobile} isMedium={isMedium} />
-                    </Stack>
-                  </DashboardTab>
-                </Grid>
-                <Grid item xs={12}>
-                  <DashboardTab>
-                    <Grid container direction='row' sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                      <Grid item xs={2}></Grid>
-                      <Grid item xs={8}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            zIndex: 1, // Look into this for all the components
-                            flex: 1,
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Maintenance ({maintenanceRequests.length})
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            zIndex: 1, // Look into this for all the components
-                            flex: 1,
-                            height: "100%",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              display: "flex", // Enables flexbox
-                              flexDirection: "row", // Sets the flex direction to row
-                              justifyContent: "center", // Centers content horizontally
-                              alignItems: "center", // Centers content vertically
-                              backgroundColor: "#3D5CAC",
-                              color: "#FFFFFF",
-                              textTransform: "none",
-                              fontSize: isMobile ? "8px" : "16px",
-                              "&:hover": {
-                                backgroundColor: "#3457A0", // Optional: Darken on hover
-                              },
-                              padding: isMobile ? "0px" : "10px",
-                              margin: isMobile ? "1px" : "auto",
-                              borderRadius: 1,
-                              cursor: "pointer",
-                              alignItems: "center",
-                              fontWeight: "bold",
-                              fontSize: "18px",
-                            }}
-                            onClick={() => handleTenantMaintenanceNavigate()}
-                          >
-                            <AddIcon />
-                          </Box>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                    <Stack>
-                      <TenantMaintenanceRequestsTable
-                        setTenantMaintenanceItemDetailState={setTenantMaintenanceItemDetailState}
-                        data={maintenanceRequests}
-                        navToMaintenance={handleTenantMaintenanceNavigate}
-                        isMobile={isMobile}
-                        isMedium={isMedium}
-                        selectedproperty={propertyAddr}
-                      />
-                    </Stack>
-                  </DashboardTab>
-                </Grid>
-              </Grid>
-            )}
-          </Grid>
-
-          <>
-            {/* {selectedProperty !== null ? (
-              <>
-                <Grid
-                  container
+                <Typography
                   sx={{
-                    paddingBottom: "10px",
-                    marginTop: isMobile ? "0px" : "7px",
-                    marginBottom: isMobile ? "0px" : "7px",
+                    fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                    fontWeight: "600",
                   }}
                 >
-                  <Grid item xs={8} md={6} lg={6}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: isMobile ? "column" : "row",
-                        justifyContent: isMobile ? "center" : "left",
-                        paddingLeft: "10px",
-                        paddingRight: "10px",
-                        alignText: "center",
-                        alignContent: "center",
-                      }}
-                    >
-                      <Typography
+                  Welcome, {user.first_name}!
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={4} md={6} lg={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "right",
+                  alignItems: "center",
+                  color: "#160449",
+                }}
+              >
+                <Button
+                  variant='contained'
+                  sx={{
+                    backgroundColor: "#97A7CF",
+                    color: theme.typography.secondary.white,
+                    textTransform: "none",
+                    whiteSpace: "nowrap",
+                  }}
+                  onClick={() => setRightPane({ type: "listings" })}
+                >
+                  <SearchIcon />
+                  {!isMobile && "Search Property"}
+                </Button>
+              </Box>
+            </Grid>
+            {/* </Grid> */}
+
+            <Grid item xs={12} md={4}>
+              <AccountBalanceWidget
+                selectedProperty={selectedProperty}
+                selectedLease={selectedLease}
+                propertyAddr={propertyAddr}
+                propertyData={propertyData}
+                total={total}
+                rentFees={rentFees}
+                lateFees={lateFees}
+                utilityFees={utilityFees}
+                setPropertyAddr={setPropertyAddr}
+                setPropertyId={setPropertyId}
+                setSelectedProperty={setSelectedProperty}
+                setSelectedLease={setSelectedLease}
+                setTotal={setTotal}
+                setViewLeaseState={setViewLeaseState}
+                rightPane={rightPane.type}
+                setPaymentState={setPaymentState}
+                setRightPane={setRightPane}
+                setTenantApplicationNavState={setTenantApplicationNavState}
+                // property={propertyListingData}
+                // property={selectedProperty}
+                property={propertyData}
+                lease={leaseListingData}
+                setViewApprovedLeaseNavState={setViewApprovedLeaseNavState}
+                propertyLeaseData={leaseDetails}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={8}>
+              {rightPane !== "" ? (
+                renderRightPane()
+              ) : (
+                <Grid container>
+                  <Grid item xs={12}>
+                    <DashboardTab>
+                      <Grid
+                        container
+                        direction='row'
                         sx={{
-                          fontSize: { xs: "22px", sm: "28px", md: "32px", lg: "32px" },
-                          fontWeight: "600",
+                          paddingBottom: "10px",
                         }}
                       >
-                        Welcome, {firstName}!
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-
-
-
-
-
-                  <Grid item xs={4} md={6} lg={6}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "right",
-                        alignItems: "center",
-                        color: "#160449",
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        sx={{
-                          backgroundColor: "#97A7CF",
-                          color: theme.typography.secondary.white,
-                          textTransform: "none",
-                          whiteSpace: "nowrap",
-                        }}
-                        onClick={() => setRightPane({ type: "listings" })}
-                      >
-                        <SearchIcon />
-                        {!isMobile && "Search Property"}
-                      </Button>
-
-                    </Box>
-
-                  </Grid>
-
-                </Grid>
-
-
-
-
-                
-                {selectedProperty?.lease_status === "ACTIVE" ? (
-
-
-
-
-                  <Grid container spacing={isMobile ? 1 : 6}>
-                    <Grid item xs={12} md={4} sx={{ height: !isMobile ? "80vh" : "auto" }}>
-                      <AccountBalanceWidget
-                        selectedProperty={selectedProperty}
-                        selectedLease={selectedLease}
-                        propertyAddr={propertyAddr}
-                        propertyData={propertyData}
-                        total={total}
-                        rentFees={rentFees}
-                        lateFees={lateFees}
-                        utilityFees={utilityFees}
-                        setPropertyAddr={setPropertyAddr}
-                        setPropertyId={setPropertyId}
-                        setSelectedProperty={setSelectedProperty}
-                        setSelectedLease={setSelectedLease}
-                        setTotal={setTotal}
-                      />
-                    </Grid>
-
-
-
-                    <Grid item xs={12} md={8}>
-                      {rightPane !== "" ? (
-                        renderRightPane()
-                      ) : (
-                        <Grid container>
-                          <Grid item xs={12}>
-                            <DashboardTab>
-                              <Grid
-                                container
-                                direction="row"
-                                sx={{
-                                  paddingBottom: "10px",
-                                }}
-                              >
-                                <Grid item xs={2}></Grid>
-                                <Grid item xs={8}>
-                                  <Box
-                                    sx={{
-                                      flexGrow: 1, // Allow this Box to grow and fill space
-                                      display: "flex",
-                                      justifyContent: "center", // Center the content of this Box
-                                    }}
-                                  >
-                                    <Typography
-                                      sx={{
-                                        color: "#160449",
-                                        fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      Announcements
-                                    </Typography>
-                                  </Box>
-                                </Grid>
-                                <Grid item xs={2}>
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      zIndex: 1, // Look into this for all the components
-                                      flex: 1,
-                                      height: "100%",
-                                    }}
-                                  >
-                                    <Box
-                                      sx={{
-                                        color: "#007AFF",
-                                        fontSize: "18px",
-                                        paddingRight: "25px",
-                                        fontWeight: "bold",
-                                      }}
-                                      onClick={() => {
-                                        navigate("/announcements", { state: { announcementsData, propertyAddr } });
-                                      }}
-                                    >
-                                      {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
-                                    </Box>
-                                  </Box>
-                                </Grid>
-                              </Grid>
-                              {announcementsData.length > 0 ? (
-                                <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
-                              ) : (
-                                <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
-                                  <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
-                                </Box>
-                              )}
-                            </DashboardTab>
-                          </Grid>
-                          <Grid item xs={12}>
-                            <DashboardTab>
-                              <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                                <Grid item xs={2}></Grid>
-                                <Grid item xs={8}>
-                                  <Box
-                                    sx={{
-                                      flexGrow: 1, // Allow this Box to grow and fill space
-                                      display: "flex",
-                                      justifyContent: "center", // Center the content of this Box
-                                    }}
-                                  >
-                                    <Typography
-                                      sx={{
-                                        color: "#160449",
-                                        fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      Payment History
-                                    </Typography>
-                                  </Box>
-                                </Grid>
-                                <Grid item xs={2}></Grid>
-                              </Grid>
-                              <Stack>
-                                <TenantPaymentHistoryTable data={filteredPaymentHistory} isMobile={isMobile} isMedium={isMedium} />
-                              </Stack>
-                            </DashboardTab>
-                          </Grid>
-                          <Grid item xs={12}>
-                            <DashboardTab>
-                              <Grid container direction="row" sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                                <Grid item xs={2}></Grid>
-                                <Grid item xs={8}>
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      zIndex: 1, // Look into this for all the components
-                                      flex: 1,
-                                    }}
-                                  >
-                                    <Typography
-                                      sx={{
-                                        fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      Maintenance ({maintenanceRequests.length})
-                                    </Typography>
-                                  </Box>
-                                </Grid>
-                                <Grid item xs={2}>
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      zIndex: 1, // Look into this for all the components
-                                      flex: 1,
-                                      height: "100%",
-                                    }}
-                                  >
-                                    <Box
-                                      sx={{
-                                        display: "flex", // Enables flexbox
-                                        flexDirection: "row", // Sets the flex direction to row
-                                        justifyContent: "center", // Centers content horizontally
-                                        alignItems: "center", // Centers content vertically
-                                        backgroundColor: "#3D5CAC",
-                                        color: "#FFFFFF",
-                                        textTransform: "none",
-                                        fontSize: isMobile ? "8px" : "16px",
-                                        "&:hover": {
-                                          backgroundColor: "#3457A0", // Optional: Darken on hover
-                                        },
-                                        padding: isMobile ? "0px" : "10px",
-                                        margin: isMobile ? "1px" : "auto",
-                                        borderRadius: 1,
-                                        cursor: "pointer",
-                                        alignItems: "center",
-                                        fontWeight: "bold",
-                                        fontSize: "18px",
-                                      }}
-                                      onClick={() => handleTenantMaintenanceNavigate()}
-                                    >
-                                      <AddIcon />
-                                    </Box>
-                                  </Box>
-                                </Grid>
-                              </Grid>
-                              <Stack>
-                                <TenantMaintenanceRequestsTable
-                                  data={maintenanceRequests}
-                                  navToMaintenance={handleTenantMaintenanceNavigate}
-                                  isMobile={isMobile}
-                                  isMedium={isMedium}
-                                />
-                              </Stack>
-                            </DashboardTab>
-                          </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={8}>
+                          <Box
+                            sx={{
+                              flexGrow: 1, // Allow this Box to grow and fill space
+                              display: "flex",
+                              justifyContent: "center", // Center the content of this Box
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                color: "#160449",
+                                fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Announcements
+                            </Typography>
+                          </Box>
                         </Grid>
+                        <Grid item xs={2}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              zIndex: 1, // Look into this for all the components
+                              flex: 1,
+                              height: "100%",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                color: "#007AFF",
+                                fontSize: "18px",
+                                paddingRight: "25px",
+                                fontWeight: "bold",
+                              }}
+                              onClick={() => {
+                                setRightPane({ type: "announcements" });
+                              }}
+                            >
+                              {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
+                            </Box>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                      {announcementsData.length > 0 ? (
+                        <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
+                      ) : (
+                        <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
+                          <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
+                        </Box>
                       )}
-                    </Grid>
+                    </DashboardTab>
                   </Grid>
-                ) : (
-                  <>
-                    <NonActiveLeaseDashboardTab property={selectedProperty} leaseStatus={selectedProperty?.lease_status} lease={selectedLease} />
-                  </>
-                )}
-              </>
-            ) : (
-              <></>
-            )} */}
-          </>
-        </Grid>
-      </Container>)}
+                  <Grid item xs={12}>
+                    <DashboardTab>
+                      <Grid container direction='row' sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={8}>
+                          <Box
+                            sx={{
+                              flexGrow: 1, // Allow this Box to grow and fill space
+                              display: "flex",
+                              justifyContent: "center", // Center the content of this Box
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                color: "#160449",
+                                fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Payment History
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                      </Grid>
+                      <Stack>
+                        <TenantPaymentHistoryTable data={filteredPaymentHistory} isMobile={isMobile} isMedium={isMedium} />
+                      </Stack>
+                    </DashboardTab>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <DashboardTab>
+                      <Grid container direction='row' sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={8}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              zIndex: 1, // Look into this for all the components
+                              flex: 1,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" },
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Maintenance ({maintenanceRequests.length})
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              zIndex: 1, // Look into this for all the components
+                              flex: 1,
+                              height: "100%",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex", // Enables flexbox
+                                flexDirection: "row", // Sets the flex direction to row
+                                justifyContent: "center", // Centers content horizontally
+                                alignItems: "center", // Centers content vertically
+                                backgroundColor: "#3D5CAC",
+                                color: "#FFFFFF",
+                                textTransform: "none",
+                                fontSize: isMobile ? "8px" : "16px",
+                                "&:hover": {
+                                  backgroundColor: "#3457A0", // Optional: Darken on hover
+                                },
+                                padding: isMobile ? "0px" : "10px",
+                                margin: isMobile ? "1px" : "auto",
+                                borderRadius: 1,
+                                cursor: "pointer",
+                                alignItems: "center",
+                                fontWeight: "bold",
+                                fontSize: "18px",
+                              }}
+                              onClick={() => handleTenantMaintenanceNavigate()}
+                            >
+                              <AddIcon />
+                            </Box>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                      <Stack>
+                        <TenantMaintenanceRequestsTable
+                          setTenantMaintenanceItemDetailState={setTenantMaintenanceItemDetailState}
+                          data={maintenanceRequests}
+                          navToMaintenance={handleTenantMaintenanceNavigate}
+                          isMobile={isMobile}
+                          isMedium={isMedium}
+                          selectedproperty={propertyAddr}
+                        />
+                      </Stack>
+                    </DashboardTab>
+                  </Grid>
+                </Grid>
+              )}
+            </Grid>
+
+            <></>
+          </Grid>
+        </Container>
+      )}
     </ThemeProvider>
   );
 }
@@ -1022,11 +747,15 @@ const AccountBalanceWidget = ({
   property,
   lease,
   setViewApprovedLeaseNavState,
+  propertyLeaseData,
 }) => {
   const navigate = useNavigate();
   // console.log("---selectedProperty in acc---", selectedProperty);
   // console.log("---selectedLease in acc---", selectedLease);
+  console.log("---propertyLeaseData in acc---", propertyLeaseData);
+  // console.log("---propertyLeaseData in acc---", propertyLeaseData[0].business_name);
   // console.log("---propertyData in acc---", propertyData);
+  // console.log("---property in acc---", property);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
@@ -1089,31 +818,34 @@ const AccountBalanceWidget = ({
 
   function handleViewApplicationNavigate(property, lease) {
     const state = {
-      data: property, status: property.lease_status, lease: lease, from: 'accwidget'
-    }
+      data: property,
+      status: property.lease_status,
+      lease: lease,
+      from: "accwidget",
+    };
     setTenantApplicationNavState(state);
   }
 
   function handleViewAprovedLeaseNavigate(property, lease) {
     const state = {
-      property: property, lease: lease, from: 'accwidget'
-    }
+      property: property,
+      lease: lease,
+      from: "accwidget",
+    };
     setViewApprovedLeaseNavState(state);
   }
 
   function handlePaymentNavigate() {
-    /*navigate("/payments", 
-    { state: { accountBalanceWidgetData: 
-      { selectedProperty, selectedLease, 
-        propertyAddr, propertyData, total,
-         rentFees, lateFees, utilityFees } } }); */
-
-    const state =
-    {
-      selectedProperty, selectedLease,
-      propertyAddr, propertyData, total,
-      rentFees, lateFees, utilityFees
-    }
+    const state = {
+      selectedProperty,
+      selectedLease,
+      propertyAddr,
+      propertyData,
+      total,
+      rentFees,
+      lateFees,
+      utilityFees,
+    };
     // console.log('---state to be passed in handlePaymentNavigate---', state);
     setPaymentState(state);
   }
@@ -1123,28 +855,45 @@ const AccountBalanceWidget = ({
     setPropertyId(item.property_uid);
     setTotal(item.balance);
     setSelectedProperty(item);
-    const lease = propertyData.find((lease) => lease.lease_uid === item.lease_uid);    
+    const lease = propertyData.find((lease) => lease.lease_uid === item.lease_uid);
     setSelectedLease(lease);
     if (rightPane == "viewlease") {
-      if (item.lease_status === 'REFUSED' || item.lease_status === 'WITHDRAWN' || item.lease_status === 'NEW' ||
-        item.lease_status === 'PROCESSING' || item.lease_status === 'RESCIND' || item.lease_status === 'REJECTED'
+      if (
+        item.lease_status === "REFUSED" ||
+        item.lease_status === "WITHDRAWN" ||
+        item.lease_status === "NEW" ||
+        item.lease_status === "PROCESSING" ||
+        item.lease_status === "RESCIND" ||
+        item.lease_status === "REJECTED"
       ) {
         setRightPane("tenantApplication");
         handleViewApplicationNavigate(item, lease);
       } else {
-        handleViewLeaseNavigate(item.lease_uid)
+        handleViewLeaseNavigate(item.lease_uid);
       }
     } else if (rightPane == "tenantApplication") {
-      if (item.lease_status === 'REFUSED' || item.lease_status === 'WITHDRAWN' || item.lease_status === 'NEW' ||
-        item.lease_status === 'PROCESSING' || item.lease_status === 'RESCIND' || item.lease_status === 'REJECTED') {
+      if (
+        item.lease_status === "REFUSED" ||
+        item.lease_status === "WITHDRAWN" ||
+        item.lease_status === "NEW" ||
+        item.lease_status === "PROCESSING" ||
+        item.lease_status === "RESCIND" ||
+        item.lease_status === "REJECTED"
+      ) {
         handleViewApplicationNavigate(item, lease);
       } else {
         setRightPane("viewlease");
         handleViewLeaseNavigate(item.lease_uid);
       }
     } else if (rightPane === "tenantLeases") {
-      if (item.lease_status === 'REFUSED' || item.lease_status === 'WITHDRAWN' || item.lease_status === 'NEW' ||
-        item.lease_status === 'PROCESSING' || item.lease_status === 'RESCIND' || item.lease_status === 'REJECTED') {
+      if (
+        item.lease_status === "REFUSED" ||
+        item.lease_status === "WITHDRAWN" ||
+        item.lease_status === "NEW" ||
+        item.lease_status === "PROCESSING" ||
+        item.lease_status === "RESCIND" ||
+        item.lease_status === "REJECTED"
+      ) {
         handleViewAprovedLeaseNavigate(item, lease);
       } else {
         setRightPane("viewlease");
@@ -1155,10 +904,14 @@ const AccountBalanceWidget = ({
   }
 
   const [image, setImage] = useState(defaultHouseImage);
+  const [bN, setBN] = useState("Not A Real Business");
 
   useEffect(() => {
     if (selectedProperty) {
-      const selectedPropertyImages = propertyData.find(property => property.property_uid === selectedProperty.property_uid)?.property_favorite_image;
+      // console.log("selectedProperty: ", selectedProperty);
+      // console.log("property: ", property);
+      const selectedPropertyImages = propertyData.find((property) => property.property_uid === selectedProperty.property_uid)?.property_favorite_image;
+      // console.log("selectedPropertyImages: ", selectedPropertyImages);
       if (selectedPropertyImages) {
         setImage(selectedPropertyImages);
       } else {
@@ -1166,6 +919,21 @@ const AccountBalanceWidget = ({
       }
     }
   }, [selectedProperty, propertyData]);
+
+  useEffect(() => {
+    if (selectedProperty && propertyLeaseData) {
+      console.log("selectedProperty: ", selectedProperty);
+      console.log("propertyLeaseData: ", propertyLeaseData);
+      // let selectedPropertyBusinessName = "Business Failing";
+      const selectedPropertyBusinessName = propertyLeaseData.find((property) => property.property_uid === selectedProperty.property_uid)?.business_name;
+      console.log("selectedPropertyBusinessName: ", selectedPropertyBusinessName);
+      if (selectedPropertyBusinessName) {
+        setBN(selectedPropertyBusinessName);
+      } else {
+        setBN("Another Fake Business");
+      }
+    }
+  }, [selectedProperty, propertyLeaseData]);
 
   function handlePropertyChange(item) {
     setPropertyAddr(item.property_address + " " + item.property_unit);
@@ -1178,7 +946,6 @@ const AccountBalanceWidget = ({
 
     handleClose();
   }
-
 
   return (
     <DashboardTab fullHeight={!isMobile ? true : false}>
@@ -1207,28 +974,30 @@ const AccountBalanceWidget = ({
             }}
           >
             <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Account Balance</Typography>
-            <Box
+            <Box // This is the property image
               sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: '20px',
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: "20px",
               }}
             >
-              <Box sx={{ flexGrow: 1, maxWidth: 200 }}> {/* Adjusted size */}
+              <Box sx={{ flexGrow: 1, maxWidth: 200 }}>
+                {" "}
+                {/* Adjusted size */}
                 <CardMedia
-                  component="img"
+                  component='img'
                   image={image}
-                  alt="property image"
+                  alt='property image'
                   sx={{
-                    width: '100%',
-                    height: 'auto',
-                    maxHeight: '150px',
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "150px",
                   }}
                 />
               </Box>
             </Box>
-            <Box
+            <Box // Not sure what this is
               sx={{
                 display: "flex",
                 flexDirection: "row",
@@ -1238,7 +1007,7 @@ const AccountBalanceWidget = ({
                 width: "100%",
               }}
             >
-              <Box
+              <Box // This is the Lease Status circle indictor to the Left of the address
                 sx={{
                   height: "30px",
                   width: "30px",
@@ -1247,7 +1016,7 @@ const AccountBalanceWidget = ({
                   marginRight: "10px",
                 }}
               />
-              <Box
+              <Box // This is the Address box including the drop down menu
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -1267,7 +1036,7 @@ const AccountBalanceWidget = ({
                 >
                   <Typography>{propertyAddr}</Typography>
                   <KeyboardArrowDownIcon sx={{ alignItem: "center" }} onClick={(event) => handleOpen(event)} />
-                  <Menu
+                  <Menu // This is the drop down menu
                     id='demo-customized-menu'
                     MenuListProps={{
                       "aria-labelledby": "demo-customized-button",
@@ -1294,7 +1063,7 @@ const AccountBalanceWidget = ({
                 </Box>
               </Box>
             </Box>
-            <Box
+            <Box // Total amount due
               sx={{
                 fontSize: { xs: "35px", sm: "35px", md: "35px", lg: "35px" },
                 fontWeight: "bold",
@@ -1436,11 +1205,25 @@ const AccountBalanceWidget = ({
           </Grid>
         </Grid>
       </Box>
-      {propertyData && propertyData.length > 0 &&
-        (selectedProperty?.lease_status === "NEW" || selectedProperty?.lease_status === "REFUSED" ||
-          selectedProperty?.lease_status === "WITHDRAWN" || selectedProperty?.lease_status === "PROCESSING" ||
-          selectedProperty?.lease_status === "REJECTED" || selectedProperty?.lease_status === "RESCIND" ? (
-          <Box
+
+      <Box>Hello</Box>
+      <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold" }}>Property Manager</Typography>
+      <Grid container>
+        <Grid item xs={12} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "left" }}>
+          {" "}
+          {bN ? bN : "Can't touch this"}
+        </Grid>
+      </Grid>
+      <Box>Goodbye</Box>
+      {propertyData &&
+        propertyData.length > 0 &&
+        (selectedProperty?.lease_status === "NEW" ||
+        selectedProperty?.lease_status === "REFUSED" ||
+        selectedProperty?.lease_status === "WITHDRAWN" ||
+        selectedProperty?.lease_status === "PROCESSING" ||
+        selectedProperty?.lease_status === "REJECTED" ||
+        selectedProperty?.lease_status === "RESCIND" ? (
+          <Box // Lease Application Box
             sx={{
               display: "flex",
               flexDirection: "row",
@@ -1459,7 +1242,7 @@ const AccountBalanceWidget = ({
             <u>View Application</u>
           </Box>
         ) : (
-          <Box
+          <Box // View Lease Box
             sx={{
               display: "flex",
               flexDirection: "row",
@@ -1475,30 +1258,30 @@ const AccountBalanceWidget = ({
             onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
           >
             <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-            <u>View Full Lease</u>
-          </Box>))}
-
-      {propertyData && propertyData.length > 0 &&
-        (selectedProperty?.lease_status === "PROCESSING" && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItem: "left",
-              justifyContent: "left",
-              margin: isMobile ? "0px" : "20px",
-              paddingBottom: isMobile ? "5px" : "10px",
-              cursor: "pointer",
-              color: "#3D5CAC",
-              fontSize: "20px",
-              fontWeight: 600,
-            }}
-            onClick={() => handleViewAprovedLeaseNavigate(selectedProperty, selectedLease)}
-          >
-            <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-            <u>View Approved Lease</u>
+            <u>View Full Lease 1</u>
           </Box>
         ))}
+
+      {propertyData && propertyData.length > 0 && selectedProperty?.lease_status === "PROCESSING" && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItem: "left",
+            justifyContent: "left",
+            margin: isMobile ? "0px" : "20px",
+            paddingBottom: isMobile ? "5px" : "10px",
+            cursor: "pointer",
+            color: "#3D5CAC",
+            fontSize: "20px",
+            fontWeight: 600,
+          }}
+          onClick={() => handleViewAprovedLeaseNavigate(selectedProperty, selectedLease)}
+        >
+          <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
+          <u>View Approved Lease</u>
+        </Box>
+      )}
     </DashboardTab>
   );
 };
@@ -1676,7 +1459,6 @@ function TenantMaintenanceRequestsTable(props) {
   //   let favoriteImage = "";
   //   const maintenanceImagesList = JSON.parse(item.maintenance_images);
 
-
   //   if (maintenanceImagesList && maintenanceImagesList.length > 0) {
   //     favoriteImage = maintenanceImagesList.find((url) => url.endsWith("img_cover"));
   //   }else {
@@ -1839,7 +1621,6 @@ function TenantMaintenanceRequestsTable(props) {
         getRowId={(row) => row.maintenance_request_uid}
         pageSizeOptions={[5, 10, 25, 100]}
         onRowClick={(row) => {
-
           /*navigate(`/tenantMaintenanceItemDetail`, {
             state: {
               item: row.row,

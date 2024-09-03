@@ -644,6 +644,13 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
   const sentContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "SENT");
   const newContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "NEW");
 
+  console.log("Active properties:", activeProperties);
+
+  // add an onclick function for propertiesDataGrid
+  // or send in property_uid to propertiespM instead of index
+  // setup index on propertiesPM side
+  // 
+
   return (
     <>
       <Grid container sx={{ padding: "10px" }}>
@@ -651,40 +658,73 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449", marginTop: "10px" }}>YOU MANAGE {activeProperties?.length} OF THEIR PROPERTIES</Typography>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Active {`(${activeProperties?.length})`}</Typography>
-      </Grid>
-      <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
+      {activeProperties && activeProperties.length > 0 ? (
+        <>
+          <Grid item xs={12}>
+            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>
+              Active {`(${activeProperties.length})`}
+            </Typography>
+          </Grid>
+          <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
+            <Grid item xs={12}>
+              <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty} />
+            </Grid>
+          </Grid>
+        </>
+      ) : (
+        <Grid container justifyContent="center" sx={{ marginTop: "20px" }}>
+          <Grid item xs={12}>
+            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "2px", marginLeft: "20px" }}>
+              Active {`(0)`}
+            </Typography>
+          </Grid>
+          <Typography sx={{ fontSize: "15px", color: "#160449" }}>
+            No active properties available for this owner.
+          </Typography>
+        </Grid>
+      )}
+      {/* <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
         <Grid item xs={12}>
           <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty} />
         </Grid>
-      </Grid>
-      <Grid container direction='row' sx={{ padding: "10px" }}>
-        <Grid container item xs={6} justifyContent='center'>
-          <Button
-            sx={{
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "#9EAED6",
-              },
-            }}
-          >
-            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>New {`(${newContracts?.length})`}</Typography>
-          </Button>
-        </Grid>
-        <Grid container item xs={6} justifyContent='center'>
-          <Button
-            sx={{
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "#9EAED6",
-              },
-            }}
-          >
-            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449" }}>Sent {`(${sentContracts?.length})`}</Typography>
-          </Button>
+      </Grid> */}
+      <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>
+            New {`(${newContracts?.length || 0})`}
+          </Typography>
+          {newContracts && newContracts.length > 0 ? (
+            newContracts.map((contract, index) => (
+              <Typography key={index} sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+                {contract.property_address}
+              </Typography>
+            ))
+          ) : (
+            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+              No new contracts
+            </Typography>
+          )}
         </Grid>
       </Grid>
+
+      <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>
+            Sent {`(${sentContracts?.length || 0})`}
+          </Typography>
+          {sentContracts && sentContracts.length > 0 ? (
+            sentContracts.map((contract, index) => (
+              <Typography key={index} sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+                {contract.property_address}
+              </Typography>
+            ))
+          ) : (
+            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+              No sent contracts
+            </Typography>
+          )}
+        </Grid>
+        </Grid>
     </>
   );
 };
@@ -730,7 +770,18 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
     {
       field: "property_address",
       flex: 1,
-      renderCell: (params) => <Typography sx={{ fontSize: "14px", color: "#160449" }}>{`${params.row.property_address}, Unit - ${params.row.property_unit}`}</Typography>,
+      renderCell: (params) => (
+        <Typography
+          sx={{ fontSize: "14px", color: "#160449", cursor: "pointer" }}
+          onClick={() => {
+            navigate("/propertiesPM", {
+              state: { currentProperty: params.row.property_uid }
+            });
+          }}
+        >
+          {`${params.row.property_address}, Unit - ${params.row.property_unit}`}
+        </Typography>
+      ),
     },
     {
       field: "rent_status",

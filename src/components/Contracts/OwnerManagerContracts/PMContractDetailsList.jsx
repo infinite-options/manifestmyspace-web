@@ -633,11 +633,11 @@ function PropertyCard(props) {
 
       //get default contract fees for manager
       // const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${contractBusinessID}`);
-      const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
-      const data2 = await businessProfileResult.json();
-      const businessProfileData = data2["result"][0];
-      // console.log("Business Services Fees", businessProfileData["business_services_fees"]);
-      setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
+      // const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+      // const data2 = await businessProfileResult.json();
+      // const businessProfileData = data2["result"][0];
+      // // console.log("Business Services Fees", businessProfileData["business_services_fees"]);
+      // setDefaultContractFees(JSON.parse(businessProfileData["business_services_fees"]));
     };
 
     fetchData();

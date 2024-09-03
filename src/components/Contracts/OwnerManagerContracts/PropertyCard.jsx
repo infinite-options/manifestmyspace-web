@@ -905,7 +905,7 @@ const PropertyCard = (props) => {
   const [indexForEditContactDialog, setIndexForEditContactDialog] = useState(false);
 
   const [allContracts, setAllContracts] = useState(null);
-  const [businessProfile, setBusinessProfile] = useState(null);
+//   const [businessProfile, setBusinessProfile] = useState(null);
 
   //Contract Details
   const [contractUID, setContractUID] = useState();
@@ -922,20 +922,22 @@ const PropertyCard = (props) => {
   const [contractAssignedContacts, setContractAssignedContacts] = useState([]);
   const [propertyOwnerName, setPropertyOwnerName] = useState("");
   const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
-  const [documentDetails, setDocumentDetails] = useState([])
+  const [documentDetails, setDocumentDetails] = useState([]);
+
 
     
-  const setBusinessProfileDetails = () => {
-    if (businessProfile !== null && businessProfile !== undefined) {
-      // console.log("Business Services Fees", businessProfile["business_services_fees"]);
-      const parsedFees = JSON.parse(businessProfile["business_services_fees"]);
-      if (parsedFees){
-        setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
-      } else {
-        setDefaultContractFees([]);
-      }
-    }
-  };
+//   const setBusinessProfileDetails = () => {
+//     if (businessProfile !== null && businessProfile !== undefined) {
+//       // console.log("Business Services Fees", businessProfile["business_services_fees"]);
+//       const parsedFees = JSON.parse(businessProfile["business_services_fees"]);
+//       if (parsedFees){
+//         setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
+//       } else {
+//         setDefaultContractFees([]);
+//       }
+//     }
+//   };
+
 
 //   const setContractDetails = () => {
 //     if (allContracts !== null && allContracts !== undefined) {
@@ -991,6 +993,29 @@ const PropertyCard = (props) => {
 //     }
 //   };
 
+useEffect(() => {
+    const fetchProfileData = async () => {
+        try {
+            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+            const data = await response.json();
+            console.log("DATA PROFILE", data);
+
+            if (data.result && data.result.length > 0) {
+                const profileFees = data.result[0].business_services_fees
+                    ? JSON.parse(data.result[0].business_services_fees)
+                    : [];
+                
+                setDefaultContractFees(profileFees);
+            }
+        } catch (error) {
+            console.error("Error fetching profile data: ", error);
+        }
+    };
+
+    fetchProfileData();
+}, []);
+
+
   useEffect(() => {
 	const setContractDetails = () => {
 		if (allContracts !== null && allContracts !== undefined) {
@@ -1036,6 +1061,25 @@ const PropertyCard = (props) => {
 		  }
 		}
 	  };
+	  const fetchProfileData = async () => {
+        try {
+            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+            const data = await response.json();
+            console.log("Fetched profile data:", data.profile.result);
+
+            if (data.profile.result && data.profile.result.length > 0) {
+                const profileFees = data.profile.result[0].business_services_fees
+                    ? JSON.parse(data.profile.result[0].business_services_fees)
+                    : [];
+                console.log("Setting defaultContractFees:", profileFees);
+                setDefaultContractFees(profileFees);
+            }
+        } catch (error) {
+            console.error("Error fetching profile data: ", error);
+        }
+    };
+
+    fetchProfileData();
     setContractDetails();
   }, [contractUID]);
 
@@ -1089,14 +1133,14 @@ const PropertyCard = (props) => {
 			setAllContracts(data["result"]);
 		  }
 		}
-		if (businessProfile === null) {
-		  const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
-		  const data2 = await businessProfileResult.json();
-		  const businessProfileData = data2["result"];
-		  const businessProf = businessProfileData?.find((item) => item.business_uid === getProfileId());
-		  console.log("businessProf - ", businessProf);
-		  setBusinessProfile(businessProf);
-		}
+		// if (businessProfile === null) {
+		//   const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
+		//   const data2 = await businessProfileResult.json();
+		//   const businessProfileData = data2["result"];
+		//   const businessProf = businessProfileData?.find((item) => item.business_uid === getProfileId());
+		//   console.log("businessProf - ", businessProf);
+		//   setBusinessProfile(businessProf);
+		// }
 	  };
 
     fetchData();
@@ -1105,6 +1149,7 @@ const PropertyCard = (props) => {
     //   setData();
     // }
   }, [props.contractUID]);
+
 
 //   useEffect(() => {
 //     setContractDetails();
