@@ -33,6 +33,7 @@ function Properties() {
   // console.log("In Properties");
   // console.log("In Properties LHS: ", location.state?.showLHS);
   // console.log("In Properties RHS: ", location.state?.showRHS);
+  console.log("location", location.state);
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
