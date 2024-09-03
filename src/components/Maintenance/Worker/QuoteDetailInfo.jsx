@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import theme from '../../../theme/theme';
 import documentIcon from "./../Business/documentIcon.png"
 import { useUser } from "../../../contexts/UserContext";
@@ -28,6 +28,12 @@ import DateTimePickerModal from "../../DateTimePicker";
 import AreYouSureModal from "../../AreYouSureModal";
 
 import APIConfig from "../../../utils/APIConfig";
+import IconButton from '@mui/material/IconButton';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 function LaborTableReadOnly({labor, setLabor}){
 
@@ -247,6 +253,33 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
     }
 
+    const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollLeft;
+				let newScrollPosition;
+	
+				if (direction === 'left') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+	
+				return newScrollPosition;
+			});
+		}
+	};
+
     return (
         <Stack
             direction="column"
@@ -294,18 +327,80 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 ) : null}
             </Grid>
             <Grid item xs={12}>
-                {quoteImages.length > 0 ? 
-                    (
-                        Array.isArray(quoteImages) && quoteImages.length > 0 ? 
-                        quoteImages.map((image, index) => (
-                            <Grid item key={index}>
-                                <img 
-                                    src={image} 
-                                    alt={`Image ${index}`} 
-                                    style={{ width: '125px', height: '125px' }} 
-                                />
-                            </Grid>
-                        ))
+                {quoteImages.length > 0 ? (
+                  <Grid item xs={12}>
+                  <Box
+                      sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 2,
+                      }}
+                  >
+                      <IconButton
+                          onClick={() => handleScroll('left')}
+                          disabled={scrollPosition === 0}
+                      >
+                          <ArrowBackIosIcon />
+                      </IconButton>
+                      <Box
+                          sx={{
+                              display: 'flex',
+                              overflowX: 'auto',
+                              scrollbarWidth: 'none',
+                              msOverflowStyle: 'none',
+                              '&::-webkit-scrollbar': {
+                                  display: 'none',
+                              },
+                          }}
+                      >
+                          <Box
+                              sx={{
+                                  display: 'flex',
+                                  overflowX: 'auto',
+                                  scrollbarWidth: 'none',
+                                  msOverflowStyle: 'none',
+                                  '&::-webkit-scrollbar': {
+                                      display: 'none',
+                                  },
+                              }}
+                          >
+                              <ImageList 
+                              ref={scrollRef}
+                              sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+                                  {quoteImages?.map((image, index) => (
+                                      <ImageListItem
+                                          key={index}
+                                          sx={{
+                                              width: 'auto',
+                                              flex: '0 0 auto',
+                                              border: '1px solid #ccc',
+                                              margin: '0 2px',
+                                              position: 'relative', // Added to position icons
+                                          }}
+                                      >
+                                          <img
+                                              src={image}
+                                              alt={`maintenance-${index}`}
+                                              style={{
+                                                  height: '150px',
+                                                  width: '150px',
+                                                  objectFit: 'cover',
+                                              }}
+                                          />
+                                      </ImageListItem>
+                                  ))}
+                              </ImageList>
+                          </Box>
+                      </Box>
+                      <IconButton onClick={() => handleScroll('right')}>
+                          <ArrowForwardIosIcon />
+                      </IconButton>
+                  </Box>
+              
+                      
+
+                  </Grid>
                         : 
                         null
                     )
