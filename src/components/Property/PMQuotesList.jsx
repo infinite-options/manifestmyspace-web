@@ -154,7 +154,7 @@ export default function PMQuotesList() {
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            <QuotesList propertyData={property_endpoint_resp} contractRequests={contractRequests} setIndex={setIndex} />
+            <QuotesList propertyData={property_endpoint_resp} contractRequests={contractRequests} setIndex={setIndex} currentContractUID={currentContractUID}/>
           </Grid>
 
           <Grid item xs={12} md={8}>
@@ -225,7 +225,7 @@ const QuotesList = (props) => {
                 >
                 {contractRequests.map((contract, index) => (
                   <Grid item xs={12} key={index} sx={{marginBottom: 0}} >
-                    <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} index={index} setIndex={setIndex} />
+                    <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} index={index} setIndex={setIndex} currentContractUID={props.currentContractUID}/>
                   </Grid>
                 ))}
               </Stack>
@@ -240,7 +240,7 @@ const QuotesList = (props) => {
 function ContractCard(props) {
   let navigate = useNavigate();
 
-  console.log("props for contract card", props);
+  // console.log("props for contract card", props);
   const contract = props.contract;
   const property_endpoint_resp = props.property_endpoint_resp;
 
@@ -257,24 +257,25 @@ function ContractCard(props) {
   // Determine text color based on contract_status or use default blue
   const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
   let announcements = JSON.parse(contract.announcements);
-  console.log("Annoncements", announcements);
+  // console.log("Annoncements", announcements);
   if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
   return (
-    <Grid
-      container
-      item
-      xs={12}
-      sx={{
-        backgroundColor: "#D6D5DA",
-        borderRadius: "10px",
-        padding: "10px",
-        marginBottom: "0px",  // Remove or set minimal margin
-        fontSize: "11px",
-        cursor: "pointer",
-      }}
-      onClick={() => setCurrentIndex(index)}
-    >
+      <Grid
+        container
+        item
+        xs={12}
+        sx={{
+          backgroundColor: contract.contract_uid === props.currentContractUID ? "#A5D6A7" : "#D6D5DA", // Highlight if selected
+          borderRadius: "10px",
+          padding: "10px",
+          marginBottom: "0px",
+          fontSize: "11px",
+          cursor: "pointer",
+          border: contract.contract_uid === props.currentContractUID ? "2px solid #4CAF50" : "none", // Add border if selected
+        }}
+        onClick={() => setCurrentIndex(index)}
+      >
       <Grid container alignItems='center'>
         <Grid item xs={4}></Grid>
 

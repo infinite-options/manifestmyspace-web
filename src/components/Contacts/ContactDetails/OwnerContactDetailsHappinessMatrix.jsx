@@ -49,9 +49,9 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [index, setIndex] = useState(0);
 
   // Effect for logging changes
-  useEffect(() => {
-    console.log("Happiness is change", happinessData);
-  }, [happinessData, ownerUID]);
+  // useEffect(() => {
+  //   console.log("Happiness is change", happinessData);
+  // }, [happinessData, ownerUID]);
 
   // const [happinessMatrixData, setHappinessMatrixData] = useState([]);
   // let [matrixData, setMatrixData] = useState([]);
@@ -645,12 +645,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
   const sentContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "SENT");
   const newContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "NEW");
 
-  console.log("Active properties:", activeProperties);
-
-  // add an onclick function for propertiesDataGrid
-  // or send in property_uid to propertiespM instead of index
-  // setup index on propertiesPM side
-  // 
+  // console.log("Active properties:", activeProperties);
 
   return (
     <>
@@ -702,7 +697,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                 sx={{ cursor: "pointer" }}
               >
                 <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
-                  {contract.property_address}
+                  {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ''}`}
                 </Typography>
               </Box>
             ))
@@ -727,7 +722,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                 sx={{ cursor: "pointer" }}
               >
                 <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
-                  {contract.property_address}
+                  {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ''}`}
                 </Typography>
               </Box>
             ))
@@ -792,7 +787,8 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
             });
           }}
         >
-          {`${params.row.property_address}, Unit - ${params.row.property_unit}`}
+          {/* {`${params.row.property_address}, Unit - ${params.row.property_unit}`} */}
+          {`${params.row.property_address}${params.row.property_unit ? `, Unit - ${params.row.property_unit}` : ''}`}
         </Typography>
       ),
     },

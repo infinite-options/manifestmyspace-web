@@ -102,6 +102,7 @@ const PropertiesInformation = ({ owner }) => {
   }
 
   const PropertiesDataGrid = ({ data }) => {
+    const navigate = useNavigate();
     console.log("PropertiesDataGrid - props.data -", data);
     const paymentStatusColorMap = {
       "Paid On Time": theme.palette.priority.clear,
@@ -133,11 +134,17 @@ const PropertiesInformation = ({ owner }) => {
     const columns = [
       { 
         field: 'property_address',      
-        // width: 200,
         flex: 0.6,
         renderCell: (params) => (
-          <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {`${params.row.property_address}, Unit - ${params.row.property_unit}`}
+          <Typography
+            sx={{ fontSize: '12px', color: '#160449', cursor: 'pointer' }}
+            onClick={() => {
+              navigate("/propertiesPM", {
+                state: { currentProperty: params.row.property_uid }
+              });
+            }}
+          >
+            {`${params.row.property_address}${params.row.property_unit ? `, Unit - ${params.row.property_unit}` : ''}`}
           </Typography>
         )
       },    
