@@ -1,12 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+// import { ClassNames } from "@emotion/react";
 
 const libraries = ["places"];
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
-const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID }) => {
+
+const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID, isRequired }) => {
   // console.log('In address autocomplete, checking address', defaultValue);
-  // console.log('In address autocomplete, checking gray', gray);
+  // console.log('In address autocomplete, checking gray', gray);  
   const autocomplete = useRef(null);
 
   const [address, setAddress] = useState(defaultValue ? defaultValue : "");
@@ -110,7 +112,8 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID }
             // width: '100%',
             padding: "5px",
             outline: "none",
-            border: "none",
+            // border: "none",
+            border: (isRequired && address === "") ? '1px solid red' : 'none',
           }}
           onChange={(e) => setAddress(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -123,7 +126,7 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID }
           value={address}
           style={{
             boxSizing: "border-box",
-            border: "1px solid transparent",
+            border: (isRequired && address === "") ? '1px solid red' : '1px solid transparent',
             width: "100%",
             height: "40px",
             padding: "0 12px",

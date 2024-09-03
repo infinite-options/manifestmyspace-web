@@ -293,6 +293,7 @@ const PropertyListings = ({ setRightPane }) => {
   }, []);
 
   async function fetchData() {
+    // const propertyResponse = await fetch(`http://localhost:4000/listings/${getProfileId()}`);
     const propertyResponse = await fetch(`${APIConfig.baseURL.dev}/listings/${getProfileId()}`);
     const propertyData = await propertyResponse.json();
     setUserLeases(propertyData?.Tenant_Leases.result);
