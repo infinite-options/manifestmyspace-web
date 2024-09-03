@@ -266,58 +266,61 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
   ];
 
   return (
-    <div>
-      <Accordion sx={{ backgroundColor: color }} expanded={expanded} onChange={() => setExpanded(prevState => !prevState)}>
+    <>
+      <Accordion sx={{ backgroundColor: '#F0F0F0', boxShadow: "none" }} expanded={expanded} onChange={() => setExpanded(prevState => !prevState)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
-          <Grid container>
+          <Grid container justifyContent='ceneter'>
 
-            {/* Document Text */}
-            <Grid item md={11.2}>
-              <Typography
-                sx={{
-                  color: "#160449",
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.small,
-                  textAlign: "center",
-                  paddingBottom: "10px",
-                  paddingTop: "5px",
-                  flexGrow: 1,
-                  paddingLeft: "50px",
-                }}
-              >
-                Documents
-              </Typography>
-            </Grid>
+              {/* Document Text */}
+              <Grid item md={11.2}>
+                <Typography
+                  sx={{
+                    color: "#160449",
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: "24px",
+                    textAlign: "center",
+                    paddingBottom: "10px",
+                    paddingTop: "5px",
+                    flexGrow: 1,
+                    paddingLeft: "50px",
+                  }}
+                  // paddingTop='5px'
+                  // paddingBottom='10px'
+                >
+                  Documents
+                </Typography>
+              </Grid>
 
-            {/* Add Icon button */}
-            <Grid item md={0.5}>
-              {/* Add Icon */}
-              <Button
-                sx={{
-                  "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-                  cursor: "pointer",
-                  textTransform: "none",
-                  minWidth: "40px",
-                  minHeight: "40px",
-                  width: "40px",
-                  fontWeight: theme.typography.secondary.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setcurrentRow({
-                    filename: "",
-                    type: "",
-                    link: "",
-                  });
-                  setIsEditing(false);
-                  handleOpen();
-                }}
-              >
-                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-              </Button>
-            </Grid>
+              {/* Add Icon button */}
+              <Grid item md={0.5}>
+                {/* Add Icon */}
+                <Button
+                  sx={{
+                    "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                    cursor: "pointer",
+                    textTransform: "none",
+                    minWidth: "40px",
+                    minHeight: "40px",
+                    width: "40px",
+                    marginTop:'5px',
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setcurrentRow({
+                      filename: "",
+                      type: "",
+                      link: "",
+                    });
+                    setIsEditing(false);
+                    handleOpen();
+                  }}
+                >
+                  <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "24px" }} />
+                </Button>
+              </Grid>
           </Grid>
         </AccordionSummary>
         <AccordionDetails>
@@ -723,7 +726,7 @@ const Documents = ({ documents, editOrUpdateLease, setModifiedData, modifiedData
                     </Button>
                   </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 };
 

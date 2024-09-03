@@ -46,7 +46,7 @@ const EditLease = (props) => {
     const [rentDue, setRentDue] = useState(rentDataFromLease[0].due_by? rentDataFromLease[0].due_by : 0)
     const [availablePay, setAvailablePay] = useState(rentDataFromLease[0].available_topay? rentDataFromLease[0].available_topay:0)
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
-    // console.log("---dhyey---- inside edit lease- leasedata, ", rentDataFromLease);
+    console.log("---dhyey---- inside edit lease- leasedata, ", leaseData);
 
     const checkFileTypeSelected = () => {
         for (let i = 0; i < contractFiles.length; i++) {
@@ -158,19 +158,19 @@ const EditLease = (props) => {
         leaseApplicationFormData.append('lease_status', "NEW")
         leaseApplicationFormData.append('lease_assigned_contacts', leaseData.lease_assigned_contacts)
         leaseApplicationFormData.append('lease_documents', leaseData.lease_documents)
-        leaseApplicationFormData.append('lease_adults', leaseData?.tenant_adult_occupants)
-        leaseApplicationFormData.append('lease_children', leaseData?.tenant_children_occupants)
-        leaseApplicationFormData.append('lease_pets', leaseData?.tenant_pet_occupants)
-        leaseApplicationFormData.append('lease_vehicles', leaseData?.tenant_vehicle_info)
-        leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString())
+        leaseApplicationFormData.append('lease_adults', leaseData?.lease_adults)
+        leaseApplicationFormData.append('lease_children', leaseData?.tenant_children_occupants) // change key
+        leaseApplicationFormData.append('lease_pets', leaseData?.tenant_pet_occupants)    // change key
+        leaseApplicationFormData.append('lease_vehicles', leaseData?.tenant_vehicle_info)  // change key
+        leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString()) // change date format
         leaseApplicationFormData.append('tenant_uid', getTenantsUid(leaseData))
 
-        leaseApplicationFormData.append("contract_name",leaseData.contract_name)
+        // leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
         leaseApplicationFormData.append("lease_end",leaseData.lease_end)
         leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)    
         
-        const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "leaseFees_uid": rentDataFromLease[0].leaseFees_uid, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
+        const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
 
         // leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
         // leaseApplicationFormData.append("frequency",leaseData.frequency)
@@ -219,7 +219,7 @@ const EditLease = (props) => {
 
         const leaseApplicationFormData = new FormData();
         leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
-        leaseApplicationFormData.append("contract_name",leaseData.contract_name)
+        // leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
         leaseApplicationFormData.append("lease_end",leaseData.lease_end)
         leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date) 

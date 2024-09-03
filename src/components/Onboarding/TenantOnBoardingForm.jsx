@@ -64,6 +64,14 @@ const useStyles = makeStyles((theme) => ({
       marginBlock: 10,
       paddingBottom: "15px",
     },
+    '& input:-webkit-autofill': {
+      backgroundColor: '#D6D5DA !important',
+      color: '#000000 !important',
+      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    },
+    '& input:-webkit-autofill:focus': {
+      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    },
   },
   errorBorder: {
     border: '1px solid red',
@@ -1316,8 +1324,8 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         <Grid item xs={12}>
           <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={true}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
-              <Grid container>
-                <Grid item md={11.2}>
+              <Grid container justifyContent='center'>
+                <Grid item md={11.5}>
                   <Typography
                     sx={{
                       color: "#160449",
@@ -1393,7 +1401,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
       </Grid>
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-        <Grid item xs={12} md={12}>
+        <Grid item xs={12}>
           <Documents
             documents={documents}
             setDocuments={setDocuments}
