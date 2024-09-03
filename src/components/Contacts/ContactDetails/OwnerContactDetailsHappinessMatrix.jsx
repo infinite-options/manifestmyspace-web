@@ -622,6 +622,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
 const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
   const activeProperties = propertiesData?.Property?.result.filter((property) => property.owner_uid === ownerUID);
   const activePropertyUIDs = activeProperties?.map((property) => property.property_uid);
+  const navigate = useNavigate();
 
   const maintenanceRequests = propertiesData?.MaintenanceRequests?.result.filter((request) => activePropertyUIDs.includes(request.maintenance_property_id));
 
@@ -695,9 +696,15 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           </Typography>
           {newContracts && newContracts.length > 0 ? (
             newContracts.map((contract, index) => (
-              <Typography key={index} sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
-                {contract.property_address}
-              </Typography>
+              <Box
+                key={index}
+                onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
+                sx={{ cursor: "pointer" }}
+              >
+                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+                  {contract.property_address}
+                </Typography>
+              </Box>
             ))
           ) : (
             <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
@@ -714,9 +721,15 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           </Typography>
           {sentContracts && sentContracts.length > 0 ? (
             sentContracts.map((contract, index) => (
-              <Typography key={index} sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
-                {contract.property_address}
-              </Typography>
+              <Box
+                key={index}
+                onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
+                sx={{ cursor: "pointer" }}
+              >
+                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+                  {contract.property_address}
+                </Typography>
+              </Box>
             ))
           ) : (
             <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
@@ -724,7 +737,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
             </Typography>
           )}
         </Grid>
-        </Grid>
+      </Grid>
     </>
   );
 };
