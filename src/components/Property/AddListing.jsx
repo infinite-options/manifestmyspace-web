@@ -896,6 +896,15 @@ export default function AddListing(props) {
       formData.append("property_available_to_rent", isListed ? 1 : 0);
       hasPropertyChanges = true;
     }
+
+    const currentDate = new Date();		
+		const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
+
+    if (propertyData.property_available_to_rent !== (isListed ? 1 : 0)) {
+      formData.append('property_listed_date', formattedDate);
+      hasPropertyChanges = true;
+    }
+					
     if (propertyData.property_amenities_community !== communityAmenities) {
       formData.append("property_amenities_community", communityAmenities);
       hasPropertyChanges = true;
