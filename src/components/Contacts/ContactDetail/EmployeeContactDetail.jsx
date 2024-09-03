@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+// import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
 // import "./../../css/contacts.css";
 import { ThemeProvider, Box, Paper, Stack, Typography, Button, InputAdornment, TextField, Card, CardContent, Accordion, AccordionSummary, AccordionDetails, Chip } from "@mui/material";
-import { Message, Search } from "@mui/icons-material";
-import { getStatusColor } from "../ContactsFunction";
-import axios from "axios";
+// import { Message, Search } from "@mui/icons-material";
+// import { getStatusColor } from "../ContactsFunction";
+// import axios from "axios";
 import { useUser } from "../../../contexts/UserContext";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
+// import Backdrop from "@mui/material/Backdrop";
+// import CircularProgress from "@mui/material/CircularProgress";
 import {
   Container,
   Grid,
@@ -17,25 +17,25 @@ import {
   Badge,
   Switch,
 } from "@mui/material";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import defaultHouseImage from "../../Property/defaultHouseImage.png";
-import { DataGrid } from '@mui/x-data-grid';
-import useMediaQuery from "@mui/material/useMediaQuery";
-import SearchIcon from '@mui/icons-material/Search';
-import EmailIcon from "../../Property/messageIconDark.png";
-import PhoneIcon from "../../Property/phoneIconDark.png";
-import AddressIcon from "../../Property/addressIconDark.png";
-import maintenanceIcon from "../../Property/maintenanceIcon.png";
+// import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+// import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+// import defaultHouseImage from "../../Property/defaultHouseImage.png";
+// import { DataGrid } from '@mui/x-data-grid';
+// import useMediaQuery from "@mui/material/useMediaQuery";
+// import SearchIcon from '@mui/icons-material/Search';
+// import EmailIcon from "../../Property/messageIconDark.png";
+// import PhoneIcon from "../../Property/phoneIconDark.png";
+// import AddressIcon from "../../Property/addressIconDark.png";
+// import maintenanceIcon from "../../Property/maintenanceIcon.png";
 import User_fill from "../../../images/User_fill_dark.png";
-import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
+// import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
 
 
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import dayjs from "dayjs";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import dayjs from "dayjs";
 
-import AES from "crypto-js/aes";
+// import AES from "crypto-js/aes";
 import ProfileInformation from "./ProfileInformation";
 
 
@@ -46,7 +46,7 @@ const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
     const [ contractsData, setContractsData ] = useState([]);
     const [ contactDetails, setContactDetails ] = useState([]);
 
-    console.log("DATA EMPLOYESS", data);
+    // console.log("DATA EMPLOYESS", data);
   
     useEffect(() => {
       setContactDetails(data)

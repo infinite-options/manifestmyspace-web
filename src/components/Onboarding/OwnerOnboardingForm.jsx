@@ -44,15 +44,15 @@ import VenmoIcon from "../../images/Venmo.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
-import CloseIcon from "@mui/icons-material/Close";
+// import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
 import APIConfig from "../../utils/APIConfig";
 
-import AdultOccupant from "../Leases/AdultOccupant";
-import ChildrenOccupant from "../Leases/ChildrenOccupant";
-import PetsOccupant from "../Leases/PetsOccupant";
-import VehiclesOccupant from "../Leases/VehiclesOccupant";
-import Documents from "../Leases/Documents";
+// import AdultOccupant from "../Leases/AdultOccupant";
+// import ChildrenOccupant from "../Leases/ChildrenOccupant";
+// import PetsOccupant from "../Leases/PetsOccupant";
+// import VehiclesOccupant from "../Leases/VehiclesOccupant";
+// import Documents from "../Leases/Documents";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -141,6 +141,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const [ errors, setErrors ] = useState({})
+  
 
   const getListDetails = async () => {
     try {
@@ -422,7 +423,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     //     map[name].value = "";
     //   }
     // }
-    setPaymentMethods(map);
+    setPaymentMethods(map);       
   };
 
   const handleChangeValue = (e) => {
@@ -440,7 +441,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         ...prevState,
         [name]: { ...prevState[name], value },
       }));
-    }
+    }    
   };
 
   const handlePaymentStep = async () => {
@@ -495,12 +496,42 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     const newErrors = {};
     if (!firstName) newErrors.firstName = 'First name is required';    
     if (!lastName) newErrors.lastName = 'Last name is required';    
+    if (!address) newErrors.address = 'Address is required';    
+    if (!unit) newErrors.unit = 'Unit is required';    
     if (!email) newErrors.email = 'Email is required';
     if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
-    if (!ssn) newErrors.ssn = 'SSN is required';    
+    if (!ssn) newErrors.ssn = 'SSN is required';   
+    
+    
+    let paymentMethodsError = false;
+    let atleaseOneActive = false;
+    Object.keys(paymentMethods)?.forEach( method => { 
+      const payMethod = paymentMethods[method];
+      
+      if(payMethod.value === '' && payMethod.checked === true ){
+        paymentMethodsError = true;
+      }
+      if(payMethod.checked === true ){
+        atleaseOneActive = true;
+      }      
+
+    })
+
+    if(!atleaseOneActive){
+      newErrors.paymentMethods = 'Atleast one active payment method is required';
+      alert('Atleast one active payment method is required');
+      return;
+    }
+
+    if(paymentMethodsError){
+      newErrors.paymentMethods = 'Please check payment method details';
+      alert('Please check payment method details');
+      return;
+    }
   
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors); // Show errors if any field is empty
+      setErrors(newErrors); 
+      alert("Please enter all required fields");
       return;
     }
 
@@ -775,7 +806,12 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address} />
+                    <AddressAutocompleteInput
+                      onAddressSelect={handleAddressSelect}
+                      gray={true}
+                      defaultValue={address} 
+                      isRequired={true}
+                    />
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
@@ -791,7 +827,17 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField value={unit} onChange={handleUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
+                    <TextField 
+                      value={unit}
+                      onChange={handleUnitChange}
+                      variant='filled'
+                      placeholder='3'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.unit ? classes.errorBorder : '',
+                      }}
+                      required
+                    ></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
