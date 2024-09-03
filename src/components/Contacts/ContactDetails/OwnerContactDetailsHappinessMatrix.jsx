@@ -679,7 +679,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
               Active {`(0)`}
             </Typography>
           </Grid>
-          <Typography sx={{ fontSize: "15px", color: "#160449" }}>
+          <Typography sx={{ ontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
             No active properties available for this owner.
           </Typography>
         </Grid>
@@ -701,13 +701,13 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                 onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
                 sx={{ cursor: "pointer" }}
               >
-                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
                   {contract.property_address}
                 </Typography>
               </Box>
             ))
           ) : (
-            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
               No new contracts
             </Typography>
           )}
@@ -726,13 +726,13 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                 onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
                 sx={{ cursor: "pointer" }}
               >
-                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
                   {contract.property_address}
                 </Typography>
               </Box>
             ))
           ) : (
-            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
               No sent contracts
             </Typography>
           )}
