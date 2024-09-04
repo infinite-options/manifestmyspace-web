@@ -76,8 +76,21 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     }
   };
   const updateProfileUid = (profileUidObj) => {
+    console.log("ROHIT - updateProfileUid - profileUidObj - ", profileUidObj)    
+    console.log("ROHIT - updateProfileUid - selectedRole - ", selectedRole)    
     if (isBusiness() || isEmployee()) {
       setUser((prev) => updateUser(prev, profileUidObj));
+    } else {
+      setUser((prev) => ({ ...prev, ...profileUidObj }));
+    }
+  };
+
+  const updateEmployeeProfileUid = (profileUidObj, role) => {
+    console.log("ROHIT - updateEmployeeProfileUid - profileUidObj - ", profileUidObj)    
+    console.log("ROHIT - updateEmployeeProfileUid - role - ", role)    
+    if (["PM_EMPLOYEE", "MAINT_EMPLOYEE"].includes(role)) {      
+      setUser((prev) => updateUserEmployee(prev, profileUidObj, role));
+      // setUser((prev) => updateUser(prev, profileUidObj));
     } else {
       setUser((prev) => ({ ...prev, ...profileUidObj }));
     }
@@ -94,6 +107,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const updateUser = (prevUser, profileUidObj) => {
+    console.log("ROHIT - updateUser - prevUser - ", prevUser)
+    console.log("ROHIT - updateUser - profileUidObj - ", profileUidObj)
     let newBusinesses;
     if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
       newBusinesses = {
@@ -106,11 +121,35 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         MAINTENANCE: updateBusinessSection(prevUser?.businesses?.MAINTENANCE, profileUidObj),
       };
     }
+    console.log("ROHIT - updateUser - newBusinesses - ", newBusinesses)
     return {
       ...prevUser,
       businesses: newBusinesses,
     };
   };
+
+  const updateUserEmployee = (prevUser, profileUidObj, role) => {
+    console.log("ROHIT - updateUserEmployee - prevUser - ", prevUser)
+    console.log("ROHIT - updateUserEmployee - profileUidObj - ", profileUidObj)
+    let newBusinesses;
+    if (role === "PM_EMPLOYEE") {
+      newBusinesses = {
+        ...prevUser?.businesses,
+        MANAGEMENT: updateBusinessSection(prevUser?.businesses?.MANAGEMENT, profileUidObj),
+      };
+    } else {
+      newBusinesses = {
+        ...prevUser?.businesses,
+        MAINTENANCE: updateBusinessSection(prevUser?.businesses?.MAINTENANCE, profileUidObj),
+      };
+    }
+    console.log("ROHIT - updateUserEmployee - newBusinesses - ", newBusinesses)
+    return {
+      ...prevUser,
+      businesses: newBusinesses,
+    };
+  };
+
   const updateBusinessSection = (prevSection, profileObj) => {
     if (prevSection) {
       return Object.assign({}, prevSection, profileObj);
@@ -119,7 +158,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const getBusiness = (user, type) => user.businesses[type].business_uid;  //"600-000003"
   const getProfileId = () => {
-    // console.log('Raminsss', user)
+    // console.log('ROHIT - getProfileId - ', user.businesses.MANAGEMENT.business_employee_id)
+    // console.log('ROHIT - selectedRole - ', selectedRole)
     if (selectedRole === "PM_EMPLOYEE") return user.businesses.MANAGEMENT.business_employee_id;
     if (selectedRole === "MAINT_EMPLOYEE") return user.businesses.MAINTENANCE.business_employee_id;
     if (isManagement()) return getBusiness(user, "MANAGEMENT");
@@ -241,6 +281,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         isLoggedIn,
         setLoggedIn,
         updateProfileUid,
+        updateEmployeeProfileUid,
         getProfileId,
         getRoleId,
         logout,

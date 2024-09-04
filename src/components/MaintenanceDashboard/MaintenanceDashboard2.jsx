@@ -24,7 +24,8 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import { ReactComponent as HomeIcon } from '../../images/home_icon.svg';
 import { ReactComponent as CalendarIcon } from '../../images/calendar_icon.svg';
 import { useMediaQuery } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
@@ -38,7 +39,8 @@ import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 
 export default function MaintenanceDashboard2() {
-	const { user, getProfileId } = useUser();
+	const { user, getProfileId, selectedRole,  } = useUser();
+	const navigate = useNavigate();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
@@ -48,6 +50,13 @@ export default function MaintenanceDashboard2() {
 	const [revenueData, setrevenueData] = useState([]);
 	const [todayData, settodayData] = useState([]);
 	const [nextScheduleData, setnextScheduleData] = useState([]);
+
+	let dataLoaded = false;
+	const [ userState, setUserState ] = useState(user);
+	const prevUserStateRef = useRef();
+
+	let dashboard_id = getProfileId();
+  	if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
 
 	const [workerMaintenanceView, setWorkerMaintenanceView] = useSessionStorage('workerMaintenanceView', false);
 	const [showMaintenanceDetail, setShowMaintenanceDetail] = useState(workerMaintenanceView);
@@ -60,16 +69,18 @@ export default function MaintenanceDashboard2() {
 		maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
 	});
 
-
-	useEffect(() => {
-		const getMaintenanceData = async () => {
-			setShowSpinner(true);
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+	const getMaintenanceData = async () => {		
+		if(dashboard_id == null){
+			return;
+		}
+		setShowSpinner(true);
+		if (getProfileId() != null) {
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`);
 			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
 
-			const statusresponse = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+			const statusresponse = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${dashboard_id}`);
 			//const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
 			const statusdata = await statusresponse.json();
 
@@ -171,10 +182,66 @@ export default function MaintenanceDashboard2() {
 			await settodayData(filteredTodayData);
 			await setnextScheduleData(filteredData);
 			setShowSpinner(false);
+			dataLoaded = true;
 		};
+	}
 
+	const emp_verification = async () => {
+		try {
+		  const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+		  // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
+		  if (!response.ok) {
+			throw new Error("Failed to fetch data");
+		  }
+		  const data = await response.json();
+		  const employee = data?.profile?.result[0]; // Assuming there's only one employee
+		  console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
+		  if (employee?.employee_verification == null) {
+			navigate("/emp_waiting");
+		  }
+		} catch (error) {
+		  console.error(error);
+		}
+	  };
+
+	useEffect(() => {		
+		setShowSpinner(true);
+		if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {		  	
+		  emp_verification();
+		  setShowSpinner(false);
+		}		
 		getMaintenanceData();
 	}, []);
+
+	useEffect(() => {
+		prevUserStateRef.current = userState;
+	}, [userState]);
+
+	useEffect(() => {
+		setUserState(user);
+	}, [user]);
+	
+	
+
+	useEffect(() => {
+		console.log("ROHIT - dataLoaded - ", dataLoaded);
+		console.log("ROHIT - user - ", user);
+		if (prevUserStateRef.current !== userState) {
+			console.log('User state has deeply changed:', userState);
+			if(dataLoaded === false){
+				setShowSpinner(true);
+				if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
+				if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {
+				
+			
+					emp_verification();
+					setShowSpinner(false);
+				}		
+			
+				getMaintenanceData();
+			}
+		}
+	  }, [userState]);
 
 	useEffect(() => {
 		const handleWorkerMaintenanceRequestSelected = async () => {
