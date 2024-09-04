@@ -33,11 +33,12 @@ import WorkerMaintenanceStatusTable from '../Maintenance/Worker/WorkerMaintenanc
 import { format, isEqual, isAfter, parseISO } from 'date-fns';
 import useSessionStorage from '../Maintenance/useSessionStorage';
 import WorkerMaintenanceRequestDetail from '../Maintenance/Worker/WorkerMaintenanceRequestDetail';
-
+import { useLocation } from 'react-router-dom';
 import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 
 export default function MaintenanceDashboard2() {
+	const location = useLocation(); 
 	const { user, getProfileId } = useUser();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [showSpinner, setShowSpinner] = useState(false);
@@ -49,20 +50,19 @@ export default function MaintenanceDashboard2() {
 	const [todayData, settodayData] = useState([]);
 	const [nextScheduleData, setnextScheduleData] = useState([]);
 
-	const [workerMaintenanceView, setWorkerMaintenanceView] = useSessionStorage('workerMaintenanceView', false);
+	const [workerMaintenanceView, setWorkerMaintenanceView] = useState(false);
 	const [showMaintenanceDetail, setShowMaintenanceDetail] = useState(workerMaintenanceView);
 
 	const [sessionData, setSessionData] = useState({
-		maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
-		propstatus: sessionStorage.getItem('workerselectedStatus'),
-		propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
-		alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
-		maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
-	});
+		maintenance_request_index: null,
+		propstatus: null,
+		propmaintenanceItemsForStatus: null,
+		alldata: null,
+		maintenance_request_uid: null,
+	  });
 
-
-	useEffect(() => {
 		const getMaintenanceData = async () => {
+			console.log('---in get----');
 			setShowSpinner(true);
 			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
 			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
@@ -173,43 +173,25 @@ export default function MaintenanceDashboard2() {
 			setShowSpinner(false);
 		};
 
-		getMaintenanceData();
-	}, []);
+		useEffect(() => {
+			console.log('is it in useeffect----');
+			if (location.state?.key || !location.state) {
+				console.log('key is it in useeffect if----', location.state?.key );
+			  getMaintenanceData(); // Fetch data on navigation
+			}
+		  }, [location.state?.key]); // The effect will trigger when `key` changes or if location.state is empty
+		
 
-	useEffect(() => {
-		const handleWorkerMaintenanceRequestSelected = async () => {
-			setShowMaintenanceDetail(true);
-			await setSessionData({
-				maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
-				propstatus: sessionStorage.getItem('workerselectedStatus'),
-				propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
-				alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
-				maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
-			});
-		};
-
-		window.addEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
-
-		return () => {
-			window.removeEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
-		};
-	}, []);
-
-	useEffect(() => {
-		const handleremoveworkermaintenanceRequestSelected = () => {
-			setShowMaintenanceDetail(false);
-		};
-
-		window.addEventListener('removeworkermaintenanceRequestSelected', handleremoveworkermaintenanceRequestSelected);
-
-		return () => {
-			window.removeEventListener(
-				'removeworkermaintenanceRequestSelected',
-				handleremoveworkermaintenanceRequestSelected
-			);
-		};
-	}, []);
-
+	const handleWorkerMaintenanceRequestSelected = (maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid) => {
+		setSessionData({
+		  maintenance_request_index,
+		  propstatus,
+		  propmaintenanceItemsForStatus,
+		  alldata,
+		  maintenance_request_uid,
+		});
+		setShowMaintenanceDetail(true);
+	  };
 
 
 	return (
@@ -248,6 +230,7 @@ export default function MaintenanceDashboard2() {
 							todayData={todayData}
 							nextScheduleData={nextScheduleData}
 							allMaintenanceStatusData={maintenanceStatusRequests}
+							onSelectRequest={handleWorkerMaintenanceRequestSelected} 
 						/>
 					</Grid>
 
@@ -259,6 +242,7 @@ export default function MaintenanceDashboard2() {
 								propmaintenanceItemsForStatus={sessionData.propmaintenanceItemsForStatus}
 								alldata={sessionData.alldata}
 								maintenance_request_uid={sessionData.maintenance_request_uid}
+								setShowMaintenanceDetail={setShowMaintenanceDetail}
 							/>
 						</Grid>
 					) : (
@@ -323,7 +307,7 @@ export default function MaintenanceDashboard2() {
 }
 
 const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, 
-	allMaintenanceStatusData }) => {
+	allMaintenanceStatusData, onSelectRequest }) => {
 	const [showSpinner, setShowSpinner] = useState(false);
 	const convertTimeTo12HourFormat = (time) => {
 		const [hours, minutes] = time.split(':');
@@ -493,7 +477,7 @@ const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, 
 </Grid>
 
 						<Grid item xs={12}>
-							<WorkOrdersAccordion maintenanceRequests={filteredMaintenanceRequests} allMaintenanceStatusData={allMaintenanceStatusData} />
+							<WorkOrdersAccordion maintenanceRequests={filteredMaintenanceRequests} allMaintenanceStatusData={allMaintenanceStatusData} onSelectRequest={onSelectRequest} />
 						</Grid>
 						<Grid item xs={12} sx={{ padding: '20px 0px 20px 0px' }}>
 							<Paper
@@ -654,7 +638,7 @@ const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, 
 	);
 };
 
-const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData }) => {
+const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData, onSelectRequest }) => {
 	const colorStatus = theme.colorStatusMM;
 	const [query, setQuery] = useState('');
 
@@ -685,6 +669,7 @@ const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData }) 
 							allMaintenanceData={maintenanceRequests}
 							allMaintenanceStatusData={allMaintenanceStatusData}
 							maintenanceRequestsCount={maintenanceArray}
+							onSelectRequest={onSelectRequest}
 						/>
 					);
 				})}
