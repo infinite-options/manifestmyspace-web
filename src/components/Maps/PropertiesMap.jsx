@@ -11,7 +11,7 @@ const containerStyle = {
   borderRadius: '5px',
 };
 
-const center = {
+const defaultCenter = {
   lat: 37.3382,
   lng: -121.8863,
 };
@@ -43,11 +43,12 @@ const mapStyles = [
 
 const libraries = ['places'];
 
-const PropertiesMap = ({ properties }) => {
+const PropertiesMap = ({ properties, mapCenter }) => {
   const [selectedProperty, setSelectedProperty] = React.useState(null);
 
   // console.log("PropertiesMap - properties - ", properties)
   // const libs = ['places']
+  console.log("ROHIT - PropertiesMap - mapCenter - ", mapCenter)
   const [ libraries ] = useState(['places']);
 
   const { isLoaded, loadError } = useJsApiLoader({
@@ -68,7 +69,7 @@ const PropertiesMap = ({ properties }) => {
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
-      center={center}
+      center={mapCenter? mapCenter : defaultCenter}
       zoom={10}
       options={{ styles: mapStyles }}
     >

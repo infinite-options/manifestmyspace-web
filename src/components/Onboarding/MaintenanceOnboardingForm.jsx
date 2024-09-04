@@ -832,6 +832,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 placeholder={`Enter Your Bank Account Number`}
                 disabled={!method.state?.checked}
                 className={classes.root}
+                InputProps={{
+                  className: method.state?.value === "" && method.state?.checked ? classes.errorBorder : '',
+                }}
+                required
               />
             </Grid>
             <Grid item xs={5}>
@@ -843,7 +847,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 fullWidth
                 placeholder={`Enter Your Bank Routing Number`}
                 disabled={!method.state?.checked}
-                className={classes.root}
+                className={classes.root}                
               />
             </Grid>
           </>
@@ -858,6 +862,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               placeholder={`Enter ${method.name}`}
               disabled={!method.state?.checked}
               className={classes.root}
+              InputProps={{
+                className: method.state?.value === "" && method.state?.checked ? classes.errorBorder : '',
+              }}
+              required
             />
           </Grid>
         )}
@@ -951,20 +959,49 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const handleNextStep = async () => {
     const newErrors = {};
     if (!businessName) newErrors.businessName = 'Business name is required';    
+    if (!address) newErrors.address = 'Address is required';    
+    if (!unit) newErrors.unit = 'Unit is required';    
     if (!email) newErrors.email = 'Email is required';
     if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
     if (!ein) newErrors.ein = 'SSN is required';
 
     if (!empFirstName) newErrors.empFirstName = 'First name is required';
     if (!empLastName) newErrors.empLastName = 'Last name is required';
-    if (!empEmail) newErrors.empEmail = 'Email is required';
-    if (!empPhoneNumber) newErrors.empPhoneNumber = 'Email is required';
-    if (!empSsn) newErrors.empSsn = 'SSN is required';
+    // if (!empEmail) newErrors.empEmail = 'Email is required';
+    // if (!empPhoneNumber) newErrors.empPhoneNumber = 'Email is required';
+    // if (!empSsn) newErrors.empSsn = 'SSN is required';
     
+    let paymentMethodsError = false;
+    let atleaseOneActive = false;
+    Object.keys(paymentMethods)?.forEach( method => {
+      console.log("ROHIT - payment method - ", paymentMethods[method]);
+      const payMethod = paymentMethods[method];
+      
+      if(payMethod.value === '' && payMethod.checked === true ){
+        paymentMethodsError = true;
+      }
+      if(payMethod.checked === true ){
+        atleaseOneActive = true;
+      }      
+
+    })
+
+    if(!atleaseOneActive){
+      newErrors.paymentMethods = 'Atleast one active payment method is required';
+      alert('Atleast one active payment method is required');
+      return;
+    }
+
+    if(paymentMethodsError){
+      newErrors.paymentMethods = 'Please check payment method details';
+      alert('Please check payment method details');
+      return;
+    }
     
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors); // Show errors if any field is empty
+      alert("Please enter all required fields");
       return;
     }
 
@@ -986,7 +1023,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       return false;
     }
 
-    if (!DataValidator.ssn_validate(empSsn)) {
+    if (empSsn && !DataValidator.ssn_validate(empSsn)) {
       alert("Please enter a valid SSN");
       return false;
     }
@@ -1256,7 +1293,12 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <AddressAutocompleteInput onAddressSelect={handleBusinessAddressSelect} gray={true} defaultValue={address} />
+                    <AddressAutocompleteInput 
+                      onAddressSelect={handleBusinessAddressSelect}
+                      gray={true} 
+                      defaultValue={address} 
+                      isRequired={true}
+                    />
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
@@ -1272,7 +1314,17 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField value={unit} onChange={handleBusinessUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
+                    <TextField 
+                      value={unit}
+                      onChange={handleBusinessUnitChange}
+                      variant='filled'
+                      placeholder='3'
+                      className={classes.root}
+                      InputProps={{
+                        className: errors.unit ? classes.errorBorder : '',
+                      }}
+                      required
+                    ></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
@@ -1726,10 +1778,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     variant='filled'
                     placeholder='Email'
                     className={classes.root}
-                    InputProps={{
-                      className: errors.empEmail ? classes.errorBorder : '',
-                    }}
-                    required
+                    // InputProps={{
+                    //   className: errors.empEmail ? classes.errorBorder : '',
+                    // }}
+                    // required
                   ></TextField>
                 </Grid>
               </Grid>
@@ -1753,10 +1805,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     variant='filled'
                     placeholder='Phone Number'
                     className={classes.root}
-                    InputProps={{
-                      className: errors.empPhoneNumber ? classes.errorBorder : '',
-                    }}
-                    required
+                    // InputProps={{
+                    //   className: errors.empPhoneNumber ? classes.errorBorder : '',
+                    // }}
+                    // required
                   ></TextField>
                 </Grid>
               </Grid>
@@ -1785,10 +1837,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     variant='filled'
                     placeholder='SSN'
                     className={classes.root}
-                    InputProps={{
-                      className: errors.empSsn ? classes.errorBorder : '',
-                    }}
-                    required
+                    // InputProps={{
+                    //   className: errors.empSsn ? classes.errorBorder : '',
+                    // }}
+                    // required
                   ></TextField>
                 </Grid>
               </Grid>

@@ -41,6 +41,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useCookies } from "react-cookie";
 // import DashboardTab from "../TenantDashboard/NewDashboardTab";
 import APIConfig from "../../utils/APIConfig";
+import { BeachAccessOutlined } from "@mui/icons-material";
 
 // import AdultOccupant from "../Leases/AdultOccupant";
 // import ChildrenOccupant from "../Leases/ChildrenOccupant";
@@ -110,6 +111,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const [deletedFiles, setDeletedFiles] = useState([]);
 
   const [states, setStates] = useState([]);
+  const [feeBases, setFeeBases] = useState([]);
 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "", fee_type: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
@@ -149,6 +151,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
       const responseJson = await response.json();
       const states = responseJson.result.filter((res) => res.list_category === "states");
       setStates(states);
+
+      const bases = responseJson.result.filter((res) => res.list_category === "basis" && res.list_item != null);      
+      setFeeBases(bases);
+
     } catch (error) {
       console.log(error);
     }
@@ -182,7 +188,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     updateModifiedData({ key: "business_name", value: event.target.value });
   };
 
-  const handleBusinessAddressSelect = (address) => {
+  const handleBusinessAddressSelect = (address) => {    
     setAddress(address.street ? address.street : "");
     updateModifiedData({ key: "business_address", value: address.street ? address.street : "" });
     setCity(address.city ? address.city : "");
@@ -603,7 +609,22 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                   >
                     {"Of"}
                   </Typography>
-                  <TextField name='of' value={row.of} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
+                  {/* <TextField name='of' value={row.of} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} /> */}
+                  <Select 
+                    name='of'
+                    value={row.of}
+                    size='small'
+                    fullWidth
+                    onChange={(e) => handleFeeChange(e, row.id)}
+                    placeholder='Select Basis'
+                    className={classes.select}                
+                  >
+                    {
+                      feeBases?.map( basis => (
+                        <MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>    
+                      ))
+                    }                    
+                  </Select>
                 </Stack>
               </Grid>
             </>
@@ -870,6 +891,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                 placeholder={`Enter Your Bank Account Number`}
                 disabled={!method.state?.checked}
                 className={classes.root}
+                InputProps={{
+                  className: method.state?.value === "" && method.state?.checked ? classes.errorBorder : '',
+                }}
+                required
               />
             </Grid>
             <Grid item xs={5}>
@@ -896,6 +921,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
               placeholder={`Enter ${method.name}`}
               disabled={!method.state?.checked}
               className={classes.root}
+              InputProps={{
+                className: method.state?.value === "" && method.state?.checked ? classes.errorBorder : '',
+              }}
+              required
             />
           </Grid>
         )}
@@ -989,20 +1018,49 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const handleNextStep = async () => {    
     const newErrors = {};
     if (!businessName) newErrors.businessName = 'Business name is required';    
+    if (!address) newErrors.address = 'Address is required';    
+    if (!unit) newErrors.unit = 'Unit is required';    
     if (!email) newErrors.email = 'Email is required';
     if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
     if (!ein) newErrors.ein = 'SSN is required';
 
     if (!empFirstName) newErrors.empFirstName = 'First name is required';
     if (!empLastName) newErrors.empLastName = 'Last name is required';
-    if (!empEmail) newErrors.empEmail = 'Email is required';
-    if (!empPhoneNumber) newErrors.empPhoneNumber = 'Email is required';
-    if (!empSsn) newErrors.empSsn = 'SSN is required';
-    
+    // if (!empEmail) newErrors.empEmail = 'Email is required';
+    // if (!empPhoneNumber) newErrors.empPhoneNumber = 'Email is required';
+    // if (!empSsn) newErrors.empSsn = 'SSN is required';
+
+    let paymentMethodsError = false;
+    let atleaseOneActive = false;
+    Object.keys(paymentMethods)?.forEach( method => { 
+      const payMethod = paymentMethods[method];
+      
+      if(payMethod.value === '' && payMethod.checked === true ){
+        paymentMethodsError = true;
+      }
+      if(payMethod.checked === true ){
+        atleaseOneActive = true;
+      }      
+
+    })
+
+    if(!atleaseOneActive){
+      newErrors.paymentMethods = 'Atleast one active payment method is required';
+      alert('Atleast one active payment method is required');
+      return;
+    }
+
+    if(paymentMethodsError){
+      newErrors.paymentMethods = 'Please check payment method details';
+      alert('Please check payment method details');
+      return;
+    }
+        
     
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors); // Show errors if any field is empty
+      alert("Please enter all required fields");
       return;
     }
 
@@ -1025,7 +1083,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
       return false;
     }
 
-    if (!DataValidator.ssn_validate(empSsn)) {
+    if (empSsn && !DataValidator.ssn_validate(empSsn)) {
       alert("Please enter a valid SSN");
       return false;
     }
@@ -1293,7 +1351,12 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <AddressAutocompleteInput onAddressSelect={handleBusinessAddressSelect} gray={true} defaultValue={address} />
+                      <AddressAutocompleteInput 
+                        onAddressSelect={handleBusinessAddressSelect}
+                        gray={true}
+                        defaultValue={address}                                           
+                        isRequired={true}
+                      />
                     </Grid>
                   </Grid>
                   <Grid container item xs={2}>
@@ -1309,7 +1372,17 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField value={unit} onChange={handleBusinessUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
+                      <TextField 
+                        value={unit}
+                        onChange={handleBusinessUnitChange}
+                        variant='filled'
+                        placeholder='3'
+                        className={classes.root}
+                        InputProps={{
+                          className: errors.unit ? classes.errorBorder : '',
+                        }}
+                        required
+                      ></TextField>
                     </Grid>
                   </Grid>
                   <Grid container item xs={2}>
@@ -1747,10 +1820,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='Email'
                       className={classes.root}
-                      InputProps={{
-                        className: errors.empEmail ? classes.errorBorder : '',
-                      }}
-                      required
+                      // InputProps={{
+                      //   className: errors.empEmail ? classes.errorBorder : '',
+                      // }}
+                      // required
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -1774,10 +1847,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='Phone Number'
                       className={classes.root}
-                      InputProps={{
-                        className: errors.empPhoneNumber ? classes.errorBorder : '',
-                      }}
-                      required
+                      // InputProps={{
+                      //   className: errors.empPhoneNumber ? classes.errorBorder : '',
+                      // }}
+                      // required
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -1806,10 +1879,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
-                      InputProps={{
-                        className: errors.empSsn ? classes.errorBorder : '',
-                      }}
-                      required
+                      // InputProps={{
+                      //   className: errors.empSsn ? classes.errorBorder : '',
+                      // }}
+                      // required
                     ></TextField>
                   </Grid>
                 </Grid>
