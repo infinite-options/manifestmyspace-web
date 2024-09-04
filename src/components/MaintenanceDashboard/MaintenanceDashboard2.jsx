@@ -176,7 +176,7 @@ export default function MaintenanceDashboard2() {
 		useEffect(() => {
 			console.log('is it in useeffect----');
 			if (location.state?.key || !location.state) {
-				console.log('key is it in useeffect if----');
+				console.log('key is it in useeffect if----', location.state?.key );
 			  getMaintenanceData(); // Fetch data on navigation
 			}
 		  }, [location.state?.key]); // The effect will trigger when `key` changes or if location.state is empty
