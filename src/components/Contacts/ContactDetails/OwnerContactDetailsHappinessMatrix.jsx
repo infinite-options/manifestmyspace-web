@@ -49,9 +49,9 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [index, setIndex] = useState(0);
 
   // Effect for logging changes
-  useEffect(() => {
-    console.log("Happiness is change", happinessData);
-  }, [happinessData, ownerUID]);
+  // useEffect(() => {
+  //   console.log("Happiness is change", happinessData);
+  // }, [happinessData, ownerUID]);
 
   // const [happinessMatrixData, setHappinessMatrixData] = useState([]);
   // let [matrixData, setMatrixData] = useState([]);
@@ -622,6 +622,7 @@ const OwnerInformation = ({ contactDetails, index }) => {
 const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
   const activeProperties = propertiesData?.Property?.result.filter((property) => property.owner_uid === ownerUID);
   const activePropertyUIDs = activeProperties?.map((property) => property.property_uid);
+  const navigate = useNavigate();
 
   const maintenanceRequests = propertiesData?.MaintenanceRequests?.result.filter((request) => activePropertyUIDs.includes(request.maintenance_property_id));
 
@@ -644,12 +645,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
   const sentContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "SENT");
   const newContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "NEW");
 
-  console.log("Active properties:", activeProperties);
-
-  // add an onclick function for propertiesDataGrid
-  // or send in property_uid to propertiespM instead of index
-  // setup index on propertiesPM side
-  // 
+  // console.log("Active properties:", activeProperties);
 
   return (
     <>
@@ -678,7 +674,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
               Active {`(0)`}
             </Typography>
           </Grid>
-          <Typography sx={{ fontSize: "15px", color: "#160449" }}>
+          <Typography sx={{ ontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
             No active properties available for this owner.
           </Typography>
         </Grid>
@@ -695,12 +691,18 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           </Typography>
           {newContracts && newContracts.length > 0 ? (
             newContracts.map((contract, index) => (
-              <Typography key={index} sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
-                {contract.property_address}
-              </Typography>
+              <Box
+                key={index}
+                onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
+                sx={{ cursor: "pointer" }}
+              >
+                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
+                  {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ''}`}
+                </Typography>
+              </Box>
             ))
           ) : (
-            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
               No new contracts
             </Typography>
           )}
@@ -714,17 +716,23 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           </Typography>
           {sentContracts && sentContracts.length > 0 ? (
             sentContracts.map((contract, index) => (
-              <Typography key={index} sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
-                {contract.property_address}
-              </Typography>
+              <Box
+                key={index}
+                onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
+                sx={{ cursor: "pointer" }}
+              >
+                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
+                  {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ''}`}
+                </Typography>
+              </Box>
             ))
           ) : (
-            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px" }}>
+            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
               No sent contracts
             </Typography>
           )}
         </Grid>
-        </Grid>
+      </Grid>
     </>
   );
 };
@@ -779,7 +787,8 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
             });
           }}
         >
-          {`${params.row.property_address}, Unit - ${params.row.property_unit}`}
+          {/* {`${params.row.property_address}, Unit - ${params.row.property_unit}`} */}
+          {`${params.row.property_address}${params.row.property_unit ? `, Unit - ${params.row.property_unit}` : ''}`}
         </Typography>
       ),
     },

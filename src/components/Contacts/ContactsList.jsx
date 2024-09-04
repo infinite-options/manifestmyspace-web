@@ -40,6 +40,21 @@ import AES from "crypto-js/aes";
 import APIConfig from "../../utils/APIConfig";
 import ContactDetails from "./ContactDetails";
 
+import { styled } from '@mui/system';
+
+const CustomSwitch = styled(Switch)(({ theme }) => ({
+  
+  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track:before': {
+    backgroundColor: 'blue',
+  },
+  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track:after': {
+    backgroundColor: 'blue',
+  },
+  '& .MuiSwitch-track': {
+    backgroundColor: 'gray', // Track color when not checked
+    opacity: 1,
+  },
+}));
 
 const tabsManager = [
     {
@@ -776,11 +791,11 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
               >
                 {` ${employee.employee_first_name ? employee.employee_first_name : "<FIRST_NAME>"} ${employee.employee_last_name ? employee.employee_last_name : "<FIRST_NAME>"}`}
               </Typography>
-              <Switch
+              <CustomSwitch
                   checked={verified}
                   onChange={handleVerificationChange}
-                  color="primary"
-                  inputProps={{ 'aria-label': 'primary checkbox' }}
+                  // color="primary"
+                  // inputProps={{ 'aria-label': 'primary checkbox' }}
               />
             </Stack>
             <Typography

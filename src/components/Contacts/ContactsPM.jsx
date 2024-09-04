@@ -27,7 +27,7 @@ const ContactsPM = () => {
     switch (selectedRole) {
       case "MANAGER":
         data = response.data["management_contacts"];
-        setContactsTab("Tenant");
+        setContactsTab("Owner");
         break;
       case "OWNER":
         data = response.data["owner_contacts"];

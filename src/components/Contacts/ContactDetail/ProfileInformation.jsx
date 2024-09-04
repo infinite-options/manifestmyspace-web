@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import theme from "../../../theme/theme";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import theme from "../../../theme/theme";
 // import "./../../css/contacts.css";
 import { ThemeProvider, Box, Paper, Stack, Typography, Button, InputAdornment, TextField, Card, CardContent, Accordion, AccordionSummary, AccordionDetails, Chip } from "@mui/material";
-import { Message, Search } from "@mui/icons-material";
-import { getStatusColor } from "../ContactsFunction";
-import axios from "axios";
-import { useUser } from "../../../contexts/UserContext";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
+// import { Message, Search } from "@mui/icons-material";
+// import { getStatusColor } from "../ContactsFunction";
+// import axios from "axios";
+// import { useUser } from "../../../contexts/UserContext";
+// import Backdrop from "@mui/material/Backdrop";
+// import CircularProgress from "@mui/material/CircularProgress";
 import {
   Container,
   Grid,
@@ -17,27 +17,27 @@ import {
   Badge,
   Switch,
 } from "@mui/material";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import defaultHouseImage from "../../Property/defaultHouseImage.png";
-import { DataGrid } from '@mui/x-data-grid';
-import useMediaQuery from "@mui/material/useMediaQuery";
-import SearchIcon from '@mui/icons-material/Search';
+// import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+// import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+// import defaultHouseImage from "../../Property/defaultHouseImage.png";
+// import { DataGrid } from '@mui/x-data-grid';
+// import useMediaQuery from "@mui/material/useMediaQuery";
+// import SearchIcon from '@mui/icons-material/Search';
 import EmailIcon from "../../Property/messageIconDark.png";
 import PhoneIcon from "../../Property/phoneIconDark.png";
 import AddressIcon from "../../Property/addressIconDark.png";
-import maintenanceIcon from "../../Property/maintenanceIcon.png";
-import User_fill from "../../../images/User_fill_dark.png";
+// import maintenanceIcon from "../../Property/maintenanceIcon.png";
+// import User_fill from "../../../images/User_fill_dark.png";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
 
 
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import dayjs from "dayjs";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import dayjs from "dayjs";
 
 import AES from "crypto-js/aes";
 
-import APIConfig from "../../../utils/APIConfig";
+// import APIConfig from "../../../utils/APIConfig";
 
 const ProfileInformation = ({ contactDetails, type }) => {
     // console.log("ProfileInformation - props.type - ", type)
@@ -63,6 +63,7 @@ const ProfileInformation = ({ contactDetails, type }) => {
     const getDecryptedSSN = (encryptedSSN) => {
       try {
         const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString();
+        console.log("ROHIT - decrypted - ", decrypted.toString());
         return "***-**-" + decrypted.toString().slice(-4);
       } catch (error) {
         console.error('Error decrypting SSN:', error);
@@ -107,7 +108,15 @@ const ProfileInformation = ({ contactDetails, type }) => {
               {type == "owner" && contactDetails?.owner_address + ', ' + contactDetails?.owner_city + ', ' + contactDetails?.owner_state + ', ' + contactDetails?.owner_zip }
               {type == "tenant" && contactDetails?.tenant_address + ', ' + contactDetails?.tenant_city + ', ' + contactDetails?.tenant_state + ', ' + contactDetails?.tenant_zip }
               {(type === "maintenance" || type === "manager") && contactDetails?.business_address + ', ' + contactDetails?.business_city + ', ' + contactDetails?.business_state + ', ' + contactDetails?.business_zip }
-              {type == "employee" && contactDetails?.employee_address + ', ' + contactDetails?.employee_city + ', ' + contactDetails?.employee_state + ', ' + contactDetails?.employee_zip }
+              {/* {type == "employee" && contactDetails?.employee_address + ', ' + contactDetails?.employee_city + ', ' + contactDetails?.employee_state + ', ' + contactDetails?.employee_zip } */}
+              {type === "employee" &&
+                (contactDetails?.employee_address || 
+                contactDetails?.employee_city || 
+                contactDetails?.employee_state || 
+                contactDetails?.employee_zip
+                  ? `${contactDetails.employee_address || '-'}, ${contactDetails.employee_city || '-'}, ${contactDetails.employee_state || '-'}, ${contactDetails.employee_zip || '-'}`
+                  : '-')
+              }
               
   
             </Typography>

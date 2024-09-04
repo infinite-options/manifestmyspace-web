@@ -66,7 +66,7 @@ export default function PropertyRentWidget(props) {
   let rentStatusData = props.rentData;
 
   const contractRequests = props?.contractRequests;
-  // console.log("PropertyRentWidget - contractRequests - ", contractRequests);
+  console.log("PropertyRentWidget - contractRequests - ", contractRequests);
 
   let unpaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "UNPAID") : 0;
   // console.log(unpaidCount);

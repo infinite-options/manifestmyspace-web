@@ -1710,7 +1710,7 @@ return (
 					{propertyData.property_unit ? (
 						<span>
 							{propertyData.property_address}
-							{', '}
+							{', Unit - '}
 							{propertyData.property_unit}
 							{', '}
 							{propertyData.property_city}
