@@ -130,7 +130,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
     }, [lease_uid, isReload]);
 
     const editOrUpdateLease = async () => {
-        console.log('inside edit', modifiedData);
+        // console.log('--dhyey-- inside edit lease - ', lease[0]);
         try {
             if (modifiedData.length > 0) {
                 setShowSpinner(true);
@@ -167,7 +167,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                         leaseApplicationFormData.append(item.key, JSON.stringify(item.value));
                     }
                 });
-                leaseApplicationFormData.append('lease_uid', lease[0].lease_uid);
+                leaseApplicationFormData.append('lease_uid', lease[0].lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
@@ -395,6 +395,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                             modifiedData={modifiedData}
                             setModifiedData={setModifiedData}
                             dataKey={"lease_documents"}
+                            isAccord={true}
                         />
                         </Grid>
                     </Grid>

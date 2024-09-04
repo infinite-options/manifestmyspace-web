@@ -30,6 +30,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../utils/privacyMasking";
 
 import APIConfig from "../../utils/APIConfig";
+import Documents from "../Leases/Documents";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -134,6 +135,7 @@ const TenantLease = () => {
 
   const [fees, setFees] = useState([]);
 
+  const [leaseDocuments, setLeaseDocuments] = useState(JSON.parse(application.lease_documents));
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
 
@@ -1348,7 +1350,7 @@ const TenantLease = () => {
               </Button>
             </Box>
           </Grid>
-          {leaseFiles.length ? (
+          {/* {leaseFiles.length ? (
             <Grid item xs={12}>
               <Box
                 sx={{
@@ -1441,7 +1443,10 @@ const TenantLease = () => {
             </Grid>
           ) : (
             <></>
-          )}
+          )} */}
+          <Box marginLeft={'20px'} width={'100%'}>
+            <Documents documents={leaseDocuments} setDocuments={setLeaseDocuments} contractFiles={leaseFiles} setContractFiles={setLeaseFiles} contractFileTypes={leaseFileTypes} setContractFileTypes={setLeaseFileTypes} isAccord={false} isEditable={true}/>
+          </Box>
           <Grid item xs={12}>
             <Box>
               <Box

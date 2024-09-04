@@ -1805,6 +1805,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
             setuploadedFiles={setuploadedFiles}
             editOrUpdateLease={editOrUpdateProfile}
             setDeletedFiles={setDeletedFiles}
+            isAccord={true}
             modifiedData={modifiedData}
             setModifiedData={setModifiedData}
             dataKey={"business_documents"}

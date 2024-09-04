@@ -17,6 +17,7 @@ import EmailIcon from "../Property/messageIconDark.png";
 import PhoneIcon from "../Property/phoneIconDark.png";
 import AES from "crypto-js/aes";
 import CloseIcon from "@mui/icons-material/Close";
+import Documents from "../Leases/Documents";
 
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();
@@ -703,7 +704,8 @@ const TenantApplicationNav = (props) => {
                           marginRight: "30px",
                         }}
                       >
-                        <Typography
+                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>
+                        {/* <Typography
                           sx={{
                             justifySelf: "center",
                             color: theme.typography.common.blue,
@@ -754,7 +756,7 @@ const TenantApplicationNav = (props) => {
                                 <Box sx={{ color: "#160449" }}>{doc.contentType}</Box>
                               </Box>
                             </>
-                          ))}
+                          ))} */}
                       </Grid>
                     </Grid>
                     <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>

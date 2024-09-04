@@ -15,9 +15,10 @@ import APIConfig from "../../utils/APIConfig";
 import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import Documents from "../Leases/Documents";
 
 export default function TenantApplication(props) {
-  // console.log("In Tenant Application", props.data);
+  console.log("In Tenant Application", props);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId, roleName } = useUser();
@@ -943,7 +944,7 @@ export default function TenantApplication(props) {
                             </Typography> */}
               </Grid>
               <Grid item xs={12}>
-                <Typography
+                {/* <Typography
                   sx={{
                     justifySelf: "center",
                     color: theme.typography.common.blue,
@@ -1012,7 +1013,8 @@ export default function TenantApplication(props) {
                       </Button>
                     </Box>
                   </>
-                ))}
+                ))} */}
+                <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} customName={"Your Documents"}/>
               </Grid>
 
               <Box

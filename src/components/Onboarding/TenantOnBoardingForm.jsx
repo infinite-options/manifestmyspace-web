@@ -1410,6 +1410,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
             documentsRef={documentsRef}
             setDeletedFiles={setDeletedFiles}
             modifiedData={modifiedData}
+            isAccord={true}
             setModifiedData={setModifiedData}
             dataKey={"tenant_documents"}
           />
