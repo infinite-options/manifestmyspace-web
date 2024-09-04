@@ -24,7 +24,8 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import { ReactComponent as HomeIcon } from '../../images/home_icon.svg';
 import { ReactComponent as CalendarIcon } from '../../images/calendar_icon.svg';
 import { useMediaQuery } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
 import theme from '../../theme/theme';
 import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
@@ -33,13 +34,13 @@ import WorkerMaintenanceStatusTable from '../Maintenance/Worker/WorkerMaintenanc
 import { format, isEqual, isAfter, parseISO } from 'date-fns';
 import useSessionStorage from '../Maintenance/useSessionStorage';
 import WorkerMaintenanceRequestDetail from '../Maintenance/Worker/WorkerMaintenanceRequestDetail';
-import { useLocation } from 'react-router-dom';
+
 import SelectMonthComponent from '../SelectMonthComponent';
 import SelectPropertyFilter from '../SelectPropertyFilter/SelectPropertyFilter';
 
 export default function MaintenanceDashboard2() {
-	const location = useLocation(); 
-	const { user, getProfileId } = useUser();
+	const { user, getProfileId, selectedRole,  } = useUser();
+	const navigate = useNavigate();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [maintenanceRequests, setMaintenanceRequests] = useState({});
@@ -50,26 +51,36 @@ export default function MaintenanceDashboard2() {
 	const [todayData, settodayData] = useState([]);
 	const [nextScheduleData, setnextScheduleData] = useState([]);
 
-	const [workerMaintenanceView, setWorkerMaintenanceView] = useState(false);
+	let dataLoaded = false;
+	const [ userState, setUserState ] = useState(user);
+	const prevUserStateRef = useRef();
+
+	let dashboard_id = getProfileId();
+  	if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
+
+	const [workerMaintenanceView, setWorkerMaintenanceView] = useSessionStorage('workerMaintenanceView', false);
 	const [showMaintenanceDetail, setShowMaintenanceDetail] = useState(workerMaintenanceView);
 
 	const [sessionData, setSessionData] = useState({
-		maintenance_request_index: null,
-		propstatus: null,
-		propmaintenanceItemsForStatus: null,
-		alldata: null,
-		maintenance_request_uid: null,
-	  });
+		maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
+		propstatus: sessionStorage.getItem('workerselectedStatus'),
+		propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
+		alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
+		maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
+	});
 
-		const getMaintenanceData = async () => {
-			console.log('---in get----');
-			setShowSpinner(true);
-			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+	const getMaintenanceData = async () => {		
+		if(dashboard_id == null){
+			return;
+		}
+		setShowSpinner(true);
+		if (getProfileId() != null) {
+			const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`);
 			// const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000012`);
 			const data = await response.json();
 
 
-			const statusresponse = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+			const statusresponse = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${dashboard_id}`);
 			//const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
 			const statusdata = await statusresponse.json();
 
@@ -171,27 +182,101 @@ export default function MaintenanceDashboard2() {
 			await settodayData(filteredTodayData);
 			await setnextScheduleData(filteredData);
 			setShowSpinner(false);
+			dataLoaded = true;
+		};
+	}
+
+	const emp_verification = async () => {
+		try {
+		  const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+		  // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
+		  if (!response.ok) {
+			throw new Error("Failed to fetch data");
+		  }
+		  const data = await response.json();
+		  const employee = data?.profile?.result[0]; // Assuming there's only one employee
+		  console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
+		  if (employee?.employee_verification == null) {
+			navigate("/emp_waiting");
+		  }
+		} catch (error) {
+		  console.error(error);
+		}
+	  };
+
+	useEffect(() => {		
+		setShowSpinner(true);
+		if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {		  	
+		  emp_verification();
+		  setShowSpinner(false);
+		}		
+		getMaintenanceData();
+	}, []);
+
+	useEffect(() => {
+		prevUserStateRef.current = userState;
+	}, [userState]);
+
+	useEffect(() => {
+		setUserState(user);
+	}, [user]);
+	
+	
+
+	useEffect(() => {
+		console.log("ROHIT - dataLoaded - ", dataLoaded);
+		console.log("ROHIT - user - ", user);
+		if (prevUserStateRef.current !== userState) {
+			console.log('User state has deeply changed:', userState);
+			if(dataLoaded === false){
+				setShowSpinner(true);
+				if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
+				if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {
+				
+			
+					emp_verification();
+					setShowSpinner(false);
+				}		
+			
+				getMaintenanceData();
+			}
+		}
+	  }, [userState]);
+
+	useEffect(() => {
+		const handleWorkerMaintenanceRequestSelected = async () => {
+			setShowMaintenanceDetail(true);
+			await setSessionData({
+				maintenance_request_index: sessionStorage.getItem('workerselectedRequestIndex'),
+				propstatus: sessionStorage.getItem('workerselectedStatus'),
+				propmaintenanceItemsForStatus: JSON.parse(sessionStorage.getItem('workermaintenanceItemsForStatus')),
+				alldata: JSON.parse(sessionStorage.getItem('workerallMaintenanceData')),
+				maintenance_request_uid: sessionStorage.getItem('workermaintenance_request_uid'),
+			});
 		};
 
-		useEffect(() => {
-			console.log('is it in useeffect----');
-			if (location.state?.key || !location.state) {
-				console.log('key is it in useeffect if----', location.state?.key );
-			  getMaintenanceData(); // Fetch data on navigation
-			}
-		  }, [location.state?.key]); // The effect will trigger when `key` changes or if location.state is empty
-		
+		window.addEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
 
-	const handleWorkerMaintenanceRequestSelected = (maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid) => {
-		setSessionData({
-		  maintenance_request_index,
-		  propstatus,
-		  propmaintenanceItemsForStatus,
-		  alldata,
-		  maintenance_request_uid,
-		});
-		setShowMaintenanceDetail(true);
-	  };
+		return () => {
+			window.removeEventListener('workermaintenanceRequestSelected', handleWorkerMaintenanceRequestSelected);
+		};
+	}, []);
+
+	useEffect(() => {
+		const handleremoveworkermaintenanceRequestSelected = () => {
+			setShowMaintenanceDetail(false);
+		};
+
+		window.addEventListener('removeworkermaintenanceRequestSelected', handleremoveworkermaintenanceRequestSelected);
+
+		return () => {
+			window.removeEventListener(
+				'removeworkermaintenanceRequestSelected',
+				handleremoveworkermaintenanceRequestSelected
+			);
+		};
+	}, []);
+
 
 
 	return (
@@ -230,7 +315,6 @@ export default function MaintenanceDashboard2() {
 							todayData={todayData}
 							nextScheduleData={nextScheduleData}
 							allMaintenanceStatusData={maintenanceStatusRequests}
-							onSelectRequest={handleWorkerMaintenanceRequestSelected} 
 						/>
 					</Grid>
 
@@ -242,7 +326,6 @@ export default function MaintenanceDashboard2() {
 								propmaintenanceItemsForStatus={sessionData.propmaintenanceItemsForStatus}
 								alldata={sessionData.alldata}
 								maintenance_request_uid={sessionData.maintenance_request_uid}
-								setShowMaintenanceDetail={setShowMaintenanceDetail}
 							/>
 						</Grid>
 					) : (
@@ -307,7 +390,7 @@ export default function MaintenanceDashboard2() {
 }
 
 const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, 
-	allMaintenanceStatusData, onSelectRequest }) => {
+	allMaintenanceStatusData }) => {
 	const [showSpinner, setShowSpinner] = useState(false);
 	const convertTimeTo12HourFormat = (time) => {
 		const [hours, minutes] = time.split(':');
@@ -477,7 +560,7 @@ const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, 
 </Grid>
 
 						<Grid item xs={12}>
-							<WorkOrdersAccordion maintenanceRequests={filteredMaintenanceRequests} allMaintenanceStatusData={allMaintenanceStatusData} onSelectRequest={onSelectRequest} />
+							<WorkOrdersAccordion maintenanceRequests={filteredMaintenanceRequests} allMaintenanceStatusData={allMaintenanceStatusData} />
 						</Grid>
 						<Grid item xs={12} sx={{ padding: '20px 0px 20px 0px' }}>
 							<Paper
@@ -638,7 +721,7 @@ const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, 
 	);
 };
 
-const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData, onSelectRequest }) => {
+const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData }) => {
 	const colorStatus = theme.colorStatusMM;
 	const [query, setQuery] = useState('');
 
@@ -669,7 +752,6 @@ const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData, on
 							allMaintenanceData={maintenanceRequests}
 							allMaintenanceStatusData={allMaintenanceStatusData}
 							maintenanceRequestsCount={maintenanceArray}
-							onSelectRequest={onSelectRequest}
 						/>
 					);
 				})}
