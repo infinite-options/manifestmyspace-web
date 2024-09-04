@@ -45,6 +45,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import APIConfig from '../../../utils/APIConfig';
+import Documents from '../../Leases/Documents';
 
 function TextInputField(props) {
 	const inputStyle = {
@@ -1360,27 +1361,27 @@ useEffect(() => {
       });
   };
 
-  const handleRemoveFile = (index) => {
-    setContractFiles((prevFiles) => {
-      const filesArray = Array.from(prevFiles);
-      filesArray.splice(index, 1);
-      return filesArray;
-    });
-    setContractFileTypes((prevTypes) => {
-      const typesArray = [...prevTypes];
-      typesArray.splice(index, 1);
-      return typesArray;
-    });
-  };
+//   const handleRemoveFile = (index) => {
+//     setContractFiles((prevFiles) => {
+//       const filesArray = Array.from(prevFiles);
+//       filesArray.splice(index, 1);
+//       return filesArray;
+//     });
+//     setContractFileTypes((prevTypes) => {
+//       const typesArray = [...prevTypes];
+//       typesArray.splice(index, 1);
+//       return typesArray;
+//     });
+//   };
 
-  const handleDeletePrevUploadedFile = (doc_url, index) => {
-	setDeletedDocsUrl(prevList => [...prevList, doc_url])
-    setPreviouslyUploadedDocs((prevFiles) => {
-      const filesArray = Array.from(prevFiles);
-      filesArray.splice(index, 1);
-      return filesArray;
-    });
-  };
+//   const handleDeletePrevUploadedFile = (doc_url, index) => {
+// 	setDeletedDocsUrl(prevList => [...prevList, doc_url])
+//     setPreviouslyUploadedDocs((prevFiles) => {
+//       const filesArray = Array.from(prevFiles);
+//       filesArray.splice(index, 1);
+//       return filesArray;
+//     });
+//   };
 
   const handleDeclineOfferClick = () => {
     // console.log("Decline Offer Clicked");
@@ -2285,236 +2286,7 @@ return (
 			</Box>
 
 			{/* previously Uploaded docs */}
-			{previouslyUploadedDocs.length ? (
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						marginBottom: '7px',
-						width: '100%',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							paddingTop: '10px',
-							paddingLeft: '5px',
-							color: '#3D5CAC',
-							width: '100%',
-						}}
-					>
-						Previously Uploaded Documents:
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'row',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-								paddingTop: '5px',
-								marginY:"7px",
-								color: 'black',
-							}}
-						>
-							<Box sx={{width:"30%"}}>Filename</Box>
-							<Box sx={{width:"20%"}}>Content Type</Box>
-							<Box sx={{width:"20%"}}>File Type</Box>
-							<Box sx={{width:"15%"}}></Box>
-						</Box>
-						{[...previouslyUploadedDocs].map((doc, i) => (
-							<>
-							{/* {console.log("details of doc-", doc)} */}
-								<Box
-									key={i}
-									sx={{
-										display: 'flex',
-										flexDirection: 'row',
-										alignItems: 'center',
-										justifyContent: 'space-between',
-									}}
-								>
-									<Box sx={{width:"30%"}}>
-										<a href={doc.link} target="_blank" rel="noopener noreferrer">
-											<Box
-												sx={{
-													// height: '40px',
-													width: '100%',
-													cursor: 'pointer', // Change cursor to indicate clickability
-													color: '#3D5CAC',
-												}}
-											>
-												{doc.filename}
-											</Box>
-										</a>
-									</Box>
-									<Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
-									<Box sx={{width:"20%"}}>{doc.fileType}</Box>
-									{/* <Box sx={{width:"10%", display: 'flex', justifyContent: 'center' }}>
-										<Button
-												variant="text"
-												onClick={(event) => {
-													// handleDeletePrevUploadedFile(doc.link, i);
-												}}
-												sx={{
-													// width: '120px',
-													cursor: 'pointer',
-													fontSize: '14px',
-													fontWeight: 'bold',
-													color: '#3D5CAC',
-													'&:hover': {
-														backgroundColor: 'transparent', // Set to the same color as the default state
-													},
-												}}
-											>
-												
-										</Button>
-									</Box> */}
-									<Box sx={{width:"15%", display: 'flex', justifyContent: 'center'}}>
-										{/* Edit icon */}
-										<Button
-												variant="text"
-												onClick={(event) => {
-													// handleDeletePrevUploadedFile(doc.link, i);
-												}}
-												sx={{
-													// width: '120px',
-													cursor: 'pointer',
-													fontSize: '14px',
-													fontWeight: 'bold',
-													color: '#3D5CAC',
-													'&:hover': {
-														backgroundColor: 'transparent', // Set to the same color as the default state
-													},
-												}}
-											>
-												<EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
-										</Button>
-
-										{/* Delete icon */}
-										<Button
-											variant="text"
-											onClick={(event) => {
-												handleDeletePrevUploadedFile(doc.link, i);
-											}}
-											sx={{
-												// width: '120px',
-												cursor: 'pointer',
-												fontSize: '14px',
-												fontWeight: 'bold',
-												color: '#3D5CAC',
-												'&:hover': {
-													backgroundColor: 'transparent', // Set to the same color as the default state
-												},
-											}}
-										>
-											<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-										</Button>
-									</Box>
-								</Box>
-							</>
-						))}
-					</Box>
-				</Box>
-			) : (
-				<></>
-			)}
-			{contractFiles.length ? (
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						marginBottom: '7px',
-						width: '100%',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-							width: '100%',
-						}}
-					>
-						Added Documents:
-						{[...contractFiles].map((f, i) => {
-							
-							return (
-								<Box
-									key={i}
-									sx={{
-										display: 'flex',
-										flexDirection: 'row',
-										alignItems: 'center',
-										justifyContent: 'space-between',
-									}}
-								>
-									<Box
-										sx={{
-											// height: '40px',
-											width: '50%', // Adjust the width as needed
-											padding: '8px', // Adjust the padding as needed
-										}}
-									>
-										{f.name}
-									</Box>
-									<Select
-										value={contractFileTypes[i]}
-										label="Document Type"
-										onChange={(e) => {
-											const updatedTypes = [...contractFileTypes];
-											updatedTypes[i] = e.target.value;
-											setContractFileTypes(updatedTypes);
-										}}
-										required
-										sx={{
-											backgroundColor: '#D6D5DA',
-											height: '40px',
-											width: '40%', // Adjust the width as needed
-											padding: '8px', // Adjust the padding as needed
-										}}
-									>
-										<MenuItem value={'contract'}>contract</MenuItem>
-										<MenuItem value={'other'}>other</MenuItem>
-									</Select>
-									<Button
-										variant="text"
-										onClick={() => {
-											// setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
-											handleRemoveFile(i);
-										}}
-										sx={{
-											width: '10%',
-											cursor: 'pointer',
-											fontSize: '14px',
-											fontWeight: 'bold',
-											color: '#3D5CAC',
-										}}
-									>
-										<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-									</Button>
-								</Box>
-							)
-						})}
-						{showMissingFileTypePrompt && (
-							<Box
-								sx={{
-									color: 'red',
-									fontSize: '13px',
-								}}
-							>
-								Please select document types for all documents before proceeding.
-							</Box>
-						)}
-					</Box>
-				</Box>
-			) : (
-				<></>
-			)}
+			<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
 			{contractAssignedContacts.length ? (
 				<Box
 					sx={{

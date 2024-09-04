@@ -32,7 +32,7 @@ import LeaseIcon from "../../Property/leaseIcon.png";
 import APIConfig from "../../../utils/APIConfig";
 
 function TenantLeases(props) {
-  console.log("In Tenant Leases", props);
+  // console.log("In Tenant Leases", props);
   const location = useLocation();
   const navigate = useNavigate();
   const { getProfileId } = useUser();

@@ -43,6 +43,7 @@ import documentIcon from "../../documentIcon.png";
 import Divider from "@mui/material/Divider";
 import { DataGrid } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
+import Documents from "../../Leases/Documents";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -123,6 +124,7 @@ const ViewManagementContract = (props) => {
     setContractFees(contractFees);
 
     const contractDocuments = propertyList[index]?.contract_documents ? JSON.parse(propertyList[index]?.contract_documents) : [];
+    // console.log("--dhyey-- inside view manager lease - ", propertyList[index])
     setContractDocuments(contractDocuments);
   }, [props.index]);
 
@@ -234,13 +236,14 @@ const ViewManagementContract = (props) => {
 
         <Grid item xs={12}>
           <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-            <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract Documents</Typography>
+            {/* <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Contract Documents</Typography>
             {contractDocuments.map((document, index) => (
               <Box key={index} sx={{ cursor: "pointer", display: "flex", alignContent: "center", alignItems: "center" }} onClick={() => handleViewButton(document.link)}>
                 <img src={documentIcon} style={{ width: "20px", height: "25px", margin: "5px", paddingRight: "5px" }} />
                 <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#3D5CAC" }}>{document.filename}</Typography>
               </Box>
-            ))}
+            ))} */}
+            <Documents documents={contractDocuments} setDocuments={setContractDocuments} isEditable={false} isAccord={false} customName={"Contract Documents"}/>
           </Box>
         </Grid>
       </Grid>

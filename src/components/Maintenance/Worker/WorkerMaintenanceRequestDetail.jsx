@@ -65,7 +65,7 @@ function a11yProps(index) {
   }
 
 
-export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid}){
+export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid, setShowMaintenanceDetail}){
     console.log("----inside WorkerMaintenanceRequestDetail----");
     // console.log(maintenance_request_index, propstatus);
     const location = useLocation();
@@ -107,18 +107,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
         if(isMobile){
             navigate(-1); 
         } else {
-            sessionStorage.removeItem('workerselectedRequestIndex');
-			sessionStorage.removeItem('workerselectedStatus');
-			sessionStorage.removeItem('workermaintenanceItemsForStatus');
-			sessionStorage.removeItem('workerallMaintenanceData');
-			sessionStorage.removeItem('workermaintenance_request_uid');
-            sessionStorage.removeItem('workerMaintenanceView');
-
-            window.dispatchEvent(new Event('storage'));
-			// Dispatch the custom event
-            setTimeout(() => {
-				window.dispatchEvent(new Event('removeworkermaintenanceRequestSelected'));
-			}, 0);
+            setShowMaintenanceDetail(false);
         }
     }
 

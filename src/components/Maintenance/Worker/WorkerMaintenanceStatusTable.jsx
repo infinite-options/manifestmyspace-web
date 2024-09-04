@@ -30,7 +30,8 @@ export const getChipColor = (priority) => {
   }
 };
 
-export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsCount }) {
+export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsCount, onSelectRequest }) {
+  console.log('--inside table---', maintenanceRequestsCount);
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId, } = useUser();
@@ -219,21 +220,13 @@ const [data, setdata] = useState({});
         },
       });
     } else {
-			// Save data to session storage
-			sessionStorage.setItem('workerselectedRequestIndex', maintenance_request_index);
-			sessionStorage.setItem('workerselectedStatus', status);
-			sessionStorage.setItem(
-				'workermaintenanceItemsForStatus',
-				JSON.stringify(maintenanceRequests[status])
-			);
-			sessionStorage.setItem('workerallMaintenanceData', JSON.stringify(data));
-      sessionStorage.setItem('workermaintenance_request_uid', maintenance_request_uid);
- 
-			sessionStorage.setItem('workerMaintenanceView', true);
-      
-			// Trigger the custom event
-			window.dispatchEvent(new Event('workermaintenanceRequestSelected'));
-		}
+      onSelectRequest(
+        maintenance_request_index, 
+        status, 
+        maintenanceRequests[status], 
+        data, 
+        maintenance_request_uid
+      )	}
   }
 
   return (

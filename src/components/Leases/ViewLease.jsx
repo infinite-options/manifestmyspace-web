@@ -43,6 +43,7 @@ import documentIcon from "../documentIcon.png";
 import Divider from "@mui/material/Divider";
 import { DataGrid } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
+import Documents from "./Documents";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -196,19 +197,36 @@ const ViewLease = (props) => {
   };
 
   useEffect(() => {
+    setShowSpinner(true);
+    getLeaseDetails();
+
+    // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
+    //   const data = res.data["Lease_Details"].result;
+    //   // console.log("FETCHING THE DATA ", data);
+    //   // setFetchData(data);
+    //   setAllLeases(data);
+    //   setShowSpinner(false);
+    // });
+
+    // const leaseID = propertyList[index]?.lease_uid;
+
+    // console.log("main useEffect -  const leaseID - ", leaseID);
+
+    
+  }, []);
+
+  useEffect(() => {
     const index = props.index ? props.index : 0;
     setIndex(index);
 
     const leaseID = propertyList[index]?.lease_uid || props.lease_id;
 
-    // console.log("index useEffect -  const leaseID - ", leaseID);
+    console.log("--dhyey-- index useEffect -  const leaseID - ", leaseID);
 
     if (leaseID != null) {
       allLeases?.forEach((lease) => {
         if (lease.lease_uid === leaseID) {
-          console.log(JSON.parse(lease.lease_fees));
-          console.log(JSON.parse(lease.property_utilities));
-          console.log(JSON.parse(lease.lease_documents));
+          console.log("---dhyey--- lease data - ", lease);
           setLeaseFees(JSON.parse(lease.lease_fees));
           setLeaseDocuments(JSON.parse(lease.lease_documents));
           const utilities = JSON.parse(lease.property_utilities);
@@ -236,47 +254,6 @@ const ViewLease = (props) => {
     }
   }, [props.index, props.propertyList, allLeases]);
 
-  useEffect(() => {
-    setShowSpinner(true);
-    getLeaseDetails();
-
-    const leaseID = propertyList[index]?.lease_uid;
-
-    // console.log("main useEffect -  const leaseID - ", leaseID);
-
-    if (leaseID != null) {
-      allLeases?.forEach((lease) => {
-        if (lease.lease_uid === leaseID) {
-          console.log(JSON.parse(lease.lease_fees));
-          console.log(JSON.parse(lease.property_utilities));
-          console.log(JSON.parse(lease.lease_documents));
-          setLeaseFees(JSON.parse(lease.lease_fees));
-          setLeaseDocuments(JSON.parse(lease.lease_documents));
-          const utilities = JSON.parse(lease.property_utilities);
-
-          const utils = utilities.map((utility) => utility.utility_desc).join(", ");
-          // console.log(utils)
-          setUtilityString(utils);
-
-          // console.log("main useEffect -  lease - ", lease);
-
-          setLeaseData(lease);
-          setTenantsData(lease.tenants ? JSON.parse(lease?.tenants) : []);
-          setAdultsData(lease.tenants ? JSON.parse(lease?.lease_adults) : []);
-          setChildrenData(lease.tenants ? JSON.parse(lease?.lease_children) : []);
-          setVehiclesData(lease.tenants ? JSON.parse(lease?.lease_vehicles) : []);
-          setPetsData(lease.tenants ? JSON.parse(lease?.lease_pets) : []);
-
-          // console.log("Lease data", lease);
-          // console.log("lease fees", lease.leaseFees);
-          // setDocument(lease.lease_documents);
-        }
-      });
-    } else {
-      // console.log(" main useEffect - Setting lease data to null.")
-      setLeaseData(null);
-    }
-  }, []);
 
   function getDayText(day) {
     switch (day % 10) {
@@ -468,6 +445,8 @@ const ViewLease = (props) => {
               }}
             >
               <Grid container sx={{ paddingTop: "20px" }}>
+
+                {/* close button and heading */}
                 <Grid item xs={12} sx={{ position: "relative" }}>
                   <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
                     <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease</Typography>
@@ -478,6 +457,8 @@ const ViewLease = (props) => {
                     </Box>
                   </Box>
                 </Grid>
+
+                {/* property address and unit */}
                 <Grid item xs={12}>
                   <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "row", padding: "25px", borderRadius: "5px" }}>
                     <Grid item xs={6}>
@@ -490,6 +471,8 @@ const ViewLease = (props) => {
                     </Grid>
                   </Box>
                 </Grid>
+
+                {/* lease details */}
                 <Grid item xs={12}>
                   <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
                     <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease Details</Typography>
@@ -515,14 +498,19 @@ const ViewLease = (props) => {
                     </Grid>
                   </Box>
                 </Grid>
+
+                {/* Rent details */}
                 <Grid item xs={12}>
                   <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
                     <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Rent Details</Typography>
                     {leaseFees.map((item, index) => (
                       <Grid container direction={"row"} key={index} sx={{ paddingBottom: "10px" }}>
+                        {/* fees name */}
                         <Grid item xs={12} sx={{ paddingTop: "5px", paddingBottom: "5px" }}>
                           <Typography sx={{ color: "#3D5CAC", fontSize: "26px", fontWeight: 700 }}>{item.fee_name ? item.fee_name : "None"}</Typography>
                         </Grid>
+
+                        {/* fees details */}
                         <Grid container sx={{ marginLeft: "15px" }}>
                           <Grid item xs={6}>
                             <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Amount</Typography>
@@ -533,16 +521,9 @@ const ViewLease = (props) => {
                             <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {item.frequency ? item.frequency : "None"}</Typography>
                           </Grid>
                           <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Late Fee After</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{item.late_by ? `${item.late_by} days` : "None"}</Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Late Fee After Per Day</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{`$${item.late_fee}` ?? "None"}</Typography>
-                          </Grid>
-                          <Grid item xs={6}>
                             <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Rent Due Date</Typography>
                             <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{item.due_by ? `${item.due_by} of month` : "None"}</Typography>
+                            
                           </Grid>
                           <Grid item xs={6}>
                             <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Available to Pay</Typography>
@@ -550,12 +531,28 @@ const ViewLease = (props) => {
                               {" "}
                               {item.available_topay ? `${item.available_topay} days before` : "None"}
                             </Typography>
+                            
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Late Fee After</Typography>
+                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{item.late_by ? `${item.late_by} days` : "None"}</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>One Time Fee</Typography>
+                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{`$${item.late_fee}` ?? "None"}</Typography>
+                          </Grid>
+                          <Grid item xs={6}/>
+                          <Grid item xs={6}>
+                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Per Day Late Fee</Typography>
+                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{`$${item.perDay_late_fee}` ?? "None"}</Typography>
                           </Grid>
                         </Grid>
                       </Grid>
                     ))}
                   </Box>
                 </Grid>
+
+                {/* Occupancy details */}
                 <Grid item xs={12}>
                   <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
                     <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Occupancy Details</Typography>
@@ -648,17 +645,22 @@ const ViewLease = (props) => {
                     </Grid>
                   </Box>
                 </Grid>
+
+                {/* documents */}
                 <Grid item xs={12}>
                   <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-                    <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease Documents</Typography>
+                    {/* <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease Documents</Typography>
                     {leaseDocuments.map((document, index) => (
                       <Box key={index} sx={{ cursor: "pointer", display: "flex", alignContent: "center", alignItems: "center" }} onClick={() => handleViewButton(document.link)}>
                         <img src={documentIcon} style={{ width: "20px", height: "25px", margin: "5px", paddingRight: "5px" }} />
                         <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#3D5CAC" }}>{document.filename}</Typography>
                       </Box>
-                    ))}
+                    ))} */}
+                    <Documents customName={"Lease Documents:"} documents={leaseDocuments} setDocuments={setLeaseDocuments} isEditable={false} />
                   </Box>
                 </Grid>
+
+                {/* end and renew button */}
                 <Grid item xs={12}>
                   {(selectedRole === "MANAGER" || selectedRole === "TENANT") && (
                     <Stack direction='row' justifyContent='space-between' alignItems='center' position='relative' sx={{ paddingTop: "15px" }}>
