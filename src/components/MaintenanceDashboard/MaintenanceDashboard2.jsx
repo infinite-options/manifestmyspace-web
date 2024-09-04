@@ -208,30 +208,30 @@ export default function MaintenanceDashboard2() {
 		}
 	  };
 
-	useEffect(() => {
-		console.log('is it in useeffect----');
-		if (location.state?.key || !location.state) {
-			if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {		  	
-				emp_verification();
-				setShowSpinner(false);
-			}		
-			console.log('key is it in useeffect if----', location.state?.key );
-			getMaintenanceData(); // Fetch data on navigation
-		}
-	}, [location.state?.key]); // The effect will trigger when `key` changes or if location.state is empty
+	// useEffect(() => {
+	// 	console.log('location.state?.key useeffect----');
+	// 	if (location.state?.key || !location.state) {
+	// 		if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {		  	
+	// 			emp_verification();
+	// 			setShowSpinner(false);
+	// 		}		
+	// 		console.log('key is it in useeffect if----', location.state?.key );
+	// 		getMaintenanceData(); // Fetch data on navigation
+	// 	}
+	// }, [location.state?.key]); // The effect will trigger when `key` changes or if location.state is empty
 
-	// useEffect(() => {		
-	// 	setShowSpinner(true);
-	// 	if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {		  	
-	// 	  emp_verification();
-	// 	  setShowSpinner(false);
-	// 	}		
-	// 	getMaintenanceData();
-	// }, []);
+	useEffect(() => {		
+		setShowSpinner(true);
+		if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {		  	
+		  emp_verification();		  
+		}		
+		getMaintenanceData();
+		setShowSpinner(false);
+	}, []);
 
-	useEffect(() => {
-		prevUserStateRef.current = userState;
-	}, [userState]);
+	// useEffect(() => {
+	// 	prevUserStateRef.current = userState;
+	// }, [userState]);
 
 	useEffect(() => {
 		setUserState(user);
@@ -241,6 +241,7 @@ export default function MaintenanceDashboard2() {
 		console.log("ROHIT - dataLoaded - ", dataLoaded);
 		console.log("ROHIT - user - ", user);
 		if (prevUserStateRef.current !== userState) {
+			prevUserStateRef.current = userState;
 			console.log('User state has deeply changed:', userState);
 			if(dataLoaded === false){
 				setShowSpinner(true);

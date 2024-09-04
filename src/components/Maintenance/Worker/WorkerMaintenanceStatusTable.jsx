@@ -31,7 +31,7 @@ export const getChipColor = (priority) => {
 };
 
 export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsCount, onSelectRequest }) {
-  console.log('--inside table---', maintenanceRequestsCount);
+  // console.log('--inside table---', maintenanceRequestsCount);
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId, } = useUser();
