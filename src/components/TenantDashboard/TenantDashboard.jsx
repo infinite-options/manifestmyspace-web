@@ -75,7 +75,7 @@ function TenantDashboard(props) {
 
   const [tenantMaintenanceItemDetailState, setTenantMaintenanceItemDetailState] = useState(null);
   const [newTenantMaintenanceState, setnewTenantMaintenanceState] = useState(null);
-  const [viewLeaseState, setViewLeaseState] = useState(null);
+  const [viewLeaseState, setViewLeaseState] = useState(location.state?.viewLeaseState ? location.state?.viewLeaseState : null);
   const [paymentState, setPaymentState] = useState(null);
   const [tenantApplicationNavState, setTenantApplicationNavState] = useState(null);
   const [viewApprovedLeaseNavState, setViewApprovedLeaseNavState] = useState(null);
@@ -341,7 +341,7 @@ function TenantDashboard(props) {
   }
 
   const renderRightPane = () => {
-    // console.log("---rightPane.type---", rightPane.type);
+    console.log("---rightPane.type---", rightPane.type);
     // console.log("336 - rightPane.state - ", rightPane.state);
     switch (rightPane.type) {
       case "listings":
@@ -399,7 +399,7 @@ function TenantDashboard(props) {
   }
 
   // console.log("Selected Property before return: ", selectedProperty);
-  console.log("[DEBUG] leaseDetails", leaseDetails);
+  // console.log("[DEBUG] leaseDetails", leaseDetails);
 
   return (
     <ThemeProvider theme={theme}>
@@ -411,6 +411,8 @@ function TenantDashboard(props) {
         <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
           <Grid container spacing={6}>
             {/* <Grid item xs={12}> */}
+
+            {/* welcome message */}
             <Grid item xs={8} md={6} lg={6}>
               <Box
                 sx={{
@@ -433,7 +435,8 @@ function TenantDashboard(props) {
                 </Typography>
               </Box>
             </Grid>
-
+            
+            {/* search icon */}
             <Grid item xs={4} md={6} lg={6}>
               <Box
                 sx={{
@@ -461,6 +464,7 @@ function TenantDashboard(props) {
             </Grid>
             {/* </Grid> */}
 
+            {/* left side render widget */}
             <Grid item xs={12} md={4}>
               <AccountBalanceWidget
                 selectedProperty={selectedProperty}
@@ -489,7 +493,8 @@ function TenantDashboard(props) {
                 propertyLeaseData={leaseDetails}
               />
             </Grid>
-
+            
+            {/* right side render */}
             <Grid item xs={12} md={8}>
               {rightPane !== "" ? (
                 renderRightPane()
@@ -750,11 +755,11 @@ const AccountBalanceWidget = ({
   propertyLeaseData,
 }) => {
   const navigate = useNavigate();
-  // console.log("---selectedProperty in acc---", selectedProperty);
+  console.log("---selectedProperty in acc---", selectedProperty);
   // console.log("---selectedLease in acc---", selectedLease);
   console.log("---propertyLeaseData in acc---", propertyLeaseData);
   // console.log("---propertyLeaseData in acc---", propertyLeaseData[0].business_name);
-  // console.log("---propertyData in acc---", propertyData);
+  console.log("---propertyData in acc---", propertyData);
   // console.log("---property in acc---", property);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -904,7 +909,9 @@ const AccountBalanceWidget = ({
   }
 
   const [image, setImage] = useState(defaultHouseImage);
-  const [bN, setBN] = useState("Not A Real Business");
+  const [businessName, setBusinessName] = useState("");
+  const [businessEmail, setBusinessEmail] = useState("No Email");
+  const [businesPhone, setBusinessPhone] = useState("No Phone Number");
 
   useEffect(() => {
     if (selectedProperty) {
@@ -922,16 +929,13 @@ const AccountBalanceWidget = ({
 
   useEffect(() => {
     if (selectedProperty && propertyLeaseData) {
-      console.log("selectedProperty: ", selectedProperty);
-      console.log("propertyLeaseData: ", propertyLeaseData);
+      // console.log("selectedProperty: ", selectedProperty);
+      // console.log("propertyLeaseData: ", propertyLeaseData);
       // let selectedPropertyBusinessName = "Business Failing";
-      const selectedPropertyBusinessName = propertyLeaseData.find((property) => property.property_uid === selectedProperty.property_uid)?.business_name;
-      console.log("selectedPropertyBusinessName: ", selectedPropertyBusinessName);
-      if (selectedPropertyBusinessName) {
-        setBN(selectedPropertyBusinessName);
-      } else {
-        setBN("Another Fake Business");
-      }
+      const foundProperty = propertyLeaseData.find((property) => property.property_uid === selectedProperty.property_uid);
+      setBusinessName(foundProperty?.business_name ? foundProperty?.business_name : "Not A Real Business");
+      setBusinessEmail(foundProperty?.business_email ? foundProperty?.business_email : "No Email")
+      setBusinessPhone(foundProperty?.business_phone_number ? foundProperty?.business_phone_number : "No Phone")
     }
   }, [selectedProperty, propertyLeaseData]);
 
@@ -1001,10 +1005,11 @@ const AccountBalanceWidget = ({
               sx={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "left",
+                justifyContent: "center",
                 alignItems: "center",
                 color: "#160449",
                 width: "100%",
+                marginTop:"10px"
               }}
             >
               <Box // This is the Lease Status circle indictor to the Left of the address
@@ -1081,6 +1086,8 @@ const AccountBalanceWidget = ({
           </Box>
         </Box>
       </Box>
+      
+      {/* Make payment */}
       <Box
         sx={{
           display: "flex",
@@ -1110,6 +1117,8 @@ const AccountBalanceWidget = ({
           Make a Payment
         </Box>
       </Box>
+      
+      {/* Balance Details */}
       <Box
         sx={{
           display: "flex",
@@ -1121,7 +1130,7 @@ const AccountBalanceWidget = ({
           paddingBottom: isMobile ? "5px" : "20px",
         }}
       >
-        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Balance Details</Typography>
+        <Typography sx={{ fontSize: { xs: "15px", sm: "15px", md: "18px", lg: "21px" }, fontWeight: "bold", color: "#160449" }}>Balance Details</Typography>
 
         <Grid container>
           <Grid item xs={6} sx={{ color: "#3D5CAC", fontSize: "16px", fontWeight: 700 }}>
@@ -1158,6 +1167,8 @@ const AccountBalanceWidget = ({
           </Grid>
         </Grid>
       </Box>
+
+      {/* lease details */}
       <Box
         sx={{
           display: "flex",
@@ -1169,7 +1180,7 @@ const AccountBalanceWidget = ({
           paddingBottom: isMobile ? "5px" : "20px",
         }}
       >
-        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold" }}>Lease Details</Typography>
+        <Typography sx={{ fontSize: { xs: "15px", sm: "15px", md: "18px", lg: "21px" }, fontWeight: "bold" }}>Lease Details</Typography>
         <Grid container>
           <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>
             {" "}
@@ -1205,16 +1216,58 @@ const AccountBalanceWidget = ({
           </Grid>
         </Grid>
       </Box>
+      
+      {/* For property manager info */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: isMobile ? "10px" : "20px",
+          paddingTop: isMobile ? "5px" : "20px",
+          paddingBottom: isMobile ? "5px" : "20px",
+        }}
+      >
+        <Typography sx={{ fontSize: { xs: "15px", sm: "15px", md: "18px", lg: "21px" }, fontWeight: "bold" }}>Property Manager</Typography>
+        <Grid container>
+          <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>
+            {" "}
+            Name{" "}
+          </Grid>
+          <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+            {" "}
+            {businessName}{" "}
+          </Grid>
+          <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>
+            {" "}
+            Email{" "}
+          </Grid>
+          <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+            {" "}
+            {businessEmail}{" "}
+          </Grid>
+          <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>
+            {" "}
+            Phone{" "}
+          </Grid>
+          <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+            {" "}
+            {businesPhone}{" "}
+          </Grid>
+        </Grid>
+      </Box>
 
-      <Box>Hello</Box>
+      {/* <Box>Hello</Box>
       <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, fontWeight: "bold" }}>Property Manager</Typography>
       <Grid container>
         <Grid item xs={12} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "left" }}>
           {" "}
-          {bN ? bN : "Can't touch this"}
+          {businessName}
         </Grid>
       </Grid>
-      <Box>Goodbye</Box>
+      <Box>Goodbye</Box> */}
+
       {propertyData &&
         propertyData.length > 0 &&
         (selectedProperty?.lease_status === "NEW" ||
@@ -1246,8 +1299,8 @@ const AccountBalanceWidget = ({
             sx={{
               display: "flex",
               flexDirection: "row",
-              alignItem: "left",
-              justifyContent: "left",
+              alignItem: "center",
+              justifyContent: "center",
               margin: isMobile ? "0px" : "20px",
               paddingBottom: isMobile ? "5px" : "10px",
               cursor: "pointer",
@@ -1257,8 +1310,8 @@ const AccountBalanceWidget = ({
             }}
             onClick={() => handleViewLeaseNavigate(selectedLease.lease_uid)}
           >
-            <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "17px", margin: "0px", paddingLeft: "15px", paddingRight: "15px" }} />
-            <u>View Full Lease 1</u>
+            <img src={documentIcon} alt='document-icon' style={{ width: "15px", height: "20px", marginTop: "3px", paddingLeft: "0px", paddingRight: "10px" }} />
+            <u>View Full Lease</u>
           </Box>
         ))}
 

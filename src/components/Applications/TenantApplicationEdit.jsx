@@ -130,7 +130,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
     }, [lease_uid, isReload]);
 
     const editOrUpdateLease = async () => {
-        console.log('inside edit', modifiedData);
+        // console.log('--dhyey-- inside edit lease - ', lease[0]);
         try {
             if (modifiedData.length > 0) {
                 setShowSpinner(true);
@@ -167,7 +167,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                         leaseApplicationFormData.append(item.key, JSON.stringify(item.value));
                     }
                 });
-                leaseApplicationFormData.append('lease_uid', lease[0].lease_uid);
+                leaseApplicationFormData.append('lease_uid', lease[0].lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
@@ -265,7 +265,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
     const handleCloseButton = (e) => {
         e.preventDefault();
         const state = {
-            data: property, status: lease_uid === null ? "" : property.lease_status, lease:  lease_uid === null ? [] : lease[0] , from: from
+            data: property, status: lease_uid === null ? "" : lease[0].lease_status, lease:  lease_uid === null ? [] : lease[0] , from: from
         }
         setRightPane?.({ type: "tenantApplication", state: state });
     };
@@ -307,7 +307,9 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                             <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
                             {snackbarMessage}
                         </Alert>
-                    </Snackbar>                    
+                    </Snackbar>
+
+                    {/* occupancy details                     */}
                     <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
                             <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={occupantsExpanded} onChange={() => setOccupantsExpanded(prevState => !prevState)}>
@@ -379,7 +381,8 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                             </Accordion>
                         </Grid>
                     </Grid>
-
+                    
+                    {/* documents details */}
                     <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12} md={12}>
                         <Documents
@@ -392,6 +395,7 @@ export default function TenantApplicationEdit({ profileData, lease_uid, setRight
                             modifiedData={modifiedData}
                             setModifiedData={setModifiedData}
                             dataKey={"lease_documents"}
+                            isAccord={true}
                         />
                         </Grid>
                     </Grid>
