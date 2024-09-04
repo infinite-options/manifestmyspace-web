@@ -499,6 +499,20 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 	const handleBackClick = () => {
 		setShowGoBackDialog(true);	
 	}
+
+	useEffect(() => {
+		const fullAddress = `${address}, ${city}, ${state}, ${zip}`;
+	  
+		const updateCoordinates = async () => {
+		  if (address && city && state && zip) {
+			const coords = await getLatLongFromAddress(fullAddress);
+			console.log("Updated coordinates: ", coords);
+			setCoordinates(coords);
+		  }
+		};
+	  
+		updateCoordinates();
+	  }, [address, city, state, zip]); 
 	
 
 	return (
