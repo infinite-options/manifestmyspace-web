@@ -139,7 +139,7 @@ import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
 import Onboarding from "./Onboarding/Onboarding";
 import OnBoardDesktop from "./Onboarding/OnBoardDesktop";
-import NewUser from "./Onboarding/NewUser";
+// import NewUser from "./Onboarding/NewUser";
 import NewUser2 from "./Onboarding/NewUser2";
 import CreateProfile from "./Onboarding/CreateProfile";
 import Register from "./Onboarding/Register";
@@ -191,7 +191,8 @@ import OwnerFirstProperty from "./OwnerDashboard/OwnerFirstProperty";
 
 function Main() {
   // console.log("In Main Page");
-  const { roleName, selectedRole } = useUser();
+  const { user, roleName, selectedRole } = useUser();
+  console.log("ROHIT - Main - user - ", user);
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box

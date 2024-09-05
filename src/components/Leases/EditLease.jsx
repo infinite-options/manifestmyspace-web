@@ -22,6 +22,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { CalendarToday, Chat, Close, Description } from '@mui/icons-material';
 import { useNavigate, useLocation} from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
+import Documents from './Documents';
 
 const EditLease = (props) => {
     const { user, getProfileId } = useUser();
@@ -29,35 +30,53 @@ const EditLease = (props) => {
     const location = useLocation();
     const [contractFileTypes, setContractFileTypes] = useState([]);
     const leaseData = location.state.leaseData;
+    // console.log("---dhyey--- leasedata Documents- ", JSON.parse(leaseData.lease_documents))
+    const [leaseDocuments, setLeaseDocuments] = useState(JSON.parse(leaseData.lease_documents));
     const [contractFiles, setContractFiles] = useState([]);
     const [contractName, setContractName] = useState(leaseData.contract_name)
     const [startDate, setStartDate] = useState(leaseData.lease_start)
     const [endDate, setEndDate] = useState(leaseData.lease_end)
     const [moveIn, setMoveIn] = useState(leaseData.lease_move_in_date)
     const [noOfOcc, setNoOfOcc] = useState("")
-    const [rent, setRent] = useState(leaseData.property_listed_rent)
-    const [rentFreq, setRentFreq] = useState(leaseData.frequency)
-    const [lateFeeAfter, setLateFeeAfter] = useState(leaseData.lease_rent_late_by)
-    const [lateFeePerDay, setLateFeePerDay] = useState(leaseData.lease_rent_late_fee)
-    const [rentDue, setRentDue] = useState(leaseData.lease_rent_due_by)
-    const [availablePay, setAvailablePay] = useState(leaseData.lease_rent_available_topay)
-    const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
-    console.log("---dhyey---- inside edit lease- leasedata, ", leaseData);
+    const [contentTypes, setContentTypes] = useState([]);
 
-    const checkFileTypeSelected = () => {
-        for (let i = 0; i < contractFiles.length; i++) {
-          if (i >= contractFileTypes.length) {
-            return false; // Return false if the index is out of bounds
-          }
-          const fileType = contractFileTypes[i];
-          console.log("FILE TYPE: ", fileType);
-          if (!fileType || fileType.trim() === "") {
-            return false;
-          }
-        }
-        setShowMissingFileTypePrompt(false);
-        return true;
-    };
+    const rentDataFromLease = JSON.parse(leaseData.lease_fees).filter((lease) => lease.fee_name === "Rent");
+
+    const [rent, setRent] = useState(rentDataFromLease[0].charge? rentDataFromLease[0].charge : 0)
+    const [rentFreq, setRentFreq] = useState(rentDataFromLease[0].frequency? rentDataFromLease[0].frequency : "Monthly")
+    const [lateFeeAfter, setLateFeeAfter] = useState(rentDataFromLease[0].late_by? rentDataFromLease[0].late_by : 0)
+    const [lateFeePerDay, setLateFeePerDay] = useState(rentDataFromLease[0].late_fee? rentDataFromLease[0].late_fee:0)
+    const [rentDue, setRentDue] = useState(rentDataFromLease[0].due_by? rentDataFromLease[0].due_by : 0)
+    const [availablePay, setAvailablePay] = useState(rentDataFromLease[0].available_topay? rentDataFromLease[0].available_topay:0)
+    const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
+    // console.log("---dhyey---- inside edit lease- leasedata, ", leaseData);
+
+    // const checkFileTypeSelected = () => {
+    //     for (let i = 0; i < contractFiles.length; i++) {
+    //       if (i >= contractFileTypes.length) {
+    //         return false; // Return false if the index is out of bounds
+    //       }
+    //       const fileType = contractFileTypes[i];
+    //       console.log("FILE TYPE: ", fileType);
+    //       if (!fileType || fileType.trim() === "") {
+    //         return false;
+    //       }
+    //     }
+    //     setShowMissingFileTypePrompt(false);
+    //     return true;
+    // };
+
+    function formatDate(date) {
+        var d = new Date(date),
+        month = "" + (d.getMonth() + 1),
+        day = "" + d.getDate(),
+        year = d.getFullYear();
+      
+        if (month.length < 2) month = "0" + month;
+        if (day.length < 2) day = "0" + day;
+      
+        return [month, day, year].join("-");
+    }
 
     const handleContractNameChange = (event) => {
         setContractName(event.target.value);
@@ -103,9 +122,13 @@ const EditLease = (props) => {
     }
 
     const handleCloseButton = () => {
-        navigate('/viewLease',{
+        navigate('/tenantDashboard',{
             state:{
-                lease_id : leaseData.lease_uid
+                viewLeaseState : {
+                    lease_id : leaseData.lease_uid,
+                    property_uid: leaseData.property_uid,
+                    isDesktop: true,
+                }
             } 
         });
     };
@@ -123,6 +146,19 @@ const EditLease = (props) => {
         });
     };
 
+    useEffect(() =>{
+        fetchContentTypes();
+    }, []);
+    
+    const fetchContentTypes = async()=>{
+        try {
+          const response = await axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/lists?list_category=content');
+          // console.log(response.data.result)
+          setContentTypes(response.data.result);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
 
     const handleNewLease = () => {
 
@@ -141,23 +177,28 @@ const EditLease = (props) => {
         leaseApplicationFormData.append('lease_status', "NEW")
         leaseApplicationFormData.append('lease_assigned_contacts', leaseData.lease_assigned_contacts)
         leaseApplicationFormData.append('lease_documents', leaseData.lease_documents)
-        leaseApplicationFormData.append('lease_adults', leaseData?.tenant_adult_occupants)
-        leaseApplicationFormData.append('lease_children', leaseData?.tenant_children_occupants)
-        leaseApplicationFormData.append('lease_pets', leaseData?.tenant_pet_occupants)
-        leaseApplicationFormData.append('lease_vehicles', leaseData?.tenant_vehicle_info)
-        leaseApplicationFormData.append('lease_application_date', date.toLocaleDateString())
+        leaseApplicationFormData.append('lease_adults', leaseData?.lease_adults)
+        leaseApplicationFormData.append('lease_children', leaseData?.lease_children) 
+        leaseApplicationFormData.append('lease_pets', leaseData?.lease_pets)    
+        leaseApplicationFormData.append('lease_vehicles', leaseData?.lease_vehicles)  
+        leaseApplicationFormData.append('lease_application_date', formatDate(date)) // change date format
         leaseApplicationFormData.append('tenant_uid', getTenantsUid(leaseData))
 
-        leaseApplicationFormData.append("contract_name",leaseData.contract_name)
+        // leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
         leaseApplicationFormData.append("lease_end",leaseData.lease_end)
-        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)                                     
-        leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
-        leaseApplicationFormData.append("frequency",leaseData.frequency)
-        leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
-        leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
-        leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
-        leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
+        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)    
+        
+        const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
+
+        // leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
+        // leaseApplicationFormData.append("frequency",leaseData.frequency)
+        // leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
+        // leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
+        // leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
+        // leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
+
+        leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees))
 
         if(contractFiles.length){
             const documentsDetails = [];
@@ -178,6 +219,8 @@ const EditLease = (props) => {
         axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
         .then((response) => {
             console.log('Data updated successfully');
+            navigate('/tenantDashboard',{ 
+            });
         })
         .catch((error) => {
             if(error.response){
@@ -197,16 +240,20 @@ const EditLease = (props) => {
 
         const leaseApplicationFormData = new FormData();
         leaseApplicationFormData.append("lease_uid", leaseData.lease_uid);
-        leaseApplicationFormData.append("contract_name",leaseData.contract_name)
+        // leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
         leaseApplicationFormData.append("lease_end",leaseData.lease_end)
-        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date)                                     
-        leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
-        leaseApplicationFormData.append("frequency",leaseData.frequency)
-        leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
-        leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
-        leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
-        leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
+        leaseApplicationFormData.append("lease_move_in_date",leaseData.lease_move_in_date) 
+        
+        const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "leaseFees_uid": rentDataFromLease[0].leaseFees_uid, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
+        leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees))
+
+        // leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
+        // leaseApplicationFormData.append("frequency",leaseData.frequency)
+        // leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
+        // leaseApplicationFormData.append("lease_rent_late_fee",leaseData.lease_rent_late_fee)
+        // leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
+        // leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
 
         if(contractFiles.length){
             const documentsDetails = [];
@@ -262,8 +309,9 @@ const EditLease = (props) => {
                 console.log("Error in sending announcements:", error);
                 alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
             }
-          };
-          sendAnnouncement();          
+        };
+        sendAnnouncement();
+        handleCloseButton();          
     }
 
     return (
@@ -279,17 +327,17 @@ const EditLease = (props) => {
                 }}
             >
                 <Paper
-                    style={{
+                    sx={{
                         margin: '30px',
                         padding: theme.spacing(2),
                         backgroundColor: theme.palette.primary.secondary,
                         width: '85%', // Occupy full width with 25px margins on each side
-                        [theme.breakpoints.down('sm')]: {
-                            width: '80%',
-                        },
-                        [theme.breakpoints.up('sm')]: {
-                            width: '50%',
-                        },
+                        // [theme.breakpoints.down('sm')]: {
+                        //     width: '80%',
+                        // },
+                        // [theme.breakpoints.up('sm')]: {
+                        //     width: '50%',
+                        // },
                         paddingTop: '10px',
                     }}
                 >
@@ -705,9 +753,12 @@ const EditLease = (props) => {
                                 </TableCell>
                             </TableRow>
                             <TableRow>
+                                <Documents isEditable={true} documents={leaseDocuments} isAccord={false} setDocuments={setLeaseDocuments} contractFileTypes={contractFileTypes} setContractFileTypes={setContractFileTypes} contractFiles={contractFiles} setContractFiles={setContractFiles}/>
+                            </TableRow>
+                            <TableRow>
                                 <TableCell>
                                     <Button
-                                        fullWidth
+                                        width='100px'
                                         variant="text"
                                         sx={{
                                             color: theme.typography.common.blue,
@@ -716,119 +767,20 @@ const EditLease = (props) => {
                                                     .fontWeight,
                                         }}
                                     >
-                        <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-                            <DescriptionIcon sx={{ fontSize: 19, color: '#3D5CAC'}} /> Add Document
-                        </label>
-                        <input
-                            id="file-upload"
-                            type="file"
-                            accept=".doc,.docx,.txt,.pdf"
-                            hidden
-                            // onChange={(e) => setContractFiles(e.target.files)}
-                            onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
-                            
-                            multiple
-                        />
-                                    </Button>
-
-                        
-{
-                contractFiles.length? (
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent:'space-between',
-                        alignItems: 'center',
-                        marginBottom: '7px',
-                        width: '100%',
-                    }}>
-                        
-                                   
-                        <Box
-                            sx={{
-                                fontSize: '15px',
-                                fontWeight: 'bold',
-                                padding: '5px',
-                                color: '#3D5CAC',
-                                width: '100%',
-                            }}
-                        >
-                            Added Documents:
-                            {[...contractFiles].map((f, i) => (
-                                <Box
-                                    key={i} 
-                                    sx={{
-                                        display:'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
+                                        <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
+                                            <DescriptionIcon sx={{ fontSize: 19, color: '#3D5CAC'}} /> Add Document
+                                        </label>
+                                        <input
+                                            id="file-upload"
+                                            type="file"
+                                            accept=".doc,.docx,.txt,.pdf"
+                                            hidden
+                                            // onChange={(e) => setContractFiles(e.target.files)}
+                                            onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
                                             
-                                            // height: '16px',
-                                            width: '50%', // Adjust the width as needed
-                                            padding: '8px', // Adjust the padding as needed
-                                        }}
-                                    >
-                                    {f.name}
-                                    </Box>
-                                    <Select
-                                        value={contractFileTypes[i]}
-                                        label="Document Type"
-                                        onChange={(e) => {
-                                                const updatedTypes = [...contractFileTypes];
-                                                updatedTypes[i] = e.target.value;
-                                                setContractFileTypes(updatedTypes);
-                                            }
-                                        }
-                                        required
-                                        sx={{
-                                            backgroundColor: '#D6D5DA',
-                                            height: '16px',
-                                            width: '40%', // Adjust the width as needed
-                                            padding: '8px', // Adjust the padding as needed
-                                        }}
-                                    >
-                                        <MenuItem value={"contract"}>contract</MenuItem>
-                                        <MenuItem value={"other"}>other</MenuItem>
-                                    </Select>
-                                    <Button 
-                                        variant="text"
-                                        onClick={() => {
-                                            // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
-                                            handleRemoveFile(i)
-                                        }}
-                                        sx={{
-                                            width: '10%', 
-                                            cursor: 'pointer',
-                                            fontSize: '14px',
-                                            fontWeight: 'bold', 
-                                            color: '#3D5CAC', 
-                                        }}
-                                        
-                                    >
-                                        <DeleteIcon  sx={{ fontSize: 19, color: '#3D5CAC'}} />
+                                            multiple
+                                        />
                                     </Button>
-                                </Box>
-        
-                                
-                            ))}
-                            
-                            {showMissingFileTypePrompt && (
-                                <Box
-                                    sx={{
-                                        color: 'red',
-                                        fontSize: '13px',
-                                    }}
-                                >
-                                    Please select document types for all documents before proceeding.
-                                </Box>
-                            )}
-                        </Box>  </Box>
-                ) : (<></>)
-            }
                                 </TableCell>
                             </TableRow>
                         </TableBody>

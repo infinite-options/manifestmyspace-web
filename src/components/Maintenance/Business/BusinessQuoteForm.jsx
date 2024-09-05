@@ -435,7 +435,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
         // changeMaintenanceRequestStatus(status)
         changeQuoteStatus(status)
         // uploadQuoteDocuments()
-        navigate("/workerMaintenance", {state: {refresh: true}})
+        navigate("/maintenanceDashboard2", {state: {refresh: true, key: Date.now()}})
     }
 
     function numImages(){
