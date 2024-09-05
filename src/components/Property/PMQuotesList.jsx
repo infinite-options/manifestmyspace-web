@@ -117,32 +117,34 @@ export default function PMQuotesList() {
   //   getProperties();
   // }, [refresh]);
 
+  const fetchData = async () => {
+    setShowSpinner(true);
+
+    const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+    // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
+
+    try {
+      const jsonData = await response.json();
+      // console.log("Manager Dashboard jsonData: ", jsonData);
+      // NEW PM REQUESTS
+      const requests = jsonData?.NewPMRequests?.result;
+      setContractRequests(requests);
+      // setCurrentContractUID(requests[0]?.contract_uid)
+      // setCurrentContractPropertyUID(requests[0]?.property_uid)
+    } catch (error) {
+      console.error(error);
+    }
+
+    setShowSpinner(false);
+  };
+
   useEffect(() => {
     // const dataObject = {};
     // console.log("In UseEffect");
     // console.log(getProfileId());
 
     // console.log("In UseEffect after if");
-    const fetchData = async () => {
-      setShowSpinner(true);
-
-      const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
-      // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
-
-      try {
-        const jsonData = await response.json();
-        // console.log("Manager Dashboard jsonData: ", jsonData);
-        // NEW PM REQUESTS
-        const requests = jsonData?.NewPMRequests?.result;
-        setContractRequests(requests);
-        // setCurrentContractUID(requests[0]?.contract_uid)
-        // setCurrentContractPropertyUID(requests[0]?.property_uid)
-      } catch (error) {
-        console.error(error);
-      }
-
-      setShowSpinner(false);
-    };
+    
     fetchData();
   }, []);
 

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import {
 	ThemeProvider,
 	Box,
@@ -46,6 +46,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import APIConfig from '../../../utils/APIConfig';
 import Documents from '../../Leases/Documents';
+import ManagementContractContext from '../../../contexts/ManagementContractContext';
+import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 
 function TextInputField(props) {
 	const inputStyle = {
@@ -82,9 +84,13 @@ function TextInputField(props) {
 	);
 }
 
-function AddFeeDialog({ open, handleClose, onAddFee }) {
+function AddFeeDialog({ open, handleClose, onAddFee, }) {	
+	const { feeBases, dataLoaded } = useContext(ManagementContractContext);
 	const { getProfileId } = useUser();
 	const [feeName, setFeeName] = useState('');
+
+	console.log("ROHIT - feeBases from Context - ", feeBases);
+
 	useEffect(() => {
 		console.log('FEE Name: ', feeName);
 	}, [feeName]);
@@ -433,9 +439,14 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 										padding: '8px', // Adjust the padding as needed
 									}}
 								>
-									<MenuItem value={'Gross Rent'}>Gross Rent</MenuItem>
+									{/* <MenuItem value={'Gross Rent'}>Gross Rent</MenuItem>
 									<MenuItem value={'Utility Bill'}>Utility Bill</MenuItem>
-									<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem>
+									<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem> */}
+									{
+										feeBases?.map( basis => (
+											<MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>
+										))
+									}
 								</Select>
 							</Box>
 						)}
@@ -884,7 +895,10 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
+  const { defaultContractFees, dataLoaded } = useContext(ManagementContractContext);
+  console.log("ROHIT - defaultContractFees from Context - ", defaultContractFees);
   // console.log("PropertyCard - props - ", props);
+  
 
   const [propertyData, setPropertyData] = useState(props.data);
   const timeDiff = props.timeDifference;
@@ -915,7 +929,7 @@ const PropertyCard = (props) => {
   const [contractEndDate, setContractEndDate] = useState(dayjs());
   const [contractStatus, setContractStatus] = useState("");
   const [contractFees, setContractFees] = useState([]);
-  const [defaultContractFees, setDefaultContractFees] = useState([]);
+//   const [defaultContractFees, setDefaultContractFees] = useState([]);
   const [contractFiles, setContractFiles] = useState([]);
   const [previouslyUploadedDocs, setPreviouslyUploadedDocs] = useState([]);
   const [contractDocument, setContractDocument] = useState(null);
@@ -994,27 +1008,27 @@ const PropertyCard = (props) => {
 //     }
 //   };
 
-useEffect(() => {
-    const fetchProfileData = async () => {
-        try {
-            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-            const data = await response.json();
-            console.log("DATA PROFILE", data);
+// useEffect(() => {
+//     const fetchProfileData = async () => {
+//         try {
+//             const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+//             const data = await response.json();
+//             console.log("DATA PROFILE", data);
 
-            if (data.result && data.result.length > 0) {
-                const profileFees = data.result[0].business_services_fees
-                    ? JSON.parse(data.result[0].business_services_fees)
-                    : [];
+//             if (data.result && data.result.length > 0) {
+//                 const profileFees = data.result[0].business_services_fees
+//                     ? JSON.parse(data.result[0].business_services_fees)
+//                     : [];
                 
-                setDefaultContractFees(profileFees);
-            }
-        } catch (error) {
-            console.error("Error fetching profile data: ", error);
-        }
-    };
+//                 setDefaultContractFees(profileFees);
+//             }
+//         } catch (error) {
+//             console.error("Error fetching profile data: ", error);
+//         }
+//     };
 
-    fetchProfileData();
-}, []);
+//     fetchProfileData();
+// }, []);
 
 
   useEffect(() => {
@@ -1062,25 +1076,25 @@ useEffect(() => {
 		  }
 		}
 	  };
-	  const fetchProfileData = async () => {
-        try {
-            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-            const data = await response.json();
-            console.log("Fetched profile data:", data.profile.result);
+	// const fetchProfileData = async () => {
+    //     try {
+    //         const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+    //         const data = await response.json();
+    //         console.log("Fetched profile data:", data.profile.result);
 
-            if (data.profile.result && data.profile.result.length > 0) {
-                const profileFees = data.profile.result[0].business_services_fees
-                    ? JSON.parse(data.profile.result[0].business_services_fees)
-                    : [];
-                console.log("Setting defaultContractFees:", profileFees);
-                setDefaultContractFees(profileFees);
-            }
-        } catch (error) {
-            console.error("Error fetching profile data: ", error);
-        }
-    };
+    //         if (data.profile.result && data.profile.result.length > 0) {
+    //             const profileFees = data.profile.result[0].business_services_fees
+    //                 ? JSON.parse(data.profile.result[0].business_services_fees)
+    //                 : [];
+    //             console.log("Setting defaultContractFees:", profileFees);
+    //             setDefaultContractFees(profileFees);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching profile data: ", error);
+    //     }
+    // };
 
-    fetchProfileData();
+    // fetchProfileData();
     setContractDetails();
   }, [contractUID]);
 

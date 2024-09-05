@@ -265,21 +265,21 @@ export default function PropertyNavigator({
     },
   ];
 
-  function getPropertyList(data) {
-    const propertyList = data["Property"].result;
-    const applications = data["Applications"].result;
-    const appsMap = new Map();
-    applications.forEach((a) => {
-      const appsByProperty = appsMap.get(a.property_uid) || [];
-      appsByProperty.push(a);
-      appsMap.set(a.property_uid, appsByProperty);
-    });
-    return propertyList.map((p) => {
-      p.applications = appsMap.get(p.property_uid) || [];
-      p.applicationsCount = [...p.applications].filter((a) => a.lease_status === "NEW").length;
-      return p;
-    });
-  }
+  // function getPropertyList(data) {
+  //   const propertyList = data["Property"].result;
+  //   const applications = data["Applications"].result;
+  //   const appsMap = new Map();
+  //   applications.forEach((a) => {
+  //     const appsByProperty = appsMap.get(a.property_uid) || [];
+  //     appsByProperty.push(a);
+  //     appsMap.set(a.property_uid, appsByProperty);
+  //   });
+  //   return propertyList.map((p) => {
+  //     p.applications = appsMap.get(p.property_uid) || [];
+  //     p.applicationsCount = [...p.applications].filter((a) => a.lease_status === "NEW").length;
+  //     return p;
+  //   });
+  // }
 
   useEffect(() => {
     setPropertyData(propertyList || []);
@@ -407,139 +407,139 @@ export default function PropertyNavigator({
     fetchDashboardData();
   }, [dashboard_id]);
 
-  function getColorStatusBasedOnSelectedRole() {
-    if (role === "Manager") {
-      return theme.colorStatusPMO;
-    } else if (role === "Owner") {
-      return theme.colorStatusO;
-    } else if (role === "Maintenance") {
-      return theme.colorStatusMM;
-    } else if (role === "PM Employee") {
-      return theme.colorStatusPMO;
-    } else if (role === "Maintenance Employee") {
-      return theme.colorStatusMM;
-    } else if (role === "Tenant") {
-      return theme.colorStatusTenant;
-    }
-  }
+  // function getColorStatusBasedOnSelectedRole() {
+  //   if (role === "Manager") {
+  //     return theme.colorStatusPMO;
+  //   } else if (role === "Owner") {
+  //     return theme.colorStatusO;
+  //   } else if (role === "Maintenance") {
+  //     return theme.colorStatusMM;
+  //   } else if (role === "PM Employee") {
+  //     return theme.colorStatusPMO;
+  //   } else if (role === "Maintenance Employee") {
+  //     return theme.colorStatusMM;
+  //   } else if (role === "Tenant") {
+  //     return theme.colorStatusTenant;
+  //   }
+  // }
 
-  const handleOwnerClick = (ownerData) => {
-    navigate("/ownerContactDetailsHappinessMatrix", {
-      // navigate(`/ownerContactTest`, {
-      state: {
-        ownerUID: ownerData,
-        navigatingFrom: "PropertyNavigator",
-        index: index,
-        happinessMatrixData: dataforhappiness,
-        happinessData: happinessData,
-        contactDetail: contactDetails,
-      },
-    });
-  };
+  // const handleOwnerClick = (ownerData) => {
+  //   navigate("/ownerContactDetailsHappinessMatrix", {
+  //     // navigate(`/ownerContactTest`, {
+  //     state: {
+  //       ownerUID: ownerData,
+  //       navigatingFrom: "PropertyNavigator",
+  //       index: index,
+  //       happinessMatrixData: dataforhappiness,
+  //       happinessData: happinessData,
+  //       contactDetail: contactDetails,
+  //     },
+  //   });
+  // };
 
-  function handleOnClickNavigateToMaintenance(row) {
-    const role = roleName();
-    // console.log(role);
-    let status = "NEW REQUEST";
-    // console.log('initial Status: ', status);
-    // console.log('handleOnClickNavigateToMaintenance');
-    // console.log('row', row);
-    // console.log('New data: ', property.maintenance);
-    // console.log(
-    //  'maintenance_request_index_new',
-    //  property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
-    // );
+  // function handleOnClickNavigateToMaintenance(row) {
+  //   const role = roleName();
+  //   // console.log(role);
+  //   let status = "NEW REQUEST";
+  //   // console.log('initial Status: ', status);
+  //   // console.log('handleOnClickNavigateToMaintenance');
+  //   // console.log('row', row);
+  //   // console.log('New data: ', property.maintenance);
+  //   // console.log(
+  //   //  'maintenance_request_index_new',
+  //   //  property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
+  //   // );
 
-    // console.log('Row: ', row);
-    // console.log('Row1: ', row.row);
-    // console.log('Row2: ', row.row.maintenance_status);
+  //   // console.log('Row: ', row);
+  //   // console.log('Row1: ', row.row);
+  //   // console.log('Row2: ', row.row.maintenance_status);
 
-    if (role === "Manager") {
-      // These maitenance_status fields work for a Property Manager.  Need to make this Role Specific
-      status = row.row.maintenance_status;
-      // console.log('Manager status', status);
+  //   if (role === "Manager") {
+  //     // These maitenance_status fields work for a Property Manager.  Need to make this Role Specific
+  //     status = row.row.maintenance_status;
+  //     // console.log('Manager status', status);
 
-      if (status === "NEW" || status === "INFO") {
-        status = "NEW REQUEST";
-      } else if (status === "PROCESSING") {
-        status = "QUOTES REQUESTED";
-      } else if (status === "CANCELLED") {
-        status = "COMPLETED";
-      }
-    }
+  //     if (status === "NEW" || status === "INFO") {
+  //       status = "NEW REQUEST";
+  //     } else if (status === "PROCESSING") {
+  //       status = "QUOTES REQUESTED";
+  //     } else if (status === "CANCELLED") {
+  //       status = "COMPLETED";
+  //     }
+  //   }
 
-    if (role === "Owner") {
-      // Owner Status
-      status = row.row.maintenance_request_status;
-      // console.log('Owner status', status);
+  //   if (role === "Owner") {
+  //     // Owner Status
+  //     status = row.row.maintenance_request_status;
+  //     // console.log('Owner status', status);
 
-      if (status === "NEW") {
-        status = "NEW REQUEST";
-      } else if (status === "INFO") {
-        status = "INFO REQUESTED";
-      }
-    }
+  //     if (status === "NEW") {
+  //       status = "NEW REQUEST";
+  //     } else if (status === "INFO") {
+  //       status = "INFO REQUESTED";
+  //     }
+  //   }
 
-    try {
-      if (!isDesktop) {
-        navigate("/maintenance/detail", {
-          state: {
-            maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
-            status: status,
-            maintenanceItemsForStatus: maintenanceReqData[status],
-            allMaintenanceData: maintenanceReqData,
-            fromProperty: true,
-            index: currentIndex,
-            isDesktop: isDesktop,
-          },
-        });
-      } else {
-        navigate("/ownerMaintenance", {
-          state: {
-            maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
-            status: status,
-            maintenanceItemsForStatus: maintenanceReqData[status],
-            allMaintenanceData: maintenanceReqData,
-            fromProperty: true,
-            index: currentIndex,
-            propertyId: propertyId,
-          },
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      alert("Error navigating to maintenance detail", error);
-    }
-  }
+  //   try {
+  //     if (!isDesktop) {
+  //       navigate("/maintenance/detail", {
+  //         state: {
+  //           maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
+  //           status: status,
+  //           maintenanceItemsForStatus: maintenanceReqData[status],
+  //           allMaintenanceData: maintenanceReqData,
+  //           fromProperty: true,
+  //           index: currentIndex,
+  //           isDesktop: isDesktop,
+  //         },
+  //       });
+  //     } else {
+  //       navigate("/ownerMaintenance", {
+  //         state: {
+  //           maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
+  //           status: status,
+  //           maintenanceItemsForStatus: maintenanceReqData[status],
+  //           allMaintenanceData: maintenanceReqData,
+  //           fromProperty: true,
+  //           index: currentIndex,
+  //           propertyId: propertyId,
+  //         },
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     alert("Error navigating to maintenance detail", error);
+  //   }
+  // }
 
-  function displayTopMaintenanceItem() {
-    const colorStatus = getColorStatusBasedOnSelectedRole();
-    if (property && property.maintenanceCount > 0) {
-      // console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
-      return (
-        <DataGrid
-          rows={property.maintenance}
-          columns={maintenanceColumns}
-          disableColumnMenu={!isDesktop}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
-            },
-          }}
-          getRowId={(row) => row.maintenance_request_uid}
-          pageSizeOptions={[5]}
-          onRowClick={(row) => {
-            // console.log("Row =", row);
-            handleOnClickNavigateToMaintenance(row);
-          }}
-        />
-      );
-    } else {
-      return "No Open Maintenance Tickets";
-    }
-  }
+  // function displayTopMaintenanceItem() {
+  //   const colorStatus = getColorStatusBasedOnSelectedRole();
+  //   if (property && property.maintenanceCount > 0) {
+  //     // console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
+  //     return (
+  //       <DataGrid
+  //         rows={property.maintenance}
+  //         columns={maintenanceColumns}
+  //         disableColumnMenu={!isDesktop}
+  //         initialState={{
+  //           pagination: {
+  //             paginationModel: {
+  //               pageSize: 5,
+  //             },
+  //           },
+  //         }}
+  //         getRowId={(row) => row.maintenance_request_uid}
+  //         pageSizeOptions={[5]}
+  //         onRowClick={(row) => {
+  //           // console.log("Row =", row);
+  //           handleOnClickNavigateToMaintenance(row);
+  //         }}
+  //       />
+  //     );
+  //   } else {
+  //     return "No Open Maintenance Tickets";
+  //   }
+  // }
 
   //   function numberOfMaintenanceItems(maintenanceItems) {
   //     if (maintenanceItems && maintenanceItems.length > 0) {
@@ -1603,6 +1603,30 @@ export default function PropertyNavigator({
                           }}
                         >
                           {property ? `$${property.property_value}` : "-"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Assessment Year
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {(property && property.property_value_year) ? `${property.property_value_year}` : "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>

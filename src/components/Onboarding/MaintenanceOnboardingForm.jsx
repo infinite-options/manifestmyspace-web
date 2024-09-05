@@ -50,12 +50,12 @@ import { useCookies } from "react-cookie";
 // import DashboardTab from "../TenantDashboard/NewDashboardTab";
 import APIConfig from "../../utils/APIConfig";
 
-import AdultOccupant from "../Leases/AdultOccupant";
-import ChildrenOccupant from "../Leases/ChildrenOccupant";
-import PetsOccupant from "../Leases/PetsOccupant";
-import VehiclesOccupant from "../Leases/VehiclesOccupant";
+// import AdultOccupant from "../Leases/AdultOccupant";
+// import ChildrenOccupant from "../Leases/ChildrenOccupant";
+// import PetsOccupant from "../Leases/PetsOccupant";
+// import VehiclesOccupant from "../Leases/VehiclesOccupant";
 import Documents from "../Leases/Documents";
-import { add } from "date-fns";
+// import { add } from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -959,8 +959,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const handleNextStep = async () => {
     const newErrors = {};
     if (!businessName) newErrors.businessName = 'Business name is required';    
-    if (!address) newErrors.address = 'Address is required';    
-    if (!unit) newErrors.unit = 'Unit is required';    
+    if (!address) newErrors.address = 'Address is required';        
     if (!email) newErrors.email = 'Email is required';
     if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
     if (!ein) newErrors.ein = 'SSN is required';
@@ -1319,11 +1318,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       onChange={handleBusinessUnitChange}
                       variant='filled'
                       placeholder='3'
-                      className={classes.root}
-                      InputProps={{
-                        className: errors.unit ? classes.errorBorder : '',
-                      }}
-                      required
+                      className={classes.root}                      
                     ></TextField>
                   </Grid>
                 </Grid>

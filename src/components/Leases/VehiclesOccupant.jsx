@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import theme from "../../theme/theme";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -275,8 +275,9 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                     value={currentRow?.year ? dayjs(currentRow.year) : null}
                                     views={['year']}
                                     format="YYYY"
+                                    maxDate={dayjs(new Date())}
                                     onChange={(e) => {
-                                        const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                        const formattedDate = e ? e.format("YYYY") : null;
                                         setCurrentRow({ ...currentRow, year: formattedDate })
                                     }
                                     }

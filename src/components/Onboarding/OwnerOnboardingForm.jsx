@@ -496,8 +496,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     const newErrors = {};
     if (!firstName) newErrors.firstName = 'First name is required';    
     if (!lastName) newErrors.lastName = 'Last name is required';    
-    if (!address) newErrors.address = 'Address is required';    
-    if (!unit) newErrors.unit = 'Unit is required';    
+    if (!address) newErrors.address = 'Address is required';        
     if (!email) newErrors.email = 'Email is required';
     if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
     if (!ssn) newErrors.ssn = 'SSN is required';   
@@ -832,11 +831,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                       onChange={handleUnitChange}
                       variant='filled'
                       placeholder='3'
-                      className={classes.root}
-                      InputProps={{
-                        className: errors.unit ? classes.errorBorder : '',
-                      }}
-                      required
+                      className={classes.root}                      
                     ></TextField>
                   </Grid>
                 </Grid>
