@@ -30,8 +30,7 @@ function ManagementContractDetails(props) {
   
 
   useEffect(() => {
-    fetchData();
-    setTimeDiff(calculateTimeDiff());
+    fetchData();    
   }, [currentContractPropertyUID]);
 
   const property_endpoint_resp = contractRequests;
@@ -90,8 +89,7 @@ function ManagementContractDetails(props) {
   useEffect(() => {
     // console.log("Management Contract Details UseEffect in ManagementContractDetails");
     // console.log("New PM Requests in MCD: ", property_endpoint_resp);
-    fetchData();
-    setTimeDiff(calculateTimeDiff());
+    fetchData();    
   }, []);
 
   const handleBackBtn = () => {
