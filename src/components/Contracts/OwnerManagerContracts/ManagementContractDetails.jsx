@@ -1,26 +1,14 @@
 import { useLocation, useNavigate } from "react-router";
 import { useEffect, useState, useContext, } from "react";
 // import axios from "axios";
-import { useUser } from "../../../contexts/UserContext";
-import Backdrop from "@mui/material/Backdrop";
+// import { useUser } from "../../../contexts/UserContext";
+// import Backdrop from "@mui/material/Backdrop";
 import {
   ThemeProvider,
-  Box,
-  Paper,
+  Box,  
   Stack,
   Typography,
   Button,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Select,
-  MenuItem,
   Grid,
   Container,
 } from "@mui/material";
@@ -39,57 +27,23 @@ function ManagementContractDetails(props) {
   // console.log("ManagementContractDetails - currentContractPropertyUID from context - ", currentContractPropertyUID);
   // const { getProfileId } = useUser();
   const navigate = useNavigate();
-
-  // const { state } = useLocation();
-  // const { contract_uid, contract_business_id, contract_property_id, } = state;
-
-  // console.log("In MCD: ", property_endpoint_resp);
-
-  // const [contractUID, setContractUID] = useState(null);
-
-  // const [contractUID, setContractUID] = useState(props.contractUID); 
-  // const [contractUID, setContractUID] = useState(currentContractUID);   //getting value from context
-
-  // const [contractPropertyID, setContractPropertyID] = useState(null);
-  // const [contractPropertyID, setContractPropertyID] = useState(props.contractPropertyUID); //getting value from context
-  // const [contractPropertyID, setContractPropertyID] = useState(currentContractPropertyUID);
-
-  // useEffect(() => {
-  //   setContractUID(props.contractUID);
-  // }, [props.contractUID]);               //ROHIT - changing to value from context
-
-  // useEffect(() => {
-  //   setContractPropertyID(props.contractPropertyUID);
-  // }, [props.contractPropertyUID]);
+  
 
   useEffect(() => {
     fetchData();
     setTimeDiff(calculateTimeDiff());
   }, [currentContractPropertyUID]);
 
-  // const property_endpoint_resp = props.properties;
   const property_endpoint_resp = contractRequests;
 
-  // const [showSpinner, setShowSpinner] = useState(false);
+
   const [isLoading, setIsLoading] = useState(true);
-  // const [propertiesData, setPropertiesData] = useState([]);
   const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
 
   const [index, setIndex] = useState(0);
-  const [timeDiff, setTimeDiff] = useState(null);
+  // const [timeDiff, setTimeDiff] = useState(null);
 
-  const fetchData = async () => {
-    // setShowSpinner(true);
-
-    // setContractUID(contract_uid);
-    // console.log(property_endpoint_resp);
-    // console.log(property_endpoint_resp["NewPMRequests"]);
-    // console.log(property_endpoint_resp["NewPMRequests"].result);
-    // console.log(property_endpoint_resp["NewPMRequests"]["result"]);
-
-    // console.log("property_endpoint_resp - ", property_endpoint_resp);
-
-    // const properties = property_endpoint_resp["NewPMRequests"]["result"] ? property_endpoint_resp["NewPMRequests"]["result"] : [];
+  const fetchData = async () => {    
     const properties = property_endpoint_resp ? property_endpoint_resp : [];
     // console.log("PROPERTIES", properties);
     // setPropertiesData(properties);
@@ -101,11 +55,8 @@ function ManagementContractDetails(props) {
 
     // console.log("FILTERED PROPERTIES DATA", filteredProperties);
 
-    // setContractPropertyID(filteredProperties[0]["property_uid"]);
-    // setContractPropertyID(contract_property_id);
-
-    setIsLoading(false);
-    // setShowSpinner(false);
+    
+    setIsLoading(false);    
   };
 
   const calculateTimeDiff = () => {
@@ -142,13 +93,6 @@ function ManagementContractDetails(props) {
     fetchData();
     setTimeDiff(calculateTimeDiff());
   }, []);
-
-  // useEffect(() => {
-  //   // console.log("Management Contract Details UseEffect in ManagementContractDetails");
-  //   // console.log("New PM Requests in MCD: ", property_endpoint_resp);
-  //   fetchData();
-  //   setTimeDiff(calculateTimeDiff());
-  // }, [props.properties]);
 
   const handleBackBtn = () => {
     navigate(-1);
@@ -273,11 +217,7 @@ function ManagementContractDetails(props) {
               </Box>
               
               <PropertyCard
-                data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []}
-                // timeDifference={timeDiff}
-                // contractUID={currentContractUID}
-                // contractBusinessID={getProfileId()}
-                // contractPropertyID={currentContractPropertyUID}
+                data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []}                
               />
             </Box>
           </Grid>
