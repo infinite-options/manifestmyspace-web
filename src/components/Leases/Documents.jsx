@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
+const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLease, setModifiedData, modifiedData, contractFiles, setContractFiles, dataKey, isAccord=false, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
   const [open, setOpen] = useState(false);
   const [currentRow, setcurrentRow] = useState(null);
   const color = theme.palette.form.main;
@@ -66,6 +66,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
   // const [preview, setPreview] = useState(null)
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false)
+  // const [contractFiles, setContractFiles] = useState([])
 
   useEffect(() => {
     console.log("inside documents mod", modifiedData);
@@ -824,19 +825,56 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
   }else{
     return(
       <>
-        <Typography
+        <Box 
           sx={{
-            color: "#160449",
-            fontWeight: theme.typography.primary.fontWeight,
-            fontSize: "18px",
-            paddingBottom: "5px",
-            paddingTop: "5px",
-            marginTop:"10px"
-          }}
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						fontSize: '15px',
+						fontWeight: 'bold',
+						// padding: '5px',
+						color: '#3D5CAC',
+					}}
         >
-          {customName ? customName : "Documents: "}
-        </Typography>
-
+          <Typography
+            sx={{
+              color: "#160449",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "18px",
+              paddingBottom: "5px",
+              paddingTop: "5px",
+              marginTop:"10px"
+            }}
+          >
+            {customName ? customName : "Documents: "}
+          </Typography>
+          <Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'row',
+							fontSize: '16px',
+							fontWeight: 'bold',
+              paddingBottom: "5px",
+              paddingTop: "5px",
+              marginLeft:"5px",
+              marginTop:"10px",
+							color: '#3D5CAC',
+						}}
+					>
+						<label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
+							<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+						</label>
+						<input
+							id="file-upload"
+							type="file"
+							accept=".doc,.docx,.txt,.pdf"
+							hidden
+							// onChange={(e) => setContractFiles(e.target.files)}
+							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+							multiple
+						/>
+					</Box>
+        </Box>
         {documents.length ? (
 				<Box
 					sx={{

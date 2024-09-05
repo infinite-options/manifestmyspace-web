@@ -2307,7 +2307,7 @@ return (
 
 			{/* previously Uploaded docs */}
 			<Box padding={"5px"}>
-				<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
+				<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} setContractFiles={setContractFiles} contractFileTypes={contractFileTypes} setContractFileTypes={setContractFileTypes}/>
 			</Box>
 
 			{/* Contact details */}
@@ -2332,18 +2332,33 @@ return (
 							width: '100%',
 						}}
 					>
-						<Typography
+						<Box
 							sx={{
-								color: "#160449",
-								fontWeight: theme.typography.primary.fontWeight,
-								fontSize: "18px",
-								paddingBottom: "5px",
-								paddingTop: "5px",
-								marginY:"10px"
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								fontSize: '15px',
+								fontWeight: 'bold',
+								padding: '5px',
+								color: '#3D5CAC',
 							}}
 						>
-							{"Contract Assigned Contacts: "}
-						</Typography>
+							<Typography
+								sx={{
+									color: "#160449",
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: "18px",
+									paddingBottom: "5px",
+									paddingTop: "5px",
+									marginY:"10px"
+								}}
+							>
+								{"Contract Assigned Contacts: "}
+							</Typography>
+							<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"}>
+								<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+							</Box>
+						</Box>
 						<Grid container sx={{ color: 'black' }} marginY={"13px"}>
 							<Grid item xs={3}>
 								Name
@@ -2369,7 +2384,7 @@ return (
 			) : (
 				<></>
 			)}
-			<Box
+			{/* <Box
 				sx={{
 					display: 'flex',
 					flexDirection: 'row',
@@ -2379,35 +2394,10 @@ return (
 					marginBottom: '7px',
 					width: '100%',
 				}}
-			>
-				<Box
-					onClick={() => {
-						setShowAddContactDialog(true);
-					}}
-				>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-							fontSize: '16px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					>
-						<PersonIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-						Add Contact
-					</Box>
-				</Box>
-				<Box>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					></Box>
+			> */}
+
+				{/* Add contact button */}
+				{/* <Box>
 					<Box
 						sx={{
 							display: 'flex',
@@ -2431,8 +2421,8 @@ return (
 							multiple
 						/>
 					</Box>
-				</Box>
-			</Box>
+				</Box> */}
+			{/* </Box> */}
 
 			<Box
 				sx={{
