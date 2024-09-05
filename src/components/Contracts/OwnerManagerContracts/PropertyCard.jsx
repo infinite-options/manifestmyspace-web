@@ -26,11 +26,11 @@ import AddIcon from '@mui/icons-material/Add';
 import { useUser } from '../../../contexts/UserContext';
 import theme from '../../../theme/theme';
 
-import ImageCarousel from '../../ImageCarousel';
+// import ImageCarousel from '../../ImageCarousel';
 import defaultHouseImage from '../../Property/defaultHouseImage.png';
 import ChatIcon from '@mui/icons-material/Chat';
 import DescriptionIcon from '@mui/icons-material/Description';
-import EditIcon from '@mui/icons-material/Edit';
+// import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { isValidDate } from '../../../utils/dates';
@@ -47,7 +47,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import APIConfig from '../../../utils/APIConfig';
 import Documents from '../../Leases/Documents';
 import ManagementContractContext from '../../../contexts/ManagementContractContext';
-import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
+// import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 
 function TextInputField(props) {
 	const inputStyle = {
@@ -85,63 +85,54 @@ function TextInputField(props) {
 }
 
 function AddFeeDialog({ open, handleClose, onAddFee, }) {	
-	const { feeBases, dataLoaded } = useContext(ManagementContractContext);
-	const { getProfileId } = useUser();
+	const { feeBases, } = useContext(ManagementContractContext);	
 	const [feeName, setFeeName] = useState('');
 
-	console.log("ROHIT - feeBases from Context - ", feeBases);
+	// console.log("feeBases from Context - ", feeBases);
 
-	useEffect(() => {
-		console.log('FEE Name: ', feeName);
-	}, [feeName]);
+	// useEffect(() => {
+	// 	console.log('FEE Name: ', feeName);
+	// }, [feeName]);
 
 	const [feeType, setFeeType] = useState('PERCENT');
-	useEffect(() => {
-		console.log('FEE TYPE: ', feeType);
-	}, [feeType]);
+	// useEffect(() => {
+	// 	console.log('FEE TYPE: ', feeType);
+	// }, [feeType]);
 
 	const [isPercentage, setIsPercentage] = useState(true);
-	useEffect(() => {
-		console.log('IS PERCENTAGE?: ', isPercentage);
-	}, [isPercentage]);
+	// useEffect(() => {
+	// 	console.log('IS PERCENTAGE?: ', isPercentage);
+	// }, [isPercentage]);
 
 	const [percentage, setPercentage] = useState('0');
-	useEffect(() => {
-		console.log('PERCENTAGE: ', percentage);
-	}, [percentage]);
+	// useEffect(() => {
+	// 	console.log('PERCENTAGE: ', percentage);
+	// }, [percentage]);
 
 	const [isFlatRate, setIsFlatRate] = useState(false);
-	useEffect(() => {
-		console.log('IS FLAT RATE?: ', isFlatRate);
-	}, [isFlatRate]);
+	// useEffect(() => {
+	// 	console.log('IS FLAT RATE?: ', isFlatRate);
+	// }, [isFlatRate]);
 
 	const [feeAmount, setFlatRate] = useState('0');
-	useEffect(() => {
-		console.log('FEE TYPE: ', feeAmount);
-	}, [feeAmount]);
+	// useEffect(() => {
+	// 	console.log('FEE TYPE: ', feeAmount);
+	// }, [feeAmount]);
 
 	const [feeFrequency, setFeeFrequency] = useState('One Time');
-	useEffect(() => {
-		console.log('FEE FREQUENCY: ', feeFrequency);
-	}, [feeFrequency]);
+	// useEffect(() => {
+	// 	console.log('FEE FREQUENCY: ', feeFrequency);
+	// }, [feeFrequency]);
 
 	const [feeAppliedTo, setFeeAppliedTo] = useState('Gross Rent');
-	useEffect(() => {
-		console.log('FEE APPLIED TO: ', feeAppliedTo);
-	}, [feeAppliedTo]);
+	// useEffect(() => {
+	// 	console.log('FEE APPLIED TO: ', feeAppliedTo);
+	// }, [feeAppliedTo]);
 
 	const handleFeeTypeChange = (event) => {
 		setFeeType(event.target.value);
 		// console.log("FEE TYPE SELECTED", event.target.value);
-		// console.log('FEE TYPE: ', selectedFeeType);
-
-		// if(event.target.value === "PERCENT"){
-		//     setIsPercentage(true)
-		//     setIsFlatRate(false);
-		// }else{
-		//     setIsFlatRate(true);
-		//     setIsPercentage(false)
-		// }
+		// console.log('FEE TYPE: ', selectedFeeType);		
 	};
 
 	const handleFrequencyChange = (event) => {
@@ -165,17 +156,6 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 		console.log('feeAmount:', feeAmount);
 		console.log('feeAppliedTo:', feeAppliedTo);
 
-		// const newFee = {
-		//     fee_name: feeName,
-		//     fee_type: feeType,
-		//     frequency: feeFrequency,
-		//     isPercentage: isPercentage,
-		//     ...(isPercentage && { charge: percentage }),
-		//     ...(isPercentage && { of: feeAppliedTo }),
-		//     isFlatRate: isFlatRate,
-		//     ...(isFlatRate && { charge: feeAmount }),
-		// }
-
 		const newFee = {
 			fee_name: feeName,
 			fee_type: feeType,
@@ -193,11 +173,7 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 		<form onSubmit={handleAddFee}>
 			<Dialog
 				open={open}
-				onClose={handleClose}
-				// sx = {{
-				//     width: '100%',
-				//     maxWidth: 'none',
-				// }}
+				onClose={handleClose}				
 				maxWidth="xl"
 				sx={{
 					'& .MuiDialog-paper': {
@@ -250,8 +226,7 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 								marginRight: '50px',
 							}}
 						>
-							<Box>Fee Name</Box>
-							{/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+							<Box>Fee Name</Box>							
 							<TextField
 								name="fee_name"
 								placeholder=""
@@ -273,28 +248,7 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 								flexDirection: 'column',
 							}}
 						>
-							<Box>Frequency</Box>
-							{/* <TextInputField 
-                                    name="fee_name"
-                                    placeholder=""
-                                    value={""} 
-                                    onChange={console.log("input changed")}
-                                    sx={{ backgroundColor: '#D6D5DA' }}
-                                >
-                                    Fee Name
-                                </TextInputField> */}
-							{/* <TextField
-                                    name="frequency"
-                                    placeholder=""
-                                    value={""}
-                                    onChange={console.log("input changed")}
-                                    InputProps={{
-                                        sx: {
-                                            backgroundColor: '#D6D5DA',
-                                            height: '40px',
-                                        },
-                                    }}
-                                /> */}
+							<Box>Frequency</Box>							
 							<Select
 								value={feeFrequency}
 								label="Frequency"
@@ -345,18 +299,13 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 								value="PERCENT"
 								control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
 								label="Percent"
-							/>
-							{/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
+							/>							
 							{feeType === 'PERCENT' && (
 								<Box>
 									<TextField
 										value={percentage}
 										label=""
-										variant="outlined"
-										// sx={{
-										//     width: '45px',
-										//     height: '3px',
-										// }}
+										variant="outlined"										
 										InputProps={{
 											sx: {
 												backgroundColor: '#D6D5DA',
@@ -400,10 +349,7 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 									placeholder=""
 									label=""
 									variant="outlined"
-									// sx={{
-									//     width: '45px',
-									//     height: '3px',
-									// }}
+									
 
 									InputProps={{
 										sx: {
@@ -895,8 +841,8 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
-  const { defaultContractFees, allContracts, currentContractUID, dataLoaded } = useContext(ManagementContractContext);  
-  console.log("PropertyCard - props - ", props);
+  const { defaultContractFees, allContracts, currentContractUID, } = useContext(ManagementContractContext);  
+//   console.log("PropertyCard - props - ", props);
   
 
   const [propertyData, setPropertyData] = useState(props.data);
@@ -998,56 +944,9 @@ const PropertyCard = (props) => {
   }, [contractStartDate]);
 
   useEffect(() => {
-	console.log("ROHIT - props.data - ", props.data)
+	console.log("props.data - ", props.data)
     setPropertyData(props.data);
   }, [props.data]);
-
-//   useEffect(() => {
-//     setContractPropertyID(props.contractPropertyID);
-//   }, [props.contractPropertyID]);
-
-//   useEffect(() => {
-
-// 	const fetchData = async () => {
-// 		console.log("props.contractUID:", props.contractUID);
-// 		setContractUID(props.contractUID);
-// 		if (allContracts === null) {
-// 		  const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
-// 		  const data = await result.json();
-// 		  // console.log("--debug--", data);
-	
-// 		  // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
-// 		  // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-	
-// 		  if (data !== "No records for this Uid") {
-// 			setAllContracts(data["result"]);
-// 		  }
-// 		}
-// 		// if (businessProfile === null) {
-// 		//   const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
-// 		//   const data2 = await businessProfileResult.json();
-// 		//   const businessProfileData = data2["result"];
-// 		//   const businessProf = businessProfileData?.find((item) => item.business_uid === getProfileId());
-// 		//   console.log("businessProf - ", businessProf);
-// 		//   setBusinessProfile(businessProf);
-// 		// }
-// 	  };
-
-//     fetchData();
-    
-//     // if (allContracts !== null && businessProfile !== null) {
-//     //   setData();
-//     // }
-//   }, [props.contractUID]);
-
-
-//   useEffect(() => {
-//     setContractDetails();
-//   }, [allContracts]);
-
-//   useEffect(() => {
-//     setBusinessProfileDetails();
-//   }, [businessProfile]);
 
   useEffect(() => {
     if (isValidDate(contractStartDate.format("MM-DD-YYYY"))) {
@@ -1087,7 +986,7 @@ const PropertyCard = (props) => {
 			? JSON.parse(propertyData.property_images)
 			: [defaultHouseImage]
 	)
-  }, [propertyData]); //rohit
+  }, [propertyData]); 
 
 //   useEffect(() => {
 //     // console.log("CONTRACT FEES - ", contractFees);
@@ -1411,14 +1310,6 @@ const PropertyCard = (props) => {
         console.error("There was a problem with the fetch operation:", error);
       });
   };
-
-//   useEffect(() => {
-//     // console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
-//     // console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
-
-//     //get contracts
-//     fetchData();    
-//   }, []);
 
   const getFormattedFeeFrequency = (frequency) => {
     // console.log("getFormattedFeeFrequency(), frequency", frequency);
@@ -2138,14 +2029,7 @@ return (
 								flexDirection: 'column',
 							}}
 							onClick={() => handleOpenEditFee(index)}
-						>
-							{/* <Box>{'Fee Name'}: {fee.feeName}</Box>
-                        <Box>{'Fee Frequency'}: {fee.feeFrequency}</Box>
-                        <Box>{'Fee Type'}: {fee.feeType}</Box>
-                        <Box>{'Is percentage?'}: {fee.isPercentage? 'True' : 'False'}</Box>
-                        <Box>{'percentage'}: {fee.isPercentage ? `Percentage: ${fee.feePercentage}, Applied To: ${fee.feeAppliedTo}` : 'False'}</Box>
-                        <Box>{'Is flat-rate?'}: {fee.isFlatRate? 'True' : 'False'}</Box>
-                        <Box>{'flat-rate'}: {fee.isFlatRate ? `Amount: ${fee.feeAmount}` : 'False'}</Box> */}
+						>							
 							<Box
 								sx={{
 									display: 'flex',
@@ -2402,53 +2286,7 @@ return (
 	);
 };
 
-const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContact }) => {
-	// return (
-	//   <Box
-	//     key={i}
-	//     sx={{
-	//       display: "flex",
-	//       flexDirection: "row",
-	//       alignItems: "center",
-	//       justifyContent: "flex-start",
-	//       paddingTop: "10px",
-	//     }}
-	//     onClick={() => handleOpenEditContact(i)}
-	//   >
-	//     <Box
-	//       sx={{
-	//         // height: '40px',
-	//         // width: '100%',
-	//         color: "#3D5CAC",
-	//         width: "200px",
-	//       }}
-	//     >
-	//       {contact.contact_first_name} {contact.contact_last_name}
-	//     </Box>
-
-	//     <Box sx={{ width: "200px" }}>{contact.contact_email}</Box>
-	//     <Box sx={{ width: "80px" }}>{contact.contact_phone_number}</Box>
-	//     <Button
-	//       variant="text"
-	//       onClick={(event) => {
-	//         handleDeleteContact(i, event);
-	//       }}
-	//       sx={{
-	//         width: "10%",
-	//         cursor: "pointer",
-	//         fontSize: "14px",
-	//         fontWeight: "bold",
-	//         color: "#3D5CAC",
-	//         "&:hover": {
-	//           backgroundColor: "transparent", // Set to the same color as the default state
-	//         },
-	//       }}
-	//     >
-	//       <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-	//     </Button>
-	//   </Box>
-
-	// );
+const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContact }) => {	
 	return (
 		<Grid container key={i} onClick={() => handleOpenEditContact(i)}>
 			<Grid item xs={3}>
@@ -2546,8 +2384,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 					{/* First name and last name */}
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
-							<Box sx={{ color: '#3D5CAC' }}>First Name</Box>
-							{/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+							<Box sx={{ color: '#3D5CAC' }}>First Name</Box>							
 							<TextField
 								name="contact_first_name"
 								placeholder=""
@@ -2716,8 +2553,7 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
 					{/* First name and last name */}
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
-							<Box sx={{ color: '#3D5CAC' }}>First Name</Box>
-							{/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+							<Box sx={{ color: '#3D5CAC' }}>First Name</Box>							
 							<TextField
 								name="contact_first_name"
 								placeholder=""
