@@ -1,7 +1,7 @@
 import { ThemeProvider, Typography, Box, Tabs, Tab, Card, CardHeader, Slider, Stack, Button, Grid, Container } from "@mui/material";
 import documentIcon from "../../images/Subtract.png";
 import Bell_fill from "../../images/Bell_fill.png";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import refundIcon from "./refundIcon.png";
@@ -14,45 +14,48 @@ import Backdrop from "@mui/material/Backdrop";
 
 import APIConfig from "../../utils/APIConfig";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
+import { ManagementContractProvider } from "../../contexts/ManagementContractContext";
+import ManagementContractContext from "../../contexts/ManagementContractContext";
+
 
 export default function PMQuotesList() {
-  let navigate = useNavigate();
+  // let navigate = useNavigate();  
   const location = useLocation();
   // console.log("In PMQuoteList");
   // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
 
-  const selectedContractUID = location?.state?.selected_contract_uid;
+  // const selectedContractUID = location?.state?.selected_contract_uid;
   // const selectedContractUID = "010-000361";
 
-  const property_endpoint_resp = location.state.property_endpoint_resp;
-  const { getProfileId } = useUser();
-  const [contractRequests, setContractRequests] = useState([]);
+  // const property_endpoint_resp = location.state.property_endpoint_resp;
+  // const { getProfileId } = useUser();
+  // const [contractRequests, setContractRequests] = useState([]);
   // const [contractRequests, setContractRequests] = useState(property_endpoint_resp);
-  const [properties, setProperties] = useState([]);
-  const [refresh, setRefresh] = useState(false);
-  const [showSpinner, setShowSpinner] = useState(false);
+  // const [properties, setProperties] = useState([]);
+  // const [refresh, setRefresh] = useState(false);
+  // const [showSpinner, setShowSpinner] = useState(false);
 
   // const [ currentContract, setCurrentContract ] = useState(null);
-  const [index, setIndex] = useState(0);
+  // const [index, setIndex] = useState(0);
   // const [ currentContractUID, setCurrentContractUID ] = useState(contractRequests[0]?.contract_uid);
-  const [currentContractUID, setCurrentContractUID] = useState(null);
+  // const [currentContractUID, setCurrentContractUID] = useState(null); 
   // const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(contractRequests[0]?.property_id);
-  const [currentContractPropertyUID, setCurrentContractPropertyUID] = useState(null);
+  // const [currentContractPropertyUID, setCurrentContractPropertyUID] = useState(null);
 
   // useEffect(() => {
   //   console.log("index - ", index);
   // }, [index]);
 
-  useEffect(() => {
-    // console.log("contractRequests - ", contractRequests);
-    if (selectedContractUID !== null && selectedContractUID !== undefined && contractRequests !== null && contractRequests !== undefined) {
-      const index = contractRequests.findIndex((contract) => contract.contract_uid === selectedContractUID);
-      // console.log("contractRequests useEffect index - ", index);
-      if (index !== -1) {
-        setIndex(index);
-      }
-    }
-  }, [contractRequests]);
+  // useEffect(() => {
+  //   // console.log("contractRequests - ", contractRequests);
+  //   if (selectedContractUID !== null && selectedContractUID !== undefined && contractRequests !== null && contractRequests !== undefined) {
+  //     const index = contractRequests.findIndex((contract) => contract.contract_uid === selectedContractUID);
+  //     // console.log("contractRequests useEffect index - ", index);
+  //     if (index !== -1) {
+  //       setIndex(index);
+  //     }
+  //   }
+  // }, [contractRequests]);
 
   // useEffect(() => {
   //   console.log("currentContractUID - ", currentContractUID);
@@ -62,11 +65,11 @@ export default function PMQuotesList() {
   //   console.log("currentContractPropertyUID - ", currentContractPropertyUID);
   // }, [currentContractPropertyUID]);
 
-  useEffect(() => {
-    const contract = contractRequests[index];
-    if (contract) setCurrentContractUID(contract?.contract_uid);
-    if (contract) setCurrentContractPropertyUID(contract?.property_id);
-  }, [index, contractRequests]);
+  // useEffect(() => {
+  //   const contract = contractRequests[index];
+  //   if (contract) setCurrentContractUID(contract?.contract_uid);
+  //   if (contract) setCurrentContractPropertyUID(contract?.property_id);
+  // }, [index, contractRequests]);
 
   // useEffect(() => {
   //   const getContractsForPM = async () => {
@@ -117,69 +120,77 @@ export default function PMQuotesList() {
   //   getProperties();
   // }, [refresh]);
 
-  const fetchData = async () => {
-    setShowSpinner(true);
+  // const fetchData = async () => {
+  //   setShowSpinner(true);
 
-    const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
-    // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
+  //   const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+  //   // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
 
-    try {
-      const jsonData = await response.json();
-      // console.log("Manager Dashboard jsonData: ", jsonData);
-      // NEW PM REQUESTS
-      const requests = jsonData?.NewPMRequests?.result;
-      setContractRequests(requests);
-      // setCurrentContractUID(requests[0]?.contract_uid)
-      // setCurrentContractPropertyUID(requests[0]?.property_uid)
-    } catch (error) {
-      console.error(error);
-    }
+  //   try {
+  //     const jsonData = await response.json();
+  //     // console.log("Manager Dashboard jsonData: ", jsonData);
+  //     // NEW PM REQUESTS
+  //     const requests = jsonData?.NewPMRequests?.result;
+  //     setContractRequests(requests);
+  //     // setCurrentContractUID(requests[0]?.contract_uid)
+  //     // setCurrentContractPropertyUID(requests[0]?.property_uid)
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
 
-    setShowSpinner(false);
-  };
+  //   setShowSpinner(false);
+  // };
 
-  useEffect(() => {
-    // const dataObject = {};
-    // console.log("In UseEffect");
-    // console.log(getProfileId());
+  // useEffect(() => {
+  //   // const dataObject = {};
+  //   // console.log("In UseEffect");
+  //   // console.log(getProfileId());
 
-    // console.log("In UseEffect after if");
+  //   // console.log("In UseEffect after if");
     
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color='inherit' />
-      </Backdrop>
-      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
-            <QuotesList propertyData={property_endpoint_resp} contractRequests={contractRequests} setIndex={setIndex} currentContractUID={currentContractUID}/>
-          </Grid>
+    <ManagementContractProvider>
+      <ThemeProvider theme={theme}>
+        {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color='inherit' />
+        </Backdrop> */}
+        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              <QuotesList
+                // propertyData={property_endpoint_resp}
+                // contractRequests={contractRequests}
+                // setIndex={setIndex}
+                // currentContractUID={currentContractUID}
+              />
+            </Grid>
 
-          <Grid item xs={12} md={8}>
-            <ManagementContractDetails
-              contractUID={currentContractUID}
-              contractPropertyUID={currentContractPropertyUID}
-              // properties={property_endpoint_resp}
-              properties={contractRequests}
-            />
+            <Grid item xs={12} md={8}>
+              <ManagementContractDetails
+                // contractUID={currentContractUID}
+                // contractPropertyUID={currentContractPropertyUID}
+                // properties={property_endpoint_resp}
+                // properties={contractRequests}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </ThemeProvider>
+        </Container>
+      </ThemeProvider>
+    </ManagementContractProvider>
   );
 }
 
 //LHS
-const QuotesList = (props) => {
-  const [showSpinner, setShowSpinner] = useState(false);
+const QuotesList = (props) => {  
+  // const [showSpinner, setShowSpinner] = useState(false);
+  const { contractRequests } = useContext(ManagementContractContext); 
 
-  const property_endpoint_resp = props.propertyData;
-  const contractRequests = props.contractRequests;
-  const setIndex = props.setIndex;
+  // const property_endpoint_resp = props.propertyData;
+  // const contractRequests = props.contractRequests;
+  // const setIndex = props.setIndex;
 
   return (
     <>
@@ -227,7 +238,14 @@ const QuotesList = (props) => {
                 >
                 {contractRequests.map((contract, index) => (
                   <Grid item xs={12} key={index} sx={{marginBottom: 0}} >
-                    <ContractCard key={index} contract={contract} property_endpoint_resp={property_endpoint_resp} index={index} setIndex={setIndex} currentContractUID={props.currentContractUID}/>
+                    <ContractCard 
+                      key={index}
+                      contract={contract}
+                      // property_endpoint_resp={property_endpoint_resp}
+                      // index={index}
+                      // setIndex={setIndex}
+                      // currentContractUID={props.currentContractUID}                      
+                    />
                   </Grid>
                 ))}
               </Stack>
@@ -241,13 +259,15 @@ const QuotesList = (props) => {
 
 function ContractCard(props) {
   let navigate = useNavigate();
+  const { currentContractUID, setCurrentContractUID, setCurrentContractPropertyUID, } = useContext(ManagementContractContext);
 
   // console.log("props for contract card", props);
   const contract = props.contract;
-  const property_endpoint_resp = props.property_endpoint_resp;
+  // console.log("ContractCard - contract", contract);
+  // const property_endpoint_resp = props.property_endpoint_resp;
 
-  const index = props.index;
-  const setCurrentIndex = props.setIndex;
+  // const index = props.index;
+  // const setCurrentIndex = props.setIndex;
 
   // Define a dictionary to map contract_status to text color
   const statusTextColorMap = {
@@ -268,15 +288,21 @@ function ContractCard(props) {
         item
         xs={12}
         sx={{
-          backgroundColor: contract.contract_uid === props.currentContractUID ? "#A5D6A7" : "#D6D5DA", // Highlight if selected
+          backgroundColor: contract.contract_uid === currentContractUID ? "#A5D6A7" : "#D6D5DA", // Highlight if selected
           borderRadius: "10px",
           padding: "10px",
           marginBottom: "0px",
           fontSize: "11px",
           cursor: "pointer",
-          border: contract.contract_uid === props.currentContractUID ? "2px solid #4CAF50" : "none", // Add border if selected
+          border: contract.contract_uid === currentContractUID ? "2px solid #4CAF50" : "none", // Add border if selected
         }}
-        onClick={() => setCurrentIndex(index)}
+        onClick={() => {
+          // setCurrentIndex(index);
+          setCurrentContractUID(contract.contract_uid);
+          setCurrentContractPropertyUID(contract.contract_property_id);
+          
+
+        }}
       >
       <Grid container alignItems='center'>
         <Grid item xs={4}></Grid>
