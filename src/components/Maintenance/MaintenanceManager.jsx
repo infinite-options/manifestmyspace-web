@@ -158,18 +158,22 @@ export default function MaintenanceManager() {
 
   const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState("NEW REQUEST");
+  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState([]);
+  const [allMaintenanceData, setAllMaintenanceData] = useState({});
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [desktopView] = useSessionStorage("desktopView", false);
-
+  
   const [cookies] = useCookies(["selectedRole"]);
   const selectedRole = cookies.selectedRole;
-  const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
-  const [rescheduleView] = useSessionStorage("rescheduleView", false);
-  const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
   const [showNewMaintenance, setshowNewMaintenance] = useState(false);
-  const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
+
+  const [desktopView, setDesktopView] = useState(false);
+const [quoteAcceptView, setQuoteAcceptView] = useState(false);
+const [rescheduleView, setRescheduleView] = useState(false);
+const [payMaintenanceView, setPayMaintenanceView] = useState(false);
+const [editMaintenanceView, setEditMaintenanceView] = useState(false);
+
 
   useEffect(() => {
     if (location.state?.showAddMaintenance) {
@@ -308,12 +312,6 @@ export default function MaintenanceManager() {
       let profileId = getProfileId();
       maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus);
     };
-
-    window.addEventListener("maintenanceUpdate", handleMaintenanceUpdate);
-
-    return () => {
-      window.removeEventListener("maintenanceUpdate", handleMaintenanceUpdate);
-    };
   }, []);
 
   const handleRowClick = (index, row) => {
@@ -327,19 +325,24 @@ export default function MaintenanceManager() {
         },
       });
     } else {
-      // Save data to session storage
-      sessionStorage.setItem("selectedRequestIndex", index);
-      sessionStorage.setItem("selectedStatus", row.maintenance_status);
-      sessionStorage.setItem("maintenanceItemsForStatus", JSON.stringify(maintenanceData[row.maintenance_status]));
-      sessionStorage.setItem("allMaintenanceData", JSON.stringify(maintenanceData));
-
       setSelectedRequestIndex(index);
       setSelectedStatus(row.maintenance_status);
-
-      // Trigger the custom event
-      window.dispatchEvent(new Event("maintenanceRequestSelected"));
+      setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+      setAllMaintenanceData(maintenanceData);
+  
+      // Trigger callback instead of event
+      handleRequestSelected(index, row.maintenance_status, maintenanceData[row.maintenance_status], maintenanceData);
     }
   };
+
+  const handleRequestSelected = (index, status, itemsForStatus, allData) => {
+    setSelectedRequestIndex(index);
+    setSelectedStatus(status);
+    setMaintenanceItemsForStatus(itemsForStatus);
+    setAllMaintenanceData(allData);
+  };
+  
+  
   
   const handleBackButton = () => {
     if (location.state && location.state.fromProperty === true) {
@@ -565,10 +568,11 @@ export default function MaintenanceManager() {
               ) : (
                 Object.keys(maintenanceData).length > 0 && (
                   <MaintenanceRequestDetailNew
-                    maintenance_request_index={selectedRequestIndex}
-                    status={selectedStatus}
-                    maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-                    allMaintenanceData={newDataObject}
+                  maintenance_request_index={selectedRequestIndex}
+                  status={selectedStatus}
+                  maintenanceItemsForStatus={maintenanceItemsForStatus}
+                  allMaintenanceData={newDataObject}
+                  handleRequestSelected={handleRequestSelected} 
                   />
                 )
               )}

@@ -56,6 +56,7 @@ export default function MaintenanceRequestDetailNew({
   status: initialStatus,
   maintenanceItemsForStatus: initialMaintenanceItemsForStatus,
   allMaintenanceData,
+  handleRequestSelected,
 }) {
   // console.log('----inside request detail----', maintenance_request_index, initialStatus);
 
@@ -218,46 +219,33 @@ export default function MaintenanceRequestDetailNew({
   }, [currentStatus]);
 
   useEffect(() => {
-    const handleMaintenanceRequestSelected = () => {
-      const index = sessionStorage.getItem("selectedRequestIndex");
-      const status = sessionStorage.getItem("selectedStatus");
-      const maintenanceItemsForStatus = JSON.parse(sessionStorage.getItem("maintenanceItemsForStatus"));
-
-      //console.log("---new useEffect-----", index, status);
-      // Update state with the new values
-      setMaintenanceRequestIndex(Number(index));
-      setCurrentStatus(status);
-      setMaintenanceItemsForStatus(maintenanceItemsForStatus);
-
-      // Find the tab index based on the status
-      const statusIndex = colorStatus.findIndex((item) => item.status === status);
+    if (maintenance_request_index !== undefined && initialStatus !== undefined && maintenanceItemsForStatus) {
+      setMaintenanceRequestIndex(maintenance_request_index);
+      setCurrentStatus(initialStatus);
+      setMaintenanceItemsForStatus(initialMaintenanceItemsForStatus);
+  
+      const statusIndex = colorStatus.findIndex((item) => item.status === initialStatus);
       if (statusIndex !== -1) {
         setValue(statusIndex);
-        handleChange(null, statusIndex, Number(index));
+        handleChange(null, statusIndex, maintenance_request_index);
       }
-    };
-
-    window.addEventListener("maintenanceRequestSelected", handleMaintenanceRequestSelected);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      window.removeEventListener("maintenanceRequestSelected", handleMaintenanceRequestSelected);
-    };
-  }, []);
+    }
+  }, [maintenance_request_index, initialStatus, initialMaintenanceItemsForStatus, colorStatus]);
+  
+  
 
   const handleChange = (event, newValue, index = 0) => {
-    console.log("----Handle change in req detail---", newValue);
     if (colorStatus && colorStatus.length > newValue) {
       setCurrentStatus(colorStatus[newValue].status);
       setValue(newValue);
       setMaintenanceRequestIndex(index);
-      const newStatus = colorStatus[newValue].mapping;
-      const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
+      const newStatus = colorStatus[newValue].status;
+      const maintenanceItemsForNewStatus = allMaintenanceData[newStatus.toUpperCase()] || [];
       setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
-    } else {
-      console.error("Invalid index or colorStatus is undefined");
+      handleRequestSelected(index, newStatus, maintenanceItemsForNewStatus, allMaintenanceData); // Use callback
     }
   };
+  
 
   const handleMaintenaceRequestIndexChange = (index, direction) => {
     setMaintenanceRequestIndex(index);
