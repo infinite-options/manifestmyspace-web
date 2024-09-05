@@ -1,5 +1,5 @@
 import {
-  ßChip,
+  Chip,
   Box,
   Button,
   Container,
