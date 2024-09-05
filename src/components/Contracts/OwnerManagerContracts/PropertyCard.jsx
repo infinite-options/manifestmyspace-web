@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
 	ThemeProvider,
 	Box,
@@ -46,6 +46,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import APIConfig from '../../../utils/APIConfig';
 import Documents from '../../Leases/Documents';
+import { FeesDataGrid } from '../../Property/PMQuotesRequested';
 
 function TextInputField(props) {
 	const inputStyle = {
@@ -85,44 +86,20 @@ function TextInputField(props) {
 function AddFeeDialog({ open, handleClose, onAddFee }) {
 	const { getProfileId } = useUser();
 	const [feeName, setFeeName] = useState('');
-	useEffect(() => {
-		console.log('FEE Name: ', feeName);
-	}, [feeName]);
 
 	const [feeType, setFeeType] = useState('PERCENT');
-	useEffect(() => {
-		console.log('FEE TYPE: ', feeType);
-	}, [feeType]);
 
 	const [isPercentage, setIsPercentage] = useState(true);
-	useEffect(() => {
-		console.log('IS PERCENTAGE?: ', isPercentage);
-	}, [isPercentage]);
 
 	const [percentage, setPercentage] = useState('0');
-	useEffect(() => {
-		console.log('PERCENTAGE: ', percentage);
-	}, [percentage]);
 
 	const [isFlatRate, setIsFlatRate] = useState(false);
-	useEffect(() => {
-		console.log('IS FLAT RATE?: ', isFlatRate);
-	}, [isFlatRate]);
 
 	const [feeAmount, setFlatRate] = useState('0');
-	useEffect(() => {
-		console.log('FEE TYPE: ', feeAmount);
-	}, [feeAmount]);
 
 	const [feeFrequency, setFeeFrequency] = useState('One Time');
-	useEffect(() => {
-		console.log('FEE FREQUENCY: ', feeFrequency);
-	}, [feeFrequency]);
 
-	const [feeAppliedTo, setFeeAppliedTo] = useState('Gross Rent');
-	useEffect(() => {
-		console.log('FEE APPLIED TO: ', feeAppliedTo);
-	}, [feeAppliedTo]);
+	const [feeAppliedTo, setFeeAppliedTo] = useState("");
 
 	const handleFeeTypeChange = (event) => {
 		setFeeType(event.target.value);
@@ -174,8 +151,8 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 			fee_name: feeName,
 			fee_type: feeType,
 			frequency: feeFrequency,
+			of: feeAppliedTo,
 			...(feeType === 'PERCENT' && { charge: percentage }),
-			...(feeType === 'PERCENT' && { of: feeAppliedTo }),
 			...(feeType === 'FLAT-RATE' && { charge: feeAmount }),
 		};
 
@@ -913,7 +890,7 @@ const PropertyCard = (props) => {
   const [contractName, setContractName] = useState("");
   const [contractStartDate, setContractStartDate] = useState(dayjs());
   const [contractEndDate, setContractEndDate] = useState(dayjs());
-  const [contractStatus, setContractStatus] = useState("");
+  const [contractStatus, setContractStatus] = useState(null);
   const [contractFees, setContractFees] = useState([]);
   const [defaultContractFees, setDefaultContractFees] = useState([]);
   const [contractFiles, setContractFiles] = useState([]);
@@ -994,27 +971,27 @@ const PropertyCard = (props) => {
 //     }
 //   };
 
-useEffect(() => {
-    const fetchProfileData = async () => {
-        try {
-            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-            const data = await response.json();
-            console.log("DATA PROFILE", data);
+// useEffect(() => {
+//     const fetchProfileData = async () => {
+//         try {
+//             const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+//             const data = await response.json();
+//             console.log("DATA PROFILE", data);
 
-            if (data.result && data.result.length > 0) {
-                const profileFees = data.result[0].business_services_fees
-                    ? JSON.parse(data.result[0].business_services_fees)
-                    : [];
+//             if (data.result && data.result.length > 0) {
+//                 const profileFees = data.result[0].business_services_fees
+//                     ? JSON.parse(data.result[0].business_services_fees)
+//                     : [];
                 
-                setDefaultContractFees(profileFees);
-            }
-        } catch (error) {
-            console.error("Error fetching profile data: ", error);
-        }
-    };
+//                 setDefaultContractFees(profileFees);
+//             }
+//         } catch (error) {
+//             console.error("Error fetching profile data: ", error);
+//         }
+//     };
 
-    fetchProfileData();
-}, []);
+//     fetchProfileData();
+// }, []);
 
 
   useEffect(() => {
@@ -1045,12 +1022,11 @@ useEffect(() => {
 			  setContractAssignedContacts(defaultContacts);
 			}
 	
-			const fees = contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : [];
-			if(fees.length > 0){
-				setContractFees(fees);
-			} else {
-				setContractFees(defaultContractFees);
-			}
+			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
+			setContractFees(fees);
+			// } else {
+			// 	setContractFees(defaultContractFees);
+			// }
 			
 			const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
 			setPreviouslyUploadedDocs(oldDocs);
@@ -1080,8 +1056,10 @@ useEffect(() => {
         }
     };
 
-    fetchProfileData();
     setContractDetails();
+	
+    fetchProfileData();
+
   }, [contractUID]);
 
 //   const fetchData = async () => {
@@ -1187,10 +1165,12 @@ useEffect(() => {
 	
 	// console.log("contractFees.length - ", contractFees.length);
 	// console.log("contractFees - ", contractFees);
-    if (!contractFees.length) {
-      setContractFees([...defaultContractFees]);
+	// console.log("--dhyey--- before assigning contract fees - ", contractStatus, " and length of contract fees -", contractFees.length)
+    if (contractStatus === "NEW" && contractFees.length === 0) {
+		// console.log("--dhyey-- contract status - ", contractStatus)
+		setContractFees([...defaultContractFees]);
     }
-  }, [defaultContractFees, props.contractUID]);
+  }, [defaultContractFees]);
 
 //   useEffect(() => {
 //     // console.log("CONTRACT FEES - ", contractFees);
@@ -1216,6 +1196,7 @@ useEffect(() => {
     //     feeName: 'New Fee',
     //     feeAmount: 0,
     // };
+	// console.log("---dhyey--- inside adding fee old fee - ", contractFees, " new fee - ", newFee)
     setContractFees((prevContractFees) => [...prevContractFees, newFee]);
   };
 
@@ -2208,12 +2189,51 @@ return (
 					color: '#3D5CAC',
 				}}
 			>
-				<Box>Management Fees 1*</Box>
-				<Box onClick={handleOpenAddFee}>
+				<Typography
+					sx={{
+						color: "#160449",
+						fontWeight: theme.typography.primary.fontWeight,
+						fontSize: "18px",
+						paddingBottom: "5px",
+						paddingTop: "5px",
+						marginTop:"10px"
+					}}
+				>
+					{"Management Fees* "}
+				</Typography>
+				{/* <Box>Management Fees 1*</Box> */}
+				<Box onClick={handleOpenAddFee} marginTop={"10px"} paddingTop={"5px"}>
 					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
 			</Box>
-			<Box
+			{contractFees.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleDeleteFee={handleDeleteFee}/> : 
+				<>
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'center',
+								alignItems: 'center',
+								marginBottom: '7px',
+								width: '100%',
+								height:"100px"
+							}}
+						>
+							<Typography
+								sx={{
+								color: "#A9A9A9",
+								fontWeight: theme.typography.primary.fontWeight,
+								fontSize: "15px",
+								}}
+							>
+								No Fees
+							</Typography>
+						</Box>
+				</>
+			}
+			
+
+			{/* <Box
 				sx={{
 					background: '#FFFFFF',
 					fontSize: '13px',
@@ -2241,7 +2261,7 @@ return (
 								flexDirection: 'column',
 							}}
 							onClick={() => handleOpenEditFee(index)}
-						>
+						> */}
 							{/* <Box>{'Fee Name'}: {fee.feeName}</Box>
                         <Box>{'Fee Frequency'}: {fee.feeFrequency}</Box>
                         <Box>{'Fee Type'}: {fee.feeType}</Box>
@@ -2249,7 +2269,7 @@ return (
                         <Box>{'percentage'}: {fee.isPercentage ? `Percentage: ${fee.feePercentage}, Applied To: ${fee.feeAppliedTo}` : 'False'}</Box>
                         <Box>{'Is flat-rate?'}: {fee.isFlatRate? 'True' : 'False'}</Box>
                         <Box>{'flat-rate'}: {fee.isFlatRate ? `Amount: ${fee.feeAmount}` : 'False'}</Box> */}
-							<Box
+							{/* <Box
 								sx={{
 									display: 'flex',
 									flexDirection: 'row',
@@ -2283,10 +2303,14 @@ return (
 						</Box>
 					))
 				)}
-			</Box>
+			</Box> */}
 
 			{/* previously Uploaded docs */}
-			<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
+			<Box padding={"5px"}>
+				<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
+			</Box>
+
+			{/* Contact details */}
 			{contractAssignedContacts.length ? (
 				<Box
 					sx={{
@@ -2308,8 +2332,19 @@ return (
 							width: '100%',
 						}}
 					>
-						Contract Assigned Contacts:
-						<Grid container sx={{ color: 'black' }}>
+						<Typography
+							sx={{
+								color: "#160449",
+								fontWeight: theme.typography.primary.fontWeight,
+								fontSize: "18px",
+								paddingBottom: "5px",
+								paddingTop: "5px",
+								marginY:"10px"
+							}}
+						>
+							{"Contract Assigned Contacts: "}
+						</Typography>
+						<Grid container sx={{ color: 'black' }} marginY={"13px"}>
 							<Grid item xs={3}>
 								Name
 							</Grid>
@@ -2321,12 +2356,13 @@ return (
 							</Grid>
 						</Grid>
 						{[...contractAssignedContacts].map((contact, i) => (
-							<ContactListItem
-								contact={contact}
-								i={i}
-								handleOpenEditContact={handleOpenEditContact}
-								handleDeleteContact={handleDeleteContact}
-							/>
+							<React.Fragment key={i}>
+								<ContactListItem
+									contact={contact}
+									handleOpenEditContact={handleOpenEditContact}
+									handleDeleteContact={handleDeleteContact}
+								/>
+							</React.Fragment>
 						))}
 					</Box>
 				</Box>
