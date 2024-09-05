@@ -38,6 +38,7 @@ export default function PMQuotesList() {
   const [currentContractUID, setCurrentContractUID] = useState(null);
   // const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(contractRequests[0]?.property_id);
   const [currentContractPropertyUID, setCurrentContractPropertyUID] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
 
   // useEffect(() => {
   //   console.log("index - ", index);
@@ -145,6 +146,28 @@ export default function PMQuotesList() {
     };
     fetchData();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchAnnouncements = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${APIConfig.baseURL.dev}/announcements/600-000003`
+  //       );
+  //       setAnnouncements(response.data.result);
+  //     } catch (error) {
+  //       console.error("Failed to fetch announcements:", error);
+  //     }
+  //   };
+
+  //   fetchAnnouncements();
+  // }, []);
+
+  // // Sort the announcements by date if they exist
+  // if (Array.isArray(announcements)) {
+  //   announcements.sort(
+  //     (a, b) => new Date(b.announcement_date) - new Date(a.announcement_date)
+  //   );
+  // }
 
   return (
     <ThemeProvider theme={theme}>
@@ -293,20 +316,13 @@ function ContractCard(props) {
         </Grid>
 
         <Grid container item xs={4} sx={{ textAlign: "center", alignItems: "center", justifyContent: "flex-end" }}>
-          <Typography
-            sx={{
-              color: textColor,
-              fontWeight: "bold",
-              fontSize: "16px",
-              // marginLeft: "5px",
-            }}
-          >
+        <Typography sx={{ color: textColor, fontWeight: "bold", fontSize: "16px" }}>
             {contract.contract_status}
           </Typography>
           {announcements?.length && (
             <img
               src={Bell_fill}
-              alt='Bell Icon'
+              alt="Bell Icon"
               style={{ display: "block", cursor: "pointer", marginTop: "5px", marginLeft: "10px" }}
               onClick={(e) => {
                 e.stopPropagation();
