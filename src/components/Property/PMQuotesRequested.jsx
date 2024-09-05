@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  IconButton,
   DialogTitle,
   TextField,
   CircularProgress,
@@ -21,12 +22,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import refundIcon from "./refundIcon.png";
 import SearchIcon from "@mui/icons-material/Search";
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from "@mui/material/Backdrop";
+import Documents from "../Leases/Documents";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -214,7 +217,7 @@ export default function PMQuotesRequested(props) {
           activeContracts.map((contract, index) => (
             <div key={index}>
               <DocumentCard data={contract} />
-              <p>{contract.contract_uid}</p>
+              {/* <p>{contract.contract_uid}</p> */}
             </div>
           ))
         ) : (
@@ -675,7 +678,9 @@ export default function PMQuotesRequested(props) {
 
 function DocumentCard(props) {
   const data = props.data;
-  const [fees, setFees] = useState([]);
+  console.log("---dhyey--- data -", data);
+  const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
+  const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)?JSON.parse(data.contract_documents) : [])
 
   let navigate = useNavigate();
 
@@ -757,7 +762,7 @@ function DocumentCard(props) {
       {data !== null ? (
         data.contract_status === "NEW" ? (
           fees?.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
-        ) : data.contract_fees !== null ? (
+        ) : fees.length !== 0 ? (
           <>
           {/* <Box sx={{marginLeft: '10px', }}>
             {
@@ -767,38 +772,67 @@ function DocumentCard(props) {
                 </Typography>
               ))}
           </Box> */}
-          <FeesDataGrid data={JSON.parse(data?.contract_fees)} />
+            <FeesDataGrid data={JSON.parse(data?.contract_fees)} />
           </>
         ) : (
-          <Typography sx={textStyle}>
-            <b>No fees</b>
-          </Typography>
+          // <Box width={'100%'} height={'100px'}>
+          //     <Typography sx={textStyle}>
+          //       <b>No fees</b>
+          //     </Typography>
+          // </Box>
+          <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '7px',
+                width: '100%',
+                height:"100px"
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#A9A9A9",
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "15px",
+                }}
+              >
+                No Fees
+              </Typography>
+            </Box>
         )
       ) : (
         <Typography sx={textStyle}>No data available</Typography>
       )}
+
+      {data.contract_status !== "NEW" ? 
+      (<Box marginLeft={"5px"}>
+        <Documents isEditable={false} isAccord={false} documents={contractDocuments} setDocuments={setContractDocuments} customName={"Attached Documents"}/>
+      </Box>) : <></>}
+
     </Box>
   );
 }
 
-const FeesDataGrid = ({ data }) => {
-  const columns = [
+export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee}) => {
+  const columns = isDeleteable ? [
     {
       field: "frequency",
       headerName: "Frequency",
-      width: 120,
+      flex:1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "fee_name",
       headerName: "Name",
-      width: 150,
+      flex:1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "charge",
       headerName: "Charge",
-      width: 100,
+      flex:1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -814,35 +848,94 @@ const FeesDataGrid = ({ data }) => {
     {
       field: "of",
       headerName: "Of",
-      width: 100,
+      flex:1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const of = params.value;
+        return <Typography>{of === null || of === undefined || of === "" ? feeType === "FLAT-RATE" ? "FLAT-RATE" : `-` : `${of}`}</Typography>;
+      },
+    },
+    {
+      field: "actions",
+      headerName: "",
+      flex: 0.5,
+      renderCell: (params) => (
+        <Box>
+          <IconButton onClick={(e) => handleDeleteFee(params.row.id, e)}>
+            <DeleteIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ] : [
+    {
+      field: "frequency",
+      headerName: "Frequency",
+      flex:1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "fee_name",
+      headerName: "Name",
+      flex:1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "charge",
+      headerName: "Charge",
+      flex:1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const charge = params.value;
+
+        return (
+          <Typography>
+            {feeType === "PERCENT" ? `${charge}%` : feeType === "FLAT-RATE" ? `$${charge}` : charge}
+          </Typography>
+        );
+      },
+    },
+    {
+      field: "of",
+      headerName: "Of",
+      flex:1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
         const of = params.value;
 
-        return <Typography>{of === null || of === undefined ? `-` : `${of}`}</Typography>;
+        return <Typography>{of === null || of === undefined ? feeType === "FLATE-RATE" ? "FLATE-RATE" : `-` : `${of}`}</Typography>;
       },
     },
   ];
 
+
   // Adding a unique id to each row using map if the data doesn't have an id field
   const rowsWithId = data.map((row, index) => ({
-    id: `${index}`,
     ...row,
+    id: row.id ? index : index,
   }));
+
+  // console.log("-- inside fee data grid - ", rowsWithId);
 
   return (
     <DataGrid
       rows={rowsWithId}
       columns={columns}
       sx={{
+        // minHeight:"100px",
+        // height:"100px",
+        // maxHeight:"100%",
         marginTop: "10px",
       }}
+      autoHeight
+      rowHeight={50} 
       hideFooter={true}
     />
   );
 };
-
-
 
 function FeesTextCard(props) {
   const textStyle = {

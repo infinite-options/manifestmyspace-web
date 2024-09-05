@@ -34,6 +34,7 @@ import LeaseIcon from "../Property/leaseIcon.png";
 import { Close } from "@mui/icons-material";
 
 import axios from 'axios';
+import FilePreviewDialog from "./FilePreviewDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +63,9 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
   const [isUpdated, setIsUpdated] = useState(false);
   const [contentTypes, setContentTypes] = useState([]);
   const [ expanded, setExpanded ] = useState(true);
+  // const [preview, setPreview] = useState(null)
+  const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false)
 
   useEffect(() => {
     console.log("inside documents mod", modifiedData);
@@ -303,6 +307,25 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
     },
   ];
 
+  // const handleFileClick = (file)=>{
+  //   setPreview(file);
+  // }
+
+  // const handlePreviewClose = () => {
+  //   setPreview(null);
+  // }
+
+  const handleFileClick = (file)=>{
+    setSelectedPreviewFile(file)
+    setPreviewDialogOpen(true)
+  }
+
+  const handlePreviewDialogClose = () => {
+    setPreviewDialogOpen(false)
+    setSelectedPreviewFile(null)
+  }
+
+
   if(isAccord){
     return (
       <>
@@ -439,7 +462,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                         }}
                       >
                         <Box sx={{width:"30%"}}>
-                          <a href={doc.link} target="_blank" rel="noopener noreferrer">
+                          {/* <a href={doc.link} target="_blank" rel="noopener noreferrer"> */}
                             <Box
                               sx={{
                                 // height: '40px',
@@ -447,10 +470,11 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                                 cursor: 'pointer', // Change cursor to indicate clickability
                                 color: '#3D5CAC',
                               }}
+                              onClick={()=>{handleFileClick(doc)}}
                             >
                               {doc.filename}
                             </Box>
-                          </a>
+                          {/* </a> */}
                         </Box>
                         <Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
                         <Box sx={{width:"20%"}}>{doc.fileType}</Box>
@@ -765,6 +789,36 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                       </Button>
                     </DialogActions>
         </Dialog>
+
+        {/* {preview && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '500px',
+            height: '100vh',
+            backgroundColor: '#f0f0f0',
+            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+            zIndex: 10,
+            padding: '20px',
+            overflowY: 'hidden',
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <Typography variant="h6">{preview.filename}</Typography>
+            <Button onClick={handlePreviewClose}>
+              <Close sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "20px",
+                  }}/>
+            </Button>
+          </Box>
+          <iframe src={preview.link} width="100%" height="84%" title="File Preview"/>
+        </Box>
+        )} */}
+
+        {previewDialogOpen && selectedPreviewFile && <FilePreviewDialog file={selectedPreviewFile} onClose={handlePreviewDialogClose}/>}
       </>
     );
   }else{
@@ -822,10 +876,10 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
 							{isEditable && <Box sx={{width:"15%"}}></Box>}
 						</Box>
 						{[...documents].map((doc, i) => (
-							<>
+							<React.Fragment key={i}>
 							{/* {console.log("details of doc-", doc)} */}
 								<Box
-									key={i}
+									// key={i}
 									sx={{
 										display: 'flex',
 										flexDirection: 'row',
@@ -834,7 +888,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
 									}}
 								>
 									<Box sx={{width:"30%"}}>
-										<a href={doc.link} target="_blank" rel="noopener noreferrer">
+										{/* <a href={doc.link} target="_blank" rel="noopener noreferrer"> */}
 											<Box
 												sx={{
 													// height: '40px',
@@ -842,10 +896,11 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
 													cursor: 'pointer', // Change cursor to indicate clickability
 													color: '#3D5CAC',
 												}}
+                        onClick={() => handleFileClick(doc)}
 											>
 												{doc.filename}
 											</Box>
-										</a>
+										{/* </a> */}
 									</Box>
 									<Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
 									<Box sx={{width:"20%"}}>{doc.fileType}</Box>
@@ -914,7 +969,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
 										</Button>
 									</Box>}
 								</Box>
-							</>
+							</React.Fragment>
 						))}
 					</Box>
 				</Box>
@@ -999,7 +1054,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                       {f.name}
                     </Box>
                     <Select
-                      value={contractFileTypes[i]}
+                      value={contractFileTypes[i]? contractFileTypes[i] : ""}
                       label="Document Type"
                       onChange={(e) => {
                         const updatedTypes = [...contractFileTypes];
@@ -1315,6 +1370,36 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                       </Button>
                     </DialogActions>
         </Dialog>
+
+        {/* {preview && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '500px',
+            height: '100vh',
+            backgroundColor: '#f0f0f0',
+            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+            zIndex: 10,
+            padding: '20px',
+            overflowY: 'hidden',
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <Typography variant="h6">{preview.filename}</Typography>
+            <Button onClick={handlePreviewClose}>
+              <Close sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "20px",
+                  }}/>
+            </Button>
+          </Box>
+          <iframe src={preview.link} width="100%" height="84%" title="File Preview"/>
+        </Box>
+        )} */}
+
+        {previewDialogOpen && selectedPreviewFile && <FilePreviewDialog file={selectedPreviewFile} onClose={handlePreviewDialogClose}/>}
       </>
     );
   }

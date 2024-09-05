@@ -170,20 +170,13 @@ function ContractCard(props) {
         </Grid>
 
         <Grid container item xs={4} sx={{ textAlign: "center", alignItems: "center", justifyContent: "flex-end" }}>
-          <Typography
-            sx={{
-              color: textColor,
-              fontWeight: "bold",
-              fontSize: "16px",
-              // marginLeft: "5px",
-            }}
-          >
+        <Typography sx={{ color: textColor, fontWeight: "bold", fontSize: "16px" }}>
             {contract.contract_status}
           </Typography>
           {announcements?.length && (
             <img
               src={Bell_fill}
-              alt='Bell Icon'
+              alt="Bell Icon"
               style={{ display: "block", cursor: "pointer", marginTop: "5px", marginLeft: "10px" }}
               onClick={(e) => {
                 e.stopPropagation();

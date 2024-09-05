@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import {
 	ThemeProvider,
 	Box,
@@ -46,6 +46,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import APIConfig from '../../../utils/APIConfig';
 import Documents from '../../Leases/Documents';
+import { FeesDataGrid } from '../../Property/PMQuotesRequested';
 import ManagementContractContext from '../../../contexts/ManagementContractContext';
 // import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 
@@ -160,8 +161,8 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 			fee_name: feeName,
 			fee_type: feeType,
 			frequency: feeFrequency,
+			of: feeAppliedTo,
 			...(feeType === 'PERCENT' && { charge: percentage }),
-			...(feeType === 'PERCENT' && { of: feeAppliedTo }),
 			...(feeType === 'FLAT-RATE' && { charge: feeAmount }),
 		};
 
@@ -872,7 +873,7 @@ const PropertyCard = (props) => {
   const [contractName, setContractName] = useState("");
   const [contractStartDate, setContractStartDate] = useState(dayjs());
   const [contractEndDate, setContractEndDate] = useState(dayjs());
-  const [contractStatus, setContractStatus] = useState("");
+  const [contractStatus, setContractStatus] = useState(null);
   const [contractFees, setContractFees] = useState([]);
 //   const [defaultContractFees, setDefaultContractFees] = useState([]);
   const [contractFiles, setContractFiles] = useState([]);
@@ -914,12 +915,11 @@ const PropertyCard = (props) => {
 			  setContractAssignedContacts(defaultContacts);
 			}
 	
-			const fees = contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : [];
-			if(fees.length > 0){
-				setContractFees(fees);
-			} else {
-				setContractFees(defaultContractFees);
-			}
+			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
+			setContractFees(fees);
+			// } else {
+			// 	setContractFees(defaultContractFees);
+			// }
 			
 			const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
 			setPreviouslyUploadedDocs(oldDocs);
@@ -1012,6 +1012,7 @@ const PropertyCard = (props) => {
     //     feeName: 'New Fee',
     //     feeAmount: 0,
     // };
+	// console.log("---dhyey--- inside adding fee old fee - ", contractFees, " new fee - ", newFee)
     setContractFees((prevContractFees) => [...prevContractFees, newFee]);
   };
 
@@ -1996,12 +1997,51 @@ return (
 					color: '#3D5CAC',
 				}}
 			>
-				<Box>Management Fees 1*</Box>
-				<Box onClick={handleOpenAddFee}>
+				<Typography
+					sx={{
+						color: "#160449",
+						fontWeight: theme.typography.primary.fontWeight,
+						fontSize: "18px",
+						paddingBottom: "5px",
+						paddingTop: "5px",
+						marginTop:"10px"
+					}}
+				>
+					{"Management Fees* "}
+				</Typography>
+				{/* <Box>Management Fees 1*</Box> */}
+				<Box onClick={handleOpenAddFee} marginTop={"10px"} paddingTop={"5px"}>
 					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
 			</Box>
-			<Box
+			{contractFees.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleDeleteFee={handleDeleteFee}/> : 
+				<>
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'center',
+								alignItems: 'center',
+								marginBottom: '7px',
+								width: '100%',
+								height:"100px"
+							}}
+						>
+							<Typography
+								sx={{
+								color: "#A9A9A9",
+								fontWeight: theme.typography.primary.fontWeight,
+								fontSize: "15px",
+								}}
+							>
+								No Fees
+							</Typography>
+						</Box>
+				</>
+			}
+			
+
+			{/* <Box
 				sx={{
 					background: '#FFFFFF',
 					fontSize: '13px',
@@ -2064,10 +2104,14 @@ return (
 						</Box>
 					))
 				)}
-			</Box>
+			</Box> */}
 
 			{/* previously Uploaded docs */}
-			<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
+			<Box padding={"5px"}>
+				<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
+			</Box>
+
+			{/* Contact details */}
 			{contractAssignedContacts.length ? (
 				<Box
 					sx={{
@@ -2089,8 +2133,19 @@ return (
 							width: '100%',
 						}}
 					>
-						Contract Assigned Contacts:
-						<Grid container sx={{ color: 'black' }}>
+						<Typography
+							sx={{
+								color: "#160449",
+								fontWeight: theme.typography.primary.fontWeight,
+								fontSize: "18px",
+								paddingBottom: "5px",
+								paddingTop: "5px",
+								marginY:"10px"
+							}}
+						>
+							{"Contract Assigned Contacts: "}
+						</Typography>
+						<Grid container sx={{ color: 'black' }} marginY={"13px"}>
 							<Grid item xs={3}>
 								Name
 							</Grid>
@@ -2102,12 +2157,13 @@ return (
 							</Grid>
 						</Grid>
 						{[...contractAssignedContacts].map((contact, i) => (
-							<ContactListItem
-								contact={contact}
-								i={i}
-								handleOpenEditContact={handleOpenEditContact}
-								handleDeleteContact={handleDeleteContact}
-							/>
+							<React.Fragment key={i}>
+								<ContactListItem
+									contact={contact}
+									handleOpenEditContact={handleOpenEditContact}
+									handleDeleteContact={handleDeleteContact}
+								/>
+							</React.Fragment>
 						))}
 					</Box>
 				</Box>
