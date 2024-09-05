@@ -17,12 +17,14 @@ import {
   List,
   ListItem,
   OutlinedInput,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import theme from "../../theme/theme";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import UTurnLeftIcon from "@mui/icons-material/UTurnLeft";
-import { makeStyles } from "@material-ui/core/styles";
-import { TextField } from "@mui/material";
+// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+// import UTurnLeftIcon from "@mui/icons-material/UTurnLeft";
+// import { makeStyles } from "@material-ui/core/styles";
+// import { TextField } from "@mui/material";
 import GoogleSignup from "./GoogleSignup";
 import axios from "axios";
 import { useCookies } from "react-cookie";
@@ -30,6 +32,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
+import PersonIcon from '@mui/icons-material/Person';
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useUser } from "../../contexts/UserContext";
 import Visibility from "@mui/icons-material/Visibility";
@@ -52,17 +55,47 @@ const NewUser = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [businesses, setBusinesses] = useState([]);
+  const [selectedBusiness, setSelectedBusiness] = useState();
+
   useEffect(() => {
-    console.log("ROLE SELECTED -  ", role);
+    console.log("ROHIT - role -  ", role);
   }, [role]);
 
+  // useEffect(() => {
+  //   console.log("email -  ", email);
+  // }, [email]);
+
   useEffect(() => {
-    console.log("email -  ", email);
-  }, [email]);
+    console.log("ROHIT - businesses -  ", businesses);
+  }, [businesses]);
+
+  useEffect(() => {
+    console.log("ROHIT - selectedBusiness -  ", selectedBusiness);
+    if( selectedBusiness?.business_type === "MANAGEMENT"){
+      setRole("PM_EMPLOYEE")
+    } else if( selectedBusiness?.business_type === "MAINTENANCE"){
+      setRole("MAINT_EMPLOYEE")
+    }
+  }, [selectedBusiness]);
+
+  const fetchBusinesses = async () => {
+    const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
+    // const args = {
+    //   business_type: isManagementEmployee() ? "MANAGEMENT" : "MAINTENANCE",
+    // };
+    // const response = await axios.get(url + objToQueryString(args));
+    const response = await axios.get(url);
+    setBusinesses(response.data.result);
+  };
 
   const handleRoleChange = (event, newRole) => {
+    console.log("ROHIT - newRole - ", newRole);
     if (newRole !== null) {
       setRole(newRole);
+      if( newRole === "EMPLOYEE"){
+        fetchBusinesses();
+      }
     }
   };
 
@@ -79,6 +112,11 @@ const NewUser = () => {
 
     if (password !== confirmPassword) {
       alert("Passwords must match");
+      return false;
+    }
+
+    if (role === "EMPLOYEE" || (selectedBusiness == null && (role === "PM_EMPLOYEE" || role === "MAINT_EMPLOYEE"))) { 
+      alert("Please select the business that you are an employee of.");
       return false;
     }
   };
@@ -231,7 +269,7 @@ const NewUser = () => {
       handleLogin();
     } else {
       if (validate_form() === false) return;
-      navigate(`/createProfile`, { state: { user: user } });
+      navigate(`/createProfile`, { state: { user: user, selectedBusiness:  selectedBusiness,} });
     }
   };
 
@@ -271,8 +309,34 @@ const NewUser = () => {
                   <Typography sx={{ fontSize: "20px", fontWeight: "bold" }}>Maintenance</Typography>
                 </Box>
               </ToggleButton>
+              <ToggleButton value='EMPLOYEE' aria-label='employee' sx={{ backgroundColor: "#FFFFFF", color: "#000000", height: "150px", width: "200px" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <PersonIcon sx={{ height: "50%", width: "50%" }} />
+                  <Typography sx={{ fontSize: "20px", fontWeight: "bold" }}>Employee</Typography>
+                </Box>
+              </ToggleButton>
             </ToggleButtonGroup>
           </Grid>
+          {
+            (role != null && (role === "EMPLOYEE" || role === "PM_EMPLOYEE" || role === "MAINT_EMPLOYEE")) && (              
+              <>
+              <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "40px" }}>
+              <Grid container item xs={12} justifyContent='center'>
+                <Typography sx={{ fontSize: "20px", color: "#3D5CAC", fontWeight: "bold", marginTop: "20px" }}>
+                  Please select a Business
+                </Typography>
+              </Grid>
+              <Grid container item xs={7.25} justifyContent='center' sx={{ marginTop: "10px" }}>
+                <Select value={selectedBusiness} onChange={(e) => setSelectedBusiness(e.target.value)} size='small' fullWidth>
+                  {businesses?.map((row) => (
+                    <MenuItem value={row}>{row.business_name}</MenuItem>
+                  ))}
+                </Select>              
+              </Grid>
+              </Grid>
+              </>
+            )
+          }
           {role != null && (
             <>
               <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "50px" }}>

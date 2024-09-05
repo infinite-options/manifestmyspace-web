@@ -39,8 +39,8 @@ import tenantDashboardImage from "./images/dashboard-images/tenant-dashboard.png
 const CreateProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user: userFromHook, setAuthData, onboardingState, setOnboardingState, updateProfileUid, selectRole, setLoggedIn } = useUser();
-  const { user } = location.state;
+  const { user: userFromHook, setAuthData, onboardingState, setOnboardingState, updateProfileUid, updateEmployeeProfileUid, selectRole, setLoggedIn } = useUser();
+  const { user, selectedBusiness} = location.state;
   console.log("In CreateProfile user - ", user);
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
@@ -54,7 +54,7 @@ const CreateProfile = () => {
   const [businessPhoneNumber, setBusinessPhoneNumber] = useState("");
 
   const validate_form = () => {
-    if ((user.role === "TENANT" || user.role === "OWNER") && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
+    if ((user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
       alert("Please fill out all fields");
       return false;
     }
@@ -94,6 +94,16 @@ const CreateProfile = () => {
           business_phone_number: businessPhoneNumber,
           business_email: businessEmail,
         };
+      case "PM_EMPLOYEE": 
+        return {
+            employee_user_id: userUID,            
+            employee_business_id: selectedBusiness?.business_uid,
+            employee_first_name: firstName,
+            employee_last_name: lastName,
+            employee_phone_number: phoneNumber,
+            employee_email: email,
+            employee_role: "EMPLOYEE",            
+        };
       case "MAINTENANCE":
         return {
           business_user_id: userUID,
@@ -102,6 +112,16 @@ const CreateProfile = () => {
           business_phone_number: businessPhoneNumber,
           business_email: businessEmail,
         };
+      case "MAINT_EMPLOYEE": 
+        return {
+            employee_user_id: userUID,            
+            employee_business_id: selectedBusiness?.business_uid,
+            employee_first_name: firstName,
+            employee_last_name: lastName,
+            employee_phone_number: phoneNumber,
+            employee_email: email,
+            employee_role: "EMPLOYEE",            
+        }
       case "OWNER":
         return {
           owner_user_id: userUID,
@@ -136,7 +156,7 @@ const CreateProfile = () => {
     return data;
   };
 
-  const handleUpdateProfileUid = (data) => {
+  const handleUpdateProfileUid = (data) => {    
     if (data.owner_uid) {
       updateProfileUid({ owner_id: data.owner_uid });
     }
@@ -147,16 +167,25 @@ const CreateProfile = () => {
       updateProfileUid({ business_uid: data.business_uid });
       updateProfileUid({ business_owner_id: data.employee_uid });
     }
+    if (data.employee_uid) {
+      console.log("ROHIT - data.employee_uid - ", data.employee_uid);      
+      updateEmployeeProfileUid({ business_uid: selectedBusiness?.business_uid, business_employee_id: data.employee_uid }, user.role);
+      // updateProfileUid({ business_uid: selectedBusiness.business_uid });
+      // updateProfileUid({ business_employee_id: data.employee_uid });
+    }
   };
 
   const createUserProfile = async (userUID, userData) => {
     console.log("createUserProfile - USER UID - ", userUID);
+    // console.log("ROHIT - createUserProfile - user.role -",  user.role)
+    selectRole(user.role);
     const payload = getPayload(user.role, userUID);
     const form = encodeForm(payload);
-    const data = await createProfile(form, user.role);
+    const data = await createProfile(form, user.role);        
+    
     handleUpdateProfileUid(data);
     setCookie("default_form_vals", { ...cookiesData, phoneNumber, email });
-    selectRole(user.role);
+    
 
     console.log("userFromHook - ", userFromHook);
     let role_id = {};
@@ -175,6 +204,20 @@ const CreateProfile = () => {
       let businesses = userData.businesses;
       businesses["MAINTENANCE"].business_uid = data.business_uid;
       businesses["MAINTENANCE"].business_owner_id = data.employee_uid;
+      role_id = { businesses };
+    }
+
+    if (user.role === "PM_EMPLOYEE") {
+      let businesses = userData.businesses;
+      businesses["MANAGEMENT"].business_uid = selectedBusiness?.business_uid;
+      businesses["MANAGEMENT"].business_employee_id = data.employee_uid;
+      role_id = { businesses };
+    }
+
+    if (user.role === "MAINT_EMPLOYEE") {
+      let businesses = userData.businesses;
+      businesses["MAINTENANCE"].business_uid = selectedBusiness?.business_uid;
+      businesses["MAINTENANCE"].business_employee_id = data.employee_uid;
       role_id = { businesses };
     }
 
@@ -364,7 +407,13 @@ const CreateProfile = () => {
       case "MANAGER":
         return managerDashboardImage;
         break;
+      case "PM_EMPLOYEE":
+        return managerDashboardImage;
+        break;
       case "MAINTENANCE":
+        return maintenanceDashboardImage;
+        break;
+      case "PM_EMPLOYEE":
         return maintenanceDashboardImage;
         break;
       case "OWNER":
@@ -447,7 +496,7 @@ const CreateProfile = () => {
               </Grid>
             )}
 
-            {(user.role === "TENANT" || user.role === "OWNER") && (
+            {(user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (
               <Grid item xs={10}>
                 <Typography sx={{ fontSize: "25px", color: "#160449" }}>Email</Typography>
                 <OutlinedInput
@@ -475,7 +524,7 @@ const CreateProfile = () => {
               </Grid>
             )}
 
-            {(user.role === "TENANT" || user.role === "OWNER") && (
+            {(user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (
               <Grid item xs={10}>
                 <Typography sx={{ fontSize: "25px", color: "#160449" }}>Phone Number</Typography>
                 <OutlinedInput

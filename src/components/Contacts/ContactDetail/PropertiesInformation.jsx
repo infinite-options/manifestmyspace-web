@@ -63,7 +63,7 @@ const PropertiesInformation = ({ owner }) => {
       </Grid>
       <Grid container sx={{padding: '10px', maxHeight: '250px', overflow: 'auto',}}>                
         <Grid item xs={12} sx={{height: '180px', minHeight: '200px'}}>        
-          <PropertiesDataGrid data={activeProperties} />
+          <PropertiesDataGrid data={activeProperties}/>
         </Grid>        
       </Grid>
       <Grid container direction='row' sx={{padding: '10px', }}>
@@ -206,7 +206,19 @@ const PropertiesInformation = ({ owner }) => {
         // width: 100,
         flex: 0.3,
         renderCell: (params) => (
-          <Box sx={{ margin: "0px" }}>
+          <Box sx={{ margin: "0px" }}
+            onClick = {() =>
+              navigate("/managerMaintenance", {
+                  state: {
+                    selectedProperty: {
+                      address: params.row.property_address,
+                      property_uid: params.row.property_uid,
+                      checked: true,
+                    },
+                  },
+                })
+            }
+            >
             <Badge
               overlap="circular"
               color="error"
