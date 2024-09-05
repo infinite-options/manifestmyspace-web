@@ -102,24 +102,28 @@ const ProfileInformation = ({ contactDetails, type }) => {
           <Grid container direction='row' item xs={12} alignItems='center' >
             <img src={AddressIcon} alt="address" />
               
-            <Typography sx={{color: '#160449', }}>          
-              {/* { contactDetails?.owner_address + ', ' + contactDetails?.owner_city + ', ' + contactDetails?.owner_state + ', ' + contactDetails?.owner_zip } */}
-  
-              {type == "owner" && contactDetails?.owner_address + ', ' + contactDetails?.owner_city + ', ' + contactDetails?.owner_state + ', ' + contactDetails?.owner_zip }
-              {type == "tenant" && contactDetails?.tenant_address + ', ' + contactDetails?.tenant_city + ', ' + contactDetails?.tenant_state + ', ' + contactDetails?.tenant_zip }
-              {(type === "maintenance" || type === "manager") && contactDetails?.business_address + ', ' + contactDetails?.business_city + ', ' + contactDetails?.business_state + ', ' + contactDetails?.business_zip }
-              {/* {type == "employee" && contactDetails?.employee_address + ', ' + contactDetails?.employee_city + ', ' + contactDetails?.employee_state + ', ' + contactDetails?.employee_zip } */}
-              {type === "employee" &&
-                (contactDetails?.employee_address || 
-                contactDetails?.employee_city || 
-                contactDetails?.employee_state || 
-                contactDetails?.employee_zip
-                  ? `${contactDetails.employee_address || '-'}, ${contactDetails.employee_city || '-'}, ${contactDetails.employee_state || '-'}, ${contactDetails.employee_zip || '-'}`
-                  : '-')
-              }
-              
-  
-            </Typography>
+            <Typography sx={{ color: '#160449', }}>
+            {type === "owner" &&
+              (contactDetails?.owner_address && contactDetails?.owner_city && contactDetails?.owner_state && contactDetails?.owner_zip
+                ? `${contactDetails.owner_address}, ${contactDetails.owner_city}, ${contactDetails.owner_state}, ${contactDetails.owner_zip}`
+                : "No address provided")}
+
+            {type === "tenant" &&
+              (contactDetails?.tenant_address && contactDetails?.tenant_city && contactDetails?.tenant_state && contactDetails?.tenant_zip
+                ? `${contactDetails.tenant_address}, ${contactDetails.tenant_city}, ${contactDetails.tenant_state}, ${contactDetails.tenant_zip}`
+                : "No address provided")}
+
+            {(type === "maintenance" || type === "manager") &&
+              (contactDetails?.business_address && contactDetails?.business_city && contactDetails?.business_state && contactDetails?.business_zip
+                ? `${contactDetails.business_address}, ${contactDetails.business_city}, ${contactDetails.business_state}, ${contactDetails.business_zip}`
+                : "No address provided")}
+
+            {type === "employee" &&
+              (contactDetails?.employee_address || contactDetails?.employee_city || contactDetails?.employee_state || contactDetails?.employee_zip
+                ? `${contactDetails.employee_address || '-'}, ${contactDetails.employee_city || '-'}, ${contactDetails.employee_state || '-'}, ${contactDetails.employee_zip || '-'}`
+                : "No address provided")}
+          </Typography>
+
           </Grid>
         </Grid>
         <Grid container item xs={12} md={6}>      

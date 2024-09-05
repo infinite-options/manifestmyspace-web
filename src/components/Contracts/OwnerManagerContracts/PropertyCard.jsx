@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import {
 	ThemeProvider,
 	Box,
@@ -26,11 +26,11 @@ import AddIcon from '@mui/icons-material/Add';
 import { useUser } from '../../../contexts/UserContext';
 import theme from '../../../theme/theme';
 
-import ImageCarousel from '../../ImageCarousel';
+// import ImageCarousel from '../../ImageCarousel';
 import defaultHouseImage from '../../Property/defaultHouseImage.png';
 import ChatIcon from '@mui/icons-material/Chat';
 import DescriptionIcon from '@mui/icons-material/Description';
-import EditIcon from '@mui/icons-material/Edit';
+// import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { isValidDate } from '../../../utils/dates';
@@ -47,6 +47,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import APIConfig from '../../../utils/APIConfig';
 import Documents from '../../Leases/Documents';
 import { FeesDataGrid } from '../../Property/PMQuotesRequested';
+import ManagementContractContext from '../../../contexts/ManagementContractContext';
+// import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 
 function TextInputField(props) {
 	const inputStyle = {
@@ -83,36 +85,55 @@ function TextInputField(props) {
 	);
 }
 
-function AddFeeDialog({ open, handleClose, onAddFee }) {
-	const { getProfileId } = useUser();
+function AddFeeDialog({ open, handleClose, onAddFee, }) {	
+	const { feeBases, } = useContext(ManagementContractContext);	
 	const [feeName, setFeeName] = useState('');
 
+	// console.log("feeBases from Context - ", feeBases);
+
+	// useEffect(() => {
+	// 	console.log('FEE Name: ', feeName);
+	// }, [feeName]);
+
 	const [feeType, setFeeType] = useState('PERCENT');
+	// useEffect(() => {
+	// 	console.log('FEE TYPE: ', feeType);
+	// }, [feeType]);
 
 	const [isPercentage, setIsPercentage] = useState(true);
+	// useEffect(() => {
+	// 	console.log('IS PERCENTAGE?: ', isPercentage);
+	// }, [isPercentage]);
 
 	const [percentage, setPercentage] = useState('0');
+	// useEffect(() => {
+	// 	console.log('PERCENTAGE: ', percentage);
+	// }, [percentage]);
 
 	const [isFlatRate, setIsFlatRate] = useState(false);
+	// useEffect(() => {
+	// 	console.log('IS FLAT RATE?: ', isFlatRate);
+	// }, [isFlatRate]);
 
 	const [feeAmount, setFlatRate] = useState('0');
+	// useEffect(() => {
+	// 	console.log('FEE TYPE: ', feeAmount);
+	// }, [feeAmount]);
 
 	const [feeFrequency, setFeeFrequency] = useState('One Time');
+	// useEffect(() => {
+	// 	console.log('FEE FREQUENCY: ', feeFrequency);
+	// }, [feeFrequency]);
 
-	const [feeAppliedTo, setFeeAppliedTo] = useState("");
+	const [feeAppliedTo, setFeeAppliedTo] = useState('Gross Rent');
+	// useEffect(() => {
+	// 	console.log('FEE APPLIED TO: ', feeAppliedTo);
+	// }, [feeAppliedTo]);
 
 	const handleFeeTypeChange = (event) => {
 		setFeeType(event.target.value);
 		// console.log("FEE TYPE SELECTED", event.target.value);
-		// console.log('FEE TYPE: ', selectedFeeType);
-
-		// if(event.target.value === "PERCENT"){
-		//     setIsPercentage(true)
-		//     setIsFlatRate(false);
-		// }else{
-		//     setIsFlatRate(true);
-		//     setIsPercentage(false)
-		// }
+		// console.log('FEE TYPE: ', selectedFeeType);		
 	};
 
 	const handleFrequencyChange = (event) => {
@@ -136,17 +157,6 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 		console.log('feeAmount:', feeAmount);
 		console.log('feeAppliedTo:', feeAppliedTo);
 
-		// const newFee = {
-		//     fee_name: feeName,
-		//     fee_type: feeType,
-		//     frequency: feeFrequency,
-		//     isPercentage: isPercentage,
-		//     ...(isPercentage && { charge: percentage }),
-		//     ...(isPercentage && { of: feeAppliedTo }),
-		//     isFlatRate: isFlatRate,
-		//     ...(isFlatRate && { charge: feeAmount }),
-		// }
-
 		const newFee = {
 			fee_name: feeName,
 			fee_type: feeType,
@@ -164,11 +174,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 		<form onSubmit={handleAddFee}>
 			<Dialog
 				open={open}
-				onClose={handleClose}
-				// sx = {{
-				//     width: '100%',
-				//     maxWidth: 'none',
-				// }}
+				onClose={handleClose}				
 				maxWidth="xl"
 				sx={{
 					'& .MuiDialog-paper': {
@@ -221,8 +227,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 								marginRight: '50px',
 							}}
 						>
-							<Box>Fee Name</Box>
-							{/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+							<Box>Fee Name</Box>							
 							<TextField
 								name="fee_name"
 								placeholder=""
@@ -244,28 +249,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 								flexDirection: 'column',
 							}}
 						>
-							<Box>Frequency</Box>
-							{/* <TextInputField 
-                                    name="fee_name"
-                                    placeholder=""
-                                    value={""} 
-                                    onChange={console.log("input changed")}
-                                    sx={{ backgroundColor: '#D6D5DA' }}
-                                >
-                                    Fee Name
-                                </TextInputField> */}
-							{/* <TextField
-                                    name="frequency"
-                                    placeholder=""
-                                    value={""}
-                                    onChange={console.log("input changed")}
-                                    InputProps={{
-                                        sx: {
-                                            backgroundColor: '#D6D5DA',
-                                            height: '40px',
-                                        },
-                                    }}
-                                /> */}
+							<Box>Frequency</Box>							
 							<Select
 								value={feeFrequency}
 								label="Frequency"
@@ -316,18 +300,13 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 								value="PERCENT"
 								control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
 								label="Percent"
-							/>
-							{/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
+							/>							
 							{feeType === 'PERCENT' && (
 								<Box>
 									<TextField
 										value={percentage}
 										label=""
-										variant="outlined"
-										// sx={{
-										//     width: '45px',
-										//     height: '3px',
-										// }}
+										variant="outlined"										
 										InputProps={{
 											sx: {
 												backgroundColor: '#D6D5DA',
@@ -371,10 +350,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 									placeholder=""
 									label=""
 									variant="outlined"
-									// sx={{
-									//     width: '45px',
-									//     height: '3px',
-									// }}
+									
 
 									InputProps={{
 										sx: {
@@ -410,9 +386,14 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 										padding: '8px', // Adjust the padding as needed
 									}}
 								>
-									<MenuItem value={'Gross Rent'}>Gross Rent</MenuItem>
+									{/* <MenuItem value={'Gross Rent'}>Gross Rent</MenuItem>
 									<MenuItem value={'Utility Bill'}>Utility Bill</MenuItem>
-									<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem>
+									<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem> */}
+									{
+										feeBases?.map( basis => (
+											<MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>
+										))
+									}
 								</Select>
 							</Box>
 						)}
@@ -861,12 +842,14 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
-  // console.log("PropertyCard - props - ", props);
+  const { defaultContractFees, allContracts, currentContractUID, } = useContext(ManagementContractContext);  
+//   console.log("PropertyCard - props - ", props);
+  
 
   const [propertyData, setPropertyData] = useState(props.data);
-  const timeDiff = props.timeDifference;
-  const contractBusinessID = props.contractBusinessID;
-  const [contractPropertyID, setContractPropertyID] = useState(props.contractPropertyID);
+//   const timeDiff = props.timeDifference;
+//   const contractBusinessID = props.contractBusinessID;
+//   const [contractPropertyID, setContractPropertyID] = useState(props.contractPropertyID);
   const today = dayjs(new Date()); // Convert new Date() to Day.js object
 
   // console.log("--debug-- PropertyCard props", props);
@@ -882,17 +865,17 @@ const PropertyCard = (props) => {
   const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false);
   const [indexForEditContactDialog, setIndexForEditContactDialog] = useState(false);
 
-  const [allContracts, setAllContracts] = useState(null);
+//   const [allContracts, setAllContracts] = useState(contracts); //from context
 //   const [businessProfile, setBusinessProfile] = useState(null);
 
   //Contract Details
-  const [contractUID, setContractUID] = useState();
+  const [contractUID, setContractUID] = useState(currentContractUID);
   const [contractName, setContractName] = useState("");
   const [contractStartDate, setContractStartDate] = useState(dayjs());
   const [contractEndDate, setContractEndDate] = useState(dayjs());
   const [contractStatus, setContractStatus] = useState(null);
   const [contractFees, setContractFees] = useState([]);
-  const [defaultContractFees, setDefaultContractFees] = useState([]);
+//   const [defaultContractFees, setDefaultContractFees] = useState([]);
   const [contractFiles, setContractFiles] = useState([]);
   const [previouslyUploadedDocs, setPreviouslyUploadedDocs] = useState([]);
   const [contractDocument, setContractDocument] = useState(null);
@@ -903,107 +886,17 @@ const PropertyCard = (props) => {
   const [documentDetails, setDocumentDetails] = useState([]);
 
 
-    
-//   const setBusinessProfileDetails = () => {
-//     if (businessProfile !== null && businessProfile !== undefined) {
-//       // console.log("Business Services Fees", businessProfile["business_services_fees"]);
-//       const parsedFees = JSON.parse(businessProfile["business_services_fees"]);
-//       if (parsedFees){
-//         setDefaultContractFees(JSON.parse(businessProfile["business_services_fees"]));
-//       } else {
-//         setDefaultContractFees([]);
-//       }
-//     }
-//   };
-
-
-//   const setContractDetails = () => {
-//     if (allContracts !== null && allContracts !== undefined) {
-//       const contractData = allContracts?.find((contract) => contract.contract_uid === props.contractUID);
-//       // console.log("setData - CONTRACT - ", contractData);
-//       // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
-//       if (contractData) {
-//         setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
-//         setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
-//         setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
-//         setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
-
-//         // setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
-//         const defaultContacts = [];
-//         const managerContact = {
-//           contact_first_name: contractData["business_name"],
-//           contact_last_name: "",
-//           contact_email: contractData["business_email"],
-//           contact_phone_number: contractData["business_phone_number"],
-//         };
-//         defaultContacts.push(managerContact);
-//         const assignedContacts = contractData["contract_assigned_contacts"];
-//         if (assignedContacts && assignedContacts.length) {
-//           setContractAssignedContacts(JSON.parse(contractData["contract_assigned_contacts"]));
-//         } else {
-//           setContractAssignedContacts(defaultContacts);
-//         }
-
-// 		const fees = contractData["contract_fees"] ? JSON.parse(contractData["contract_fees"]) : [];
-// 		if(fees.length > 0){
-// 			setContractFees(fees);
-// 		} else {
-// 			setContractFees(defaultContractFees);
-// 		}
-        
-//         const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
-// 		// const oldDocsDetails = contractData["contract_documents_contentType"]? JSON.parse(contractData["contract_documents_contentType"]) : []
-
-// 		// let temp = []
-
-// 		// oldDocs.map((d, i) => {
-// 		// 	temp.push({...d, "contentType": oldDocsDetails[i].fileType})
-// 		// })
-
-// 		setPreviouslyUploadedDocs(oldDocs);
-// 		// setContractFileTypes(oldDocsDetails);
-//         const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
-//         if (contractDoc) {
-//           setContractDocument(contractDoc);
-//         }
-//         setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
-//       }
-//     }
-//   };
-
-// useEffect(() => {
-//     const fetchProfileData = async () => {
-//         try {
-//             const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-//             const data = await response.json();
-//             console.log("DATA PROFILE", data);
-
-//             if (data.result && data.result.length > 0) {
-//                 const profileFees = data.result[0].business_services_fees
-//                     ? JSON.parse(data.result[0].business_services_fees)
-//                     : [];
-                
-//                 setDefaultContractFees(profileFees);
-//             }
-//         } catch (error) {
-//             console.error("Error fetching profile data: ", error);
-//         }
-//     };
-
-//     fetchProfileData();
-// }, []);
-
 
   useEffect(() => {
 	const setContractDetails = () => {
 		if (allContracts !== null && allContracts !== undefined) {
-		  const contractData = allContracts?.find((contract) => contract.contract_uid === props.contractUID);
+		  const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
 		  // console.log("setData - CONTRACT - ", contractData);
 		  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
 		  if (contractData) {
 			setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
 			setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
-			setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
+			// setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
 			setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
 	
 			// setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
@@ -1037,106 +930,23 @@ const PropertyCard = (props) => {
 			setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
 		  }
 		}
-	  };
-	  const fetchProfileData = async () => {
-        try {
-            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-            const data = await response.json();
-            console.log("Fetched profile data:", data.profile.result);
-
-            if (data.profile.result && data.profile.result.length > 0) {
-                const profileFees = data.profile.result[0].business_services_fees
-                    ? JSON.parse(data.profile.result[0].business_services_fees)
-                    : [];
-                console.log("Setting defaultContractFees:", profileFees);
-                setDefaultContractFees(profileFees);
-            }
-        } catch (error) {
-            console.error("Error fetching profile data: ", error);
-        }
-    };
-
+	  };	
     setContractDetails();
-	
-    fetchProfileData();
-
-  }, [contractUID]);
-
-//   const fetchData = async () => {
-//     // console.log("props.contractUID:", props.contractUID);
-//     setContractUID(props.contractUID);
-//     if (allContracts === null) {
-//       const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
-//       const data = await result.json();
-//       console.log("--debug--", data);
-
-//       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
-//       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-
-//       if (data !== "No records for this Uid") {
-//         setAllContracts(data["result"]);
-//       }
-//     }
-//     if (businessProfile === null) {
-//       const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
-//       const data2 = await businessProfileResult.json();
-//       const businessProfileData = data2["result"];
-//       const businessProf = businessProfileData?.find((item) => item.business_uid === getProfileId());
-//       console.log("businessProf - ", businessProf);
-//       setBusinessProfile(businessProf);
-//     }
-//   };
+  }, [currentContractUID]);
 
   useEffect(() => {
+	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
+		  // console.log("setData - CONTRACT - ", contractData);
+		  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
+	if (contractData) {
+		setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
+	}
+  }, [contractStartDate]);
+
+  useEffect(() => {
+	console.log("props.data - ", props.data)
     setPropertyData(props.data);
   }, [props.data]);
-
-  useEffect(() => {
-    setContractPropertyID(props.contractPropertyID);
-  }, [props.contractPropertyID]);
-
-  useEffect(() => {
-
-	const fetchData = async () => {
-		console.log("props.contractUID:", props.contractUID);
-		setContractUID(props.contractUID);
-		if (allContracts === null) {
-		  const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${contractBusinessID}`);
-		  const data = await result.json();
-		  // console.log("--debug--", data);
-	
-		  // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
-		  // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
-	
-		  if (data !== "No records for this Uid") {
-			setAllContracts(data["result"]);
-		  }
-		}
-		// if (businessProfile === null) {
-		//   const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
-		//   const data2 = await businessProfileResult.json();
-		//   const businessProfileData = data2["result"];
-		//   const businessProf = businessProfileData?.find((item) => item.business_uid === getProfileId());
-		//   console.log("businessProf - ", businessProf);
-		//   setBusinessProfile(businessProf);
-		// }
-	  };
-
-    fetchData();
-    
-    // if (allContracts !== null && businessProfile !== null) {
-    //   setData();
-    // }
-  }, [props.contractUID]);
-
-
-//   useEffect(() => {
-//     setContractDetails();
-//   }, [allContracts]);
-
-//   useEffect(() => {
-//     setBusinessProfileDetails();
-//   }, [businessProfile]);
 
   useEffect(() => {
     if (isValidDate(contractStartDate.format("MM-DD-YYYY"))) {
@@ -1165,12 +975,18 @@ const PropertyCard = (props) => {
 	
 	// console.log("contractFees.length - ", contractFees.length);
 	// console.log("contractFees - ", contractFees);
-	// console.log("--dhyey--- before assigning contract fees - ", contractStatus, " and length of contract fees -", contractFees.length)
-    if (contractStatus === "NEW" && contractFees.length === 0) {
-		// console.log("--dhyey-- contract status - ", contractStatus)
-		setContractFees([...defaultContractFees]);
-    }
-  }, [defaultContractFees]);
+    if (!contractFees.length) {
+      setContractFees([...defaultContractFees]);
+    }	
+  }, [defaultContractFees, currentContractUID]);
+
+  useEffect(() => {
+	setImages(
+		propertyData.property_images && JSON.parse(propertyData.property_images).length > 0
+			? JSON.parse(propertyData.property_images)
+			: [defaultHouseImage]
+	)
+  }, [propertyData]); 
 
 //   useEffect(() => {
 //     // console.log("CONTRACT FEES - ", contractFees);
@@ -1496,14 +1312,6 @@ const PropertyCard = (props) => {
       });
   };
 
-//   useEffect(() => {
-//     // console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
-//     // console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
-
-//     //get contracts
-//     fetchData();    
-//   }, []);
-
   const getFormattedFeeFrequency = (frequency) => {
     // console.log("getFormattedFeeFrequency(), frequency", frequency);
     let freq = "";
@@ -1547,10 +1355,10 @@ const PropertyCard = (props) => {
     return freq;
   };
 // Parse property images or use the default image if none are available
-const images =
+const [images, setImages] = useState(
 propertyData.property_images && JSON.parse(propertyData.property_images).length > 0
 	? JSON.parse(propertyData.property_images)
-	: [defaultHouseImage];
+	: [defaultHouseImage]);
 
 const [scrollPosition, setScrollPosition] = useState(0);
 const scrollRef = useRef(null);
@@ -2261,15 +2069,8 @@ return (
 								flexDirection: 'column',
 							}}
 							onClick={() => handleOpenEditFee(index)}
-						> */}
-							{/* <Box>{'Fee Name'}: {fee.feeName}</Box>
-                        <Box>{'Fee Frequency'}: {fee.feeFrequency}</Box>
-                        <Box>{'Fee Type'}: {fee.feeType}</Box>
-                        <Box>{'Is percentage?'}: {fee.isPercentage? 'True' : 'False'}</Box>
-                        <Box>{'percentage'}: {fee.isPercentage ? `Percentage: ${fee.feePercentage}, Applied To: ${fee.feeAppliedTo}` : 'False'}</Box>
-                        <Box>{'Is flat-rate?'}: {fee.isFlatRate? 'True' : 'False'}</Box>
-                        <Box>{'flat-rate'}: {fee.isFlatRate ? `Amount: ${fee.feeAmount}` : 'False'}</Box> */}
-							{/* <Box
+						>							
+							<Box
 								sx={{
 									display: 'flex',
 									flexDirection: 'row',
@@ -2531,53 +2332,7 @@ return (
 	);
 };
 
-const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContact }) => {
-	// return (
-	//   <Box
-	//     key={i}
-	//     sx={{
-	//       display: "flex",
-	//       flexDirection: "row",
-	//       alignItems: "center",
-	//       justifyContent: "flex-start",
-	//       paddingTop: "10px",
-	//     }}
-	//     onClick={() => handleOpenEditContact(i)}
-	//   >
-	//     <Box
-	//       sx={{
-	//         // height: '40px',
-	//         // width: '100%',
-	//         color: "#3D5CAC",
-	//         width: "200px",
-	//       }}
-	//     >
-	//       {contact.contact_first_name} {contact.contact_last_name}
-	//     </Box>
-
-	//     <Box sx={{ width: "200px" }}>{contact.contact_email}</Box>
-	//     <Box sx={{ width: "80px" }}>{contact.contact_phone_number}</Box>
-	//     <Button
-	//       variant="text"
-	//       onClick={(event) => {
-	//         handleDeleteContact(i, event);
-	//       }}
-	//       sx={{
-	//         width: "10%",
-	//         cursor: "pointer",
-	//         fontSize: "14px",
-	//         fontWeight: "bold",
-	//         color: "#3D5CAC",
-	//         "&:hover": {
-	//           backgroundColor: "transparent", // Set to the same color as the default state
-	//         },
-	//       }}
-	//     >
-	//       <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-	//     </Button>
-	//   </Box>
-
-	// );
+const ContactListItem = ({ contact, i, handleOpenEditContact, handleDeleteContact }) => {	
 	return (
 		<Grid container key={i} onClick={() => handleOpenEditContact(i)}>
 			<Grid item xs={3}>
@@ -2675,8 +2430,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 					{/* First name and last name */}
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
-							<Box sx={{ color: '#3D5CAC' }}>First Name</Box>
-							{/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+							<Box sx={{ color: '#3D5CAC' }}>First Name</Box>							
 							<TextField
 								name="contact_first_name"
 								placeholder=""
@@ -2845,8 +2599,7 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
 					{/* First name and last name */}
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
-							<Box sx={{ color: '#3D5CAC' }}>First Name</Box>
-							{/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+							<Box sx={{ color: '#3D5CAC' }}>First Name</Box>							
 							<TextField
 								name="contact_first_name"
 								placeholder=""

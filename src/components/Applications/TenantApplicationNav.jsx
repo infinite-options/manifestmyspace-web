@@ -18,6 +18,7 @@ import PhoneIcon from "../Property/phoneIconDark.png";
 import AES from "crypto-js/aes";
 import CloseIcon from "@mui/icons-material/Close";
 import Documents from "../Leases/Documents";
+import WaiverForm from "../Leases/WaiverForm";
 
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();
@@ -62,6 +63,11 @@ const TenantApplicationNav = (props) => {
         return "";
     }
   }
+ 
+  const handleNavigateToWaiverForm = () => {
+    navigate("/waiverForm");
+  };
+
   const handleNextCard = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % applications.length);
   };
@@ -704,7 +710,7 @@ const TenantApplicationNav = (props) => {
                           marginRight: "30px",
                         }}
                       >
-                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>
+                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents: 1"}/>
                         {/* <Typography
                           sx={{
                             justifySelf: "center",

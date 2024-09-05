@@ -1018,8 +1018,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const handleNextStep = async () => {    
     const newErrors = {};
     if (!businessName) newErrors.businessName = 'Business name is required';    
-    if (!address) newErrors.address = 'Address is required';    
-    if (!unit) newErrors.unit = 'Unit is required';    
+    if (!address) newErrors.address = 'Address is required';        
     if (!email) newErrors.email = 'Email is required';
     if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
     if (!ein) newErrors.ein = 'SSN is required';
@@ -1377,11 +1376,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         onChange={handleBusinessUnitChange}
                         variant='filled'
                         placeholder='3'
-                        className={classes.root}
-                        InputProps={{
-                          className: errors.unit ? classes.errorBorder : '',
-                        }}
-                        required
+                        className={classes.root}                        
                       ></TextField>
                     </Grid>
                   </Grid>

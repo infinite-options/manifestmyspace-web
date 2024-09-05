@@ -21,6 +21,7 @@ import ManagerCashflow from "./Cashflow/ManagerCashflow";
 import ManagerTransactions from "./Cashflow/ManagerTransactions";
 import ViewLease from "./Leases/ViewLease";
 import EditLease from "./Leases/EditLease";
+import WavierForm from "./Leases/WaiverForm";
 import LeasePDF from "./Leases/LeasePDF";
 import Leases from "./Leases/Leases";
 import LeasesDashboard from "./Leases/LeasesDashboard";
@@ -244,6 +245,7 @@ function Main() {
 
             <Route path='viewLease' element={<ViewLease />} />
             <Route path='editLease' element={<EditLease />} />
+            <Route path='waiverForm' element={<WavierForm />} />
             <Route path='leaseDocument' element={<LeasePDF />} />
             <Route path='Leases' element={<LeasesDashboard />} />
 
