@@ -915,11 +915,12 @@ const PropertyCard = (props) => {
 			  setContractAssignedContacts(defaultContacts);
 			}
 	
-			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
-			setContractFees(fees);
-			// } else {
-			// 	setContractFees(defaultContractFees);
-			// }
+			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];			
+			if(fees?.length > 0 ){
+				setContractFees(fees);
+			} else {
+				setContractFees(defaultContractFees);
+			}
 			
 			const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
 			setPreviouslyUploadedDocs(oldDocs);
