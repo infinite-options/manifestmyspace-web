@@ -5,17 +5,19 @@ import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { OnboardingProvider } from "./contexts/OnboardingContext";
 import { CookiesProvider } from "react-cookie";
+import { MaintenanceProvider } from "./contexts/MaintenanceContext";  // Import the MaintenanceProvider
 
 function App() {
-  // console.log("In App.js");
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <UserProvider>
         <OnboardingProvider>
           <SettingsACHContextProvider>
-            <BrowserRouter>
-              <Main />
-            </BrowserRouter>
+            <MaintenanceProvider>  {/* Wrap the application in MaintenanceProvider */}
+              <BrowserRouter>
+                <Main />
+              </BrowserRouter>
+            </MaintenanceProvider>
           </SettingsACHContextProvider>
         </OnboardingProvider>
       </UserProvider>

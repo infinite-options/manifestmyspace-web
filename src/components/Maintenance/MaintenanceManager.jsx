@@ -25,10 +25,12 @@ import AddMaintenanceItem from "./AddMaintenanceItem";
 import EditMaintenanceItem from "./EditMaintenanceItem";
 import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 
-export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus) {
+import { useMaintenance } from "../../contexts/MaintenanceContext";
+
+export async function maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
   
   const dataObject = {};
-
+  
   function dedupeQuotes(array) {
     const mapping = {};
     const dedupeArray = [];
@@ -87,11 +89,11 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
     dataObject["COMPLETED"] = array5 || [];
     dataObject["PAID"] = array6 || [];
 
-    setMaintenanceData((prevData) => ({
+    await setMaintenanceData((prevData) => ({
       ...prevData,
       ...dataObject,
     }));
-    setDisplayMaintenanceData((prevData) => ({
+    await setDisplayMaintenanceData((prevData) => ({
       ...prevData,
       ...dataObject,
     }));
@@ -99,6 +101,9 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
     // Determine the initial status based on the arrays
     const initialStatus = determineInitialStatus(array1, array2, array3, array4, array5, array6);
     setSelectedStatus(initialStatus);
+    // console.log('---what is set here---', maintenanceData);
+    setMaintenanceItemsForStatus(dataObject[initialStatus]);
+    setAllMaintenanceData(dataObject);
 
     setShowSpinner(false);
   };
@@ -156,20 +161,20 @@ export default function MaintenanceManager() {
 
   const businessId = user.businesses.MAINTENANCE.business_uid;
 
-  const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState("NEW REQUEST");
+  const { selectedRequestIndex, setSelectedRequestIndex, selectedStatus, setSelectedStatus, maintenanceItemsForStatus, setMaintenanceItemsForStatus, allMaintenanceData, setAllMaintenanceData } = useMaintenance();
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [desktopView] = useSessionStorage("desktopView", false);
-
   const [cookies] = useCookies(["selectedRole"]);
   const selectedRole = cookies.selectedRole;
+
+  const [desktopView] = useSessionStorage("desktopView", false);
   const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
   const [rescheduleView] = useSessionStorage("rescheduleView", false);
   const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
-  const [showNewMaintenance, setshowNewMaintenance] = useState(false);
   const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
+
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
+  const [showNewMaintenance, setshowNewMaintenance] = useState(false);
 
   useEffect(() => {
     if (location.state?.showAddMaintenance) {
@@ -299,24 +304,19 @@ export default function MaintenanceManager() {
 
   useEffect(() => {
     let profileId = getProfileId();
-    maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus);
+    maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
     setRefresh(false);
   }, [refresh]);
 
   useEffect(() => {
     const handleMaintenanceUpdate = () => {
       let profileId = getProfileId();
-      maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus);
-    };
-
-    window.addEventListener("maintenanceUpdate", handleMaintenanceUpdate);
-
-    return () => {
-      window.removeEventListener("maintenanceUpdate", handleMaintenanceUpdate);
+      maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
     };
   }, []);
 
-  const handleRowClick = (index, row) => {
+  const handleRowClick = async (index, row) => {
+    console.log('is it coming here');
     if (isMobile) {
       navigate(`/maintenance/detail`, {
         state: {
@@ -327,17 +327,18 @@ export default function MaintenanceManager() {
         },
       });
     } else {
-      // Save data to session storage
-      sessionStorage.setItem("selectedRequestIndex", index);
-      sessionStorage.setItem("selectedStatus", row.maintenance_status);
-      sessionStorage.setItem("maintenanceItemsForStatus", JSON.stringify(maintenanceData[row.maintenance_status]));
-      sessionStorage.setItem("allMaintenanceData", JSON.stringify(maintenanceData));
+    //   // Save data to session storage
+    //   sessionStorage.setItem("selectedRequestIndex", index);
+    //   sessionStorage.setItem("selectedStatus", row.maintenance_status);
+    //   sessionStorage.setItem("maintenanceItemsForStatus", JSON.stringify(maintenanceData[row.maintenance_status]));
+    //   sessionStorage.setItem("allMaintenanceData", JSON.stringify(maintenanceData));
+    console.log('--is it here to set things---', index, row);
+      await setSelectedRequestIndex(index);
+      await setSelectedStatus(row.maintenance_status);
+      console.log('before setting----', maintenanceData);
+      setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+      setAllMaintenanceData(maintenanceData);
 
-      setSelectedRequestIndex(index);
-      setSelectedStatus(row.maintenance_status);
-
-      // Trigger the custom event
-      window.dispatchEvent(new Event("maintenanceRequestSelected"));
     }
   };
   

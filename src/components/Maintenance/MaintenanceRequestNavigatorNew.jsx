@@ -32,6 +32,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { IconButton } from '@mui/material';
 import APIConfig from '../../utils/APIConfig';
 
+import { useMaintenance } from '../../contexts/MaintenanceContext'; // Added useMaintenance context
+
 function getInitialImages(requestData, currentIndex) {
 	try {
 		if (
@@ -64,9 +66,10 @@ export default function MaintenanceRequestNavigatorNew({
 	navigateParams,
 	fetchAndUpdateQuotes,
 }) {
-	//console.log('----inside maintainance navigator---', maintenanceQuotes);
-	const [currentIndex, setCurrentIndex] = useState(requestIndex);
+	console.log('----inside maintainance navigator---', allData);
+	const { setEditMaintenanceView } = useMaintenance(); // Use the context
 
+	const [currentIndex, setCurrentIndex] = useState(requestIndex);
 	const [activeStep, setActiveStep] = useState(0);
 	const [formattedDate, setFormattedDate] = useState('');
 	const [numOpenRequestDays, setNumOpenRequestDays] = useState('');
@@ -158,29 +161,78 @@ export default function MaintenanceRequestNavigatorNew({
 		}
 	}
 
-	useEffect(() => {
-		setCurrentIndex(requestIndex);
-	}, [requestIndex]);
-
-	useEffect(() => {
-		const initialImages = getInitialImages(requestData, currentIndex);
-		setImages(initialImages);
-		setActiveStep(0);
-
-		if (requestData[currentIndex] && requestData[currentIndex].maintenance_request_created_date !== 'null') {
-			let formattedDate = dayjs(requestData[currentIndex].maintenance_request_created_date).format('MM-DD-YYYY');
-			setFormattedDate(formattedDate);
-			const today = dayjs();
-			let diff = today.diff(formattedDate, 'day');
-			setNumOpenRequestDays(diff);
-		} else {
-			setFormattedDate('N/A');
-			setNumOpenRequestDays('N/A');
+	// Display scheduled date logic
+	function displayScheduledDate(data) {
+		if (data.maintenance_request_closed_date) {
+			return data.maintenance_request_closed_date !== 'null'
+				? `Closed: ${data.maintenance_request_closed_date}`
+				: `Closed: `;
 		}
-	}, [currentIndex]);
+		if (
+			!data.maintenance_scheduled_date ||
+			!data.maintenance_scheduled_time ||
+			data.maintenance_scheduled_time === 'null' ||
+			data.maintenance_scheduled_date === 'null'
+		) {
+			return 'Not Scheduled';
+		} else {
+			const formattedTime = dayjs(data.maintenance_scheduled_time, 'HH:mm').format('h:mm A');
+			return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`;
+		}
+	}
 
-	const maxSteps = images.length;
+	const data = requestData[currentIndex];
+	let propertyAddress = ' ';
+	propertyAddress = propertyAddress.concat(
+		' ',
+		data?.property_address,
+		' ',
+		data?.property_unit,
+		' ',
+		data?.property_city,
+		' ',
+		data?.property_state,
+		' ',
+		data?.property_zip
+	);
 
+	let estimatedCost = ' ';
+	estimatedCost = estimatedCost.concat(
+		' ',
+		data?.maintenance_estimated_cost ? data?.maintenance_estimated_cost : 'Not reported'
+	);
+
+	let completionStatus = 'no';
+	if (data?.maintenance_request_status === 'Completed' || data?.maintenance_request_status === 'Closed') {
+		completionStatus = 'yes';
+	} else {
+		completionStatus = 'no';
+	}
+
+	// Handle scrolling of images
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			const currentScrollPosition = scrollRef.current.scrollLeft;
+
+			if (direction === 'left') {
+				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				setScrollPosition(newScrollPosition);
+			} else {
+				const newScrollPosition = currentScrollPosition + scrollAmount;
+				setScrollPosition(newScrollPosition);
+			}
+		}
+	};
 	const handleNextCard = () => {
 		setCurrentIndex((prevIndex) => {
 			let newIndex = prevIndex + 1;
@@ -209,89 +261,6 @@ export default function MaintenanceRequestNavigatorNew({
 			}
 		});
 	};
-
-	const handleNext = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep + 1);
-	};
-
-	const handleBack = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep - 1);
-	};
-
-	function displayScheduledDate(data) {
-
-		//console.log('displayScheduledDate from this one:', data);
-		if (data.maintenance_request_closed_date) {
-			return data.maintenance_request_closed_date !== 'null'
-				? `Closed: ${data.maintenance_request_closed_date}`
-				: `Closed: `;
-		}
-		if (
-			!data.maintenance_scheduled_date ||
-			!data.maintenance_scheduled_time ||
-			data.maintenance_scheduled_time === 'null' ||
-			data.maintenance_scheduled_date === 'null'
-		) {
-			return 'Not Scheduled';
-		} else {
-			const formattedTime = dayjs(data.maintenance_scheduled_time, 'HH:mm').format('h:mm A');
-			return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`;
-		}
-	}
-	const data = requestData[currentIndex];
-	//console.log('---editmaintenance data---', data);
-
-	let propertyAddress = ' ';
-	propertyAddress = propertyAddress.concat(
-		' ',
-		data?.property_address,
-		' ',
-		data?.property_unit,
-		' ',
-		data?.property_city,
-		' ',
-		data?.property_state,
-		' ',
-		data?.property_zip
-	);
-
-	let estimatedCost = ' ';
-	estimatedCost = estimatedCost.concat(
-		' ',
-		data?.maintenance_estimated_cost ? data?.maintenance_estimated_cost : 'Not reported'
-	);
-
-	let completionStatus = 'no';
-	if (data?.maintenance_request_status === 'Completed' || data?.maintenance_request_status === 'Closed') {
-		completionStatus = 'yes';
-	} else {
-		completionStatus = 'no';
-	}
-
-	const [scrollPosition, setScrollPosition] = useState(0);
-	const scrollRef = useRef(null);
-
-	useEffect(() => {
-		if (scrollRef.current) {
-			scrollRef.current.scrollLeft = scrollPosition;
-		}
-	}, [scrollPosition]);
-
-	const handleScroll = (direction) => {
-		if (scrollRef.current) {
-			const scrollAmount = 200;
-			const currentScrollPosition = scrollRef.current.scrollLeft;
-
-			if (direction === 'left') {
-				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-				setScrollPosition(newScrollPosition);
-			} else {
-				const newScrollPosition = currentScrollPosition + scrollAmount;
-				setScrollPosition(newScrollPosition);
-			}
-		}
-	};
-
 	const tenantName = `${data?.tenant_first_name ? data?.tenant_first_name : ''} ${
 		data?.tenant_last_name ? data?.tenant_last_name : ''
 	}`.trim();

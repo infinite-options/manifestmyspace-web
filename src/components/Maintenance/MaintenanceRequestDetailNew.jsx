@@ -7,7 +7,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
-import RequestCard from "./MaintenanceRequestCard";
 import MaintenanceRequestNavigatorNew from "./MaintenanceRequestNavigatorNew";
 import AddIcon from "@mui/icons-material/Add";
 import SelectMonthComponent from "../SelectMonthComponent";
@@ -17,18 +16,17 @@ import NewRequestAction from "./Manager/NewRequestAction";
 import QuotesRequestAction from "./Manager/QuotesRequestAction";
 import QuotesAccepted from "./Manager/QuotesAccepted";
 import ScheduleMaintenance from "./Manager/ScheduleMaintenance";
-import RescheduleMaintenance from "./Manager/RescheduleMaintenance";
 import CompleteMaintenance from "./Manager/CompleteMaintenance";
 import PaidMaintenance from "./Manager/PaidMaintenance";
 import { useUser } from "../../contexts/UserContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
 import APIConfig from "../../utils/APIConfig";
+import { useMaintenance } from "../../contexts/MaintenanceContext";
 
 export function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
-    <div role='tabpanel' hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
       {value === index && (
         <Box sx={{ p: 3 }}>
           <Typography>{children}</Typography>
@@ -51,13 +49,19 @@ function a11yProps(index) {
   };
 }
 
-export default function MaintenanceRequestDetailNew({
-  maintenance_request_index,
-  status: initialStatus,
-  maintenanceItemsForStatus: initialMaintenanceItemsForStatus,
-  allMaintenanceData,
-}) {
-  // console.log('----inside request detail----', maintenance_request_index, initialStatus);
+export default function MaintenanceRequestDetailNew() {
+  const {
+    selectedRequestIndex,
+    selectedStatus,
+    maintenanceItemsForStatus,
+    setSelectedRequestIndex,
+    setSelectedStatus,
+    setMaintenanceItemsForStatus,
+    allMaintenanceData,
+    maintenanceQuotes,
+    setMaintenanceQuotes,
+  } = useMaintenance();
+
 
   const location = useLocation();
   const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -65,56 +69,21 @@ export default function MaintenanceRequestDetailNew({
   let profileId = getProfileId();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  function getColorStatusBasedOnSelectedRole() {
-    const role = roleName();
-    if (role === "Manager") {
-      return theme.colorStatusPMO;
-    } else if (role === "Owner") {
-      return theme.colorStatusO;
-    } else if (role === "Maintenance") {
-      return theme.colorStatusMM;
-    } else if (role === "PM Employee") {
-      return theme.colorStatusPMO;
-    } else if (role === "Maintenance Employee") {
-      return theme.colorStatusMM;
-    } else if (role === "Tenant") {
-      return theme.colorStatusTenant;
-    }
-  }
-
-  const colorStatus = getColorStatusBasedOnSelectedRole();
+  const colorStatus = roleName() === "Manager" ? theme.colorStatusPMO : theme.colorStatusMM;
 
   const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
-  const [maintenanceRequestIndex, setMaintenanceRequestIndex] = useState(isMobile ? location.state.maintenance_request_index : maintenance_request_index);
-  const [currentStatus, setCurrentStatus] = useState("");
-  const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(isMobile ? location.state.maintenanceItemsForStatus : initialMaintenanceItemsForStatus);
-
-  const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
-  const [filteredQuotes, setFilteredQuotes] = useState([]);
-  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : initialStatus)));
+  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : selectedStatus)));
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
+  const [filteredQuotes, setFilteredQuotes] = useState([]);
   const [navParams, setNavParams] = useState({});
   const allData = isMobile ? location.state.allMaintenanceData : allMaintenanceData;
   const isDesktop = location.state?.isDesktop || false;
   const propertyIndex = location.state?.index || -1;
 
-  function navigateToAddMaintenanceItem() {
-    navigate("/addMaintenanceItem", { state: { month, year } });
-  }
-
-  function handleBackButton() {
-    if (fromProperty) {
-      if (isDesktop === true) {
-        // navigate("/properties", { state: { index: propertyIndex } }); - PM Changed
-        navigate("/propertiesPM", { state: { index: propertyIndex } });
-      } else {
-        navigate(-1);
-      }
-    } else {
-      navigate(maintenanceRoutingBasedOnSelectedRole());
-    }
-  }
+  // Tab grey-out logic
+  let [areTabsGrey, setAreTabsGrey] = useState([0, 0, 0, 0, 0, 0]);
+  let [tabs, setTabs] = useState({});
 
   function deactivateTab(key, maintenanceData) {
     if (maintenanceData && maintenanceData[key]) {
@@ -123,9 +92,6 @@ export default function MaintenanceRequestDetailNew({
       return true;
     }
   }
-
-  let [areTabsGrey, setAreTabsGrey] = useState([0, 0, 0, 0, 0, 0]);
-  let [tabs, setTabs] = useState({});
 
   function greyOutTab(key, maintenanceData, color) {
     let greyColor = "#D9D9D9";
@@ -136,27 +102,94 @@ export default function MaintenanceRequestDetailNew({
     }
   }
 
+  function navigateToAddMaintenanceItem() {
+    navigate("/addMaintenanceItem", { state: { month, year } });
+  }
+
+  function handleBackButton() {
+    if (fromProperty) {
+      if (isDesktop === true) {
+        navigate("/propertiesPM", { state: { index: propertyIndex } });
+      } else {
+        navigate(-1);
+      }
+    } else {
+      navigate(maintenanceRoutingBasedOnSelectedRole());
+    }
+  }
   useEffect(() => {
-    //console.log("------UseEffect 0--------", initialStatus, maintenance_request_index);
-    const stat = isMobile ? location.state.status : initialStatus;
-    setCurrentStatus(stat);
-    const selectedIndex = isMobile ? location.state.maintenance_request_index : maintenance_request_index;
-    setMaintenanceRequestIndex(selectedIndex);
-  }, [initialStatus, maintenance_request_index, isMobile, location.state]);
+    const handleMaintenanceRequestSelected = () => {
+
+      console.log("---is event heard-----", selectedStatus, selectedRequestIndex);
+      // Update state with the new values
+      //setMaintenanceRequestIndex(selectedRequestIndex);
+      //setCurrentStatus(selectedStatus);
+      //setMaintenanceItemsForStatus(maintenanceItemsForStatus);
+
+      // Find the tab index based on the status
+      const statusIndex = colorStatus.findIndex((item) => item.status === selectedStatus);
+      if (statusIndex !== -1) {
+        setValue(statusIndex);
+        handleChange(null, statusIndex, selectedRequestIndex);
+      }
+    };
+
+  }, [selectedStatus, selectedRequestIndex]);
 
   useEffect(() => {
     setNavParams({
-      maintenanceRequestIndex,
-      status: currentStatus,
+      maintenanceRequestIndex: selectedRequestIndex,
+      status: selectedStatus,
       maintenanceItemsForStatus,
       allData,
       filteredQuotes,
     });
-    colorStatus.find((item, index) => {
-      if (item.status === currentStatus) {
-        setValue(index >= 0 ? index : 0);
+  }, [selectedRequestIndex, selectedStatus, maintenanceItemsForStatus]);
+
+  useEffect(() => {
+    var quotesFilteredById = maintenanceQuotes?.filter(
+      (item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[selectedRequestIndex]?.maintenance_request_uid
+    );
+
+    quotesFilteredById?.sort((a, b) => {
+      if (a.quote_status === "SENT") return -1;
+      if (b.quote_status === "SENT") return 1;
+      return 0;
+    });
+
+    const uniqueQuotes = [];
+    const uniqueKeys = new Set();
+
+    quotesFilteredById?.forEach((quote) => {
+      let key = quote.quote_business_id + quote.maintenance_quote_uid + quote.quote_maintenance_request_id;
+      if (!uniqueKeys.has(key)) {
+        uniqueKeys.add(key);
+        uniqueQuotes.push(quote);
       }
     });
+
+    setFilteredQuotes(uniqueQuotes);
+  }, [selectedRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
+
+  const fetchAndUpdateQuotes = async () => {
+    const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
+    const data = await response.json();
+    setMaintenanceQuotes(data.maintenanceQuotes.result);
+  };
+
+  useEffect(() => {
+    fetchAndUpdateQuotes();
+  }, []);
+
+  useEffect(() => {
+    colorStatus.find((item, index) => {
+      if (item.mapping === selectedStatus) {
+        setValue(index);
+      }
+    });
+  }, [selectedStatus]);
+
+  useEffect(() => {
     colorStatus.map((item, index) => {
       let key = item.mapping;
       let isGrey = allData[key] && allData[key].length > 0 ? 0 : 1;
@@ -169,98 +202,21 @@ export default function MaintenanceRequestDetailNew({
       let lastTab = temp.lastIndexOf(0);
       setTabs({ firstTab, lastTab });
     });
-  }, [maintenanceRequestIndex, currentStatus]);
-
-  useEffect(() => {
-    var quotesFilteredById = maintenanceQuotes.filter((item) => item.quote_maintenance_request_id === maintenanceItemsForStatus[maintenanceRequestIndex]?.maintenance_request_uid);
-
-    quotesFilteredById.sort((a, b) => {
-      if (a.quote_status === "SENT") {
-        return -1;
-      } else if (b.quote_status === "SENT") {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-
-    const uniqueQuotes = [];
-    const uniqueKeys = new Set();
-
-    quotesFilteredById.forEach((quote, index) => {
-      let key = quote.quote_business_id + quote.maintenance_quote_uid + quote.quote_maintenance_request_id;
-      if (!uniqueKeys.has(key)) {
-        uniqueKeys.add(key);
-        uniqueQuotes.push(quote);
-      }
-    });
-
-    setFilteredQuotes(uniqueQuotes);
-  }, [maintenanceRequestIndex, maintenanceQuotes, maintenanceItemsForStatus]);
-
-  const fetchAndUpdateQuotes = async () => {
-    const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes/${profileId}`);
-    const data = await response.json();
-    const quotes = data.maintenanceQuotes.result;
-    setMaintenanceQuotes(quotes);
-  };
-
-  useEffect(() => {
-    fetchAndUpdateQuotes();
-  }, []);
-
-  useEffect(() => {
-    colorStatus.find((item, index) => {
-      if (item.mapping === currentStatus) {
-        setValue(index);
-      }
-    });
-  }, [currentStatus]);
-
-  useEffect(() => {
-    const handleMaintenanceRequestSelected = () => {
-      const index = sessionStorage.getItem("selectedRequestIndex");
-      const status = sessionStorage.getItem("selectedStatus");
-      const maintenanceItemsForStatus = JSON.parse(sessionStorage.getItem("maintenanceItemsForStatus"));
-
-      //console.log("---new useEffect-----", index, status);
-      // Update state with the new values
-      setMaintenanceRequestIndex(Number(index));
-      setCurrentStatus(status);
-      setMaintenanceItemsForStatus(maintenanceItemsForStatus);
-
-      // Find the tab index based on the status
-      const statusIndex = colorStatus.findIndex((item) => item.status === status);
-      if (statusIndex !== -1) {
-        setValue(statusIndex);
-        handleChange(null, statusIndex, Number(index));
-      }
-    };
-
-    window.addEventListener("maintenanceRequestSelected", handleMaintenanceRequestSelected);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      window.removeEventListener("maintenanceRequestSelected", handleMaintenanceRequestSelected);
-    };
-  }, []);
+  }, [selectedRequestIndex, selectedStatus]);
 
   const handleChange = (event, newValue, index = 0) => {
-    console.log("----Handle change in req detail---", newValue);
     if (colorStatus && colorStatus.length > newValue) {
-      setCurrentStatus(colorStatus[newValue].status);
+      setSelectedStatus(colorStatus[newValue].status);
       setValue(newValue);
-      setMaintenanceRequestIndex(index);
+      setSelectedRequestIndex(index);
       const newStatus = colorStatus[newValue].mapping;
       const maintenanceItemsForNewStatus = allData[newStatus.toUpperCase()] || [];
       setMaintenanceItemsForStatus(maintenanceItemsForNewStatus);
-    } else {
-      console.error("Invalid index or colorStatus is undefined");
     }
   };
 
   const handleMaintenaceRequestIndexChange = (index, direction) => {
-    setMaintenanceRequestIndex(index);
+    setSelectedRequestIndex(index);
 
     if (direction.changeTab === "forward") {
       let i = value + 1;
@@ -268,9 +224,7 @@ export default function MaintenanceRequestDetailNew({
         i++;
         if (i > 5) break;
       }
-      if (i <= 5) {
-        handleChange(null, i);
-      }
+      if (i <= 5) handleChange(null, i);
     } else if (direction.changeTab === "backward") {
       let i = value - 1;
       while (areTabsGrey[i] === 1) {
@@ -278,15 +232,15 @@ export default function MaintenanceRequestDetailNew({
         if (i < 0) break;
       }
       if (i >= 0) {
-        let requestType = colorStatus[i].mapping.toUpperCase();
-        let lastIndex = allData[requestType] && allData[requestType].length ? allData[requestType].length - 1 : 0;
+        const lastIndex = allData[colorStatus[i].mapping]?.length - 1 || 0;
         setValue(i);
-        setCurrentStatus(colorStatus[i].status);
-        setMaintenanceRequestIndex(lastIndex);
-        setMaintenanceItemsForStatus(allData[requestType] || []);
+        setSelectedStatus(colorStatus[i].status);
+        setSelectedRequestIndex(lastIndex);
+        setMaintenanceItemsForStatus(allData[colorStatus[i].mapping.toUpperCase()] || []);
       }
     }
   };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -308,23 +262,23 @@ export default function MaintenanceRequestDetailNew({
           }}
         >
           {isMobile && (
-            <Box position='absolute'>
+            <Box position="absolute">
               <Button onClick={() => handleBackButton()}>
                 <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>
           )}
           <Stack
-            direction='row'
-            justifyContent='center'
-            alignItems='center'
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
             sx={{
               paddingBottom: "20px",
               paddingLeft: "0px",
               paddingRight: "0px",
             }}
           >
-            <Box direction='row' justifyContent='center' alignItems='center'>
+            <Box direction="row" justifyContent="center" alignItems="center">
               <Typography
                 sx={{
                   color: theme.typography.primary.black,
@@ -350,7 +304,7 @@ export default function MaintenanceRequestDetailNew({
               }}
             >
               <Tabs
-                variant='fullWidth'
+                variant="fullWidth"
                 value={value}
                 onChange={handleChange}
                 TabIndicatorProps={{
@@ -411,8 +365,7 @@ export default function MaintenanceRequestDetailNew({
                       borderBottomRightRadius: "10px",
                       borderBottomLeftRadius: "10px",
                       paddingBottom: "5px",
-                      borderRadius: '5px',
-                      
+                      borderRadius: "5px",
                     }}
                   >
                     <Grid
@@ -424,14 +377,14 @@ export default function MaintenanceRequestDetailNew({
                         paddingBottom: "0px",
                       }}
                     >
-                      {allData[item.mapping] && allData[item.mapping][maintenanceRequestIndex] ? (
+                      {allData[item.mapping]?.[selectedRequestIndex] ? (
                         <MaintenanceRequestNavigatorNew
-                          requestIndex={maintenanceRequestIndex}
-                          backward_active_status={maintenanceRequestIndex === 0 && value === tabs.firstTab}
-                          forward_active_status={value === tabs.lastTab && allData[item.mapping].length - 1 === maintenanceRequestIndex}
+                          requestIndex={selectedRequestIndex}
+                          backward_active_status={selectedRequestIndex === 0 && value === tabs.firstTab}
+                          forward_active_status={value === tabs.lastTab && allData[item.mapping]?.length - 1 === selectedRequestIndex}
                           updateRequestIndex={handleMaintenaceRequestIndexChange}
                           requestData={allData[item.mapping]}
-                          status={currentStatus}
+                          status={selectedStatus}
                           color={item.color}
                           item={item}
                           allData={allData}
@@ -452,23 +405,24 @@ export default function MaintenanceRequestDetailNew({
                   paddingTop: "0px",
                 }}
               >
-                {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[maintenanceRequestIndex] ? (
-                  <NewRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} />
+                {console.log('----return in maintenanceItemsForStatus---', maintenanceItemsForStatus)}
+                {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[selectedRequestIndex] ? (
+                  <NewRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} />
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Requested" ? (
-                  <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Accepted" ? (
-                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
                 {colorStatus[value]?.status === "Scheduled" ? (
-                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
-                {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[maintenanceRequestIndex].maintenance_request_status !== "CANCELLED" ? (
-                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[selectedRequestIndex]?.maintenance_request_status !== "CANCELLED" ? (
+                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
                 {colorStatus[value]?.status === "Paid" ? (
-                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
                 ) : null}
               </Box>
             </Box>
