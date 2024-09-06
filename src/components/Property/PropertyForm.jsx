@@ -179,9 +179,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 	// setCoordinates(coords);
 	// };
 
-	useEffect(() => {
-		console.log("ROHIT - assessmentYear - ", assessmentYear);
-	}, [assessmentYear]);
+	// useEffect(() => {
+	// 	console.log("assessmentYear - ", assessmentYear);
+	// }, [assessmentYear]);
 
 	const handleUnitChange = (event) => {
 		setUnit(event.target.value);
