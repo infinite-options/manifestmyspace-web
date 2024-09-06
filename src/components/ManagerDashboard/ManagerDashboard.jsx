@@ -79,9 +79,9 @@ function ManagerDashboard() {
             throw new Error("Failed to fetch data");
           }
           const data = await response.json();
-          console.log("ROHIT - data - ", data)
+          // console.log("data - ", data)
           const employee = data?.profile?.result[0]; // Assuming there's only one employee
-          console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
+          // console.log("employee?.employee_verification - ", employee?.employee_verification)
           if (employee?.employee_verification == null) {
             navigate("/emp_waiting");
           }
@@ -113,7 +113,7 @@ function ManagerDashboard() {
           }
           const data = await response.json();
           const employee = data?.profile?.result[0]; // Assuming there's only one employee
-          console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
+          // console.log("employee?.employee_verification - ", employee?.employee_verification)
           if (employee?.employee_verification == null) {
             navigate("/emp_waiting");
           }

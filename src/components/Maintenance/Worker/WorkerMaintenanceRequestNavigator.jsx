@@ -117,7 +117,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
   console.log("124 - data - ", data);
 
    useEffect(() => {
-    console.log("ROHIT - data - ", data);
+    // console.log("data - ", data);
     if(data){
       formatDate(data.maintenance_request_created_date);
     }

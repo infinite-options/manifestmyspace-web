@@ -48,7 +48,7 @@ const PropertiesMap = ({ properties, mapCenter }) => {
 
   // console.log("PropertiesMap - properties - ", properties)
   // const libs = ['places']
-  console.log("ROHIT - PropertiesMap - mapCenter - ", mapCenter)
+  // console.log("PropertiesMap - mapCenter - ", mapCenter)
   const [ libraries ] = useState(['places']);
 
   const { isLoaded, loadError } = useJsApiLoader({

@@ -63,7 +63,7 @@ const ProfileInformation = ({ contactDetails, type }) => {
     const getDecryptedSSN = (encryptedSSN) => {
       try {
         const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString();
-        console.log("ROHIT - decrypted - ", decrypted.toString());
+        // console.log("decrypted - ", decrypted.toString());
         return "***-**-" + decrypted.toString().slice(-4);
       } catch (error) {
         console.error('Error decrypting SSN:', error);

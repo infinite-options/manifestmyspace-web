@@ -973,7 +973,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     let paymentMethodsError = false;
     let atleaseOneActive = false;
     Object.keys(paymentMethods)?.forEach( method => {
-      console.log("ROHIT - payment method - ", paymentMethods[method]);
+      // console.log("payment method - ", paymentMethods[method]);
       const payMethod = paymentMethods[method];
       
       if(payMethod.value === '' && payMethod.checked === true ){

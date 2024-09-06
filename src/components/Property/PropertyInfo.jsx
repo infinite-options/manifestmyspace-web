@@ -32,7 +32,7 @@ const PropertyInfo = (props) => {
   const navigate = useNavigate();
   const index = props.index;
   const property = props.data;
-  console.log("ROHIT - PropertyInfo - property - ",property )
+  // console.log("PropertyInfo - property - ",property )
   const status = props.status;
   const lease = props.lease;
   // const ppt_images = property.property_images.split(",");
@@ -86,7 +86,7 @@ const PropertyInfo = (props) => {
 
   const utilities = property.property_utilities ? JSON.parse(property.property_utilities) : [];  
 
-  console.log("ROHIT - utilities - ", utilities);
+  // console.log("utilities - ", utilities);
 
   function parseImageData(data) {
     if (data === undefined) {

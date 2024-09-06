@@ -192,8 +192,7 @@ import OwnerFirstProperty from "./OwnerDashboard/OwnerFirstProperty";
 
 function Main() {
   // console.log("In Main Page");
-  const { user, roleName, selectedRole } = useUser();
-  console.log("ROHIT - Main - user - ", user);
+  const { user, roleName, selectedRole } = useUser();  
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box

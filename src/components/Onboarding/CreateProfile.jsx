@@ -168,7 +168,7 @@ const CreateProfile = () => {
       updateProfileUid({ business_owner_id: data.employee_uid });
     }
     if (data.employee_uid) {
-      console.log("ROHIT - data.employee_uid - ", data.employee_uid);      
+      // console.log("data.employee_uid - ", data.employee_uid);      
       updateEmployeeProfileUid({ business_uid: selectedBusiness?.business_uid, business_employee_id: data.employee_uid }, user.role);
       // updateProfileUid({ business_uid: selectedBusiness.business_uid });
       // updateProfileUid({ business_employee_id: data.employee_uid });
@@ -176,8 +176,8 @@ const CreateProfile = () => {
   };
 
   const createUserProfile = async (userUID, userData) => {
-    console.log("createUserProfile - USER UID - ", userUID);
-    // console.log("ROHIT - createUserProfile - user.role -",  user.role)
+    // console.log("createUserProfile - USER UID - ", userUID);
+    // console.log("createUserProfile - user.role -",  user.role)
     selectRole(user.role);
     const payload = getPayload(user.role, userUID);
     const form = encodeForm(payload);
