@@ -217,7 +217,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
 
   const handleDeleteClick = () => {
     setOpenDeleteConfirmation(true);
-    console.log("yesss click on delete")
+    // console.log("yesss click on delete")
   };
 
   const handleDeleteClose = () => {
@@ -411,7 +411,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                 },
               }}
             /> */}
-            {documents.length ? (
+            {documents && documents.length ? (
               <Box
                 sx={{
                   display: 'flex',
@@ -824,20 +824,54 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
   }else{
     return(
       <>
-        <Typography
+        <Box
           sx={{
-            color: "#160449",
-            fontWeight: theme.typography.primary.fontWeight,
-            fontSize: "18px",
-            paddingBottom: "5px",
-            paddingTop: "5px",
-            marginTop:"10px"
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            fontSize: '15px',
+            fontWeight: 'bold',
+            color: '#3D5CAC',
           }}
         >
-          {customName ? customName : "Documents: "}
-        </Typography>
-
-        {documents.length ? (
+          <Typography
+            sx={{
+              color: "#160449",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "18px",
+              paddingBottom: "5px",
+              paddingTop: "5px",
+              marginTop:"10px"
+            }}
+          >
+            {customName ? customName : "Documents: "}
+          </Typography>
+          {isEditable && <Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'row',
+							fontSize: '18px',
+							fontWeight: 'bold',
+							paddingTop: '5px',
+              marginTop:"10px",
+							color: '#3D5CAC',
+						}}
+					>
+						<label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
+              <AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+						</label>
+						<input
+							id="file-upload"
+							type="file"
+							accept=".doc,.docx,.txt,.pdf"
+							hidden
+							// onChange={(e) => setContractFiles(e.target.files)}
+							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+							multiple
+						/>
+					</Box>}
+        </Box>
+        {documents && documents.length ? (
 				<Box
 					sx={{
 						display: 'flex',
@@ -1013,7 +1047,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
               sx={{
                 fontSize: '15px',
                 fontWeight: 'bold',
-                padding: '5px',
+                // padding: '5px',
                 color: '#3D5CAC',
                 width: '100%',
               }}

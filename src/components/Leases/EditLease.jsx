@@ -30,7 +30,8 @@ const EditLease = (props) => {
     const location = useLocation();
     const [contractFileTypes, setContractFileTypes] = useState([]);
     const leaseData = location.state.leaseData;
-    // console.log("---dhyey--- leasedata Documents- ", JSON.parse(leaseData.lease_documents))
+    // console.log("---dhyey--- leasedata Documents- ", leaseData)
+    // console.log("---dhyey edit lease props - ", props)
     const [leaseDocuments, setLeaseDocuments] = useState(JSON.parse(leaseData.lease_documents));
     const [contractFiles, setContractFiles] = useState([]);
     const [contractName, setContractName] = useState(leaseData.contract_name)
@@ -39,6 +40,7 @@ const EditLease = (props) => {
     const [moveIn, setMoveIn] = useState(leaseData.lease_move_in_date)
     const [noOfOcc, setNoOfOcc] = useState("")
     const [contentTypes, setContentTypes] = useState([]);
+    const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
 
     const rentDataFromLease = JSON.parse(leaseData.lease_fees).filter((lease) => lease.fee_name === "Rent");
 
@@ -121,16 +123,11 @@ const EditLease = (props) => {
         setAvailablePay(event.target.value);
     }
 
-    const handleCloseButton = () => {
-        navigate('/tenantDashboard',{
-            state:{
-                viewLeaseState : {
-                    lease_id : leaseData.lease_uid,
-                    property_uid: leaseData.property_uid,
-                    isDesktop: true,
-                }
-            } 
-        });
+    const handleCloseButton = (e) => {
+        // navigate('/tenantDashboard',{ 
+        // });
+        // e.preventDefault();
+        props.onBackClick?.();
     };
 
     const handleRemoveFile = (index) => {
@@ -199,6 +196,7 @@ const EditLease = (props) => {
         // leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
 
         leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees))
+        leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
 
         if(contractFiles.length){
             const documentsDetails = [];
@@ -247,6 +245,8 @@ const EditLease = (props) => {
         
         const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "leaseFees_uid": rentDataFromLease[0].leaseFees_uid, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
         leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees))
+        leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+
 
         // leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
         // leaseApplicationFormData.append("frequency",leaseData.frequency)
@@ -310,8 +310,9 @@ const EditLease = (props) => {
                 alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
             }
         };
-        sendAnnouncement();
-        handleCloseButton();          
+        sendAnnouncement().then((e)=>{
+            handleCloseButton(e);          
+        });
     }
 
     return (
@@ -753,9 +754,9 @@ const EditLease = (props) => {
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <Documents isEditable={true} documents={leaseDocuments} isAccord={false} setDocuments={setLeaseDocuments} contractFileTypes={contractFileTypes} setContractFileTypes={setContractFileTypes} contractFiles={contractFiles} setContractFiles={setContractFiles}/>
+                                <Documents isEditable={true} documents={leaseDocuments} isAccord={false} deletedDocsUrl={deletedDocsUrl} setDeleteDocsUrl={setDeletedDocsUrl} setDocuments={setLeaseDocuments} contractFileTypes={contractFileTypes} setContractFileTypes={setContractFileTypes} contractFiles={contractFiles} setContractFiles={setContractFiles} />
                             </TableRow>
-                            <TableRow>
+                            {/* <TableRow>
                                 <TableCell>
                                     <Button
                                         width='100px'
@@ -782,7 +783,7 @@ const EditLease = (props) => {
                                         />
                                     </Button>
                                 </TableCell>
-                            </TableRow>
+                            </TableRow> */}
                         </TableBody>
                     </Table>
                     <Stack

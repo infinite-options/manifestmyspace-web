@@ -221,12 +221,12 @@ const ViewLease = (props) => {
 
     const leaseID = propertyList[index]?.lease_uid || props.lease_id;
 
-    console.log("--dhyey-- index useEffect -  const leaseID - ", leaseID);
+    // console.log("--dhyey-- index useEffect -  const leaseID - ", leaseID);
 
     if (leaseID != null) {
       allLeases?.forEach((lease) => {
         if (lease.lease_uid === leaseID) {
-          console.log("---dhyey--- lease data - ", lease);
+          // console.log("---dhyey--- lease data - ", lease);
           setLeaseFees(JSON.parse(lease.lease_fees));
           setLeaseDocuments(JSON.parse(lease.lease_documents));
           const utilities = JSON.parse(lease.property_utilities);

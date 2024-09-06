@@ -239,6 +239,7 @@ function TenantDashboard(props) {
   }, [paymentState]);
 
   useEffect(() => {
+    // console.log("--dhyey-- viewLEasestate - ", viewLeaseState)
     if (viewLeaseState) {
       setRightPane({ type: "viewlease" });
     }

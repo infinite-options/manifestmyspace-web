@@ -710,7 +710,7 @@ const TenantApplicationNav = (props) => {
                           marginRight: "30px",
                         }}
                       >
-                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents: 1"}/>
+                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>
                         {/* <Typography
                           sx={{
                             justifySelf: "center",

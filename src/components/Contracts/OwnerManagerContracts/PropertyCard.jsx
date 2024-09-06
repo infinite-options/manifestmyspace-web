@@ -125,7 +125,7 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 	// 	console.log('FEE FREQUENCY: ', feeFrequency);
 	// }, [feeFrequency]);
 
-	const [feeAppliedTo, setFeeAppliedTo] = useState('Gross Rent');
+	const [feeAppliedTo, setFeeAppliedTo] = useState('');
 	// useEffect(() => {
 	// 	console.log('FEE APPLIED TO: ', feeAppliedTo);
 	// }, [feeAppliedTo]);
@@ -173,48 +173,37 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 	return (
 		<form onSubmit={handleAddFee}>
 			<Dialog
-				open={open}
-				onClose={handleClose}				
-				maxWidth="xl"
-				sx={{
-					'& .MuiDialog-paper': {
-						width: '60%',
-						maxWidth: 'none',
-					},
-				}}
-			>
-				<Box
+					open={open}
+					onClose={handleClose}				
+					maxWidth="xl"
 					sx={{
-						width: '100%',
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'center',
-						fontSize: '15px',
-						fontWeight: 'bold',
-						padding: '5px',
-						color: '#3D5CAC',
-					}}
-				>
-					Management Fees
-				</Box>
-				<Box
-					sx={{
-						width: '100%',
-						display: 'flex',
-						flexDirection: 'row',
-
-						fontSize: '15px',
-						fontWeight: 'bold',
-						padding: '5px',
-						color: '#3D5CAC',
+						'& .MuiDialog-paper': {
+							width: '60%',
+							maxWidth: 'none',
+						},
 					}}
 				>
 					<Box
 						sx={{
+							width: '100%',
 							display: 'flex',
 							flexDirection: 'row',
-							justifyContent: 'space-between',
-							fontSize: '13px',
+							justifyContent: 'center',
+							fontSize: '15px',
+							fontWeight: 'bold',
+							padding: '5px',
+							color: '#3D5CAC',
+						}}
+					>
+						Management Fees
+					</Box>
+					<Box
+						sx={{
+							width: '100%',
+							display: 'flex',
+							flexDirection: 'row',
+
+							fontSize: '15px',
 							fontWeight: 'bold',
 							padding: '5px',
 							color: '#3D5CAC',
@@ -223,162 +212,48 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 						<Box
 							sx={{
 								display: 'flex',
-								flexDirection: 'column',
-								marginRight: '50px',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								fontSize: '13px',
+								fontWeight: 'bold',
+								padding: '5px',
+								color: '#3D5CAC',
 							}}
 						>
-							<Box>Fee Name</Box>							
-							<TextField
-								name="fee_name"
-								placeholder=""
-								value={feeName}
-								onChange={(event) => {
-									setFeeName(event.target.value);
-								}}
-								InputProps={{
-									sx: {
-										backgroundColor: '#D6D5DA',
-										height: '40px',
-									},
-								}}
-							/>
-						</Box>
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-						>
-							<Box>Frequency</Box>							
-							<Select
-								value={feeFrequency}
-								label="Frequency"
-								onChange={handleFrequencyChange}
-								sx={{
-									backgroundColor: '#D6D5DA',
-									height: '40px',
-									width: '200px', // Adjust the width as needed
-									padding: '8px', // Adjust the padding as needed
-								}}
-							>
-								<MenuItem value={'One Time'}>One Time</MenuItem>
-								<MenuItem value={'hourly'}>hourly</MenuItem>
-								<MenuItem value={'daily'}>daily</MenuItem>
-								<MenuItem value={'weekly'}>weekly</MenuItem>
-								<MenuItem value={'biweekly'}>biweekly</MenuItem>
-								<MenuItem value={'monthly'}>monthly</MenuItem>
-								<MenuItem value={'annually'}>annually</MenuItem>
-							</Select>
-						</Box>
-					</Box>
-				</Box>
-				<Box
-					sx={{
-						width: '100%',
-						display: 'flex',
-						flexDirection: 'row',
-						fontSize: '13px',
-						fontWeight: 'bold',
-						padding: '15px',
-						color: '#3D5CAC',
-					}}
-				>
-					<RadioGroup
-						row
-						aria-label="fee-type-group-label"
-						name="fee-type-radio-buttons-group"
-						value={feeType}
-						onChange={handleFeeTypeChange}
-					>
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-						>
-							<FormControlLabel
-								value="PERCENT"
-								control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
-								label="Percent"
-							/>							
-							{feeType === 'PERCENT' && (
-								<Box>
-									<TextField
-										value={percentage}
-										label=""
-										variant="outlined"										
-										InputProps={{
-											sx: {
-												backgroundColor: '#D6D5DA',
-												width: '60px',
-												height: '40px',
-											},
-										}}
-										onChange={(event) => {
-											setPercentage(event.target.value);
-										}}
-									/>
-								</Box>
-							)}
-						</Box>
-
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-						>
-							<FormControlLabel
-								value="FLAT-RATE"
-								control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
-								label="Flat Rate"
-							/>
-							<Box sx={{ width: '60px', height: '40px' }}></Box>
-						</Box>
-						{feeType === 'FLAT-RATE' && (
 							<Box
 								sx={{
 									display: 'flex',
 									flexDirection: 'column',
-									paddingLeft: '20px',
+									marginRight: '50px',
 								}}
 							>
-								Amount
+								<Box>Fee Name</Box>							
 								<TextField
-									name="flat-rate"
-									value={feeAmount}
+									name="fee_name"
 									placeholder=""
-									label=""
-									variant="outlined"
-									
-
+									value={feeName}
+									onChange={(event) => {
+										setFeeName(event.target.value);
+									}}
 									InputProps={{
 										sx: {
 											backgroundColor: '#D6D5DA',
-											width: '100px',
 											height: '40px',
 										},
 									}}
-									onChange={(event) => {
-										setFlatRate(event.target.value);
-									}}
 								/>
 							</Box>
-						)}
-						{feeType === 'PERCENT' && (
 							<Box
 								sx={{
 									display: 'flex',
 									flexDirection: 'column',
-									paddingLeft: '20px',
-									height: '40px',
 								}}
 							>
-								Applied To
+								<Box>Frequency</Box>							
 								<Select
-									value={feeAppliedTo}
-									label="Applied To"
-									onChange={handleAppliedToChange}
+									value={feeFrequency}
+									label="Frequency"
+									onChange={handleFrequencyChange}
 									sx={{
 										backgroundColor: '#D6D5DA',
 										height: '40px',
@@ -386,44 +261,169 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 										padding: '8px', // Adjust the padding as needed
 									}}
 								>
-									{/* <MenuItem value={'Gross Rent'}>Gross Rent</MenuItem>
-									<MenuItem value={'Utility Bill'}>Utility Bill</MenuItem>
-									<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem> */}
-									{
-										feeBases?.map( basis => (
-											<MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>
-										))
-									}
+									<MenuItem value={'One Time'}>One Time</MenuItem>
+									<MenuItem value={'hourly'}>hourly</MenuItem>
+									<MenuItem value={'daily'}>daily</MenuItem>
+									<MenuItem value={'weekly'}>weekly</MenuItem>
+									<MenuItem value={'biweekly'}>biweekly</MenuItem>
+									<MenuItem value={'monthly'}>monthly</MenuItem>
+									<MenuItem value={'annually'}>annually</MenuItem>
 								</Select>
 							</Box>
-						)}
-					</RadioGroup>
-				</Box>
-				<DialogActions>
-					<Button
-						onClick={handleClose}
+						</Box>
+					</Box>
+					<Box
 						sx={{
-							'&:hover': {
-								backgroundColor: '#fff',
-							},
-							color: '#160449',
+							width: '100%',
+							display: 'flex',
+							flexDirection: 'row',
+							fontSize: '13px',
+							fontWeight: 'bold',
+							padding: '15px',
+							color: '#3D5CAC',
 						}}
 					>
-						Close
-					</Button>
-					<Button
-						type="submit"
-						onClick={handleAddFee}
-						sx={{
-							'&:hover': {
-								backgroundColor: '#fff',
-							},
-							color: '#160449',
-						}}
-					>
-						Add Fee
-					</Button>
-				</DialogActions>
+						<RadioGroup
+							row
+							aria-label="fee-type-group-label"
+							name="fee-type-radio-buttons-group"
+							value={feeType}
+							onChange={handleFeeTypeChange}
+						>
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+								}}
+							>
+								<FormControlLabel
+									value="PERCENT"
+									control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
+									label="Percent"
+								/>							
+								{feeType === 'PERCENT' && (
+									<Box>
+										<TextField
+											value={percentage}
+											label=""
+											variant="outlined"										
+											InputProps={{
+												sx: {
+													backgroundColor: '#D6D5DA',
+													width: '60px',
+													height: '40px',
+												},
+											}}
+											onChange={(event) => {
+												setPercentage(event.target.value);
+											}}
+										/>
+									</Box>
+								)}
+							</Box>
+
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+								}}
+							>
+								<FormControlLabel
+									value="FLAT-RATE"
+									control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
+									label="Flat Rate"
+								/>
+								<Box sx={{ width: '60px', height: '40px' }}></Box>
+							</Box>
+							{feeType === 'FLAT-RATE' && (
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										paddingLeft: '20px',
+									}}
+								>
+									Amount
+									<TextField
+										name="flat-rate"
+										value={feeAmount}
+										placeholder=""
+										label=""
+										variant="outlined"
+										
+
+										InputProps={{
+											sx: {
+												backgroundColor: '#D6D5DA',
+												width: '100px',
+												height: '40px',
+											},
+										}}
+										onChange={(event) => {
+											setFlatRate(event.target.value);
+										}}
+									/>
+								</Box>
+							)}
+							{feeType === 'PERCENT' && (
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										paddingLeft: '20px',
+										height: '40px',
+									}}
+								>
+									Applied To
+									<Select
+										value={feeAppliedTo}
+										label="Applied To"
+										onChange={handleAppliedToChange}
+										sx={{
+											backgroundColor: '#D6D5DA',
+											height: '40px',
+											width: '200px', // Adjust the width as needed
+											padding: '8px', // Adjust the padding as needed
+										}}
+									>
+										{/* <MenuItem value={'Gross Rent'}>Gross Rent</MenuItem>
+										<MenuItem value={'Utility Bill'}>Utility Bill</MenuItem>
+										<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem> */}
+										{
+											feeBases?.map( (basis, i) => (
+												<MenuItem key={i} value={basis.list_item}>{basis.list_item}</MenuItem>
+											))
+										}
+									</Select>
+								</Box>
+							)}
+						</RadioGroup>
+					</Box>
+					<DialogActions>
+						<Button
+							onClick={handleClose}
+							sx={{
+								'&:hover': {
+									backgroundColor: '#fff',
+								},
+								color: '#160449',
+							}}
+						>
+							Close
+						</Button>
+						<Button
+							type="submit"
+							onClick={handleAddFee}
+							sx={{
+								'&:hover': {
+									backgroundColor: '#fff',
+								},
+								color: '#160449',
+							}}
+						>
+							Add Fee
+						</Button>
+					</DialogActions>
 			</Dialog>
 		</form>
 	);
@@ -916,7 +916,16 @@ const PropertyCard = (props) => {
 			}
 	
 			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
-			setContractFees(fees);
+
+			if(fees.length === 0 && contractData["contract_status"] === "NEW"){
+				setContractFees([...defaultContractFees]);
+			}else{
+				setContractFees(fees);
+			}
+
+			// if (contractStatus === "NEW" && !contractFees.length) {
+				
+			// }	
 			// } else {
 			// 	setContractFees(defaultContractFees);
 			// }
@@ -930,8 +939,10 @@ const PropertyCard = (props) => {
 			setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
 		  }
 		}
-	  };	
+	};
+
     setContractDetails();
+	
   }, [currentContractUID]);
 
   useEffect(() => {
@@ -968,17 +979,17 @@ const PropertyCard = (props) => {
     // console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
   }, [contractAssignedContacts]);
 
-  useEffect(() => {
+//   useEffect(() => {
     // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
     // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
 	
 	// console.log("contractFees.length - ", contractFees.length);
-	// console.log("contractFees - ", contractFees);
-    if (!contractFees.length) {
-      setContractFees([...defaultContractFees]);
-    }	
-  }, [defaultContractFees, currentContractUID]);
+// 	console.log("--dhyey--- check contractFees inside useeffect defaultcontract- ", contractFees);
+//     if (contractStatus === "NEW" && !contractFees.length) {
+//       setContractFees([...defaultContractFees]);
+//     }	
+//   }, [defaultContractFees, currentContractUID]);
 
   useEffect(() => {
 	setImages(
@@ -1244,7 +1255,7 @@ const PropertyCard = (props) => {
     formData.append("contract_fees", contractFeesJSONString);
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
-    formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+    // formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
 	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
 
     const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
@@ -2133,18 +2144,32 @@ return (
 							width: '100%',
 						}}
 					>
-						<Typography
+						<Box
 							sx={{
-								color: "#160449",
-								fontWeight: theme.typography.primary.fontWeight,
-								fontSize: "18px",
-								paddingBottom: "5px",
-								paddingTop: "5px",
-								marginY:"10px"
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								fontSize: '15px',
+								fontWeight: 'bold',
+								color: '#3D5CAC',
 							}}
 						>
-							{"Contract Assigned Contacts: "}
-						</Typography>
+							<Typography
+								sx={{
+									color: "#160449",
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: "18px",
+									paddingBottom: "5px",
+									paddingTop: "5px",
+									marginY:"10px"
+								}}
+							>
+								{"Contract Assigned Contacts: "}
+							</Typography>
+							<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"5px"}>
+								<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+							</Box>
+						</Box>
 						<Grid container sx={{ color: 'black' }} marginY={"13px"}>
 							<Grid item xs={3}>
 								Name
@@ -2170,7 +2195,9 @@ return (
 			) : (
 				<></>
 			)}
-			<Box
+
+			{/* Add document and add contact button */}
+			{/* <Box
 				sx={{
 					display: 'flex',
 					flexDirection: 'row',
@@ -2181,59 +2208,10 @@ return (
 					width: '100%',
 				}}
 			>
-				<Box
-					onClick={() => {
-						setShowAddContactDialog(true);
-					}}
-				>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-							fontSize: '16px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					>
-						<PersonIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-						Add Contact
-					</Box>
-				</Box>
 				<Box>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					></Box>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-							fontSize: '16px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					>
-						<label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-							<DescriptionIcon sx={{ fontSize: 19, color: '#3D5CAC' }} /> Add Document
-						</label>
-						<input
-							id="file-upload"
-							type="file"
-							accept=".doc,.docx,.txt,.pdf"
-							hidden
-							// onChange={(e) => setContractFiles(e.target.files)}
-							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
-							multiple
-						/>
-					</Box>
+					
 				</Box>
-			</Box>
+			</Box> */}
 
 			<Box
 				sx={{
@@ -2270,7 +2248,7 @@ return (
 							textTransform: 'none',
 						}}
 					>
-						{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Offer 1'}
+						{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Offer'}
 					</Typography>
 				</Button>
 				</>
