@@ -21,8 +21,8 @@ import {
 	DialogActions,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import MapIcon from '@mui/icons-material/Map';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+// import MapIcon from '@mui/icons-material/Map';
+// import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import AddressAutocompleteInput from './AddressAutocompleteInput';
 import theme from '../../theme/theme';
 import { useUser } from '../../contexts/UserContext';
@@ -32,6 +32,10 @@ import StaticMap from "./StaticMap"
 import APIConfig from "../../utils/APIConfig";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ReferUser from '../../components/Referral/ReferUser';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const useStyles = makeStyles({
 	card: {
@@ -128,6 +132,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 	const [bedrooms, setBedrooms] = useState('');
 	const [bathrooms, setBathrooms] = useState('');
 	const [cost, setCost] = useState('');
+	const [assessmentYear, setAssessmentYear] = useState('');
 	const [ownerId, setOwnerId] = useState(getProfileId());
 	const [selectedOwner, setSelectedOwner] = useState("");
 	const [notes, setNotes] = useState('');
@@ -156,11 +161,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 		setZip(address.zip ? address.zip : "");
 	};
 
-	useEffect(() => {
+	// useEffect(() => {
 
-		console.log("Address set to 23", address)
-		console.log("Address city set to 23", city)
-	}, [address, unit, city, state, zip]);
+	// 	console.log("Address set to 23", address)
+	// 	console.log("Address city set to 23", city)
+	// }, [address, unit, city, state, zip]);
 
 
 	// const handleAddressSelect = async (address) => {
@@ -174,6 +179,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 	// setCoordinates(coords);
 	// };
 
+	useEffect(() => {
+		console.log("ROHIT - assessmentYear - ", assessmentYear);
+	}, [assessmentYear]);
 
 	const handleUnitChange = (event) => {
 		setUnit(event.target.value);
@@ -314,6 +322,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 		formData.append("property_num_beds", bedrooms);
 		formData.append("property_num_baths", bathrooms);
 		formData.append("property_value", cost);
+		formData.append("property_value_year", assessmentYear);
 		formData.append("property_area", squareFootage);
 		formData.append("property_listed", 0);
 		formData.append("property_notes", notes);
@@ -709,7 +718,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 								/>
 							</Grid>
 							<Grid item xs={12} sm={8}>
-								<Grid container spacing={3}>
+								<Grid container spacing={3} columnSpacing={12}>
 									<Grid item xs={2}>
 										<Typography
 											sx={{
@@ -848,6 +857,63 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 											placeholder="$"
 											onChange={handleCostChange}
 										/>
+									</Grid>
+									<Grid item xs={2.5} sx={{padding: '2px', }}>
+										<Typography
+											sx={{
+												marginTop: '5px',
+												color: '#160449',
+												fontWeight: theme.typography.primary.fontWeight,
+												fontSize: 14,
+											}}
+										>
+											Assessment Year
+										</Typography>
+									</Grid>
+									<Grid item xs={9.5}>
+										{/* <TextField
+											size="small"
+											fullWidth
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '3px',
+												height: '40px', // Consistent height for all text fields
+												marginTop: '4px', // Add space above the text field
+											}}
+											placeholder="$"
+											onChange={handleAssessmentYearChange}
+										/> */}
+										<LocalizationProvider dateAdapter={AdapterDayjs}>
+											<DatePicker
+												// label="Year"
+												value={assessmentYear ? dayjs(assessmentYear) : null}
+												views={['year']}
+												format="YYYY"
+												maxDate={dayjs(new Date())}
+												onChange={(e) => {
+													const formattedDate = e ? e.format("YYYY") : null;
+													setAssessmentYear(formattedDate)
+												}}
+												sx={{ 
+													backgroundColor: '#FFFFFF',
+													width: '100%',
+													borderRadius: '3px',
+													marginTop: '5px',
+													'& .MuiInputBase-input': {
+														height: '30px', // Adjust the height here
+														padding: '5px 10px', // Adjust padding if needed
+													},
+												}}
+												fullWidth
+												InputLabelProps={{
+													sx: {
+														fontSize: '10px',
+														height: '40px',
+													},
+												}}
+											/>
+										</LocalizationProvider>
 									</Grid>
 									<Grid item xs={2}>
 										<Typography

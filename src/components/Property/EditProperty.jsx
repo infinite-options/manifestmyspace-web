@@ -19,23 +19,23 @@ import {
 	Menu,
 } from '@mui/material';
 import theme from '../../theme/theme';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+// import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+// import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ImageUploader from '../ImageUploader';
-import dataURItoBlob from '../utils/dataURItoBlob';
-import defaultHouseImage from './defaultHouseImage.png';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+// import dataURItoBlob from '../utils/dataURItoBlob';
+// import defaultHouseImage from './defaultHouseImage.png';
+// import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+// import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { useUser } from '../../contexts/UserContext';
 import IconButton from '@mui/material/IconButton';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Assessment } from '@mui/icons-material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+// import { Assessment } from '@mui/icons-material';
+// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { getLatLongFromAddress } from '../../utils/geocode';
 import AddressAutocompleteInput from './AddressAutocompleteInput';
 import { useCookies } from 'react-cookie';
@@ -47,7 +47,12 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import APIConfig from '../../utils/APIConfig';
-import PropertyNavigator from './PropertyNavigator';
+// import PropertyNavigator from './PropertyNavigator';
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 function EditProperty(props) {
 	// console.log("In Edit Property");
@@ -180,12 +185,15 @@ function EditProperty(props) {
 	const [hasChanges, setHasChanges] = useState(false);
 	const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
 	const [deletedIcons, setDeletedIcons] = useState(
-		new Array(JSON.parse(propertyData.property_images).length).fill(false)
+		propertyData?.property_images? new Array(JSON.parse(propertyData.property_images).length).fill(false) : []
 	);
 	const [favoriteIcons, setFavoriteIcons] = useState(
-    JSON.parse(propertyData.property_images).map(image => image === propertyData.property_favorite_image)
+		propertyData?.property_images? JSON.parse(propertyData.property_images).map(image => image === propertyData.property_favorite_image) : []
   );
 
+//   useEffect(() => {
+// 	console.log("assessmentYear - ", assessmentYear);
+//   }, [assessmentYear]);
   
 
 	useEffect(() => {
@@ -217,7 +225,7 @@ function EditProperty(props) {
 		setInitSelectedImageList(JSON.parse(property.property_images));
 		setFavImage(property.property_favorite_image);
 		setInitFavImage(property.property_favorite_image);
-		setMaxSteps(selectedImageList.length);
+		setMaxSteps(selectedImageList?.length);
 		setNotes(property.property_notes);
 		setInitNotes(property.property_notes);
 		setUnit(property.property_unit);
@@ -973,7 +981,7 @@ function EditProperty(props) {
 								>
 									Assessment Year
 								</Typography>
-								<TextField
+								{/* <TextField
 									fullWidth
 									sx={{
 										backgroundColor: 'white',
@@ -983,7 +991,37 @@ function EditProperty(props) {
 									size="small"
 									onChange={(e) => setAssessmentYear(e.target.value)}
 									value={assessmentYear}
-								/>
+								/> */}
+								<LocalizationProvider dateAdapter={AdapterDayjs}>
+									<DatePicker
+										// label="Year"
+										value={assessmentYear ? dayjs(assessmentYear) : null}
+										views={['year']}
+										format="YYYY"
+										maxDate={dayjs(new Date())}
+										onChange={(e) => {
+											const formattedDate = e ? e.format("YYYY") : null;
+											setAssessmentYear(formattedDate)
+										}}
+										sx={{ 
+											backgroundColor: '#FFFFFF',
+											width: '100%',
+											borderRadius: '3px',
+											marginTop: '5px',
+											'& .MuiInputBase-input': {
+												height: '30px', // Adjust the height here
+												padding: '5px 10px', // Adjust padding if needed
+											},
+										}}
+										fullWidth
+										InputLabelProps={{
+											sx: {
+												fontSize: '10px',
+												height: '40px',
+											},
+										}}
+									/>
+								</LocalizationProvider>
 							</Grid>
 							<Grid item xs={12}>
 								<Typography
