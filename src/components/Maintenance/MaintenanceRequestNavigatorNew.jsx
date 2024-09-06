@@ -66,10 +66,10 @@ export default function MaintenanceRequestNavigatorNew({
 	navigateParams,
 	fetchAndUpdateQuotes,
 }) {
-	console.log('----inside maintainance navigator---', allData);
 	const { setEditMaintenanceView } = useMaintenance(); // Use the context
 
 	const [currentIndex, setCurrentIndex] = useState(requestIndex);
+
 	const [activeStep, setActiveStep] = useState(0);
 	const [formattedDate, setFormattedDate] = useState('');
 	const [numOpenRequestDays, setNumOpenRequestDays] = useState('');
@@ -85,6 +85,10 @@ export default function MaintenanceRequestNavigatorNew({
 	const [priorities, setPriorities] = useState(
 		requestData.map((request) => request.maintenance_priority || 'Medium')
 	);
+
+	useEffect(() => {
+		setCurrentIndex(requestIndex);
+	}, [requestIndex]);
 
 	const maintenancePrimary = {
 		color: '#FFFFFF',
